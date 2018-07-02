@@ -4,19 +4,58 @@ using UnityEngine;
 
 namespace WorldObjects
 {
-    public class Chunk : MonoBehaviour
+    public class Chunk : MonoBehaviour, IBoundary
     {
         private Dictionary<IntVector2, Block> _blockMap = new Dictionary<IntVector2, Block>();
+        private List<Space> _spaces = new List<Space>();
+
+        private IntVector2 _bottomLeftCorner;
+        private IntVector2 _topRightCorner;
 
         public void Register(Block block)
         {
             _blockMap[block.Position] = block;
             block.transform.SetParent(transform, true);
 
+            if (_bottomLeftCorner == null ||
+                block.Position.X < _bottomLeftCorner.X ||
+                block.Position.Y < _bottomLeftCorner.Y)
+            {
+                _bottomLeftCorner = block.Position;
+            }
+            if (_topRightCorner == null ||
+                block.Position.X > _topRightCorner.X ||
+                block.Position.Y > _topRightCorner.Y)
+            {
+                _topRightCorner = block.Position;
+            }
+
             block.OnDestroy += OnBlockDestroyed;
             block.OnCrumble += OnBlockCrumbled;
             block.OnStabilize += OnBlockStabilized;
         }
+
+        public void Register(Space space)
+        {
+            _spaces.Add(space);
+        }
+
+        public Space GetSpaceForPosition(IntVector2 position)
+        {
+            if (!Contains(position)) throw new ArgumentOutOfRangeException($"Chunk does not contains {position}.");
+
+            foreach (var space in _spaces)
+            {
+                if (space.Contains(position)) return space;
+            }
+            return null;
+        }
+
+        public bool Contains(IntVector2 position) =>
+            position.X >= _bottomLeftCorner.X &&
+            position.Y >= _bottomLeftCorner.Y &&
+            position.X <= _topRightCorner.X &&
+            position.Y <= _topRightCorner.Y;
 
         private void OnBlockDestroyed(Block block)
         {
@@ -69,6 +108,8 @@ namespace WorldObjects
             Vector2.down,
             Vector2.right
         };
+
+        public override string ToString() => $"Chunk from {_bottomLeftCorner} to {_topRightCorner}.";
     }
 }
 

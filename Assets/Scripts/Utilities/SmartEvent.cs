@@ -90,3 +90,33 @@ public class SmartEvent<T, U> : UnityEvent
         TheEvent?.Invoke(arg, arg2);
     }
 }
+
+public class SmartEvent<T, U, V> : UnityEvent
+{
+    public delegate void TheDelegate(T arg, U arg2, V arg3);
+    event TheDelegate TheEvent;
+
+    public static SmartEvent<T, U, V> operator +(SmartEvent<T, U, V> lhs, TheDelegate rhs)
+    {
+        if (rhs != null)
+        {
+            lhs.TheEvent += rhs;
+        }
+
+        return lhs;
+    }
+    public static SmartEvent<T, U, V> operator -(SmartEvent<T, U, V> lhs, TheDelegate rhs)
+    {
+        if (rhs != null)
+        {
+            lhs.TheEvent += rhs;
+        }
+
+        return lhs;
+    }
+
+    public void Raise(T arg, U arg2, V arg3)
+    {
+        TheEvent?.Invoke(arg, arg2, arg3);
+    }
+}

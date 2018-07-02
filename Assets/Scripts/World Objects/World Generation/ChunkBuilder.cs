@@ -53,13 +53,16 @@ namespace WorldObjects.WorldGeneration
 
         public Chunk Build()
         {
+            var chunk = new GameObject($"Chunk [{_chunkWorldCenterpoint.x}, {_chunkWorldCenterpoint.y}]").AddComponent<Chunk>();
+
             var spaces = new List<Space>();
             foreach (var sBuilder in _spaceBuilders)
             {
-                spaces.Add(sBuilder.Build());
+                var space = sBuilder.Build();
+                spaces.Add(space);
+                chunk.Register(space);
             }
 
-            var chunk = new GameObject($"Chunk [{_chunkWorldCenterpoint.x}, {_chunkWorldCenterpoint.y}]").AddComponent<Chunk>();
             foreach (var builder in _blockBuilders)
             {
                 Block block;

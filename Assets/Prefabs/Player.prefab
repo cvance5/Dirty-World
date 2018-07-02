@@ -19,10 +19,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4243101412831334}
+  - component: {fileID: 114487742133395586}
+  - component: {fileID: 114237843733034080}
   - component: {fileID: 212343200990117794}
   - component: {fileID: 61437638054683924}
   - component: {fileID: 50120577649415964}
-  - component: {fileID: 114487742133395586}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -133,6 +134,17 @@ MonoBehaviour:
   Range: 2
   Damage: 0
   Force: 25
+--- !u!114 &114237843733034080
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1354266971631064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5026b787fc53f734499fe4c33b6e4e86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114487742133395586
 MonoBehaviour:
   m_ObjectHideFlags: 1

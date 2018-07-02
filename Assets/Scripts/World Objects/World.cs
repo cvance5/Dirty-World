@@ -11,5 +11,17 @@ namespace WorldObjects
             _activeChunks.Add(chunk);
             chunk.transform.SetParent(transform);
         }
+
+        public static Chunk GetChunkForPosition(IntVector2 position)
+        {
+            foreach (var chunk in Instance._activeChunks)
+            {
+                if (chunk.Contains(position))
+                {
+                    return chunk;
+                }
+            }
+            return null;
+        }
     }
 }

@@ -7,6 +7,8 @@ public class GameManager : Singleton<GameManager>
     void Start()
     {
         WorldObjects.WorldGeneration.WorldBuilder.BuildInitialChunk();
-        Instantiate(Settings.Player, Vector2.zero, Quaternion.identity);
+        var playerObj = Instantiate(Settings.Player, Vector2.zero, Quaternion.identity);
+        var playerData = playerObj.GetComponent<Player.PlayerData>();
+        PositionTracker.BeginTracking(playerData);
     }
 }

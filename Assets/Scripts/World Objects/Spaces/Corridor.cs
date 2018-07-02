@@ -5,10 +5,12 @@
         private IntVector2 _bottomLeftCorner;
         private IntVector2 _topRightCorner;
 
-        public Corridor(IntVector2 bottomLEftCorner, IntVector2 topRightCorner)
+        public Corridor(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {
-            _bottomLeftCorner = bottomLEftCorner;
+            _bottomLeftCorner = bottomLeftCorner;
             _topRightCorner = topRightCorner;
+
+            Name = $"{_bottomLeftCorner} to {_topRightCorner}.";
         }
 
         public override bool Contains(IntVector2 position) =>
