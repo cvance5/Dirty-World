@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-namespace WorldGeneration
+namespace WorldObjects.WorldGeneration
 {
     public class BlockBuilder
     {
         private bool _exists;
-        public Vector2 WorldPosition { get; private set; }
+        public IntVector2 WorldPosition { get; private set; }
 
         public BlockBuilder(Vector2 worldPosition)
         {
@@ -26,7 +26,7 @@ namespace WorldGeneration
             if (_exists)
             {
                 block = Object.Instantiate(GameManager.Instance.Settings.Block, WorldPosition, Quaternion.identity).GetComponent<Block>();
-                block.name = $"[{WorldPosition.x}, {WorldPosition.y}]";
+                block.name = $"[{WorldPosition.X}, {WorldPosition.Y}]";
             }
 
             return block;

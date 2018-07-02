@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Player
 {
@@ -41,11 +40,11 @@ namespace Player
 
             if (_hits[0].collider != null)
             {
-                var block = _hits[0].collider.GetComponent<Block>();
+                var hittable = (IHittable)_hits[0].collider.GetComponent(typeof(IHittable));
 
-                if (block != null)
+                if (hittable != null)
                 {
-                    block.OnHit(Damage, Force);
+                    hittable.OnHit(Damage, Force);
                 }
 
                 LineToTarget(_hits[0].point);

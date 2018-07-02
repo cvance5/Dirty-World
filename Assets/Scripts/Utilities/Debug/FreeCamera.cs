@@ -87,7 +87,7 @@ public class FreeCamera : MonoBehaviour
             //grab the rotation of the camera so we can move in a psuedo local XY space
             target.rotation = transform.rotation;
             target.Translate(Vector3.right * -Input.GetAxis("Mouse X") * panSpeed);
-            target.Translate(transform.up * -Input.GetAxis("Mouse Y") * panSpeed, Space.World);
+            target.Translate(transform.up * -Input.GetAxis("Mouse Y") * panSpeed, UnityEngine.Space.World);
         }
 
         ////////Orbit Position

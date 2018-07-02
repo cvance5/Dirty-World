@@ -1,13 +1,15 @@
 ﻿using System.Collections.Generic;
 
-public class World : Singleton<World>
+namespace WorldObjects
 {
-    private List<Chunk> _activeChunks = new List<Chunk>();
-    private List<Space> _activeSpaces = new List<Space>();
-
-    public void RegisterChunk(Chunk chunk)
+    public class World : Singleton<World>
     {
-        _activeChunks.Add(chunk);
-        chunk.transform.SetParent(transform);
+        private List<Chunk> _activeChunks = new List<Chunk>();
+
+        public void RegisterChunk(Chunk chunk)
+        {
+            _activeChunks.Add(chunk);
+            chunk.transform.SetParent(transform);
+        }
     }
 }

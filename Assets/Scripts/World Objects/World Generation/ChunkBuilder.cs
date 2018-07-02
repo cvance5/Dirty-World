@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace WorldGeneration
+namespace WorldObjects.WorldGeneration
 {
     public class ChunkBuilder
     {
         private Vector2 _chunkWorldCenterpoint;
         private List<BlockBuilder> _blockBuilders = new List<BlockBuilder>();
+        private List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
         private Dictionary<Vector2, BlockBuilder> _blockByWorldPosition = new Dictionary<Vector2, BlockBuilder>();
 
         private Vector2 _chunkSize = GameManager.Instance.Settings.ChunkSize;
@@ -30,6 +31,12 @@ namespace WorldGeneration
             }
         }
 
+        public ChunkBuilder AddSpace(SpaceBuilder spaceBuilder)
+        {
+            _spaceBuilders.Add(spaceBuilder);
+            return this;
+        }
+
         public ChunkBuilder RemoveAtWorldPositions(params Vector2[] worldPositions)
         {
             foreach (var worldPos in worldPositions)
@@ -46,10 +53,27 @@ namespace WorldGeneration
 
         public Chunk Build()
         {
+            var spaces = new List<Space>();
+            foreach (var sBuilder in _spaceBuilders)
+            {
+                spaces.Add(sBuilder.Build());
+            }
+
             var chunk = new GameObject($"Chunk [{_chunkWorldCenterpoint.x}, {_chunkWorldCenterpoint.y}]").AddComponent<Chunk>();
             foreach (var builder in _blockBuilders)
             {
-                var block = builder.Build();
+                Block block;
+
+                var containingSpace = spaces.Find(space => space.Contains(builder.WorldPosition));
+
+                if (containingSpace != null)
+                {
+                    block = containingSpace.GetBlock(builder.WorldPosition);
+                }
+                else
+                {
+                    block = builder.Build();
+                }
 
                 if (block != null)
                 {
@@ -58,6 +82,7 @@ namespace WorldGeneration
             }
 
             _blockBuilders.Clear();
+            _spaceBuilders.Clear();
 
             return chunk;
         }
