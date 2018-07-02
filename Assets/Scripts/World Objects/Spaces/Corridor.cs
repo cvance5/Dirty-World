@@ -10,6 +10,9 @@
             _bottomLeftCorner = bottomLeftCorner;
             _topRightCorner = topRightCorner;
 
+            Extents.Add(_bottomLeftCorner);
+            Extents.Add(_topRightCorner);
+
             Name = $"{_bottomLeftCorner} to {_topRightCorner}.";
         }
 

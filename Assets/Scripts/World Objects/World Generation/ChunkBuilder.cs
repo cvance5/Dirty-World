@@ -5,55 +5,60 @@ namespace WorldObjects.WorldGeneration
 {
     public class ChunkBuilder
     {
-        private Vector2 _chunkWorldCenterpoint;
+        private IntVector2 _chunkWorldCenterpoint;
         private List<BlockBuilder> _blockBuilders = new List<BlockBuilder>();
         private List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
-        private Dictionary<Vector2, BlockBuilder> _blockByWorldPosition = new Dictionary<Vector2, BlockBuilder>();
+        private List<IntVector2> _boundedDirections = new List<IntVector2>();
 
-        private Vector2 _chunkSize = GameManager.Instance.Settings.ChunkSize;
+        private int _chunkSize => World.ChunkSize;
 
-        public ChunkBuilder(Vector2 chunkWorldCenterpoint)
+        public ChunkBuilder(IntVector2 chunkWorldCenterpoint)
         {
-            _chunkWorldCenterpoint = chunkWorldCenterpoint;
-            Vector2 startingPoint = new Vector2(-(_chunkSize.x / 2), -(_chunkSize.y / 2));
+            _chunkWorldCenterpoint = new IntVector2(chunkWorldCenterpoint);
+
+            IntVector2 startingPoint = new IntVector2(-(_chunkSize / 2), -(_chunkSize / 2));
 
             // Initialize all blocks in chunk to the default value
-            for (int row = 0; row < _chunkSize.x; row++)
+            for (int row = 0; row < _chunkSize; row++)
             {
-                for (int column = 0; column < _chunkSize.y; column++)
+                for (int column = 0; column < _chunkSize; column++)
                 {
-                    Vector2 offset = new Vector2(row, column);
-                    Vector2 positionInChunk = startingPoint + offset;
+                    IntVector2 offset = new IntVector2(row, column);
+                    IntVector2 positionInChunk = startingPoint + offset;
                     var blockBuilder = new BlockBuilder(_chunkWorldCenterpoint + positionInChunk);
                     _blockBuilders.Add(blockBuilder);
-                    _blockByWorldPosition[blockBuilder.WorldPosition] = blockBuilder;
+                }
+            }
+
+            foreach (var dir in Directions.Cardinals)
+            {
+                if (World.GetNeighborOfChunk(chunkWorldCenterpoint, dir) != null)
+                {
+                    _boundedDirections.Add(dir);
                 }
             }
         }
 
         public ChunkBuilder AddSpace(SpaceBuilder spaceBuilder)
         {
-            _spaceBuilders.Add(spaceBuilder);
-            return this;
-        }
-
-        public ChunkBuilder RemoveAtWorldPositions(params Vector2[] worldPositions)
-        {
-            foreach (var worldPos in worldPositions)
+            foreach (var boundedDir in _boundedDirections)
             {
-                BlockBuilder blockBuilder;
-                if (_blockByWorldPosition.TryGetValue(worldPos, out blockBuilder))
-                {
-                    blockBuilder.Remove();
-                }
+                spaceBuilder.Clamp(boundedDir, _chunkSize);
             }
 
+            _spaceBuilders.Add(spaceBuilder);
             return this;
         }
 
         public Chunk Build()
         {
-            var chunk = new GameObject($"Chunk [{_chunkWorldCenterpoint.x}, {_chunkWorldCenterpoint.y}]").AddComponent<Chunk>();
+            var chunk = new GameObject($"Chunk [{_chunkWorldCenterpoint.X}, {_chunkWorldCenterpoint.Y}]").AddComponent<Chunk>();
+            chunk.transform.position = _chunkWorldCenterpoint;
+            chunk.AssignExtents
+            (
+                new IntVector2(_chunkWorldCenterpoint.X - _chunkSize / 2, _chunkWorldCenterpoint.Y - _chunkSize / 2),
+                new IntVector2(_chunkWorldCenterpoint.X + _chunkSize / 2, _chunkWorldCenterpoint.Y + _chunkSize / 2)
+            );
 
             var spaces = new List<Space>();
             foreach (var sBuilder in _spaceBuilders)
@@ -61,6 +66,20 @@ namespace WorldObjects.WorldGeneration
                 var space = sBuilder.Build();
                 spaces.Add(space);
                 chunk.Register(space);
+            }
+
+            foreach (var dir in Directions.Cardinals)
+            {
+                var neighbor = (World.GetNeighborOfChunk(_chunkWorldCenterpoint, dir));
+
+                if (neighbor != null)
+                {
+                    foreach (var overlappingSpace in neighbor.GetSpacesReachingEdge(-dir))
+                    {
+                        spaces.Add(overlappingSpace);
+                        chunk.Register(overlappingSpace);
+                    }
+                }
             }
 
             foreach (var builder in _blockBuilders)

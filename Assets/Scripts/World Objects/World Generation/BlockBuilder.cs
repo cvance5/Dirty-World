@@ -7,7 +7,7 @@ namespace WorldObjects.WorldGeneration
         private bool _exists;
         public IntVector2 WorldPosition { get; private set; }
 
-        public BlockBuilder(Vector2 worldPosition)
+        public BlockBuilder(IntVector2 worldPosition)
         {
             WorldPosition = worldPosition;
             _exists = true;

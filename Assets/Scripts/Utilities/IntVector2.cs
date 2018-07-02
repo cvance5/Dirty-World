@@ -2,8 +2,8 @@
 
 public class IntVector2
 {
-    public int X { get; private set; }
-    public int Y { get; private set; }
+    public int X { get; set; }
+    public int Y { get; set; }
 
     public IntVector2(int x, int y)
     {
@@ -19,6 +19,7 @@ public class IntVector2
 
     public static IntVector2 operator +(IntVector2 lhs, IntVector2 rhs) => new IntVector2(lhs.X + rhs.X, lhs.Y + rhs.Y);
     public static IntVector2 operator +(IntVector2 lhs, Vector2 rhs) => lhs + new IntVector2(rhs);
+    public static IntVector2 operator -(IntVector2 vec) => new IntVector2(-vec.X, -vec.Y);
 
     public static implicit operator IntVector2(Vector2 source) => new IntVector2(source);
     public static implicit operator Vector2(IntVector2 source) => new Vector2(source.X, source.Y);

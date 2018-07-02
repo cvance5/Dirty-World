@@ -6,29 +6,31 @@ namespace WorldObjects
 {
     public class Chunk : MonoBehaviour, IBoundary
     {
-        private Dictionary<IntVector2, Block> _blockMap = new Dictionary<IntVector2, Block>();
+        public IntVector2 Position => new IntVector2(transform.position);
+
         private List<Space> _spaces = new List<Space>();
+        private Dictionary<IntVector2, Block> _blockMap = new Dictionary<IntVector2, Block>();
+        private Dictionary<IntVector2, List<Space>> _spacesOverlappingEdges = new Dictionary<IntVector2, List<Space>>()
+        {
+            { Vector2.up, new List<Space>() },
+            { Vector2.right, new List<Space>() },
+            { Vector2.down, new List<Space>() },
+            { Vector2.left, new List<Space>() }
+        };
 
         private IntVector2 _bottomLeftCorner;
         private IntVector2 _topRightCorner;
+
+        public void AssignExtents(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
+        {
+            _bottomLeftCorner = bottomLeftCorner;
+            _topRightCorner = topRightCorner;
+        }
 
         public void Register(Block block)
         {
             _blockMap[block.Position] = block;
             block.transform.SetParent(transform, true);
-
-            if (_bottomLeftCorner == null ||
-                block.Position.X < _bottomLeftCorner.X ||
-                block.Position.Y < _bottomLeftCorner.Y)
-            {
-                _bottomLeftCorner = block.Position;
-            }
-            if (_topRightCorner == null ||
-                block.Position.X > _topRightCorner.X ||
-                block.Position.Y > _topRightCorner.Y)
-            {
-                _topRightCorner = block.Position;
-            }
 
             block.OnDestroy += OnBlockDestroyed;
             block.OnCrumble += OnBlockCrumbled;
@@ -38,6 +40,31 @@ namespace WorldObjects
         public void Register(Space space)
         {
             _spaces.Add(space);
+
+            List<IntVector2> edgesReached = new List<IntVector2>();
+
+            foreach (var extentPoint in space.Extents)
+            {
+                if (!Contains(extentPoint))
+                {
+                    if (extentPoint.X < _bottomLeftCorner.X) edgesReached.Add(Vector2.left);
+                    if (extentPoint.Y < _bottomLeftCorner.Y) edgesReached.Add(Vector2.down);
+                    if (extentPoint.X > _bottomLeftCorner.X) edgesReached.Add(Vector2.right);
+                    if (extentPoint.Y > _bottomLeftCorner.Y) edgesReached.Add(Vector2.up);
+                }
+
+                // We are already overlapping all edges with 
+                // the previous extents, so don't check the rest.
+                if (edgesReached.Count == 4) break;
+            }
+
+            if (edgesReached.Count > 0)
+            {
+                foreach (var edgeReached in edgesReached)
+                {
+                    _spacesOverlappingEdges[edgeReached].Add(space);
+                }
+            }
         }
 
         public Space GetSpaceForPosition(IntVector2 position)
@@ -51,6 +78,8 @@ namespace WorldObjects
             return null;
         }
 
+        public List<Space> GetSpacesReachingEdge(IntVector2 edge) => _spacesOverlappingEdges[edge];
+
         public bool Contains(IntVector2 position) =>
             position.X >= _bottomLeftCorner.X &&
             position.Y >= _bottomLeftCorner.Y &&
@@ -59,7 +88,7 @@ namespace WorldObjects
 
         private void OnBlockDestroyed(Block block)
         {
-            foreach (var dir in _neighborPositions)
+            foreach (var dir in Directions.Cardinals)
             {
                 Block neighbor;
                 if (_blockMap.TryGetValue(block.Position + dir, out neighbor))
@@ -77,7 +106,7 @@ namespace WorldObjects
 
         private void OnBlockCrumbled(Block block)
         {
-            foreach (var dir in _neighborPositions)
+            foreach (var dir in Directions.Cardinals)
             {
                 Block neighbor;
                 if (_blockMap.TryGetValue(block.Position + dir, out neighbor))
@@ -101,15 +130,33 @@ namespace WorldObjects
             Log.Info($"Block stabilized at {block.Position}.");
         }
 
-        private static readonly List<IntVector2> _neighborPositions = new List<IntVector2>()
-        {
-            Vector2.up,
-            Vector2.left,
-            Vector2.down,
-            Vector2.right
-        };
-
         public override string ToString() => $"Chunk from {_bottomLeftCorner} to {_topRightCorner}.";
+
+        public override bool Equals(object obj)
+        {
+            var chunk = obj as Chunk;
+            return chunk != null &&
+                   base.Equals(obj) &&
+                   EqualityComparer<IntVector2>.Default.Equals(Position, chunk.Position) &&
+                   EqualityComparer<List<Space>>.Default.Equals(_spaces, chunk._spaces) &&
+                   EqualityComparer<Dictionary<IntVector2, Block>>.Default.Equals(_blockMap, chunk._blockMap) &&
+                   EqualityComparer<Dictionary<IntVector2, List<Space>>>.Default.Equals(_spacesOverlappingEdges, chunk._spacesOverlappingEdges) &&
+                   EqualityComparer<IntVector2>.Default.Equals(_bottomLeftCorner, chunk._bottomLeftCorner) &&
+                   EqualityComparer<IntVector2>.Default.Equals(_topRightCorner, chunk._topRightCorner);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 471642533;
+            hashCode = hashCode * -1521134295 + base.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(Position);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Space>>.Default.GetHashCode(_spaces);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<IntVector2, Block>>.Default.GetHashCode(_blockMap);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<IntVector2, List<Space>>>.Default.GetHashCode(_spacesOverlappingEdges);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(_bottomLeftCorner);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(_topRightCorner);
+            return hashCode;
+        }
     }
 }
 

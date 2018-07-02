@@ -9,19 +9,30 @@ namespace WorldObjects.WorldGeneration
         {
             var sBuilder = new CorridorBuilder(Vector2.zero, CorridorBuilder.CorridorAlignment.StartFromLeft)
                 .SetHeight(1)
-                .SetLength(15);
+                .SetLength(100);
 
             var sBuilder2 = new CorridorBuilder(Vector2.zero + (Vector2.up), CorridorBuilder.CorridorAlignment.StartFromLeft)
                 .SetHeight(3)
                 .SetLength(5);
 
             var cBuilder = new ChunkBuilder(Vector2.zero)
-                    .RemoveAtWorldPositions(Vector2.zero, Vector2.left, Vector2.right)
                     .AddSpace(sBuilder)
                     .AddSpace(sBuilder2);
 
-            var initialChunk = cBuilder.Build();
-            World.Instance.RegisterChunk(initialChunk);
+            World.Instance.RegisterChunk(cBuilder.Build());
+
+            foreach (var dir in Directions.Compass)
+            {
+                var cBuilderTemp = new ChunkBuilder(new IntVector2(dir.X * World.ChunkSize, dir.Y * World.ChunkSize));
+
+                World.Instance.RegisterChunk(cBuilderTemp.Build());
+            }
+        }
+
+        public static void BuildChunk(IntVector2 position)
+        {
+            var cBuilder = new ChunkBuilder(position);
+            World.Instance.RegisterChunk(cBuilder.Build());
         }
     }
 }

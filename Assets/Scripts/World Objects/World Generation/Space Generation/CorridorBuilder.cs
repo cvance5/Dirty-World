@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using WorldObjects.Spaces;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
@@ -23,26 +23,62 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
 
             _alignment = alignment;
+            FindAllPoints();
         }
 
         public CorridorBuilder SetLength(int blocksLong)
         {
             _length = blocksLong - 1;
+            FindAllPoints();
             return this;
         }
 
         public CorridorBuilder SetHeight(int blockHigh)
         {
             _height = blockHigh - 1;
+            FindAllPoints();
             return this;
         }
 
-        public override Space Build()
+        public override SpaceBuilder Clamp(IntVector2 direction, int amount)
         {
+            if (direction == Directions.Up)
+            {
+                if (_leftEnd.Y + _height > amount)
+                {
+                    var difference = (_leftEnd.Y + _height) - amount;
+                    _leftEnd.Y -= difference;
+                    _center.Y -= difference;
+                    _rightEnd.Y -= difference;
+                }
+
+            }
+            else if (direction == Directions.Right)
+            {
+                _rightEnd.X = Math.Min(_rightEnd.X, amount);
+                _alignment = CorridorAlignment.StartFromRight; // We have to enforce this boundary
+            }
+            else if (direction == Directions.Down)
+            {
+                if (_leftEnd.Y < amount)
+                {
+                    _leftEnd.Y = amount;
+                    _center.Y = amount;
+                    _rightEnd.Y = amount;
+                }
+            }
+            else if (direction == Directions.Left)
+            {
+                _leftEnd.X = Math.Max(_leftEnd.X, amount);
+                _alignment = CorridorAlignment.StartFromLeft; // We have to enforce this boundary
+            }
+            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+
             FindAllPoints();
-            
-            return new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height));
+            return this;
         }
+
+        public override Space Build() => new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height));
 
         private void FindAllPoints()
         {

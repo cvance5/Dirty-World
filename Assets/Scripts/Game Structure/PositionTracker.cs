@@ -21,7 +21,7 @@ public class PositionTracker : Singleton<PositionTracker>
         {
             var position = target.GetPosition();
 
-            var chunk = World.GetChunkForPosition(position);
+            var chunk = World.GetContainingChunk(position);
             var space = chunk.GetSpaceForPosition(position);
 
             var initialPositionData = new PositionData(chunk, space);
@@ -56,7 +56,7 @@ public class PositionTracker : Singleton<PositionTracker>
 
     public static void Subscribe(ITrackable target, Action<PositionData, PositionData> callback)
     {
-        var callbacks = new List<Action<PositionData, PositionData>>();
+        List<Action<PositionData, PositionData>> callbacks;
 
         if (_onPositionChangedCallbacks.TryGetValue(target, out callbacks))
         {
@@ -65,8 +65,7 @@ public class PositionTracker : Singleton<PositionTracker>
         }
         else
         {
-            callbacks.Add(callback);
-            _onPositionChangedCallbacks.Add(target, callbacks);
+            _onPositionChangedCallbacks.Add(target, new List<Action<PositionData, PositionData>>() { callback });
         }
     }
 
@@ -95,7 +94,7 @@ public class PositionTracker : Singleton<PositionTracker>
 
                 if (!oldPositionData.Chunk.Contains(position))
                 {
-                    newPositionData.Chunk = World.GetChunkForPosition(position);
+                    newPositionData.Chunk = World.GetContainingChunk(position);
                 }
                 else newPositionData.Chunk = oldPositionData.Chunk;
 
