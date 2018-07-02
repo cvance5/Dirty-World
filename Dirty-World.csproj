@@ -262,6 +262,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Game Structure\Cardinals.cs" />
     <Compile Include="Assets\Scripts\Game Structure\GameManager.cs" />
     <Compile Include="Assets\Scripts\Game Structure\IBoundary.cs" />
     <Compile Include="Assets\Scripts\Game Structure\IHittable.cs" />

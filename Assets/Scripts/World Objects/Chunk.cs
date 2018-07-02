@@ -59,7 +59,7 @@ namespace WorldObjects
 
         private void OnBlockDestroyed(Block block)
         {
-            foreach (var dir in _cardinals)
+            foreach (var dir in _neighborPositions)
             {
                 Block neighbor;
                 if (_blockMap.TryGetValue(block.Position + dir, out neighbor))
@@ -77,7 +77,7 @@ namespace WorldObjects
 
         private void OnBlockCrumbled(Block block)
         {
-            foreach (var dir in _cardinals)
+            foreach (var dir in _neighborPositions)
             {
                 Block neighbor;
                 if (_blockMap.TryGetValue(block.Position + dir, out neighbor))
@@ -101,7 +101,7 @@ namespace WorldObjects
             Log.Info($"Block stabilized at {block.Position}.");
         }
 
-        private static readonly List<IntVector2> _cardinals = new List<IntVector2>()
+        private static readonly List<IntVector2> _neighborPositions = new List<IntVector2>()
         {
             Vector2.up,
             Vector2.left,
