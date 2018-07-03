@@ -26,9 +26,7 @@ namespace WorldObjects.WorldGeneration
 
             foreach (var dir in Directions.Compass)
             {
-                var cBuilderTemp = new ChunkBuilder(new IntVector2(dir.X * World.ChunkSize, dir.Y * World.ChunkSize));
-
-                World.Instance.RegisterChunk(cBuilderTemp.Build());
+                BuildChunk(new IntVector2(dir.X * World.ChunkSize, dir.Y * World.ChunkSize));
             }
         }
 

@@ -17,7 +17,7 @@ public class GameManager : Singleton<GameManager>
 
     private void CheckForGenerateChunk(PositionData oldData, PositionData newData)
     {
-        foreach (var dir in Directions.Cardinals)
+        foreach (var dir in Directions.Compass)
         {
             var position = World.GetChunkPosition(newData.Chunk.Position, dir);
 
