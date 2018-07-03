@@ -100,7 +100,7 @@ namespace WorldObjects
             block.OnCrumble -= OnBlockCrumbled;
             block.OnDestroy -= OnBlockDestroyed;
 
-            if (!_blockMap.Remove(block.Position)) Log.Warning($"Attempted to destroy block, but could not find it at {block.Position}.");
+            if (!_blockMap.Remove(block.Position)) Log.Info($"Attempted to destroy block, but could not find it at {block.Position}.");
             else Log.Info($"Block destroyed at {block.Position}.");
         }
 
