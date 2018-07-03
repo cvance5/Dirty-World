@@ -32,9 +32,9 @@ namespace WorldObjects
             _blockMap[block.Position] = block;
             block.transform.SetParent(transform, true);
 
-            block.OnDestroy += OnBlockDestroyed;
-            block.OnCrumble += OnBlockCrumbled;
-            block.OnStabilize += OnBlockStabilized;
+            block.OnDestroyed += OnBlockDestroyed;
+            block.OnCrumbled += OnBlockCrumbled;
+            block.OnStabilized += OnBlockStabilized;
         }
 
         public void Register(Space space)
@@ -95,21 +95,17 @@ namespace WorldObjects
 
         private void OnBlockDestroyed(Block block)
         {
-            block.OnCrumble -= OnBlockCrumbled;
-            block.OnDestroy -= OnBlockDestroyed;
+            block.OnCrumbled -= OnBlockCrumbled;
+            block.OnDestroyed -= OnBlockDestroyed;
 
             if (!_blockMap.Remove(block.Position)) Log.Info($"Attempted to destroy block, but could not find it at {block.Position}.");
             else Log.Info($"Block destroyed at {block.Position}.");
-
-            AlertNeighbors(block);
         }
 
         private void OnBlockCrumbled(Block block)
         {
             if (!_blockMap.Remove(block.Position)) throw new Exception($"Attempted to crumble block, but could not find it at {block.Position}.");
             else Log.Info($"Block crumbled at {block.Position}.");
-
-            AlertNeighbors(block);
         }
 
         private void OnBlockStabilized(Block block)
@@ -121,18 +117,6 @@ namespace WorldObjects
             }
 
             Log.Info($"Block stabilized at {block.Position}.");
-
-            AlertNeighbors(block);
-        }
-
-        private void AlertNeighbors(Block block)
-        {
-            var neighbors = World.GetNeighbors(block);
-
-            foreach (var neighbor in neighbors)
-            {
-                neighbor.HandleNeighborUpdate();
-            }
         }
 
         public override string ToString() => $"Chunk from {_bottomLeftCorner} to {_topRightCorner}.";

@@ -1,4 +1,4 @@
 ﻿public interface IHittable
 {
-    void OnHit(int damage, int force);
+    void Hit(int damage, int force);
 }

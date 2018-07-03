@@ -44,7 +44,7 @@ namespace Player
 
                 if (hittable != null)
                 {
-                    hittable.OnHit(Damage, Force);
+                    hittable.Hit(Damage, Force);
                 }
 
                 LineToTarget(_hits[0].point);

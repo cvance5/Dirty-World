@@ -62,8 +62,8 @@ namespace WorldObjects.WorldGeneration
             chunk.transform.position = _chunkWorldCenterpoint;
             chunk.AssignExtents
             (
-                new IntVector2(_chunkWorldCenterpoint.X - _chunkSize / 2, _chunkWorldCenterpoint.Y - _chunkSize / 2),
-                new IntVector2(_chunkWorldCenterpoint.X + _chunkSize / 2, _chunkWorldCenterpoint.Y + _chunkSize / 2)
+                new IntVector2(_chunkWorldCenterpoint.X - (_chunkSize / 2), _chunkWorldCenterpoint.Y - (_chunkSize / 2)),
+                new IntVector2(_chunkWorldCenterpoint.X + (_chunkSize / 2), _chunkWorldCenterpoint.Y + (_chunkSize / 2))
             );
 
             var spaces = new List<Space>();

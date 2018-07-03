@@ -6,12 +6,12 @@ namespace WorldObjects
 {
     public abstract class Block : MonoBehaviour, IHittable
     {
-        public SmartEvent<Block> OnCrumble = new SmartEvent<Block>();
-        public SmartEvent<Block> OnDestroy = new SmartEvent<Block>();
-        public SmartEvent<Block> OnStabilize = new SmartEvent<Block>();
+        public SmartEvent<Block> OnCrumbled = new SmartEvent<Block>();
+        public SmartEvent<Block> OnDestroyed = new SmartEvent<Block>();
+        public SmartEvent<Block> OnStabilized = new SmartEvent<Block>();
 
-        protected int _health = 100;
-        protected int _stability = 100;
+        public int Health { get; protected set; } = 100;
+        public int Stability { get; protected set; } = 100;
 
         [SerializeField]
         [Range(0, 1)]
@@ -58,57 +58,52 @@ namespace WorldObjects
             }
         }
 
-        public void OnHit(int damage, int force)
+        public void Hit(int damage, int force)
         {
             ApplyDamage(damage);
 
-            if (_health > 0) ApplyForce(force);
+            if (Health > 0) ApplyForce(force);
         }
 
         public virtual void HandleNeighborUpdate() { }
 
         public void ApplyDamage(int damage)
         {
-            if (_health <= 0) return;
+            if (Health <= 0) return;
 
-            _health -= (int)(damage * (1f - _damageResistance));
+            Health -= (int)(damage * (1f - _damageResistance));
 
-            if (_health <= 0)
+            if (Health <= 0)
             {
                 Destroy();
             }
             else
             {
-                _sprite.color = Color.Lerp(_baseColor, Color.black, 1 - (_health / 100f));
+                _sprite.color = Color.Lerp(_baseColor, Color.black, 1 - (Health / 100f));
             }
         }
 
         public void ApplyForce(int force)
         {
-            if (_stability <= 0) return;
+            if (Stability <= 0) return;
 
-            _stability -= (int)(force * (1f - _forceResistance));
+            Stability -= (int)(force * (1f - _forceResistance));
 
-            if (_stability <= 0)
+            if (Stability <= 0)
             {
                 Crumble();
             }
         }
 
-        protected virtual void Destroy()
-        {
-            OnDestroy.Raise(this);
-            Destroy(gameObject);
-        }
-
         protected virtual void Crumble()
         {
-            OnCrumble.Raise(this);
-
             _rigidbody.bodyType = RigidbodyType2D.Dynamic;
             _velocitySamples = new Queue<float>();
 
             StartCoroutine(CheckForStability());
+
+            OnCrumbled.Raise(this);
+            AlertNeighbors();
         }
 
         protected virtual void Stabilize()
@@ -116,10 +111,29 @@ namespace WorldObjects
             transform.SnapToGrid();
 
             _rigidbody.bodyType = RigidbodyType2D.Kinematic;
-            _stability = 100;
+            Stability = 100;
             _velocitySamples = null;
 
-            OnStabilize.Raise(this);
+            OnStabilized.Raise(this);
+            AlertNeighbors();
+        }
+
+        protected virtual void Destroy()
+        {
+            Destroy(gameObject);
+
+            OnDestroyed.Raise(this);
+            AlertNeighbors();
+        }
+
+        private void AlertNeighbors()
+        {
+            var neighbors = World.GetNeighbors(this);
+
+            foreach (var neighbor in neighbors)
+            {
+                neighbor.HandleNeighborUpdate();
+            }
         }
     }
 }

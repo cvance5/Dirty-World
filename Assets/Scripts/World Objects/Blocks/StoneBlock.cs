@@ -8,7 +8,7 @@
 
             foreach (var neighbor in neighbors)
             {
-                neighbor.OnHit(0, 100);
+                neighbor.Hit(0, 100);
             }
 
             base.Crumble();
@@ -20,7 +20,7 @@
 
             foreach (var neighbor in neighbors)
             {
-                neighbor.OnHit(0, 200);
+                neighbor.Hit(0, 200);
             }
 
             base.Destroy();
