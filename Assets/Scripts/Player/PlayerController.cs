@@ -50,7 +50,7 @@ namespace Player
 
             if (currentForce.magnitude > MaximumSpeed)
             {
-                currentForce *= (currentForce.magnitude / MaximumSpeed);
+                currentForce = (MaximumSpeed * currentForce.normalized);
             }
 
             _rigidbody.velocity = currentForce;
