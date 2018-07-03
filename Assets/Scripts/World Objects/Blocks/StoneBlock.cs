@@ -2,5 +2,28 @@
 {
     public class StoneBlock : Block
     {
+        protected override void Crumble()
+        {
+            var neighbors = World.GetNeighbors(this);
+
+            foreach (var neighbor in neighbors)
+            {
+                neighbor.OnHit(0, 100);
+            }
+
+            base.Crumble();
+        }
+
+        protected override void Destroy()
+        {
+            var neighbors = World.GetNeighbors(this);
+
+            foreach (var neighbor in neighbors)
+            {
+                neighbor.OnHit(0, 200);
+            }
+
+            base.Destroy();
+        }
     }
 }

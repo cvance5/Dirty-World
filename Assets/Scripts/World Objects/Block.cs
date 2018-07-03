@@ -10,17 +10,17 @@ namespace WorldObjects
         public SmartEvent<Block> OnDestroy = new SmartEvent<Block>();
         public SmartEvent<Block> OnStabilize = new SmartEvent<Block>();
 
-        private int _health = 100;
-        private int _stability = 100;
+        protected int _health = 100;
+        protected int _stability = 100;
 
         [SerializeField]
         [Range(0, 1)]
-        private float _damageResistance = 0f;
+        protected float _damageResistance = 0f;
         [SerializeField]
         [Range(0, 1)]
-        private float _forceResistance = 0f;
+        protected float _forceResistance = 0f;
         [SerializeField]
-        private float _restabilizationThreshold = .01f;
+        protected float _restabilizationThreshold = .01f;
 
         public IntVector2 Position => new IntVector2(transform.position);
 
@@ -28,7 +28,6 @@ namespace WorldObjects
         private Color _baseColor;
 
         private Rigidbody2D _rigidbody;
-
         private Queue<float> _velocitySamples;
 
         private void Awake()
@@ -66,6 +65,8 @@ namespace WorldObjects
             if (_health > 0) ApplyForce(force);
         }
 
+        public virtual void HandleNeighborUpdate() { }
+
         public void ApplyDamage(int damage)
         {
             if (_health <= 0) return;
@@ -74,8 +75,7 @@ namespace WorldObjects
 
             if (_health <= 0)
             {
-                OnDestroy.Raise(this);
-                Destroy(gameObject);
+                Destroy();
             }
             else
             {
@@ -95,7 +95,13 @@ namespace WorldObjects
             }
         }
 
-        private void Crumble()
+        protected virtual void Destroy()
+        {
+            OnDestroy.Raise(this);
+            Destroy(gameObject);
+        }
+
+        protected virtual void Crumble()
         {
             OnCrumble.Raise(this);
 
@@ -105,7 +111,7 @@ namespace WorldObjects
             StartCoroutine(CheckForStability());
         }
 
-        private void Stabilize()
+        protected virtual void Stabilize()
         {
             transform.SnapToGrid();
 

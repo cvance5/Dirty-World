@@ -67,6 +67,13 @@ namespace WorldObjects
             }
         }
 
+        public Block GetBlockForPosition(IntVector2 position)
+        {
+            Block block = null;
+            _blockMap.TryGetValue(position, out block);
+            return block;
+        }
+
         public Space GetSpaceForPosition(IntVector2 position)
         {
             if (!Contains(position)) throw new ArgumentOutOfRangeException($"Chunk does not contains {position}.");
@@ -88,35 +95,21 @@ namespace WorldObjects
 
         private void OnBlockDestroyed(Block block)
         {
-            foreach (var dir in Directions.Cardinals)
-            {
-                Block neighbor;
-                if (_blockMap.TryGetValue(block.Position + dir, out neighbor))
-                {
-                    neighbor.ApplyForce(25);
-                }
-            }
-
             block.OnCrumble -= OnBlockCrumbled;
             block.OnDestroy -= OnBlockDestroyed;
 
             if (!_blockMap.Remove(block.Position)) Log.Info($"Attempted to destroy block, but could not find it at {block.Position}.");
             else Log.Info($"Block destroyed at {block.Position}.");
+
+            AlertNeighbors(block);
         }
 
         private void OnBlockCrumbled(Block block)
         {
-            foreach (var dir in Directions.Cardinals)
-            {
-                Block neighbor;
-                if (_blockMap.TryGetValue(block.Position + dir, out neighbor))
-                {
-                    neighbor.ApplyForce(25);
-                }
-            }
-
             if (!_blockMap.Remove(block.Position)) throw new Exception($"Attempted to crumble block, but could not find it at {block.Position}.");
             else Log.Info($"Block crumbled at {block.Position}.");
+
+            AlertNeighbors(block);
         }
 
         private void OnBlockStabilized(Block block)
@@ -128,6 +121,18 @@ namespace WorldObjects
             }
 
             Log.Info($"Block stabilized at {block.Position}.");
+
+            AlertNeighbors(block);
+        }
+
+        private void AlertNeighbors(Block block)
+        {
+            var neighbors = World.GetNeighbors(block);
+
+            foreach (var neighbor in neighbors)
+            {
+                neighbor.HandleNeighborUpdate();
+            }
         }
 
         public override string ToString() => $"Chunk from {_bottomLeftCorner} to {_topRightCorner}.";

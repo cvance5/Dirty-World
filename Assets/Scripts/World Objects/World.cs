@@ -6,8 +6,8 @@ namespace WorldObjects
     {
         public static int ChunkSize => GameManager.Instance.Settings.ChunkSize;
 
-        private List<Chunk> _activeChunks = new List<Chunk>();
-        private Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
+        private static List<Chunk> _activeChunks = new List<Chunk>();
+        private static Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
 
         public void RegisterChunk(Chunk chunk)
         {
@@ -17,9 +17,45 @@ namespace WorldObjects
             _chunksByWorldPosition.Add(new IntVector2(chunk.transform.position), chunk);
         }
 
+        public static List<Block> GetNeighbors(Block block)
+        {
+            var neighbors = new List<Block>();
+
+            foreach (var dir in Directions.Cardinals)
+            {
+                Block neighbor = null;
+                var neighborPos = block.Position + dir;
+
+                foreach (var chunk in _activeChunks)
+                {
+                    if (chunk.Contains(neighborPos))
+                    {
+                        neighbor = chunk.GetBlockForPosition(neighborPos);
+                    }
+                }
+
+                if (neighbor != null) neighbors.Add(neighbor);
+            }
+
+            return neighbors;
+        }
+
+        public static List<Chunk> GetNeighbors(Chunk chunk)
+        {
+            var neighbors = new List<Chunk>();
+
+            foreach (var dir in Directions.Cardinals)
+            {
+                var neighbor = GetNeighborOfChunk(chunk.Position, dir);
+                if (neighbor != null) neighbors.Add(neighbor);
+            }
+
+            return neighbors;
+        }
+
         public static Chunk GetContainingChunk(IntVector2 position)
         {
-            foreach (var chunk in Instance._activeChunks)
+            foreach (var chunk in _activeChunks)
             {
                 if (chunk.Contains(position))
                 {
@@ -38,9 +74,7 @@ namespace WorldObjects
         public static Chunk GetChunkAtPosition(IntVector2 chunkPosition)
         {
             Chunk chunk = null;
-            Instance._chunksByWorldPosition.TryGetValue(chunkPosition, out chunk);
-
-            // No chunk has been made yet here
+            _chunksByWorldPosition.TryGetValue(chunkPosition, out chunk);
             return chunk;
         }
 
