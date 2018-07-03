@@ -10,11 +10,19 @@ namespace WorldObjects
         public SmartEvent<Block> OnDestroy = new SmartEvent<Block>();
         public SmartEvent<Block> OnStabilize = new SmartEvent<Block>();
 
-        public IntVector2 Position => new IntVector2(transform.position);
+        private int _health = 100;
+        private int _stability = 100;
 
-        public int Health { get; private set; } = 100;
-        public int Stability { get; private set; } = 100;
-        public float RestabilizationThreshhold { get; private set; } = .01f;
+        [SerializeField]
+        [Range(0, 1)]
+        private float _damageResistance = 0f;
+        [SerializeField]
+        [Range(0, 1)]
+        private float _forceResistance = 0f;
+        [SerializeField]
+        private float _restabilizationThreshold = .01f;
+
+        public IntVector2 Position => new IntVector2(transform.position);
 
         private SpriteRenderer _sprite;
         private Color _baseColor;
@@ -40,7 +48,7 @@ namespace WorldObjects
                 if (_velocitySamples.Count > 10)
                 {
                     _velocitySamples.Dequeue();
-                    if (MathUtils.Average(_velocitySamples) < RestabilizationThreshhold)
+                    if (MathUtils.Average(_velocitySamples) < _restabilizationThreshold)
                     {
                         Stabilize();
                         break;
@@ -54,33 +62,34 @@ namespace WorldObjects
         public void OnHit(int damage, int force)
         {
             ApplyDamage(damage);
-            ApplyForce(force);
+
+            if (_health > 0) ApplyForce(force);
         }
 
         public void ApplyDamage(int damage)
         {
-            if (Health <= 0) return;
+            if (_health <= 0) return;
 
-            Health -= damage;
+            _health -= (int)(damage * (1f - _damageResistance));
 
-            if (Health <= 0)
+            if (_health <= 0)
             {
                 OnDestroy.Raise(this);
                 Destroy(gameObject);
             }
             else
             {
-                _sprite.color = Color.Lerp(_baseColor, Color.black, 1 - (Health / 100f));
+                _sprite.color = Color.Lerp(_baseColor, Color.black, 1 - (_health / 100f));
             }
         }
 
         public void ApplyForce(int force)
         {
-            if (Stability <= 0) return;
+            if (_stability <= 0) return;
 
-            Stability -= force;
+            _stability -= (int)(force * (1f - _forceResistance));
 
-            if (Stability <= 0)
+            if (_stability <= 0)
             {
                 Crumble();
             }
@@ -101,7 +110,7 @@ namespace WorldObjects
             transform.SnapToGrid();
 
             _rigidbody.bodyType = RigidbodyType2D.Kinematic;
-            Stability = 100;
+            _stability = 100;
             _velocitySamples = null;
 
             OnStabilize.Raise(this);
