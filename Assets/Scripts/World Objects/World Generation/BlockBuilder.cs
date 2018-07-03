@@ -25,8 +25,8 @@ namespace WorldObjects.WorldGeneration
 
             if (_exists)
             {
-                block = Object.Instantiate(GameManager.Instance.Settings.Block, WorldPosition, Quaternion.identity).GetComponent<Block>();
-                block.name = $"[{WorldPosition.X}, {WorldPosition.Y}]";
+                var blockObject = BlockLoader.CreateBlock(BlockTypes.Dirt, WorldPosition);
+                block = blockObject.GetComponent<Block>();
             }
 
             return block;

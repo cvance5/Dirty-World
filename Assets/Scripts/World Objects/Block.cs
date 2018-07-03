@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace WorldObjects
 {
-    public class Block : MonoBehaviour, IHittable
+    public abstract class Block : MonoBehaviour, IHittable
     {
         public SmartEvent<Block> OnCrumble = new SmartEvent<Block>();
         public SmartEvent<Block> OnDestroy = new SmartEvent<Block>();

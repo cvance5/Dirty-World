@@ -17,10 +17,10 @@
         }
 
         public override bool Contains(IntVector2 position) =>
-            position.X >= _bottomLeftCorner.X &&
-            position.Y >= _bottomLeftCorner.Y &&
-            position.X <= _topRightCorner.X &&
-            position.Y <= _topRightCorner.Y;
+            !(position.X < _bottomLeftCorner.X ||
+            position.Y < _bottomLeftCorner.Y ||
+            position.X > _topRightCorner.X ||
+            position.Y > _topRightCorner.Y);
 
         public override Block GetBlock(IntVector2 position) => null;
     }

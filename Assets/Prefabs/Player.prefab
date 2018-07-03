@@ -156,8 +156,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c47f5d1e779d2a641a452e7d11e26a52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementSpeed: 10
-  MaximumSpeed: 20
+  MovementSpeed: 30
+  MaximumSpeed: 50
   Gun: {fileID: 114145164831314864}
 --- !u!120 &120935657492406058
 LineRenderer:
