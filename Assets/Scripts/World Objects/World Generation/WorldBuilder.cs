@@ -7,16 +7,19 @@ namespace WorldObjects.WorldGeneration
     {
         public static void BuildInitialChunk()
         {
-            var sBuilder = new CorridorBuilder(Vector2.zero, CorridorBuilder.CorridorAlignment.StartFromLeft)
+            var cBuilder = new ChunkBuilder(Vector2.zero);
+
+            var sBuilder = new CorridorBuilder(cBuilder)
+                .SetStartingPoint(Vector2.zero, CorridorBuilder.CorridorAlignment.StartFromLeft)
                 .SetHeight(1)
                 .SetLength(100);
 
-            var sBuilder2 = new CorridorBuilder(Vector2.zero + (Vector2.up), CorridorBuilder.CorridorAlignment.StartFromLeft)
+            var sBuilder2 = new CorridorBuilder(cBuilder)
+                .SetStartingPoint(Vector2.zero + (Vector2.up), CorridorBuilder.CorridorAlignment.StartFromLeft)
                 .SetHeight(3)
                 .SetLength(5);
 
-            var cBuilder = new ChunkBuilder(Vector2.zero)
-                    .AddSpace(sBuilder)
+            cBuilder.AddSpace(sBuilder)
                     .AddSpace(sBuilder2);
 
             World.Instance.RegisterChunk(cBuilder.Build());
@@ -32,6 +35,10 @@ namespace WorldObjects.WorldGeneration
         public static void BuildChunk(IntVector2 position)
         {
             var cBuilder = new ChunkBuilder(position);
+            var sBuilder = SpacePicker.Pick(cBuilder);
+
+            cBuilder.AddSpace(sBuilder);
+
             World.Instance.RegisterChunk(cBuilder.Build());
         }
     }

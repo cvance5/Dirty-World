@@ -2,7 +2,10 @@
 {
     public abstract class SpaceBuilder
     {
-        public abstract Space Build();
+        public SpaceBuilder(ChunkBuilder containingChunk) { }
+
         public abstract SpaceBuilder Clamp(IntVector2 direction, int amount);
+
+        public abstract Space Build();
     }
 }

@@ -13,4 +13,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Block: {fileID: 1106346448946280, guid: 18c25412a7d772d4fbaca2869b663e47, type: 2}
   Player: {fileID: 1354266971631064, guid: 43954d760bad97f4a83e77b414d07365, type: 2}
-  ChunkSize: 32
+  ChunkSize: 16

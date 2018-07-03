@@ -13,7 +13,21 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private int _height;
         private int _length;
 
-        public CorridorBuilder(IntVector2 startingPoint, CorridorAlignment alignment)
+        public CorridorBuilder(ChunkBuilder containingChunk)
+            : base(containingChunk)
+        {
+            var rand = new Random();
+
+            _height = rand.Next(1, 10);
+            _length = rand.Next(1, 100);
+
+            IntVector2 startingPoint = new IntVector2(rand.Next(containingChunk.BottomLeft.X, containingChunk.TopRight.X), 
+                                                      rand.Next(containingChunk.BottomLeft.Y, containingChunk.TopRight.Y));
+
+            SetStartingPoint(startingPoint, Enum<CorridorAlignment>.Random);
+        }
+
+        public CorridorBuilder SetStartingPoint(IntVector2 startingPoint, CorridorAlignment alignment)
         {
             switch (alignment)
             {
@@ -24,6 +38,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             _alignment = alignment;
             FindAllPoints();
+
+            return this;
         }
 
         public CorridorBuilder SetLength(int blocksLong)

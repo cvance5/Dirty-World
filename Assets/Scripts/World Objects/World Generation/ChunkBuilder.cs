@@ -5,18 +5,24 @@ namespace WorldObjects.WorldGeneration
 {
     public class ChunkBuilder
     {
-        private IntVector2 _chunkWorldCenterpoint;
+        public IntVector2 BottomLeft { get; private set; }
+        public IntVector2 TopRight { get; private set; }
+
+        private IntVector2 _chunkWorldCenterpoint;        
         private List<BlockBuilder> _blockBuilders = new List<BlockBuilder>();
         private List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
         private List<IntVector2> _boundedDirections = new List<IntVector2>();
 
-        private int _chunkSize => World.ChunkSize;
+        private static int _chunkSize => World.ChunkSize;
 
         public ChunkBuilder(IntVector2 chunkWorldCenterpoint)
         {
             _chunkWorldCenterpoint = new IntVector2(chunkWorldCenterpoint);
 
             IntVector2 startingPoint = new IntVector2(-(_chunkSize / 2), -(_chunkSize / 2));
+
+            BottomLeft = new IntVector2(startingPoint);
+            TopRight = new IntVector2(startingPoint.X + _chunkSize, startingPoint.Y + _chunkSize);
 
             // Initialize all blocks in chunk to the default value
             for (int row = 0; row < _chunkSize; row++)

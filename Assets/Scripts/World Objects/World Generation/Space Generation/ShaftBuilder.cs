@@ -12,7 +12,21 @@ public class ShaftBuilder : SpaceBuilder
     private int _height;
     private int _width;
 
-    public ShaftBuilder(IntVector2 startingPoint, ShaftAlignment alignment)
+    public ShaftBuilder(ChunkBuilder containingChunk)
+        : base(containingChunk)
+    {
+        var rand = new Random();
+
+        _width = rand.Next(1, 10);
+        _height = rand.Next(1, 100);
+
+        IntVector2 startingPoint = new IntVector2(rand.Next(containingChunk.BottomLeft.X, containingChunk.TopRight.X), 
+                                                  rand.Next(containingChunk.BottomLeft.Y, containingChunk.TopRight.Y));
+
+        SetStartingPoint(startingPoint, Enum<ShaftAlignment>.Random);
+    }
+
+    public ShaftBuilder SetStartingPoint(IntVector2 startingPoint, ShaftAlignment alignment)
     {
         switch (alignment)
         {
@@ -23,6 +37,7 @@ public class ShaftBuilder : SpaceBuilder
 
         _alignment = alignment;
         FindAllPoints();
+        return this;
     }
 
     public ShaftBuilder SetLength(int blocksLong)
