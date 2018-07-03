@@ -118,6 +118,5 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             StartFromRight
         }
     }
-
 }
 

@@ -13,7 +13,7 @@
             Extents.Add(_bottomLeftCorner);
             Extents.Add(_topRightCorner);
 
-            Name = $"{_bottomLeftCorner} to {_topRightCorner}.";
+            Name = $"Corridor from {_bottomLeftCorner} to {_topRightCorner}.";
         }
 
         public override bool Contains(IntVector2 position) =>
