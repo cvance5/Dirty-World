@@ -135,5 +135,12 @@ namespace WorldObjects
                 neighbor.HandleNeighborUpdate();
             }
         }
+
+        protected virtual void DropItem() { }
+
+        private void OnDestroy()
+        {
+            DropItem();
+        }
     }
 }

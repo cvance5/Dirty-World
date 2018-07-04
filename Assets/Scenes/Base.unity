@@ -204,6 +204,7 @@ GameObject:
   - component: {fileID: 760801528}
   - component: {fileID: 760801527}
   - component: {fileID: 760801529}
+  - component: {fileID: 760801530}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -249,6 +250,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DirtBlock: {fileID: 1106346448946280, guid: 18c25412a7d772d4fbaca2869b663e47, type: 2}
   StoneBlock: {fileID: 1106346448946280, guid: 8f00c51663a33f94f949545f1177407e, type: 2}
+  GoldBlock: {fileID: 1106346448946280, guid: 5ca319298dd08f94c9c660b1240fae97, type: 2}
+--- !u!114 &760801530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 760801526}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9e0527aced5f8c42a0c14e4ed1ca633, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GoldPiece: {fileID: 1925429388468338, guid: 3cc95f6373cce3a4e9511f4a56a3c8a6, type: 2}
 --- !u!1 &1408553649
 GameObject:
   m_ObjectHideFlags: 0

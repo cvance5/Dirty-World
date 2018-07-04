@@ -1,5 +1,6 @@
 ﻿public enum BlockTypes
 {
     Dirt,
-    Stone
+    Stone,
+    Gold
 }

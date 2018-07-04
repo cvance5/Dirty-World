@@ -35,7 +35,8 @@ namespace WorldObjects.WorldGeneration
             var cBuilder = new ChunkBuilder(position);
             var sBuilder = SpacePicker.Pick(cBuilder);
 
-            cBuilder.AddSpace(sBuilder);
+            cBuilder.AddSpace(sBuilder)
+                    .AddBlocks(BlockTypes.Gold, BlockTypes.Gold, BlockTypes.Gold);
 
             World.Instance.RegisterChunk(cBuilder.Build());
         }

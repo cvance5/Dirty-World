@@ -8,7 +8,7 @@ namespace WorldObjects.WorldGeneration
         public IntVector2 BottomLeft { get; private set; }
         public IntVector2 TopRight { get; private set; }
 
-        private IntVector2 _chunkWorldCenterpoint;        
+        private IntVector2 _chunkWorldCenterpoint;
         private List<BlockBuilder> _blockBuilders = new List<BlockBuilder>();
         private List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
         private List<IntVector2> _boundedDirections = new List<IntVector2>();
@@ -53,6 +53,33 @@ namespace WorldObjects.WorldGeneration
             }
 
             _spaceBuilders.Add(spaceBuilder);
+            return this;
+        }
+
+        public ChunkBuilder AddBlocks(params BlockTypes[] blocksToAdd)
+        {
+            // Randomly order the blocks (without actually changing their order, 
+            // because that would be unnecessarily expensive and may change other
+            // effects.
+            var selectionOrder = Chance.ExclusiveRandomOrder(_blockBuilders.Count);
+
+            int addedBlocks = 0;
+
+            for (int blockIndex = 0; blockIndex < _blockBuilders.Count; blockIndex++)
+            {
+                // Foreach block, if it the randomized order shows it as one of the
+                // first blocks, assign it to the blockType specified in the matching
+                // index of blocks to add.
+                if (selectionOrder[blockIndex] < blocksToAdd.Length)
+                {
+                    _blockBuilders[blockIndex].SetType(blocksToAdd[selectionOrder[blockIndex]]);
+                    addedBlocks++;
+
+                    // If we have added all blocks, break.
+                    if (addedBlocks >= blocksToAdd.Length) break;
+                }
+            }
+
             return this;
         }
 

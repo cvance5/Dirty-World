@@ -132,8 +132,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Range: 2
-  Damage: 0
-  Force: 25
+  Damage: 50
+  Force: 100
 --- !u!114 &114237843733034080
 MonoBehaviour:
   m_ObjectHideFlags: 1

@@ -22,9 +22,9 @@ GameObject:
   - component: {fileID: 212624701635964486}
   - component: {fileID: 61819584787066844}
   - component: {fileID: 50927949586040902}
-  - component: {fileID: 114336014862780570}
+  - component: {fileID: 114659851415428286}
   m_Layer: 9
-  m_Name: StoneBlock
+  m_Name: GoldBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -88,7 +88,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.97709924, y: 0.97709924}
   m_EdgeRadius: 0
---- !u!114 &114336014862780570
+--- !u!114 &114659851415428286
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -96,11 +96,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1106346448946280}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a34c598a8c2c26c4dafd308f9e203e05, type: 3}
+  m_Script: {fileID: 11500000, guid: 63a29fa75128a394fa449a6197cf3e85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damageResistance: 0.9
-  _forceResistance: 0.5
+  _damageResistance: 0
+  _forceResistance: 0
   _restabilizationThreshold: 0.01
 --- !u!212 &212624701635964486
 SpriteRenderer:
@@ -137,7 +137,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4767bdcdf12fe1c4588cb2adf0f34c19, type: 3}
-  m_Color: {r: 0.30882353, g: 0.29559967, b: 0.28384516, a: 1}
+  m_Color: {r: 0.8897059, g: 0.8033521, b: 0.32055578, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

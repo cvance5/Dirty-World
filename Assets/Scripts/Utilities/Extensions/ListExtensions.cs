@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-public static class ListExtensions
+public static class List
 {
     public static T RandomItem<T>(this List<T> list)
     {
