@@ -1,4 +1,5 @@
-﻿using ItemManagement;
+﻿using System;
+using ItemManagement;
 using Metadata;
 using UnityEngine;
 
@@ -76,26 +77,53 @@ namespace Player
         {
             var tag = other.tag;
 
-            if (tag == Tags.Item)
+            switch (tag)
             {
-                var otherItem = other.GetComponent<Item>();
+                case Tags.Item: HandleItem(other.GetComponent<Item>()); break;
+                case Tags.Hazard: HandleHazard(other.GetComponent<Hazard>()); break;
+            }
+        }
 
-                Log.ErrorIfNull(otherItem, $"{other} has tag {tag} but does not have an item component.");
+        private void HandleItem(Item item)
+        {
+            Log.ErrorIfNull(item, $"{item} has tag {Tags.Item} but does not have an item component.");
 
-                foreach (var interaction in otherItem.Interactions)
+            foreach (var interaction in item.Interactions)
+            {
+                switch (interaction)
                 {
-                    switch (interaction)
-                    {
-                        case InteractionTypes.Collect:
-                            var otherCollectible = otherItem as ICollectible;
-                            Log.ErrorIfNull(otherCollectible, $"{other} has interaction {interaction} but does not implement ICollectible.");
-                            _data.AddItem(otherCollectible.GetItemType());
-                            otherCollectible.OnCollect();
-                            break;
-                        case InteractionTypes.Damage:
-                            break;
-                        default: Log.Error($"Unknown interaction '{interaction}'."); break;
-                    }
+                    case InteractionTypes.Collect:
+                        var collectibleItem = item as ICollectible;
+                        Log.ErrorIfNull(collectibleItem, $"{item} has interaction {interaction} but does not implement {typeof(ICollectible).Name}.");
+                        _data.AddItem(collectibleItem.GetItemType());
+                        collectibleItem.OnCollect();
+                        break;
+                    case InteractionTypes.Damage:
+                        break;
+                    default: Log.Error($"Unknown interaction '{interaction}'."); break;
+                }
+            }
+        }
+
+        private void HandleHazard(Hazard hazard)
+        {
+            Log.ErrorIfNull(hazard, $"{hazard} has tag {Tags.Hazard} but does not have an item component.");
+
+            foreach (var effect in hazard.Effects)
+            {
+                switch (effect)
+                {
+                    case HazardEffects.Damage:
+                        var damagingHazard = hazard as IDamaging;
+                        Log.ErrorIfNull(damagingHazard, $"{hazard} has effect {effect} but does not implement {typeof(IDamaging).Name}.");
+                        _data.ApplyDamage(damagingHazard.GetDamage());
+                        break;
+                    case HazardEffects.Impulse:
+                        var knockbackHazard = hazard as IImpulsive;
+                        Log.ErrorIfNull(knockbackHazard, $"{hazard} has effect {effect} but does not implement {typeof(IImpulsive).Name}.");
+                        _rigidbody.velocity = knockbackHazard.GetImpulse(_rigidbody.velocity);
+                        break;
+                    default: Log.Error($"Unknown effect '{effect}'."); break;
                 }
             }
         }

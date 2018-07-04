@@ -51,6 +51,8 @@ public class PositionTracker : Singleton<PositionTracker>
                 Log.Info("Stopping position update coroutine.");
                 Instance.StopCoroutine(_updateMethod);
             }
+
+            _onPositionChangedCallbacks.Remove(target);
         }
     }
 

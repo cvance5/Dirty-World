@@ -117,22 +117,34 @@ namespace WorldObjects.WorldGeneration
 
             foreach (var builder in _blockBuilders)
             {
-                Block block;
+                var position = builder.WorldPosition;
 
-                var containingSpace = spaces.Find(space => space.Contains(builder.WorldPosition));
+                BlockTypes blockToBuild = BlockTypes.None;
+
+                var containingSpace = spaces.Find(space => space.Contains(position));
 
                 if (containingSpace != null)
                 {
-                    block = containingSpace.GetBlock(builder.WorldPosition);
+                    blockToBuild = containingSpace.GetBlock(position);
+
+                    if (containingSpace.IsHazardous)
+                    {
+                        var hazardType = containingSpace.GetHazard(position);
+
+                        if (hazardType != HazardTypes.None)
+                        {
+                            chunk.Register(HazardLoader.CreateHazard(hazardType, position));                            
+                        }
+                    }
                 }
                 else
                 {
-                    block = builder.Build();
+                    blockToBuild = builder.Build();
                 }
 
-                if (block != null)
+                if (blockToBuild != BlockTypes.None)
                 {
-                    chunk.Register(block);
+                    chunk.Register(BlockLoader.CreateBlock(blockToBuild, position));
                 }
             }
 

@@ -6,7 +6,9 @@ public static class Chance
 {
     private static Random _rand = new Random();
 
-    public static bool CoinFlip => (_rand.Next() % 2) == 1;
+    public static bool CoinFlip => OneIn(2);
+
+    public static bool OneIn(int x) => _rand.Next(x - 1) == 0;
 
     public static List<int> ExclusiveRandomOrder(int numNumbers)
     {

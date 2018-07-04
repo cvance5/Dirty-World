@@ -9,6 +9,7 @@ namespace WorldObjects
         public IntVector2 Position => new IntVector2(transform.position);
 
         private List<Space> _spaces = new List<Space>();
+        private List<Hazard> _hazards = new List<Hazard>();
         private Dictionary<IntVector2, Block> _blockMap = new Dictionary<IntVector2, Block>();
         private Dictionary<IntVector2, List<Space>> _spacesOverlappingEdges = new Dictionary<IntVector2, List<Space>>()
         {
@@ -35,6 +36,12 @@ namespace WorldObjects
             block.OnDestroyed += OnBlockDestroyed;
             block.OnCrumbled += OnBlockCrumbled;
             block.OnStabilized += OnBlockStabilized;
+        }
+
+        public void Register(Hazard hazard)
+        {
+            _hazards.Add(hazard);
+            hazard.transform.SetParent(transform, true);
         }
 
         public void Register(Space space)

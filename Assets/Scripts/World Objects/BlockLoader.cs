@@ -1,27 +1,34 @@
 ﻿using UnityEngine;
 
-public class BlockLoader : Singleton<BlockLoader>
+namespace WorldObjects.WorldGeneration
 {
-    public GameObject DirtBlock;
-    public GameObject StoneBlock;
-    public GameObject GoldBlock;
-
-    public static GameObject CreateBlock(BlockTypes type, IntVector2 worldPosition)
+    public class BlockLoader : Singleton<BlockLoader>
     {
-        GameObject blockObject;
+        public GameObject DirtBlock;
+        public GameObject StoneBlock;
+        public GameObject GoldBlock;
 
-        switch (type)
+        public static Block CreateBlock(BlockTypes type, IntVector2 worldPosition)
         {
-            case BlockTypes.Dirt: blockObject = Instance.DirtBlock; break;
-            case BlockTypes.Stone: blockObject = Instance.StoneBlock; break;
-            case BlockTypes.Gold: blockObject = Instance.GoldBlock; break;
-            default: throw new System.ArgumentException($"Unknown block type of {type}.");
+            GameObject blockObject;
+
+            switch (type)
+            {
+                case BlockTypes.Dirt: blockObject = Instance.DirtBlock; break;
+                case BlockTypes.Stone: blockObject = Instance.StoneBlock; break;
+                case BlockTypes.Gold: blockObject = Instance.GoldBlock; break;
+                default: throw new System.ArgumentException($"Unknown block type of {type}.");
+            }
+
+            blockObject = Instantiate(blockObject);
+            blockObject.transform.position = worldPosition;
+            blockObject.name = $"[{worldPosition.X}, {worldPosition.Y}]";
+
+            var block = blockObject.GetComponent<Block>();
+
+            Log.ErrorIfNull(block, $"Block of type {type} has not been given a 'block' component.");
+
+            return block;
         }
-
-        blockObject = Instantiate(blockObject);
-        blockObject.transform.position = worldPosition;
-        blockObject.name = $"[{worldPosition.X}, {worldPosition.Y}]";
-
-        return blockObject;
     }
 }

@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿using ItemManagement;
+using UnityEngine;
 
 public class ItemLoader : Singleton<ItemLoader>
 {
     public GameObject GoldPiece;
 
-    public static GameObject CreateItem(ItemTypes type, IntVector2 worldPosition)
+    public static Item CreateItem(ItemTypes type, IntVector2 worldPosition)
     {
         GameObject itemObject;
 
@@ -18,7 +19,10 @@ public class ItemLoader : Singleton<ItemLoader>
         itemObject.transform.position = worldPosition;
         itemObject.name = $"[{worldPosition.X}, {worldPosition.Y}]";
 
-        return itemObject;
-    }
+        var item = itemObject.GetComponent<Item>();
 
+        Log.ErrorIfNull(item, $"Item of type {type} has not been given a 'item' component.");
+
+        return item;
+    }
 }

@@ -10,9 +10,6 @@
             Destroy(gameObject);
         }
 
-        protected override void SetInteractions()
-        {
-            Interactions = new InteractionTypes[] { InteractionTypes.Collect };
-        }
+        protected override void InitializeInteractions() => Interactions = new InteractionTypes[] { InteractionTypes.Collect };
     }
 }

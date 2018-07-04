@@ -13,6 +13,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private int _height;
         private int _length;
 
+        private bool _isHazardous;
+
         public CorridorBuilder(ChunkBuilder containingChunk)
             : base(containingChunk)
         {
@@ -25,6 +27,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                                                       rand.Next(containingChunk.BottomLeft.Y, containingChunk.TopRight.Y));
 
             SetStartingPoint(startingPoint, Enum<CorridorAlignment>.Random);
+
+            _isHazardous = true; // Chance.OneIn(5);
         }
 
         public CorridorBuilder SetStartingPoint(IntVector2 startingPoint, CorridorAlignment alignment)
@@ -53,6 +57,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _height = blockHigh - 1;
             FindAllPoints();
+            return this;
+        }
+
+        public CorridorBuilder SetHazards(bool hasHazards)
+        {
+            _isHazardous = hasHazards;
             return this;
         }
 
@@ -94,7 +104,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public override Space Build() => new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height));
+        public override Space Build() => new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height), _isHazardous);
 
         private void FindAllPoints()
         {

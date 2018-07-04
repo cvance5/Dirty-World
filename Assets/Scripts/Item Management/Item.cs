@@ -7,8 +7,8 @@ namespace ItemManagement
     {
         public InteractionTypes[] Interactions { get; protected set; }
 
-        private void Awake() => SetInteractions();
+        private void Awake() => InitializeInteractions();
 
-        protected abstract void SetInteractions();
+        protected abstract void InitializeInteractions();
     }
 }

@@ -9,6 +9,7 @@
         public BlockBuilder(IntVector2 worldPosition)
         {
             WorldPosition = worldPosition;
+            _type = BlockTypes.Dirt;
             _exists = true;
         }
 
@@ -24,17 +25,16 @@
             return this;
         }
 
-        public Block Build()
+        public BlockTypes Build()
         {
-            Block block = null;
+            BlockTypes type = BlockTypes.None;
 
             if (_exists)
             {
-                var blockObject = BlockLoader.CreateBlock(_type, WorldPosition);
-                block = blockObject.GetComponent<Block>();
+                type = _type;
             }
 
-            return block;
+            return type;
         }
     }
 }

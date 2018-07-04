@@ -2,6 +2,8 @@
 {
     public class Shaft : Space
     {
+        public override bool IsHazardous => false;
+
         private IntVector2 _bottomLeftCorner;
         private IntVector2 _topRightCorner;
 
@@ -22,23 +24,25 @@
             position.X > _topRightCorner.X ||
             position.Y > _topRightCorner.Y);
 
-        public override Block GetBlock(IntVector2 position)
+        public override BlockTypes GetBlock(IntVector2 position)
         {
-            Block block = null;
+            BlockTypes block = BlockTypes.None;
 
             if (position.Y == _topRightCorner.Y)
             {
                 if (Chance.CoinFlip)
                 {
-                    block = BlockLoader.CreateBlock(BlockTypes.Stone, position).GetComponent<Block>();
+                    block = BlockTypes.Stone;
                 }
                 else
                 {
-                    block = BlockLoader.CreateBlock(BlockTypes.Dirt, position).GetComponent<Block>();
+                    block = BlockTypes.Dirt;
                 }
             }
 
             return block;
         }
+
+        public override HazardTypes GetHazard(IntVector2 position) => HazardTypes.None;
     }
 }
