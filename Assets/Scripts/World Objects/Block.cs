@@ -140,7 +140,17 @@ namespace WorldObjects
 
         private void OnDestroy()
         {
-            DropItem();
+            if (!_isQuitting)
+            {
+                DropItem();
+            }
         }
+
+        private void OnApplicationQuit()
+        {
+            _isQuitting = true;
+        }
+
+        private static bool _isQuitting = false;
     }
 }

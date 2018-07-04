@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using ItemManagement;
+using Metadata;
+using UnityEngine;
 
 namespace Player
 {
@@ -10,10 +12,12 @@ namespace Player
         public Gun Gun;
 
         private Rigidbody2D _rigidbody;
+        private PlayerData _data;
 
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
+            _data = GetComponent<PlayerData>();
         }
 
         private void Update()
@@ -65,6 +69,34 @@ namespace Player
             else if (orientDirction > 0)
             {
                 transform.right = Vector2.right;
+            }
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            var tag = other.tag;
+
+            if (tag == Tags.Item)
+            {
+                var otherItem = other.GetComponent<Item>();
+
+                Log.ErrorIfNull(otherItem, $"{other} has tag {tag} but does not have an item component.");
+
+                foreach (var interaction in otherItem.Interactions)
+                {
+                    switch (interaction)
+                    {
+                        case InteractionTypes.Collect:
+                            var otherCollectible = otherItem as ICollectible;
+                            Log.ErrorIfNull(otherCollectible, $"{other} has interaction {interaction} but does not implement ICollectible.");
+                            _data.AddItem(otherCollectible.GetItemType());
+                            otherCollectible.OnCollect();
+                            break;
+                        case InteractionTypes.Damage:
+                            break;
+                        default: Log.Error($"Unknown interaction '{interaction}'."); break;
+                    }
+                }
             }
         }
     }

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 public static class Log
-{ 
+{
     public static void Error(string message)
     {
 #if UNITY_EDITOR
@@ -14,10 +14,15 @@ public static class Log
         Debug.LogWarning(message);
 #endif
     }
-    public static void Info(string message)
+    public static void Info(string message, string colorName = "black")
     {
 #if UNITY_EDITOR
-        Debug.Log(message);
+        Debug.Log($"<color={colorName}>" + message + "</color>");
 #endif
+    }
+
+    public static void ErrorIfNull(object obj, string message)
+    {
+        if (obj == null) Error(message);
     }
 }
