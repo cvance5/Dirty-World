@@ -32,5 +32,7 @@ namespace WorldObjects.Hazards
             OnHazardDestroyed.Raise(this);
             Destroy(gameObject);
         }
+
+        public override string GetObjectName() => $"Spike {Position}";
     }
 }

@@ -1,18 +1,19 @@
 ﻿using UnityEngine;
-using WorldObjects;
 
-[RequireComponent(typeof(Collider2D))]
-public abstract class Hazard : MonoBehaviour
+namespace WorldObjects
 {
-    public SmartEvent<Hazard> OnHazardDestroyed = new SmartEvent<Hazard>();
+    [RequireComponent(typeof(Collider2D))]
+    public abstract class Hazard : WorldObject
+    {
+        public SmartEvent<Hazard> OnHazardDestroyed = new SmartEvent<Hazard>();
 
-    public IntVector2 Position => new IntVector2(transform.position);
-    public abstract IntVector2 AnchoringPosition { get; }
-    public HazardEffects[] Effects { get; protected set; }
+        public abstract IntVector2 AnchoringPosition { get; }
+        public HazardEffects[] Effects { get; protected set; }
 
-    private void Awake() => InitializeEffects();
+        private void Awake() => InitializeEffects();
 
-    protected abstract void InitializeEffects();
+        protected abstract void InitializeEffects();
 
-    public abstract void SetAnchor(Block anchorBlock);
+        public abstract void SetAnchor(Block anchorBlock);
+    }
 }

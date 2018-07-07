@@ -2,6 +2,8 @@
 {
     public class StoneBlock : Block
     {
+        public override string GetObjectName() => $"Stone {Position}";
+
         protected override void Crumble()
         {
             var neighbors = World.GetNeighbors(this);

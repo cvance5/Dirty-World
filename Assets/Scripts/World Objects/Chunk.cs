@@ -4,10 +4,8 @@ using UnityEngine;
 
 namespace WorldObjects
 {
-    public class Chunk : MonoBehaviour, IBoundary
+    public class Chunk : WorldObject, IBoundary
     {
-        public IntVector2 Position => new IntVector2(transform.position);
-
         private List<Space> _spaces = new List<Space>();
         private List<Hazard> _hazards = new List<Hazard>();
         private Dictionary<IntVector2, Block> _blockMap = new Dictionary<IntVector2, Block>();
@@ -153,7 +151,7 @@ namespace WorldObjects
             hazard.OnHazardDestroyed -= OnHazardRemoved;
         }
 
-        public override string ToString() => $"Chunk from {_bottomLeftCorner} to {_topRightCorner}.";
+        public override string GetObjectName() => $"Chunk {Position}";
 
         public override bool Equals(object obj)
         {

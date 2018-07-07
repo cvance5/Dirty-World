@@ -6,6 +6,8 @@ namespace WorldObjects.Blocks
     {
         private int _numNeighbors;
 
+        public override string GetObjectName() => $"Dirt {Position}";
+
         public override void HandleNeighborUpdate()
         {
             UpdateStability();

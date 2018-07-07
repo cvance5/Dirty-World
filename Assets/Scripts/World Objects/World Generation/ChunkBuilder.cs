@@ -135,7 +135,7 @@ namespace WorldObjects.WorldGeneration
 
                         if (hazardType != HazardTypes.None)
                         {
-                            hazardsToAdd.Add(HazardLoader.CreateHazard(hazardType, position));
+                            hazardsToAdd.Add(ObjectLoader.CreateHazard(hazardType, position));
                         }
                     }
                 }
@@ -146,7 +146,7 @@ namespace WorldObjects.WorldGeneration
 
                 if (blockToBuild != BlockTypes.None)
                 {
-                    chunk.Register(BlockLoader.CreateBlock(blockToBuild, position));
+                    chunk.Register(ObjectLoader.CreateBlock(blockToBuild, position));
                 }
             }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace WorldObjects
 {
-    public abstract class Block : MonoBehaviour, IHittable
+    public abstract class Block : WorldObject, IHittable
     {
         public SmartEvent<Block> OnCrumbled = new SmartEvent<Block>();
         public SmartEvent<Block> OnDestroyed = new SmartEvent<Block>();
@@ -21,8 +21,6 @@ namespace WorldObjects
         protected float _forceResistance = 0f;
         [SerializeField]
         protected float _restabilizationThreshold = .01f;
-
-        public IntVector2 Position => new IntVector2(transform.position);
 
         private SpriteRenderer _sprite;
         private Color _baseColor;
