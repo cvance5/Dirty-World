@@ -180,8 +180,9 @@ namespace WorldObjects
             if (!_isStable)
             {
                 var otherObject = collision.collider.gameObject;
+                var impactVelocity = (collision.relativeVelocity - collision.rigidbody.velocity);
 
-                var impactMagnitude = Mathf.RoundToInt(collision.relativeVelocity.magnitude);
+                var impactMagnitude = Mathf.RoundToInt(impactVelocity.magnitude);
                 int unabsorbedImpactMagnitude = impactMagnitude - _impactAbsorption;
 
                 switch (otherObject.tag)
@@ -255,5 +256,5 @@ namespace WorldObjects
         private static bool _isQuitting = false;
 
         protected static readonly Log _log = new Log("Block");
-    }    
+    }
 }

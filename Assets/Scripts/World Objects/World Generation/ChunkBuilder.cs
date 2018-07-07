@@ -14,15 +14,16 @@ namespace WorldObjects.WorldGeneration
         private List<IntVector2> _boundedDirections = new List<IntVector2>();
 
         private static int _chunkSize => World.ChunkSize;
+        private static int _halfChunkSize => _chunkSize / 2;
 
         public ChunkBuilder(IntVector2 chunkWorldCenterpoint)
         {
             _chunkWorldCenterpoint = new IntVector2(chunkWorldCenterpoint);
 
-            IntVector2 startingPoint = new IntVector2(-(_chunkSize / 2), -(_chunkSize / 2));
+            IntVector2 startingPoint = new IntVector2(-_halfChunkSize, -_halfChunkSize);
 
-            BottomLeft = new IntVector2(startingPoint);
-            TopRight = new IntVector2(startingPoint.X + _chunkSize, startingPoint.Y + _chunkSize);
+            BottomLeft = new IntVector2(chunkWorldCenterpoint.X - _halfChunkSize, chunkWorldCenterpoint.Y - _halfChunkSize);
+            TopRight = new IntVector2(chunkWorldCenterpoint.X + _halfChunkSize, chunkWorldCenterpoint.Y + _halfChunkSize);
 
             // Initialize all blocks in chunk to the default value
             for (int row = 0; row < _chunkSize; row++)

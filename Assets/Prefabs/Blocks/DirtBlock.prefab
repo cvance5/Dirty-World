@@ -104,6 +104,7 @@ MonoBehaviour:
   _restabilizationThreshold: 0.01
   _impactAbsorption: 0
   _impactDurability: 4
+  _weight: 0.75
 --- !u!212 &212624701635964486
 SpriteRenderer:
   m_ObjectHideFlags: 1

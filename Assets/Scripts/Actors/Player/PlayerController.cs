@@ -7,10 +7,18 @@ namespace Actors.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        public float MovementSpeed;
-        public float MaximumSpeed;
+        [SerializeField]
+        private float _movementSpeed = 10f;
+        [SerializeField]
+        private float _maximumSpeed = 20f;
+
+        [SerializeField]
+        private float _minZoom = 5f;
+        [SerializeField]
+        private float _maxZoom = 10f;
 
         public Gun Gun;
+
 
         private Rigidbody2D _rigidbody;
         private PlayerData _data;
@@ -31,7 +39,7 @@ namespace Actors.Player
 
             if (movementVector.x != 0) Orient(movementVector.x);
 
-            AddForce(movementVector * MovementSpeed * Time.deltaTime);
+            AddForce(movementVector * _movementSpeed * Time.deltaTime);
 
             if (Input.GetButtonDown("Fire"))
             {
@@ -47,15 +55,26 @@ namespace Actors.Player
                 y = transform.position.y,
                 z = -10
             };
+
+            var percentOfMaxSpeed = 0f;
+            if (_rigidbody.velocity != Vector2.zero)
+            {
+                percentOfMaxSpeed = (_rigidbody.velocity.magnitude / _maximumSpeed);
+            }
+
+            var targetZoom = (percentOfMaxSpeed * (_maxZoom - _minZoom) + _minZoom);
+            var actualZoom = Mathf.Lerp(Camera.main.orthographicSize, targetZoom, Time.deltaTime);
+
+            Camera.main.orthographicSize = actualZoom;
         }
 
         private void AddForce(Vector2 force)
         {
             var currentForce = _rigidbody.velocity + force;
 
-            if (currentForce.magnitude > MaximumSpeed)
+            if (currentForce.magnitude > _maximumSpeed)
             {
-                currentForce = (MaximumSpeed * currentForce.normalized);
+                currentForce = (_maximumSpeed * currentForce.normalized);
             }
 
             _rigidbody.velocity = currentForce;
