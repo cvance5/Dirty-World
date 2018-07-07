@@ -17,8 +17,15 @@ namespace Actors.Player
         [SerializeField]
         private float _maxZoom = 10f;
 
-        public Gun Gun;
+        [SerializeField]
+        private float _minScroll = 0f;
+        [SerializeField]
+        private float _maxScroll = 10f;
+        [SerializeField]
+        private float _scrollSensitivity = .5f;
+        private float _scrollZoom;
 
+        public Gun Gun;
 
         private Rigidbody2D _rigidbody;
         private PlayerData _data;
@@ -45,6 +52,9 @@ namespace Actors.Player
             {
                 Gun.Fire();
             }
+
+            _scrollZoom -= (Input.GetAxis("Scroll") * _scrollSensitivity);
+            _scrollZoom = Mathf.Clamp(_scrollZoom, _minScroll, _maxScroll);
         }
 
         private void LateUpdate()
@@ -62,7 +72,10 @@ namespace Actors.Player
                 percentOfMaxSpeed = (_rigidbody.velocity.magnitude / _maximumSpeed);
             }
 
-            var targetZoom = (percentOfMaxSpeed * (_maxZoom - _minZoom) + _minZoom);
+            var minZoom = _minZoom + _scrollZoom;
+            var maxZoom = _maxZoom + _scrollZoom;
+
+            var targetZoom = (percentOfMaxSpeed * (maxZoom - minZoom) + minZoom);
             var actualZoom = Mathf.Lerp(Camera.main.orthographicSize, targetZoom, Time.deltaTime);
 
             Camera.main.orthographicSize = actualZoom;

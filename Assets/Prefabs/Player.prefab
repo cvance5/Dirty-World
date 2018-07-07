@@ -162,6 +162,9 @@ MonoBehaviour:
   _maximumSpeed: 20
   _minZoom: 5
   _maxZoom: 10
+  _minScroll: 0
+  _maxScroll: 10
+  _scrollSensitivity: 1.5
   Gun: {fileID: 114145164831314864}
 --- !u!120 &120935657492406058
 LineRenderer:
