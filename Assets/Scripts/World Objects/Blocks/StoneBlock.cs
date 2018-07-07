@@ -1,11 +1,15 @@
-﻿namespace WorldObjects.Blocks
+﻿using System.Collections;
+
+namespace WorldObjects.Blocks
 {
     public class StoneBlock : Block
     {
         public override string GetObjectName() => $"Stone {GetPosition()}";
 
-        protected override void Crumble()
+        protected override IEnumerator Crumble()
         {
+            yield return null;
+
             var neighbors = World.GetNeighbors(this);
 
             foreach (var neighbor in neighbors)
@@ -13,11 +17,13 @@
                 neighbor.Hit(0, 100);
             }
 
-            base.Crumble();
+            yield return base.Crumble();
         }
 
-        protected override void Destroy()
+        protected override IEnumerator Destroy()
         {
+            yield return null;
+
             var neighbors = World.GetNeighbors(this);
 
             foreach (var neighbor in neighbors)
@@ -25,7 +31,7 @@
                 neighbor.Hit(0, 200);
             }
 
-            base.Destroy();
+            yield return base.Destroy();
         }
     }
 }

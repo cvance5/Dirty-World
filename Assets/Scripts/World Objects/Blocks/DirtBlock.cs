@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 namespace WorldObjects.Blocks
 {
@@ -13,15 +14,15 @@ namespace WorldObjects.Blocks
             UpdateStability();
         }
 
-        protected override void Crumble()
+        protected override IEnumerator Crumble()
         {
-            base.Crumble();
+            yield return base.Crumble();
             DestabalizeNeighbors(25);
         }
 
-        protected override void Destroy()
+        protected override IEnumerator Destroy()
         {
-            base.Destroy();
+            yield return base.Destroy();
 
             if (_isStable)
             {
@@ -30,9 +31,9 @@ namespace WorldObjects.Blocks
             }
         }
 
-        protected override void Stabilize()
+        protected override IEnumerator Stabilize()
         {
-            base.Stabilize();
+            yield return base.Stabilize();
             UpdateStability();
         }
 

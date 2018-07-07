@@ -52,29 +52,6 @@ namespace WorldObjects
             _baseColor = _sprite.color;
         }
 
-        private IEnumerator CheckForStability()
-        {
-            var waitForFixedUpdate = new WaitForFixedUpdate();
-
-            while (true)
-            {
-                _velocitySamples.Enqueue(_rigidbody.velocity.magnitude);
-                if (_velocitySamples.Count > 10)
-                {
-                    _velocitySamples.Dequeue();
-
-                    if (MathUtils.Average(_velocitySamples) < _restabilizationThreshold &&
-                        IntVector2.Distance(GetPosition(), transform.position) < .02f)
-                    {
-                        Stabilize();
-                        break;
-                    }
-                }
-
-                yield return waitForFixedUpdate;
-            }
-        }
-
         public void Hit(int damage, int force)
         {
             ApplyDamage(damage);
@@ -102,7 +79,7 @@ namespace WorldObjects
 
             if (Health <= 0)
             {
-                Destroy();
+                StartCoroutine(Destroy());
             }
             else
             {
@@ -118,12 +95,14 @@ namespace WorldObjects
 
             if (Stability <= 0)
             {
-                Crumble();
+                StartCoroutine(Crumble());
             }
         }
 
-        protected virtual void Crumble()
+        protected virtual IEnumerator Crumble()
         {
+            yield return null;
+
             _rigidbody.bodyType = RigidbodyType2D.Dynamic;
             _velocitySamples = new Queue<float>();
 
@@ -133,8 +112,10 @@ namespace WorldObjects
             AlertNeighbors();
         }
 
-        protected virtual void Stabilize()
+        protected virtual IEnumerator Stabilize()
         {
+            yield return null;
+
             transform.SnapToGrid();
 
             _rigidbody.bodyType = RigidbodyType2D.Kinematic;
@@ -145,8 +126,10 @@ namespace WorldObjects
             AlertNeighbors();
         }
 
-        protected virtual void Destroy()
+        protected virtual IEnumerator Destroy()
         {
+            yield return null;
+
             Destroy(gameObject);
 
             OnDestroyed.Raise(this);
@@ -154,6 +137,29 @@ namespace WorldObjects
             if (_isStable)
             {
                 AlertNeighbors();
+            }
+        }
+
+        private IEnumerator CheckForStability()
+        {
+            var waitForFixedUpdate = new WaitForFixedUpdate();
+
+            while (true)
+            {
+                _velocitySamples.Enqueue(_rigidbody.velocity.magnitude);
+                if (_velocitySamples.Count > 10)
+                {
+                    _velocitySamples.Dequeue();
+
+                    if (MathUtils.Average(_velocitySamples) < _restabilizationThreshold &&
+                        IntVector2.Distance(GetPosition(), transform.position) < .02f)
+                    {
+                        StartCoroutine(Stabilize());
+                        break;
+                    }
+                }
+
+                yield return waitForFixedUpdate;
             }
         }
 
