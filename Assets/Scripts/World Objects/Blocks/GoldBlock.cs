@@ -2,11 +2,11 @@
 {
     public class GoldBlock : Block
     {
-        public override string GetObjectName() => $"Gold {Position}";
+        public override string GetObjectName() => $"Gold {GetPosition()}";
 
         protected override void DropItem()
         {
-            ItemLoader.CreateItem(ItemTypes.GoldPiece, Position);
+            ItemLoader.CreateItem(ItemTypes.GoldPiece, GetPosition());
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Player
+namespace Actors.Player
 {
     public class Gun : MonoBehaviour
     {

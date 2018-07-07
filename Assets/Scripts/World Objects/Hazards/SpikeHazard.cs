@@ -4,7 +4,7 @@ namespace WorldObjects.Hazards
 {
     public class SpikeHazard : Hazard, IDamaging, IImpulsive
     {
-        public override IntVector2 AnchoringPosition => new IntVector2(Position - transform.up);
+        public override IntVector2 AnchoringPosition => new IntVector2(GetPosition() - transform.up);
 
         public int GetDamage() => 25;
         public Vector2 GetImpulse(Vector2 velocity) => -velocity * .75f;
@@ -33,6 +33,6 @@ namespace WorldObjects.Hazards
             Destroy(gameObject);
         }
 
-        public override string GetObjectName() => $"Spike {Position}";
+        public override string GetObjectName() => $"Spike {GetPosition()}";
     }
 }

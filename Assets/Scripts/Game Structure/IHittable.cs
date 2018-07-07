@@ -1,5 +1,7 @@
-﻿public interface IHittable
+﻿using UnityEngine;
+
+public interface IHittable
 {
     void Hit(int damage, int force);
-    void Impact(int impactMagnitude);
+    void Impact(Vector2 impact);
 }

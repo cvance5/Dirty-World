@@ -3,7 +3,7 @@ using Metadata;
 using UnityEngine;
 using WorldObjects;
 
-namespace Player
+namespace Actors.Player
 {
     public class PlayerController : MonoBehaviour
     {

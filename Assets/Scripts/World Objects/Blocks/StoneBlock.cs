@@ -2,7 +2,7 @@
 {
     public class StoneBlock : Block
     {
-        public override string GetObjectName() => $"Stone {Position}";
+        public override string GetObjectName() => $"Stone {GetPosition()}";
 
         protected override void Crumble()
         {

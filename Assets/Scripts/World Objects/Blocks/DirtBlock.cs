@@ -6,7 +6,7 @@ namespace WorldObjects.Blocks
     {
         private int _numNeighbors;
 
-        public override string GetObjectName() => $"Dirt {Position}";
+        public override string GetObjectName() => $"Dirt {GetPosition()}";
 
         public override void HandleNeighborUpdate()
         {
@@ -22,7 +22,12 @@ namespace WorldObjects.Blocks
         protected override void Destroy()
         {
             base.Destroy();
-            DestabalizeNeighbors(50);
+
+            if (_isStable)
+            {
+                DestabalizeNeighbors(50);
+
+            }
         }
 
         protected override void Stabilize()

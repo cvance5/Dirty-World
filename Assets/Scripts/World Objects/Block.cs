@@ -1,5 +1,5 @@
-﻿using Metadata;
-using Player;
+﻿using Actors;
+using Metadata;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,6 +37,7 @@ namespace WorldObjects
 
         private Rigidbody2D _rigidbody;
         private Queue<float> _velocitySamples;
+        protected bool _isStable => _rigidbody.bodyType == RigidbodyType2D.Kinematic;
 
         private void Awake()
         {
@@ -57,7 +58,7 @@ namespace WorldObjects
                     _velocitySamples.Dequeue();
 
                     if (MathUtils.Average(_velocitySamples) < _restabilizationThreshold &&
-                        IntVector2.Distance(Position, transform.position) < .02f)
+                        IntVector2.Distance(GetPosition(), transform.position) < .02f)
                     {
                         Stabilize();
                         break;
@@ -75,11 +76,12 @@ namespace WorldObjects
             if (Health > 0) ApplyForce(force);
         }
 
-        public void Impact(int impactMagniture)
+        public void Impact(Vector2 impact)
         {
+            int impactMagniture = (int)impact.magnitude;
             if (impactMagniture > _impactDurability)
             {
-                var remainder = impactMagniture - _impactDurability;
+                int remainder = impactMagniture - _impactDurability;
                 Hit(remainder, remainder);
             }
         }
@@ -142,7 +144,11 @@ namespace WorldObjects
             Destroy(gameObject);
 
             OnDestroyed.Raise(this);
-            AlertNeighbors();
+
+            if (_isStable)
+            {
+                AlertNeighbors();
+            }
         }
 
         private void AlertNeighbors()
@@ -159,21 +165,28 @@ namespace WorldObjects
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (_rigidbody.bodyType == RigidbodyType2D.Dynamic)
+            if (!_isStable)
             {
                 var otherObject = collision.collider.gameObject;
 
-                var impact = Mathf.RoundToInt(collision.relativeVelocity.magnitude);
-                int unabsorbedImpact = impact - _impactAbsorption;
+                var impactMagnitude = Mathf.RoundToInt(collision.relativeVelocity.magnitude);
+                int unabsorbedImpactMagnitude = impactMagnitude - _impactAbsorption;
 
                 switch (otherObject.tag)
                 {
-                    case Tags.Hazard: HandleHazard(otherObject.GetComponent<Hazard>()); break;
-                    case Tags.Player: HandlePlayerCollision(otherObject.GetComponent<PlayerData>(), unabsorbedImpact); break;
+                    case Tags.Hazard:
+                        HandleHazard(otherObject.GetComponent<Hazard>());
+                        break;
+                    case Tags.Enemy:
+                    case Tags.Player:
+                        HandleActor(otherObject.GetComponent<ActorData>(), unabsorbedImpactMagnitude);
+                        break;
                 }
 
-                if (unabsorbedImpact > 0)
+                if (unabsorbedImpactMagnitude > 0)
                 {
+                    var unabsorbedImpact = collision.relativeVelocity.normalized * unabsorbedImpactMagnitude;
+
                     Impact(unabsorbedImpact);
 
                     var otherHittable = otherObject.GetComponent(typeof(IHittable)) as IHittable;
@@ -209,9 +222,9 @@ namespace WorldObjects
             }
         }
 
-        protected void HandlePlayerCollision(PlayerData playerData, int impact)
+        protected void HandleActor(ActorData actorData, int impactMagnitude)
         {
-            playerData.ApplyDamage(impact);
+            actorData.ApplyDamage(impactMagnitude);
         }
 
         private void OnDestroy()

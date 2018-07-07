@@ -1,14 +1,17 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Player
+namespace Actors
 {
-    public class PlayerData : MonoBehaviour, ITrackable
+    public abstract class ActorData : MonoBehaviour, ITrackable
     {
         public int Health { get; private set; } = 100;
-
         public IntVector2 GetPosition() => new IntVector2(transform.position);
-        public uint GoldCollected { get; private set; }
+
+        [SerializeField]
+        private float _damageInvulnerabilityDuration = 1f;
+        [SerializeField]
+        private int _damageResistance = 5;
 
         private SpriteRenderer _sprite;
         private bool _isTakingDamage = false;
@@ -20,6 +23,9 @@ namespace Player
 
         public void ApplyDamage(int amount)
         {
+            if (amount < _damageResistance) return;
+            else amount -= _damageResistance;
+
             if (!_isTakingDamage)
             {
                 Health -= amount;
@@ -29,17 +35,12 @@ namespace Player
             }
         }
 
-        public void AddItem(ItemTypes item)
-        {
-            if (item == ItemTypes.GoldPiece) GoldCollected++;
-        }
-
         private IEnumerator FlashDamage()
         {
             _isTakingDamage = true;
-            var waitFor = new WaitForSeconds(.25f);
+            var waitFor = new WaitForSeconds(_damageInvulnerabilityDuration / NUM_FLASHES);
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < NUM_FLASHES; i++)
             {
                 _sprite.color = Color.red;
                 yield return waitFor;
@@ -49,12 +50,8 @@ namespace Player
             _isTakingDamage = false;
         }
 
-        private void Die()
-        {
-            PositionTracker.StopTracking(this);
-            Log.Info($"Score: {GoldCollected}", "blue");
+        protected abstract void Die();
 
-            Destroy(gameObject);
-        }
+        private const int NUM_FLASHES = 4;
     }
 }

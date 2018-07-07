@@ -24,7 +24,7 @@ namespace WorldObjects
             foreach (var dir in Directions.Cardinals)
             {
                 Block neighbor = null;
-                var neighborPos = block.Position + dir;
+                var neighborPos = block.GetPosition() + dir;
 
                 foreach (var chunk in _activeChunks)
                 {
@@ -46,7 +46,7 @@ namespace WorldObjects
 
             foreach (var dir in Directions.Cardinals)
             {
-                var neighbor = GetNeighborOfChunk(chunk.Position, dir);
+                var neighbor = GetNeighborOfChunk(chunk.GetPosition(), dir);
                 if (neighbor != null) neighbors.Add(neighbor);
             }
 

@@ -28,7 +28,7 @@ namespace WorldObjects
 
         public void Register(Block block)
         {
-            _blockMap[block.Position] = block;
+            _blockMap[block.GetPosition()] = block;
             block.transform.SetParent(transform, true);
 
             block.OnDestroyed += OnBlockDestroyed;
@@ -118,25 +118,25 @@ namespace WorldObjects
             block.OnCrumbled -= OnBlockCrumbled;
             block.OnDestroyed -= OnBlockDestroyed;
 
-            if (!_blockMap.Remove(block.Position)) Log.Info($"Attempted to destroy block, but could not find it at {block.Position}.");
-            else Log.Info($"Block destroyed at {block.Position}.");
+            if (!_blockMap.Remove(block.GetPosition())) Log.Info($"Attempted to destroy block, but could not find it at {block.GetPosition()}.");
+            else Log.Info($"Block destroyed at {block.GetPosition()}.");
         }
 
         private void OnBlockCrumbled(Block block)
         {
-            if (!_blockMap.Remove(block.Position)) throw new Exception($"Attempted to crumble block, but could not find it at {block.Position}.");
-            else Log.Info($"Block crumbled at {block.Position}.");
+            if (!_blockMap.Remove(block.GetPosition())) throw new Exception($"Attempted to crumble block, but could not find it at {block.GetPosition()}.");
+            else Log.Info($"Block crumbled at {block.GetPosition()}.");
         }
 
         private void OnBlockStabilized(Block block)
         {
-            if (_blockMap.ContainsKey(block.Position)) throw new Exception($"Attempted to add block, but one already exists at {block.Position}!");
+            if (_blockMap.ContainsKey(block.GetPosition())) throw new Exception($"Attempted to add block, but one already exists at {block.GetPosition()}!");
             else
             {
-                _blockMap[block.Position] = block;
+                _blockMap[block.GetPosition()] = block;
             }
 
-            Log.Info($"Block stabilized at {block.Position}.");
+            Log.Info($"Block stabilized at {block.GetPosition()}.");
         }
 
         private void OnHazardRemoved(Hazard hazard)
@@ -151,14 +151,14 @@ namespace WorldObjects
             hazard.OnHazardDestroyed -= OnHazardRemoved;
         }
 
-        public override string GetObjectName() => $"Chunk {Position}";
+        public override string GetObjectName() => $"Chunk {GetPosition()}";
 
         public override bool Equals(object obj)
         {
             var chunk = obj as Chunk;
             return chunk != null &&
                    base.Equals(obj) &&
-                   EqualityComparer<IntVector2>.Default.Equals(Position, chunk.Position) &&
+                   EqualityComparer<IntVector2>.Default.Equals(GetPosition(), chunk.GetPosition()) &&
                    EqualityComparer<List<Space>>.Default.Equals(_spaces, chunk._spaces) &&
                    EqualityComparer<Dictionary<IntVector2, Block>>.Default.Equals(_blockMap, chunk._blockMap) &&
                    EqualityComparer<Dictionary<IntVector2, List<Space>>>.Default.Equals(_spacesOverlappingEdges, chunk._spacesOverlappingEdges) &&
@@ -170,7 +170,7 @@ namespace WorldObjects
         {
             var hashCode = 471642533;
             hashCode = hashCode * -1521134295 + base.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(Position);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(GetPosition());
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Space>>.Default.GetHashCode(_spaces);
             hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<IntVector2, Block>>.Default.GetHashCode(_blockMap);
             hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<IntVector2, List<Space>>>.Default.GetHashCode(_spacesOverlappingEdges);
