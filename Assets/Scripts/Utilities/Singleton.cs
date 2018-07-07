@@ -12,7 +12,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         {
             if (applicationIsQuitting)
             {
-                Log.Warning("[Singleton] Instance '" + typeof(T) +
+                Debug.LogWarning("[Singleton] Instance '" + typeof(T) +
                     "' already destroyed on application quit." +
                     " Won't create again - returning null.");
                 return null;
@@ -26,7 +26,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
                     if (FindObjectsOfType(typeof(T)).Length > 1)
                     {
-                        Log.Error("[Singleton] Something went really wrong " +
+                        Debug.LogError("[Singleton] Something went really wrong " +
                             " - there should never be more than 1 singleton!" +
                             " Reopening the scene might fix it.");
                         return _instance;
@@ -49,7 +49,7 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
     public virtual void Initialize() { }
 
-    public void OnDestroy()
+    private void OnApplicationQuit()
     {
         applicationIsQuitting = true;
     }

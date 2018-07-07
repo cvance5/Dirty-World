@@ -46,7 +46,7 @@ namespace WorldObjects.Blocks
                 if (neighbor.Stability <= stabilityThreshold)
                 {
                     neighbor.Hit(0, stabilityThreshold);
-                    Log.Info($"{this} has applied {stabilityThreshold} force to neighbor {neighbor}.");
+                    _log.Info($"{this} has applied {stabilityThreshold} force to neighbor {neighbor}.");
                 }
             }
         }

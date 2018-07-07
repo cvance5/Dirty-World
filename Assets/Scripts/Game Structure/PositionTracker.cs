@@ -28,11 +28,11 @@ public class PositionTracker : Singleton<PositionTracker>
 
             _trackedTargets.Add(target, initialPositionData);
 
-            Log.Info($"Now tracking {target} at initial position {initialPositionData}.");
+            _log.Info($"Now tracking {target} at initial position {initialPositionData}.");
 
             if (_trackedTargets.Count == 1)
             {
-                Log.Info("Starting position update coroutine.");
+                _log.Info("Starting position update coroutine.");
                 _updateMethod = Instance.StartCoroutine(PositionUpdate());
             }
         }
@@ -44,11 +44,11 @@ public class PositionTracker : Singleton<PositionTracker>
         {
             _trackedTargets.Remove(target);
 
-            Log.Info($"No longer tracking {target}.");
+            _log.Info($"No longer tracking {target}.");
 
             if (_trackedTargets.Count == 0)
             {
-                Log.Info("Stopping position update coroutine.");
+                _log.Info("Stopping position update coroutine.");
                 Instance.StopCoroutine(_updateMethod);
             }
 
@@ -109,7 +109,7 @@ public class PositionTracker : Singleton<PositionTracker>
 
                 if (oldPositionData != newPositionData)
                 {
-                    Log.Info($"{target} has changed from {oldPositionData} to {newPositionData}.");
+                    _log.Info($"{target} has changed from {oldPositionData} to {newPositionData}.");
 
                     List<Action<PositionData, PositionData>> callbacksToCall;
                     if (_onPositionChangedCallbacks.TryGetValue(target, out callbacksToCall))
@@ -126,4 +126,6 @@ public class PositionTracker : Singleton<PositionTracker>
             yield return _positionUpdateTick;
         }
     }
+
+    private static readonly Log _log = new Log("PositionTracker");
 }

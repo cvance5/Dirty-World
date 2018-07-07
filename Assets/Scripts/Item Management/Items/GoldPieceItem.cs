@@ -6,7 +6,6 @@
 
         public void OnCollect()
         {
-            Log.Info("BOOP!", "green");
             Destroy(gameObject);
         }
 

@@ -30,7 +30,7 @@ namespace WorldObjects.WorldGeneration
             var block = blockObject.GetComponent<Block>();
             blockObject.name = block.GetObjectName();
 
-            Log.ErrorIfNull(block, $"Block of type {type} has not been given a 'block' component.");
+            _log.ErrorIfNull(block, $"Block of type {type} has not been given a 'block' component.");
 
             return block;
         }
@@ -51,9 +51,11 @@ namespace WorldObjects.WorldGeneration
 
             var hazard = hazardObject.GetComponent<Hazard>();
 
-            Log.ErrorIfNull(hazard, $"Hazard of type {type} has not been given a 'hazard' component.");
+            _log.ErrorIfNull(hazard, $"Hazard of type {type} has not been given a 'hazard' component.");
 
             return hazard;
         }
+
+        private static readonly Log _log = new Log("ObjectLoader");
     }
 }

@@ -213,7 +213,7 @@ namespace WorldObjects
 
         private void HandleHazard(Hazard hazard)
         {
-            Log.ErrorIfNull(hazard, $"{hazard} has tag {Tags.Hazard} but does not have an item component.");
+            _log.ErrorIfNull(hazard, $"{hazard} has tag {Tags.Hazard} but does not have an item component.");
 
             foreach (var effect in hazard.Effects)
             {
@@ -221,15 +221,15 @@ namespace WorldObjects
                 {
                     case HazardEffects.Damage:
                         var damagingHazard = hazard as IDamaging;
-                        Log.ErrorIfNull(damagingHazard, $"{hazard} has effect {effect} but does not implement {typeof(IDamaging).Name}.");
+                        _log.ErrorIfNull(damagingHazard, $"{hazard} has effect {effect} but does not implement {typeof(IDamaging).Name}.");
                         ApplyDamage(damagingHazard.GetDamage());
                         break;
                     case HazardEffects.Impulse:
                         var knockbackHazard = hazard as IImpulsive;
-                        Log.ErrorIfNull(knockbackHazard, $"{hazard} has effect {effect} but does not implement {typeof(IImpulsive).Name}.");
+                        _log.ErrorIfNull(knockbackHazard, $"{hazard} has effect {effect} but does not implement {typeof(IImpulsive).Name}.");
                         _rigidbody.velocity = knockbackHazard.GetImpulse(_rigidbody.velocity);
                         break;
-                    default: Log.Error($"Unknown effect '{effect}'."); break;
+                    default: _log.Error($"Unknown effect '{effect}'."); break;
                 }
             }
         }
@@ -253,5 +253,7 @@ namespace WorldObjects
         }
 
         private static bool _isQuitting = false;
-    }
+
+        protected static readonly Log _log = new Log("Block");
+    }    
 }

@@ -14,9 +14,11 @@ namespace Actors.Player
         protected override void Die()
         {
             PositionTracker.StopTracking(this);
-            Log.Info($"Score: {GoldCollected}", "blue");
+            _log.Info($"Score: {GoldCollected}", "blue");
 
             Destroy(gameObject);
         }
+
+        private static readonly Log _log = new Log("PlayerData");
     }
 }

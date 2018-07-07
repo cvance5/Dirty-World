@@ -21,8 +21,10 @@ public class ItemLoader : Singleton<ItemLoader>
 
         var item = itemObject.GetComponent<Item>();
 
-        Log.ErrorIfNull(item, $"Item of type {type} has not been given a 'item' component.");
+        _log.ErrorIfNull(item, $"Item of type {type} has not been given a 'item' component.");
 
         return item;
     }
+
+    private static readonly Log _log = new Log("ItemLoader");
 }

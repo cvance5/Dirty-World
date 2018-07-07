@@ -118,14 +118,14 @@ namespace WorldObjects
             block.OnCrumbled -= OnBlockCrumbled;
             block.OnDestroyed -= OnBlockDestroyed;
 
-            if (!_blockMap.Remove(block.GetPosition())) Log.Info($"Attempted to destroy block, but could not find it at {block.GetPosition()}.");
-            else Log.Info($"Block destroyed at {block.GetPosition()}.");
+            if (!_blockMap.Remove(block.GetPosition())) _log.Info($"Attempted to destroy block, but could not find it at {block.GetPosition()}.");
+            else _log.Info($"Block destroyed at {block.GetPosition()}.");
         }
 
         private void OnBlockCrumbled(Block block)
         {
             if (!_blockMap.Remove(block.GetPosition())) throw new Exception($"Attempted to crumble block, but could not find it at {block.GetPosition()}.");
-            else Log.Info($"Block crumbled at {block.GetPosition()}.");
+            else _log.Info($"Block crumbled at {block.GetPosition()}.");
         }
 
         private void OnBlockStabilized(Block block)
@@ -136,7 +136,7 @@ namespace WorldObjects
                 _blockMap[block.GetPosition()] = block;
             }
 
-            Log.Info($"Block stabilized at {block.GetPosition()}.");
+            _log.Info($"Block stabilized at {block.GetPosition()}.");
         }
 
         private void OnHazardRemoved(Hazard hazard)
@@ -144,7 +144,7 @@ namespace WorldObjects
             if (_hazards.Contains(hazard))
             {
                 _hazards.Remove(hazard);
-                Log.Info($"Hazard {hazard} has been removed.");
+                _log.Info($"Hazard {hazard} has been removed.");
             }
             else throw new Exception($"Attempted to remove hazard {hazard} but it could not be found!");
 
@@ -178,6 +178,8 @@ namespace WorldObjects
             hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(_topRightCorner);
             return hashCode;
         }
+
+        protected static readonly Log _log = new Log("Chunk");
     }
 }
 
