@@ -17,11 +17,14 @@ namespace WorldObjects
 
         [SerializeField]
         [Range(0, 1)]
+        [Tooltip("Percent of damage ignored when this block is hit.")]
         protected float _damageResistance = 0f;
         [SerializeField]
         [Range(0, 1)]
+        [Tooltip("Percent of force ignored when this block is hit.")]
         protected float _forceResistance = 0f;
         [SerializeField]
+        [Tooltip("Velocity magnitude limit under which this block restabilizes.")]
         protected float _restabilizationThreshold = .01f;
 
         [SerializeField]
@@ -31,6 +34,9 @@ namespace WorldObjects
         [Tooltip("The force this object ignores before calculating impact damage.")]
         protected int _impactDurability = 0;
 
+        [SerializeField]
+        [Tooltip("Multiplier to impact force to simulate denser materials.")]
+        protected float _weight = 1f;
 
         private SpriteRenderer _sprite;
         private Color _baseColor;
@@ -193,7 +199,7 @@ namespace WorldObjects
 
                     if (otherHittable != null)
                     {
-                        otherHittable.Impact(unabsorbedImpact);
+                        otherHittable.Impact(unabsorbedImpact * _weight);
                     }
                 }
             }
