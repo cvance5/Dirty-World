@@ -25,7 +25,7 @@ GameObject:
   - component: {fileID: 114997434426918518}
   m_Layer: 9
   m_Name: DirtBlock
-  m_TagString: Untagged
+  m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -99,6 +99,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08617acf7a039424abf900b45d37265e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _damageResistance: 0
+  _forceResistance: 0
+  _restabilizationThreshold: 0.01
+  _impactAbsorption: 0
+  _impactDurability: 4
 --- !u!212 &212624701635964486
 SpriteRenderer:
   m_ObjectHideFlags: 1

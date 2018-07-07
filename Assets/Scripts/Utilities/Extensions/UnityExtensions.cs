@@ -34,21 +34,6 @@ public static class UnityExtensions
         };
     }
 
-    public static Vector3 SetAxis(this Vector3 source, Axis axis, float value)
-    {
-        switch (axis)
-        {
-            case Axis.X:
-                return new Vector3(value, source.y, source.z);
-            case Axis.Y:
-                return new Vector3(source.x, value, source.z);
-            case Axis.Z:
-                return new Vector3(source.x, source.y, value);
-            default:
-                throw new System.ArgumentOutOfRangeException("Value is not an access.");
-        }
-    }
-
     public static void SetActive(this Component component, bool isActive)
     {
         component.gameObject.SetActive(isActive);
@@ -66,39 +51,6 @@ public static class UnityExtensions
         }
 
         return children;
-    }
-
-    public static Vector3 RandomPointWithinBounds(this MeshFilter meshFilter)
-    {
-        Bounds bounds = meshFilter.mesh.bounds;
-
-        float minX = meshFilter.transform.localScale.x * bounds.size.x * 0.5f;
-        float minY = meshFilter.transform.localScale.y * bounds.size.y * 0.5f;
-        float minZ = meshFilter.transform.localScale.z * bounds.size.z * 0.5f;
-
-        Vector3 randomPoint = new Vector3(
-            Random.Range(minX, -minX),
-            Random.Range(minY, -minY),
-            Random.Range(minZ, -minZ)
-            );
-
-        return randomPoint;
-    }
-    public static Vector3 RandomPointWithinBounds(this Collider collider)
-    {
-        Bounds bounds = collider.bounds;
-
-        float minX = collider.transform.localScale.x * bounds.size.x * 0.5f;
-        float minY = collider.transform.localScale.y * bounds.size.y * 0.5f;
-        float minZ = collider.transform.localScale.z * bounds.size.z * 0.5f;
-
-        Vector3 randomPoint = new Vector3(
-            Random.Range(minX, -minX),
-            Random.Range(minY, -minY),
-            Random.Range(minZ, -minZ)
-            );
-
-        return randomPoint;
     }
 
     public enum Axis

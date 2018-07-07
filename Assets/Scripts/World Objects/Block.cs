@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Metadata;
+using Player;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,6 +24,14 @@ namespace WorldObjects
         [SerializeField]
         protected float _restabilizationThreshold = .01f;
 
+        [SerializeField]
+        [Tooltip("The force removed from collisions initiated by this object.")]
+        protected int _impactAbsorption = 0;
+        [SerializeField]
+        [Tooltip("The force this object ignores before calculating impact damage.")]
+        protected int _impactDurability = 0;
+
+
         private SpriteRenderer _sprite;
         private Color _baseColor;
 
@@ -37,7 +47,7 @@ namespace WorldObjects
 
         private IEnumerator CheckForStability()
         {
-            var waiter = new WaitForFixedUpdate();
+            var waitForFixedUpdate = new WaitForFixedUpdate();
 
             while (true)
             {
@@ -45,14 +55,16 @@ namespace WorldObjects
                 if (_velocitySamples.Count > 10)
                 {
                     _velocitySamples.Dequeue();
-                    if (MathUtils.Average(_velocitySamples) < _restabilizationThreshold)
+
+                    if (MathUtils.Average(_velocitySamples) < _restabilizationThreshold &&
+                        IntVector2.Distance(Position, transform.position) < .02f)
                     {
                         Stabilize();
                         break;
                     }
                 }
 
-                yield return waiter;
+                yield return waitForFixedUpdate;
             }
         }
 
@@ -61,6 +73,15 @@ namespace WorldObjects
             ApplyDamage(damage);
 
             if (Health > 0) ApplyForce(force);
+        }
+
+        public void Impact(int impactMagniture)
+        {
+            if (impactMagniture > _impactDurability)
+            {
+                var remainder = impactMagniture - _impactDurability;
+                Hit(remainder, remainder);
+            }
         }
 
         public virtual void HandleNeighborUpdate() { }
@@ -135,6 +156,63 @@ namespace WorldObjects
         }
 
         protected virtual void DropItem() { }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            if (_rigidbody.bodyType == RigidbodyType2D.Dynamic)
+            {
+                var otherObject = collision.collider.gameObject;
+
+                var impact = Mathf.RoundToInt(collision.relativeVelocity.magnitude);
+                int unabsorbedImpact = impact - _impactAbsorption;
+
+                switch (otherObject.tag)
+                {
+                    case Tags.Hazard: HandleHazard(otherObject.GetComponent<Hazard>()); break;
+                    case Tags.Player: HandlePlayerCollision(otherObject.GetComponent<PlayerData>(), unabsorbedImpact); break;
+                }
+
+                if (unabsorbedImpact > 0)
+                {
+                    Impact(unabsorbedImpact);
+
+                    var otherHittable = otherObject.GetComponent(typeof(IHittable)) as IHittable;
+
+                    if (otherHittable != null)
+                    {
+                        otherHittable.Impact(unabsorbedImpact);
+                    }
+                }
+            }
+        }
+
+        private void HandleHazard(Hazard hazard)
+        {
+            Log.ErrorIfNull(hazard, $"{hazard} has tag {Tags.Hazard} but does not have an item component.");
+
+            foreach (var effect in hazard.Effects)
+            {
+                switch (effect)
+                {
+                    case HazardEffects.Damage:
+                        var damagingHazard = hazard as IDamaging;
+                        Log.ErrorIfNull(damagingHazard, $"{hazard} has effect {effect} but does not implement {typeof(IDamaging).Name}.");
+                        ApplyDamage(damagingHazard.GetDamage());
+                        break;
+                    case HazardEffects.Impulse:
+                        var knockbackHazard = hazard as IImpulsive;
+                        Log.ErrorIfNull(knockbackHazard, $"{hazard} has effect {effect} but does not implement {typeof(IImpulsive).Name}.");
+                        _rigidbody.velocity = knockbackHazard.GetImpulse(_rigidbody.velocity);
+                        break;
+                    default: Log.Error($"Unknown effect '{effect}'."); break;
+                }
+            }
+        }
+
+        protected void HandlePlayerCollision(PlayerData playerData, int impact)
+        {
+            playerData.ApplyDamage(impact);
+        }
 
         private void OnDestroy()
         {

@@ -17,6 +17,10 @@ public class IntVector2
         Y = Mathf.RoundToInt(vec.y);
     }
 
+    public static float Distance(IntVector2 pos1, IntVector2 pos2) => ((pos1.X - pos2.X) * (pos1.X - pos2.X) + (pos1.Y - pos2.Y) * (pos1.Y - pos2.Y));
+    public static float Distance(IntVector2 pos1, Vector2 pos2) => ((pos1.X - pos2.x) * (pos1.X - pos2.x) + (pos1.Y - pos2.y) * (pos1.Y - pos2.y));
+    public static IntVector2 Lerp(IntVector2 start, IntVector2 target, float time) => new IntVector2((int)Mathf.Lerp(start.X, target.X, time), (int)Mathf.Lerp(start.Y, target.Y, time));
+
     public static IntVector2 operator +(IntVector2 lhs, IntVector2 rhs) => new IntVector2(lhs.X + rhs.X, lhs.Y + rhs.Y);
     public static IntVector2 operator +(IntVector2 lhs, Vector2 rhs) => lhs + new IntVector2(rhs);
     public static IntVector2 operator -(IntVector2 vec) => new IntVector2(-vec.X, -vec.Y);
@@ -33,8 +37,8 @@ public class IntVector2
     public override int GetHashCode()
     {
         var hashCode = 1861411795;
-        hashCode = hashCode * -1521134295 + X.GetHashCode();
-        hashCode = hashCode * -1521134295 + Y.GetHashCode();
+        hashCode *= -1521134295 + X.GetHashCode();
+        hashCode *= -1521134295 + Y.GetHashCode();
         return hashCode;
     }
 }
