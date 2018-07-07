@@ -49,7 +49,7 @@ public class SmartEvent<T> : UnityEvent
     {
         if(rhs != null)
         {
-            lhs.TheEvent += rhs;
+            lhs.TheEvent -= rhs;
         }
 
         return lhs;
@@ -79,7 +79,7 @@ public class SmartEvent<T, U> : UnityEvent
     {
         if (rhs != null)
         {
-            lhs.TheEvent += rhs;
+            lhs.TheEvent -= rhs;
         }
 
         return lhs;
@@ -109,7 +109,7 @@ public class SmartEvent<T, U, V> : UnityEvent
     {
         if (rhs != null)
         {
-            lhs.TheEvent += rhs;
+            lhs.TheEvent -= rhs;
         }
 
         return lhs;
