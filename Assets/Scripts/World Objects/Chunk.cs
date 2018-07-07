@@ -40,8 +40,23 @@ namespace WorldObjects
 
         public void Register(Hazard hazard)
         {
-            _hazards.Add(hazard);
-            hazard.transform.SetParent(transform, true);
+            var anchorPos = hazard.AnchoringPosition;
+
+            if (anchorPos != null)
+            {
+                Block anchor = null;
+                _blockMap.TryGetValue(anchorPos, out anchor);
+                hazard.SetAnchor(anchor);
+            }
+
+            // The hazard may have destroyed itself because of its 
+            // anchoring situation.
+            if (hazard != null)
+            {
+                _hazards.Add(hazard);
+                hazard.transform.SetParent(transform, true);
+                hazard.OnHazardDestroyed += OnHazardRemoved;
+            }
         }
 
         public void Register(Space space)
@@ -124,6 +139,18 @@ namespace WorldObjects
             }
 
             Log.Info($"Block stabilized at {block.Position}.");
+        }
+
+        private void OnHazardRemoved(Hazard hazard)
+        {
+            if (_hazards.Contains(hazard))
+            {
+                _hazards.Remove(hazard);
+                Log.Info($"Hazard {hazard} has been removed.");
+            }
+            else throw new Exception($"Attempted to remove hazard {hazard} but it could not be found!");
+
+            hazard.OnHazardDestroyed -= OnHazardRemoved;
         }
 
         public override string ToString() => $"Chunk from {_bottomLeftCorner} to {_topRightCorner}.";

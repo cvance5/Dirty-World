@@ -28,7 +28,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             SetStartingPoint(startingPoint, Enum<CorridorAlignment>.Random);
 
-            _isHazardous = true; // Chance.OneIn(5);
+            _isHazardous = Chance.OneIn(5);
         }
 
         public CorridorBuilder SetStartingPoint(IntVector2 startingPoint, CorridorAlignment alignment)

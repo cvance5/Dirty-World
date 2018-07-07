@@ -115,6 +115,8 @@ namespace WorldObjects.WorldGeneration
                 }
             }
 
+            List<Hazard> hazardsToAdd = new List<Hazard>();
+
             foreach (var builder in _blockBuilders)
             {
                 var position = builder.WorldPosition;
@@ -133,7 +135,7 @@ namespace WorldObjects.WorldGeneration
 
                         if (hazardType != HazardTypes.None)
                         {
-                            chunk.Register(HazardLoader.CreateHazard(hazardType, position));                            
+                            hazardsToAdd.Add(HazardLoader.CreateHazard(hazardType, position));
                         }
                     }
                 }
@@ -146,6 +148,11 @@ namespace WorldObjects.WorldGeneration
                 {
                     chunk.Register(BlockLoader.CreateBlock(blockToBuild, position));
                 }
+            }
+
+            foreach (var hazardToAdd in hazardsToAdd)
+            {
+                chunk.Register(hazardToAdd);
             }
 
             _blockBuilders.Clear();

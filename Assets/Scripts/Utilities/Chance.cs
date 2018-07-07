@@ -8,7 +8,11 @@ public static class Chance
 
     public static bool CoinFlip => OneIn(2);
 
-    public static bool OneIn(int x) => _rand.Next(x - 1) == 0;
+    public static bool OneIn(int x)
+    {
+        var rand = _rand.Next(x);
+        return rand == 0;
+    }
 
     public static List<int> ExclusiveRandomOrder(int numNumbers)
     {

@@ -4,13 +4,33 @@ namespace WorldObjects.Hazards
 {
     public class SpikeHazard : Hazard, IDamaging, IImpulsive
     {
-        protected override void InitializeEffects() => Effects = new HazardEffects[] { HazardEffects.Damage, HazardEffects.Impulse };
+        public override IntVector2 AnchoringPosition => new IntVector2(Position - transform.up);
 
         public int GetDamage() => 25;
+        public Vector2 GetImpulse(Vector2 velocity) => -velocity * .75f;
 
-        public Vector2 GetImpulse(Vector2 velocity)
+        protected override void InitializeEffects() => Effects = new HazardEffects[] { HazardEffects.Damage, HazardEffects.Impulse };
+
+        public override void SetAnchor(Block anchor)
         {
-            return -velocity * .75f;
+            if (anchor != null)
+            {
+                anchor.OnCrumbled += OnAnchorRemoved;
+                anchor.OnDestroyed += OnAnchorRemoved;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        private void OnAnchorRemoved(Block anchor)
+        {
+            anchor.OnCrumbled -= OnAnchorRemoved;
+            anchor.OnDestroyed -= OnAnchorRemoved;
+
+            OnHazardDestroyed.Raise(this);
+            Destroy(gameObject);
         }
     }
 }
