@@ -1,20 +1,27 @@
-﻿using UnityEngine;
+﻿using ItemManagement;
+using System.Collections.Generic;
 
 namespace Actors.Player
 {
     public class PlayerData : ActorData
     {
-        public int GoldCollected { get; private set; }
+        public int Wealth { get; private set; }
 
-        public void AddItem(ItemTypes item)
+        public void AddCollectedItems(Dictionary<CollectibleType, int> collectedItems)
         {
-            if (item == ItemTypes.GoldPiece) GoldCollected++;
+            foreach (var kvp in collectedItems)
+            {
+                switch (kvp.Key)
+                {
+                    case CollectibleType.Wealth: Wealth += kvp.Value; break;
+                }
+            }
         }
 
         protected override void Die()
         {
             PositionTracker.StopTracking(this);
-            _log.Info($"Score: {GoldCollected}", "blue");
+            _log.Info($"Score: {Wealth}", "blue");
 
             Destroy(gameObject);
         }

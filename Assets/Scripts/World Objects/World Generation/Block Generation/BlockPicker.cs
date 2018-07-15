@@ -4,44 +4,27 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
 {
     public static class BlockPicker
     {
-        private static readonly Dictionary<BlockTypes, List<Range>> _blockRanges = new Dictionary<BlockTypes, List<Range>>()
+        private static readonly Dictionary<BlockTypes, Range> _blockRanges = new Dictionary<BlockTypes, Range>()
         {
-            { BlockTypes.Stone, new List<Range>()
-                {
-                    new Range(int.MinValue, World.SurfaceDepth)
-                }
-            },
-            { BlockTypes.Gold, new List<Range>()
-                {
-                    new Range(World.SurfaceDepth - 5, World.SurfaceDepth),
-                    new Range(int.MinValue, World.SurfaceDepth - 10)
-                }
-            },
+            { BlockTypes.Stone, new Range(int.MinValue, World.SurfaceDepth) },
+            { BlockTypes.Copper, new Range(World.SurfaceDepth - 15, World.SurfaceDepth) },
+            { BlockTypes.Silver,  new Range(World.SurfaceDepth - 30, World.SurfaceDepth - 10) },
+            { BlockTypes.Gold,  new Range(World.SurfaceDepth - 45, World.SurfaceDepth - 25) },
+            { BlockTypes.Platinum, new Range(int.MinValue, World.SurfaceDepth - 40) }
+        };
+
+        private static readonly Dictionary<BlockTypes, float> _blockScarcities = new Dictionary<BlockTypes, float>()
+        {
+            { BlockTypes.Silver, .75f },
+            { BlockTypes.Gold, .6f },
+            { BlockTypes.Platinum, .45f }
         };
 
         public static Dictionary<BlockTypes, int> Pick(ChunkBuilder cBuilder)
         {
             var blocksAvailableAtDepth = GetBlocksAtDepth(cBuilder.Depth);
-
-            var blockCounts = new Dictionary<BlockTypes, int>();
-
-            foreach (var block in blocksAvailableAtDepth)
-            {
-                switch (block)
-                {
-                    // Blocks which have special casing that do not need 
-                    // a count specified for them.
-                    case BlockTypes.None:
-                    case BlockTypes.Dirt:
-                        break;
-
-                    // Blocks which increase in count the deeper you go
-                    case BlockTypes.Stone:
-                    case BlockTypes.Gold:
-                        blockCounts.Add(block, -cBuilder.Depth);
-                        break;
-                }
-            }
+            var blockCounts = GetBlockCountsByDepth(blocksAvailableAtDepth, cBuilder.Depth);
+            var modifiedBlockCounts = ApplyBlockScarcity(blockCounts);
 
             return blockCounts;
         }
@@ -52,17 +35,65 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
 
             foreach (var blockRange in _blockRanges)
             {
-                foreach (var range in blockRange.Value)
+                var range = blockRange.Value;
+
+                if (range.IsInRange(depth))
                 {
-                    if (range.IsInRange(depth))
-                    {
-                        availableBlocks.Add(blockRange.Key);
-                        break;
-                    }
+                    availableBlocks.Add(blockRange.Key);
                 }
             }
 
             return availableBlocks;
+        }
+
+        private static Dictionary<BlockTypes, int> GetBlockCountsByDepth(List<BlockTypes> blockTypes, int depth)
+        {
+            var results = new Dictionary<BlockTypes, int>();
+
+            foreach (var block in blockTypes)
+            {
+                switch (block)
+                {
+                    // Blocks which have special casing that do not need 
+                    // a count specified for them
+                    case BlockTypes.None:
+                    case BlockTypes.Dirt:
+                        break;
+
+                    // Blocks which increase in count the deeper you go
+                    case BlockTypes.Stone:
+                    case BlockTypes.Platinum:
+                        results.Add(block, -depth);
+                        break;
+
+                    // Blocks which are most dense near the center of 
+                    // their respective ranges
+                    case BlockTypes.Copper:
+                    case BlockTypes.Silver:
+                    case BlockTypes.Gold:
+                        var range = _blockRanges[block];
+                        var maxSize = range.Size;
+                        var distance = range.DistanceFromCenter(depth);
+                        results.Add(block, maxSize - distance);
+                        break;
+                }
+            }
+
+            return results;
+        }
+
+        private static Dictionary<BlockTypes, int> ApplyBlockScarcity(Dictionary<BlockTypes, int> blockCounts)
+        {
+            var modifiedBlockCounts = new Dictionary<BlockTypes, int>(blockCounts);
+
+            foreach (var blockType in blockCounts.Keys)
+            {
+                float scarcity = 1;
+                _blockScarcities.TryGetValue(blockType, out scarcity);
+                modifiedBlockCounts[blockType] = (int)(blockCounts[blockType] * scarcity);
+            }
+
+            return modifiedBlockCounts;
         }
     }
 }

@@ -7,7 +7,10 @@ namespace WorldObjects.WorldGeneration
         [Header("Blocks")]
         public GameObject DirtBlock;
         public GameObject StoneBlock;
+        public GameObject CopperBlock;
+        public GameObject SilverBlock;
         public GameObject GoldBlock;
+        public GameObject PlatinumBlock;
 
         [Header("Hazards")]
         public GameObject SpikeHazard;
@@ -20,7 +23,10 @@ namespace WorldObjects.WorldGeneration
             {
                 case BlockTypes.Dirt: blockObject = Instance.DirtBlock; break;
                 case BlockTypes.Stone: blockObject = Instance.StoneBlock; break;
+                case BlockTypes.Copper: blockObject = Instance.CopperBlock; break;
+                case BlockTypes.Silver: blockObject = Instance.SilverBlock; break;
                 case BlockTypes.Gold: blockObject = Instance.GoldBlock; break;
+                case BlockTypes.Platinum: blockObject = Instance.PlatinumBlock; break;
                 default: throw new System.ArgumentException($"Unknown block type of {type}.");
             }
 

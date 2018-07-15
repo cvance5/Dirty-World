@@ -3,5 +3,8 @@
     None,
     Dirt,
     Stone,
-    Gold
+    Copper,
+    Silver,
+    Gold,
+    Platinum
 }

@@ -1,8 +1,10 @@
-﻿namespace ItemManagement.Items
+﻿using System.Collections.Generic;
+
+namespace ItemManagement.Items
 {
-    public class GoldPieceItem : Item, ICollectible
+    public abstract class WealthItem : Item, ICollectible
     {
-        public ItemTypes GetItemType() => ItemTypes.GoldPiece;
+        public abstract Dictionary<CollectibleType, int> CollectedItems { get; }
 
         public void OnCollect()
         {

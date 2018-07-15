@@ -21,9 +21,9 @@ GameObject:
   - component: {fileID: 4684311391860850}
   - component: {fileID: 212370257960952906}
   - component: {fileID: 58375980200773880}
-  - component: {fileID: 114792254222608192}
+  - component: {fileID: 114151535762341768}
   m_Layer: 0
-  m_Name: GoldPiece
+  m_Name: PlatinumPiece
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57,7 +57,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.085
---- !u!114 &114792254222608192
+--- !u!114 &114151535762341768
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1925429388468338}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3d54e8856a044154ebafe2151dacef0e, type: 3}
+  m_Script: {fileID: 11500000, guid: 3c5a88f899a66814ea27c321151ef488, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!212 &212370257960952906
@@ -103,7 +103,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  m_Color: {r: 0.8901961, g: 0.8039216, b: 0.32156864, a: 1}
+  m_Color: {r: 0.5095156, g: 0.8618304, b: 0.9117647, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

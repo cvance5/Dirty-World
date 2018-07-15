@@ -6,7 +6,7 @@
 
         protected override void DropItem()
         {
-            ItemLoader.CreateItem(ItemTypes.GoldPiece, GetPosition());
+            ItemLoader.CreateItem(ItemType.GoldPiece, GetPosition());
         }
     }
 }

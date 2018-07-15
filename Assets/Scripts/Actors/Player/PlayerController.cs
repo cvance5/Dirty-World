@@ -127,7 +127,7 @@ namespace Actors.Player
                     case InteractionTypes.Collect:
                         var collectibleItem = item as ICollectible;
                         _log.ErrorIfNull(collectibleItem, $"{item} has interaction {interaction} but does not implement {typeof(ICollectible).Name}.");
-                        _data.AddItem(collectibleItem.GetItemType());
+                        _data.AddCollectedItems(collectibleItem.CollectedItems);
                         collectibleItem.OnCollect();
                         break;
                     case InteractionTypes.Damage:

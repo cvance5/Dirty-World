@@ -3,15 +3,21 @@ using UnityEngine;
 
 public class ItemLoader : Singleton<ItemLoader>
 {
+    public GameObject CopperPiece;
+    public GameObject SilverPiece;
     public GameObject GoldPiece;
+    public GameObject PlatinumPiece;
 
-    public static Item CreateItem(ItemTypes type, IntVector2 worldPosition)
+    public static Item CreateItem(ItemType type, IntVector2 worldPosition)
     {
         GameObject itemObject;
 
         switch (type)
         {
-            case ItemTypes.GoldPiece: itemObject = Instance.GoldPiece; break;
+            case ItemType.CopperPiece: itemObject = Instance.CopperPiece; break;
+            case ItemType.SilverPiece: itemObject = Instance.SilverPiece; break;
+            case ItemType.GoldPiece: itemObject = Instance.GoldPiece; break;
+            case ItemType.PlatinumPiece: itemObject = Instance.PlatinumPiece; break;
             default: throw new System.ArgumentException($"Unknown item type of {type}.");
         }
 
