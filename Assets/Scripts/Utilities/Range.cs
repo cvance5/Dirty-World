@@ -1,7 +1,12 @@
-﻿public struct Range
+﻿using System;
+
+public struct Range
 {
     public int Min { get; private set; }
     public int Max { get; private set; }
+
+    public int Size { get; }
+    public float Center { get; }
 
     public Range(int min, int max)
     {
@@ -9,7 +14,12 @@
 
         Min = min;
         Max = max;
+
+        Size = Max - Min;
+        Center = Min + (Size / 2);
     }
 
     public bool IsInRange(int value) => (value >= Min && value <= Max);
+
+    public int DistanceFromCenter(int value) => (int)Math.Abs(Center - value);
 }
