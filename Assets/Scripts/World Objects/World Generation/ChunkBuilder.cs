@@ -8,13 +8,18 @@ namespace WorldObjects.WorldGeneration
         public IntVector2 BottomLeft { get; private set; }
         public IntVector2 TopRight { get; private set; }
 
+        public int Depth { get; private set; }
+        public int Remoteness { get; private set; }
+
         private IntVector2 _chunkWorldCenterpoint;
         private List<BlockBuilder> _blockBuilders = new List<BlockBuilder>();
         private List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
         private List<IntVector2> _boundedDirections = new List<IntVector2>();
 
-        private static int _chunkSize => World.ChunkSize;
-        private static int _halfChunkSize => _chunkSize / 2;
+        private static int _chunkSize = World.ChunkSize;
+        private static int _halfChunkSize = _chunkSize / 2;
+
+        private static BlockTypes _fillBlock = BlockTypes.Dirt;
 
         public ChunkBuilder(IntVector2 chunkWorldCenterpoint)
         {
@@ -24,6 +29,9 @@ namespace WorldObjects.WorldGeneration
 
             BottomLeft = new IntVector2(chunkWorldCenterpoint.X - _halfChunkSize, chunkWorldCenterpoint.Y - _halfChunkSize);
             TopRight = new IntVector2(chunkWorldCenterpoint.X + _halfChunkSize, chunkWorldCenterpoint.Y + _halfChunkSize);
+
+            Depth = _chunkWorldCenterpoint.Y / _chunkSize;
+            Remoteness = Mathf.Abs(_chunkWorldCenterpoint.X / _chunkSize) + Mathf.Abs(_chunkWorldCenterpoint.Y / _chunkSize);
 
             // Initialize all blocks in chunk to the default value
             for (int row = 0; row < _chunkSize; row++)
@@ -54,6 +62,24 @@ namespace WorldObjects.WorldGeneration
             }
 
             _spaceBuilders.Add(spaceBuilder);
+
+            return this;
+        }
+
+        public ChunkBuilder AddBlocks(Dictionary<BlockTypes, int> blockAmounts)
+        {
+            var blocks = new List<BlockTypes>();
+
+            foreach (var kvp in blockAmounts)
+            {
+                for (int amountAdded = 0; amountAdded < kvp.Value; amountAdded++)
+                {
+                    blocks.Add(kvp.Key);
+                }
+            }
+
+            AddBlocks(blocks.ToArray());
+
             return this;
         }
 
@@ -80,6 +106,13 @@ namespace WorldObjects.WorldGeneration
                     if (addedBlocks >= blocksToAdd.Length) break;
                 }
             }
+
+            return this;
+        }
+
+        public ChunkBuilder SetFill(BlockTypes fillBlock)
+        {
+            _fillBlock = fillBlock;
 
             return this;
         }
@@ -142,6 +175,7 @@ namespace WorldObjects.WorldGeneration
                 }
                 else
                 {
+                    if (builder.IsFill) builder.SetType(_fillBlock);
                     blockToBuild = builder.Build();
                 }
 

@@ -4,12 +4,13 @@ namespace WorldObjects
 {
     public class World : Singleton<World>
     {
+        public static int SurfaceDepth => GameManager.Instance.Settings.SurfaceDepth;
         public static int ChunkSize => GameManager.Instance.Settings.ChunkSize;
 
         private static List<Chunk> _activeChunks = new List<Chunk>();
         private static Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
 
-        public void RegisterChunk(Chunk chunk)
+        public void Register(Chunk chunk)
         {
             chunk.transform.SetParent(transform);
 

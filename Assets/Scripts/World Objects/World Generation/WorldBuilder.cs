@@ -1,10 +1,20 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using WorldObjects.WorldGeneration.BlockGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace WorldObjects.WorldGeneration
 {
     public static class WorldBuilder
     {
+        private static readonly int _chunkSize = World.ChunkSize;
+
+        private static readonly Dictionary<BlockTypes, Range> _fillRanges = new Dictionary<BlockTypes, Range>()
+        {
+            {BlockTypes.None, new Range(World.SurfaceDepth + 1, int.MaxValue) },
+            {BlockTypes.Dirt, new Range(int.MinValue, World.SurfaceDepth) }
+        };
+
         public static void BuildInitialChunk()
         {
             var cBuilder = new ChunkBuilder(Vector2.zero);
@@ -24,11 +34,11 @@ namespace WorldObjects.WorldGeneration
             cBuilder.AddSpace(sBuilder)
                     .AddSpace(sBuilder2);
 
-            World.Instance.RegisterChunk(cBuilder.Build());
+            World.Instance.Register(cBuilder.Build());
 
             foreach (var dir in Directions.Compass)
             {
-                BuildChunk(new IntVector2(dir.X * World.ChunkSize, dir.Y * World.ChunkSize));
+                BuildChunk(new IntVector2(dir.X * _chunkSize, dir.Y * _chunkSize));
             }
         }
 
@@ -37,10 +47,23 @@ namespace WorldObjects.WorldGeneration
             var cBuilder = new ChunkBuilder(position);
             var sBuilder = SpacePicker.Pick(cBuilder);
 
-            cBuilder.AddSpace(sBuilder)
-                    .AddBlocks(BlockTypes.Gold, BlockTypes.Gold, BlockTypes.Gold);
+            var blocks = BlockPicker.Pick(cBuilder);
 
-            World.Instance.RegisterChunk(cBuilder.Build());
+            cBuilder.AddSpace(sBuilder)
+                    .AddBlocks(blocks)
+                    .SetFill(GetFill(cBuilder.Depth));
+
+            World.Instance.Register(cBuilder.Build());
+        }
+        
+        private static BlockTypes GetFill(int depth)
+        {
+            foreach (var fillRange in _fillRanges)
+            {
+                if (fillRange.Value.IsInRange(depth)) return fillRange.Key;
+            }
+
+            throw new System.ArgumentOutOfRangeException($"Unhandled depth {depth}.  No fill block found.");
         }
     }
 }

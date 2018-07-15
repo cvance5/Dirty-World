@@ -6,12 +6,12 @@ namespace WorldObjects.WorldGeneration
 {
     public static class SpacePicker
     {
-        public static List<Type> SpaceBuilders = new List<Type>()
+        private static readonly List<Type> _spaces = new List<Type>()
         {
             typeof(CorridorBuilder),
             typeof(ShaftBuilder)
         };
 
-        public static SpaceBuilder Pick(ChunkBuilder chunkBuilder) => Activator.CreateInstance(SpaceBuilders.RandomItem(), chunkBuilder) as SpaceBuilder;
+        public static SpaceBuilder Pick(ChunkBuilder cBuilder) => Activator.CreateInstance(_spaces.RandomItem(), cBuilder) as SpaceBuilder;
     }
 }
