@@ -104,6 +104,7 @@ MonoBehaviour:
   _restabilizationThreshold: 0.01
   _impactAbsorption: 5
   _impactDurability: 5
+  _weight: 1
 --- !u!212 &212624701635964486
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -139,7 +140,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4767bdcdf12fe1c4588cb2adf0f34c19, type: 3}
-  m_Color: {r: 0.8897059, g: 0.8033521, b: 0.32055578, a: 1}
+  m_Color: {r: 1, g: 0.84313726, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

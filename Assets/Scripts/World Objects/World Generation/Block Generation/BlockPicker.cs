@@ -63,7 +63,8 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
                     // Blocks which increase in count the deeper you go
                     case BlockTypes.Stone:
                     case BlockTypes.Platinum:
-                        results.Add(block, -depth);
+                        var depthRange = _blockRanges[block];
+                        results.Add(block, depthRange.Max - depth);
                         break;
 
                     // Blocks which are most dense near the center of 
@@ -71,9 +72,9 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
                     case BlockTypes.Copper:
                     case BlockTypes.Silver:
                     case BlockTypes.Gold:
-                        var range = _blockRanges[block];
-                        var maxSize = range.Size;
-                        var distance = range.DistanceFromCenter(depth);
+                        var targetRange = _blockRanges[block];
+                        var maxSize = targetRange.Size;
+                        var distance = targetRange.DistanceFromCenter(depth);
                         results.Add(block, maxSize - distance);
                         break;
                 }
