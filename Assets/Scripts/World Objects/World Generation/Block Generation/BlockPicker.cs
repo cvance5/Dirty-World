@@ -26,7 +26,7 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
             var blockCounts = GetBlockCountsByDepth(blocksAvailableAtDepth, cBuilder.Depth);
             var modifiedBlockCounts = ApplyBlockScarcity(blockCounts);
 
-            return blockCounts;
+            return modifiedBlockCounts;
         }
 
         private static List<BlockTypes> GetBlocksAtDepth(int depth)
@@ -89,8 +89,8 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
 
             foreach (var blockType in blockCounts.Keys)
             {
-                float scarcity = 1;
-                _blockScarcities.TryGetValue(blockType, out scarcity);
+                float scarcity;
+                if (!_blockScarcities.TryGetValue(blockType, out scarcity)) scarcity = 1;
                 modifiedBlockCounts[blockType] = (int)(blockCounts[blockType] * scarcity);
             }
 
