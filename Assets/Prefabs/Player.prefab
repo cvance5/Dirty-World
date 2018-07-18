@@ -39,7 +39,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4004712278230928}
-  - component: {fileID: 114145164831314864}
+  - component: {fileID: 114058492963332348}
   - component: {fileID: 120935657492406058}
   m_Layer: 8
   m_Name: Gun
@@ -120,7 +120,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.2, y: 0.2}
   m_EdgeRadius: 0
---- !u!114 &114145164831314864
+--- !u!114 &114058492963332348
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -128,12 +128,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1633904804685256}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f035eae1fde45448a41db192ec6f92e, type: 3}
+  m_Script: {fileID: 11500000, guid: 2eaf8ccc1906ac84188e004db49a8c6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Range: 4
-  Damage: 50
-  Force: 100
+  Range: 0
+  Damage: 0
+  Force: 0
 --- !u!114 &114237843733034080
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -167,7 +167,7 @@ MonoBehaviour:
   _minScroll: 0
   _maxScroll: 10
   _scrollSensitivity: 1.5
-  Gun: {fileID: 114145164831314864}
+  Gun: {fileID: 0}
 --- !u!120 &120935657492406058
 LineRenderer:
   m_ObjectHideFlags: 1

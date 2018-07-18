@@ -2,18 +2,20 @@
 
 namespace Actors.Player
 {
-    public class Gun : MonoBehaviour
+    public abstract class Gun : MonoBehaviour
     {
-        public float Range;
-        public int Damage;
-        public int Force;
+        [SerializeField]
+        protected float _range;
+        [SerializeField]
+        protected int _damage;
+        [SerializeField]
+        protected int _force;
 
-        private ContactFilter2D _filter;
-        private RaycastHit2D[] _hits = new RaycastHit2D[1];
+        protected ContactFilter2D _filter;
 
-        private LineRenderer _bulletRenderer;
+        protected RaycastHit2D[] _hits = new RaycastHit2D[1];
 
-        private void Awake()
+        protected void Awake()
         {
             _filter = new ContactFilter2D();
             _filter.SetLayerMask(new LayerMask()
@@ -22,41 +24,11 @@ namespace Actors.Player
                       | LayerMask.GetMask("Enemy")
             });
 
-            _bulletRenderer = GetComponent<LineRenderer>();
-            _bulletRenderer.enabled = false;
+            OnAwake();
         }
 
-        public void Fire()
-        {
-            var targetVector = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position);
-            targetVector.z = 0;
-            targetVector = targetVector.normalized;
+        protected abstract void OnAwake();
 
-            if (Physics2D.Raycast(transform.position, targetVector, _filter, _hits, Range) == 0)
-            {
-                LineToTarget(transform.position + (targetVector * Range));
-                return;
-            }
-
-            if (_hits[0].collider != null)
-            {
-                var hittable = (IHittable)_hits[0].collider.GetComponent(typeof(IHittable));
-
-                if (hittable != null)
-                {
-                    hittable.Hit(Damage, Force);
-                }
-
-                LineToTarget(_hits[0].point);
-            }
-        }
-
-        private void LineToTarget(Vector3 target)
-        {
-            _bulletRenderer.SetPosition(0, transform.position);
-            _bulletRenderer.SetPosition(1, target);
-            _bulletRenderer.enabled = true;
-            Timekeeper.SetTimer(.1f, () => _bulletRenderer.enabled = false);
-        }
+        public abstract void Fire();
     }
 }
