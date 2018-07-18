@@ -13,6 +13,12 @@ namespace Actors.Player
         private float _maximumSpeed = 20f;
 
         [SerializeField]
+        private float _jumpForce = 10f;
+
+        [SerializeField]
+        private float _airborneMotionTolerance = 1f;
+
+        [SerializeField]
         private float _minZoom = 5f;
         [SerializeField]
         private float _maxZoom = 10f;
@@ -30,29 +36,71 @@ namespace Actors.Player
         private Rigidbody2D _rigidbody;
         private PlayerData _data;
 
+        private PlayerState State;
+
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
             _data = GetComponent<PlayerData>();
+
+            StateUpdate();
         }
 
         private void Update()
         {
+            StateUpdate();
+
+            HorizontalMovementUpdate();
+
+            JumpUpdate();
+
+            FireUpdate();
+
+            CameraUpdate();
+        }
+
+        private void StateUpdate()
+        {
+            if (Mathf.Abs(_rigidbody.velocity.y) > _airborneMotionTolerance)
+            {
+                State = PlayerState.Airborne;
+            }
+            else State = PlayerState.Grounded;
+        }
+
+        private void HorizontalMovementUpdate()
+        {
             Vector2 movementVector = new Vector2()
             {
                 x = Input.GetAxis("Horizontal"),
-                y = Input.GetAxis("Vertical")
             };
 
             if (movementVector.x != 0) Orient(movementVector.x);
 
             AddForce(movementVector * _movementSpeed * Time.deltaTime);
+        }
 
+        private void JumpUpdate()
+        {
+            if (State == PlayerState.Grounded)
+            {
+                if (Input.GetButtonDown("Jump"))
+                {
+                    AddImpulse(Vector2.up * _jumpForce);
+                }
+            }
+        }
+
+        private void FireUpdate()
+        {
             if (Input.GetButtonDown("Fire"))
             {
                 Gun.Fire();
             }
+        }
 
+        private void CameraUpdate()
+        {
             _scrollZoom -= (Input.GetAxis("Scroll") * _scrollSensitivity);
             _scrollZoom = Mathf.Clamp(_scrollZoom, _minScroll, _maxScroll);
         }
@@ -91,6 +139,11 @@ namespace Actors.Player
             }
 
             _rigidbody.velocity = currentForce;
+        }
+
+        private void AddImpulse(Vector2 impulse)
+        {
+            _rigidbody.velocity += impulse;
         }
 
         private void Orient(float orientDirction)

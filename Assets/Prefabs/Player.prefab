@@ -87,13 +87,13 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 2
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 5
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!61 &61437638054683924
 BoxCollider2D:
@@ -158,8 +158,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c47f5d1e779d2a641a452e7d11e26a52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movementSpeed: 20
-  _maximumSpeed: 20
+  _movementSpeed: 50
+  _maximumSpeed: 80
+  _jumpForce: 17
+  _airborneMotionTolerance: 1
   _minZoom: 5
   _maxZoom: 10
   _minScroll: 0

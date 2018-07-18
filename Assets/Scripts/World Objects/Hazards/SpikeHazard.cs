@@ -6,7 +6,10 @@ namespace WorldObjects.Hazards
     {
         public override IntVector2 AnchoringPosition => new IntVector2(GetPosition() - transform.up);
 
-        public int GetDamage() => 25;
+        [SerializeField]
+        private int _damage = 25;
+        public int GetDamage() => _damage;
+
         public Vector2 GetImpulse(Vector2 velocity) => -velocity * .75f;
 
         protected override void InitializeEffects() => Effects = new HazardEffects[] { HazardEffects.Damage, HazardEffects.Impulse };
