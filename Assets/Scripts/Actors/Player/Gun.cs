@@ -30,5 +30,6 @@ namespace Actors.Player
         protected abstract void OnAwake();
 
         public abstract void Fire();
+        public abstract void AlternateFire();
     }
 }

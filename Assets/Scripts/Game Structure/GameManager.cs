@@ -19,7 +19,7 @@ public class GameManager : Singleton<GameManager>
     {
         foreach (var dir in Directions.Compass)
         {
-            var position = World.GetChunkPosition(newData.Chunk.GetPosition(), dir);
+            var position = World.GetChunkPosition(new IntVector2(newData.Chunk.transform.position), dir);
 
             if (World.GetChunkAtPosition(position) == null)
             {

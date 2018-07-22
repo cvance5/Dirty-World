@@ -2,11 +2,11 @@
 {
     public class CopperBlock : Block
     {
-        public override string GetObjectName() => $"Copper {GetPosition()}";
+        public override string ObjectName => $"Copper {Position}";
 
         protected override void DropItem()
         {
-            ItemLoader.CreateItem(ItemType.CopperPiece, GetPosition());
+            ItemLoader.CreateItem(ItemType.CopperPiece, Position);
         }
     }
 }

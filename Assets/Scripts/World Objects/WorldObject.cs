@@ -4,9 +4,29 @@ namespace WorldObjects
 {
     public abstract class WorldObject : MonoBehaviour, ITrackable
     {
-        public abstract string GetObjectName();
-        public IntVector2 GetPosition() => new IntVector2(transform.position);
+        public SmartEvent<WorldObject> OnWorldObjectDestroyed = new SmartEvent<WorldObject>();
 
-        public override string ToString() => GetObjectName();
+        public IntVector2 Position => new IntVector2(transform.position);
+
+        public abstract string ObjectName { get; }
+        public override string ToString() => ObjectName;
+
+        private static bool _isQuitting = false;
+
+        protected void OnDestroy()
+        {
+            if(!_isQuitting)
+            {
+                OnWorldObjectDestroyed.Raise(this);
+                OnDestroyed();
+            }
+        }
+
+        protected abstract void OnDestroyed();
+
+        private void OnApplicationQuit()
+        {
+            _isQuitting = true;
+        }
     }
 }

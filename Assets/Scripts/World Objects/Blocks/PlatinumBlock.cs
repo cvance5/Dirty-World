@@ -2,11 +2,11 @@
 {
     public class PlatinumBlock : Block
     {
-        public override string GetObjectName() => $"Platinum {GetPosition()}";
+        public override string ObjectName => $"Platinum {Position}";
 
         protected override void DropItem()
         {
-            ItemLoader.CreateItem(ItemType.PlatinumPiece, GetPosition());
+            ItemLoader.CreateItem(ItemType.PlatinumPiece, Position);
         }
     }
 }

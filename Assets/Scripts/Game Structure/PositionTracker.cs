@@ -19,7 +19,7 @@ public class PositionTracker : Singleton<PositionTracker>
     {
         if (!_trackedTargets.ContainsKey(target))
         {
-            var position = target.GetPosition();
+            var position = target.Position;
 
             var chunk = World.GetContainingChunk(position);
             var space = chunk.GetSpaceForPosition(position);
@@ -90,7 +90,7 @@ public class PositionTracker : Singleton<PositionTracker>
             foreach (var trackedTarget in _trackedTargets.ToList())
             {
                 var target = trackedTarget.Key;
-                var position = target.GetPosition();
+                var position = target.Position;
                 var newPositionData = new PositionData();
                 var oldPositionData = trackedTarget.Value;
 

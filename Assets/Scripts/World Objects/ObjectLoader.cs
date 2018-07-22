@@ -34,7 +34,7 @@ namespace WorldObjects.WorldGeneration
             blockObject.transform.position = worldPosition;
 
             var block = blockObject.GetComponent<Block>();
-            blockObject.name = block.GetObjectName();
+            blockObject.name = block.ObjectName;
 
             _log.ErrorIfNull(block, $"Block of type {type} has not been given a 'block' component.");
 

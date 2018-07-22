@@ -4,11 +4,11 @@ namespace WorldObjects.Hazards
 {
     public class SpikeHazard : Hazard, IDamaging, IImpulsive
     {
-        public override IntVector2 AnchoringPosition => new IntVector2(GetPosition() - transform.up);
+        public override IntVector2 AnchoringPosition => new IntVector2(Position - transform.up);
 
         [SerializeField]
         private int _damage = 25;
-        public int GetDamage() => _damage;
+        public int Damage => _damage;
 
         public Vector2 GetImpulse(Vector2 velocity) => -velocity * .75f;
 
@@ -18,8 +18,8 @@ namespace WorldObjects.Hazards
         {
             if (anchor != null)
             {
-                anchor.OnCrumbled += OnAnchorRemoved;
-                anchor.OnDestroyed += OnAnchorRemoved;
+                anchor.OnBlockCrumbled += OnAnchorRemoved;
+                anchor.OnBlockDestroyed += OnAnchorRemoved;
             }
             else
             {
@@ -29,13 +29,15 @@ namespace WorldObjects.Hazards
 
         private void OnAnchorRemoved(Block anchor)
         {
-            anchor.OnCrumbled -= OnAnchorRemoved;
-            anchor.OnDestroyed -= OnAnchorRemoved;
+            anchor.OnBlockCrumbled -= OnAnchorRemoved;
+            anchor.OnBlockDestroyed -= OnAnchorRemoved;
 
             OnHazardDestroyed.Raise(this);
             Destroy(gameObject);
         }
 
-        public override string GetObjectName() => $"Spike {GetPosition()}";
+        public override string ObjectName => $"Spike {Position}";
+
+        protected override void OnDestroyed() { }
     }
 }

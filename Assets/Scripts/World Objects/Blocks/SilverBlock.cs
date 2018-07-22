@@ -2,11 +2,11 @@
 {
     public class SilverBlock : Block
     {
-        public override string GetObjectName() => $"Silver {GetPosition()}";
+        public override string ObjectName => $"Silver {Position}";
 
         protected override void DropItem()
         {
-            ItemLoader.CreateItem(ItemType.SilverPiece, GetPosition());
+            ItemLoader.CreateItem(ItemType.SilverPiece, Position);
         }
     }
 }

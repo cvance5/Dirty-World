@@ -1,4 +1,4 @@
 ﻿public interface IDamaging
 {
-    int GetDamage();
+    int Damage { get; }
 }

@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class Timekeeper : Singleton<Timekeeper>
 {
-    public static void SetTimer(float delay, Action callback)
+    public static Coroutine SetTimer(float delay, Action callback)
     {
-        Instance.StartCoroutine(WaitForTimer(delay, callback));
+         return Instance.StartCoroutine(WaitForTimer(delay, callback));
     }
 
     private static IEnumerator WaitForTimer(float delay, Action callback)

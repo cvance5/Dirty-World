@@ -15,7 +15,7 @@ namespace WorldObjects
             chunk.transform.SetParent(transform);
 
             _activeChunks.Add(chunk);
-            _chunksByWorldPosition.Add(new IntVector2(chunk.transform.position), chunk);
+            _chunksByWorldPosition.Add(chunk.Position, chunk);
         }
 
         public static List<Block> GetNeighbors(Block block)
@@ -25,7 +25,7 @@ namespace WorldObjects
             foreach (var dir in Directions.Cardinals)
             {
                 Block neighbor = null;
-                var neighborPos = block.GetPosition() + dir;
+                var neighborPos = block.Position + dir;
 
                 foreach (var chunk in _activeChunks)
                 {
@@ -47,7 +47,7 @@ namespace WorldObjects
 
             foreach (var dir in Directions.Cardinals)
             {
-                var neighbor = GetNeighborOfChunk(chunk.GetPosition(), dir);
+                var neighbor = GetNeighborOfChunk(chunk.Position, dir);
                 if (neighbor != null) neighbors.Add(neighbor);
             }
 

@@ -4,7 +4,7 @@ namespace WorldObjects.Blocks
 {
     public class StoneBlock : Block
     {
-        public override string GetObjectName() => $"Stone {GetPosition()}";
+        public override string ObjectName => $"Stone {Position}";
 
         protected override IEnumerator Crumble()
         {

@@ -6,14 +6,18 @@ using UnityEngine;
 
 namespace WorldObjects
 {
-    public abstract class Block : WorldObject, IHittable
+    [RequireComponent(typeof(Collider2D))]
+    [RequireComponent(typeof(Rigidbody2D))]
+    public abstract class Block : WorldObject, IHittable, IImpulsable
     {
-        public SmartEvent<Block> OnCrumbled = new SmartEvent<Block>();
-        public SmartEvent<Block> OnDestroyed = new SmartEvent<Block>();
-        public SmartEvent<Block> OnStabilized = new SmartEvent<Block>();
+        public SmartEvent<Block> OnBlockCrumbled = new SmartEvent<Block>();
+        public SmartEvent<Block> OnBlockDestroyed = new SmartEvent<Block>();
+        public SmartEvent<Block> OnBlockStabilized = new SmartEvent<Block>();
 
         public int Health { get; protected set; } = 100;
         public int Stability { get; protected set; } = 100;
+
+        public bool CanStabalize { get; set; }
 
         [SerializeField]
         [Range(0, 1)]
@@ -43,7 +47,7 @@ namespace WorldObjects
 
         private Rigidbody2D _rigidbody;
         private Queue<float> _velocitySamples;
-        protected bool _isStable => _rigidbody.bodyType == RigidbodyType2D.Kinematic;
+        public bool IsStable => _rigidbody.bodyType == RigidbodyType2D.Kinematic;
 
         private void Awake()
         {
@@ -59,14 +63,18 @@ namespace WorldObjects
             if (Health > 0) ApplyForce(force);
         }
 
-        public void Impact(Vector2 impact)
+        public void Impulse(Vector2 impulse)
         {
-            int impactMagniture = (int)impact.magnitude;
-            if (impactMagniture > _impactDurability)
+            if (IsStable)
             {
-                int remainder = impactMagniture - _impactDurability;
-                Hit(remainder, remainder);
+                int impactMagniture = (int)impulse.magnitude;
+                if (impactMagniture > _impactDurability)
+                {
+                    int remainder = impactMagniture - _impactDurability;
+                    Hit(remainder, remainder);
+                }
             }
+            else _rigidbody.AddForce(impulse);
         }
 
         public virtual void HandleNeighborUpdate() { }
@@ -108,7 +116,7 @@ namespace WorldObjects
 
             StartCoroutine(CheckForStability());
 
-            OnCrumbled.Raise(this);
+            OnBlockCrumbled.Raise(this);
             AlertNeighbors();
         }
 
@@ -122,7 +130,7 @@ namespace WorldObjects
             Stability = 100;
             _velocitySamples = null;
 
-            OnStabilized.Raise(this);
+            OnBlockStabilized.Raise(this);
             AlertNeighbors();
         }
 
@@ -132,9 +140,9 @@ namespace WorldObjects
 
             Destroy(gameObject);
 
-            OnDestroyed.Raise(this);
+            OnBlockDestroyed.Raise(this);
 
-            if (_isStable)
+            if (IsStable)
             {
                 AlertNeighbors();
             }
@@ -146,16 +154,19 @@ namespace WorldObjects
 
             while (true)
             {
-                _velocitySamples.Enqueue(_rigidbody.velocity.magnitude);
-                if (_velocitySamples.Count > 10)
+                if (CanStabalize)
                 {
-                    _velocitySamples.Dequeue();
-
-                    if (MathUtils.Average(_velocitySamples) < _restabilizationThreshold &&
-                        IntVector2.Distance(GetPosition(), transform.position) < .02f)
+                    _velocitySamples.Enqueue(_rigidbody.velocity.magnitude);
+                    if (_velocitySamples.Count > 10)
                     {
-                        StartCoroutine(Stabilize());
-                        break;
+                        _velocitySamples.Dequeue();
+
+                        if (MathUtils.Average(_velocitySamples) < _restabilizationThreshold &&
+                                 IntVector2.Distance(Position, transform.position) < .02f)
+                        {
+                            StartCoroutine(Stabilize());
+                            break;
+                        }
                     }
                 }
 
@@ -177,22 +188,22 @@ namespace WorldObjects
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (!_isStable)
+            if (!IsStable)
             {
-                var otherObject = collision.collider.gameObject;
+                var other = collision.collider.gameObject;
                 var impactVelocity = (collision.relativeVelocity - collision.rigidbody.velocity);
 
                 var impactMagnitude = Mathf.RoundToInt(impactVelocity.magnitude);
                 int unabsorbedImpactMagnitude = impactMagnitude - _impactAbsorption;
 
-                switch (otherObject.tag)
+                switch (other.tag)
                 {
                     case Tags.Hazard:
-                        HandleHazard(otherObject.GetComponent<Hazard>());
+                        HandleHazard(other.GetComponent<Hazard>());
                         break;
                     case Tags.Enemy:
                     case Tags.Player:
-                        HandleActor(otherObject.GetComponent<ActorData>(), unabsorbedImpactMagnitude);
+                        HandleActor(other.GetComponent<ActorData>(), unabsorbedImpactMagnitude);
                         break;
                 }
 
@@ -200,13 +211,12 @@ namespace WorldObjects
                 {
                     var unabsorbedImpact = collision.relativeVelocity.normalized * unabsorbedImpactMagnitude;
 
-                    Impact(unabsorbedImpact);
+                    Impulse(unabsorbedImpact);
 
-                    var otherHittable = otherObject.GetComponent(typeof(IHittable)) as IHittable;
-
-                    if (otherHittable != null)
+                    var otherImpulsable = other.GetComponent<IImpulsable>();
+                    if (otherImpulsable != null)
                     {
-                        otherHittable.Impact(unabsorbedImpact * _weight);
+                        otherImpulsable.Impulse(unabsorbedImpact * _weight);
                     }
                 }
             }
@@ -223,7 +233,7 @@ namespace WorldObjects
                     case HazardEffects.Damage:
                         var damagingHazard = hazard as IDamaging;
                         _log.ErrorIfNull(damagingHazard, $"{hazard} has effect {effect} but does not implement {typeof(IDamaging).Name}.");
-                        ApplyDamage(damagingHazard.GetDamage());
+                        ApplyDamage(damagingHazard.Damage);
                         break;
                     case HazardEffects.Impulse:
                         var knockbackHazard = hazard as IImpulsive;
@@ -240,20 +250,10 @@ namespace WorldObjects
             actorData.ApplyDamage(impactMagnitude);
         }
 
-        private void OnDestroy()
+        protected override void OnDestroyed()
         {
-            if (!_isQuitting)
-            {
-                DropItem();
-            }
+            DropItem();
         }
-
-        private void OnApplicationQuit()
-        {
-            _isQuitting = true;
-        }
-
-        private static bool _isQuitting = false;
 
         protected static readonly Log _log = new Log("Block");
     }
