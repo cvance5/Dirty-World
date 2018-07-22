@@ -127,6 +127,7 @@ namespace WorldObjects
             transform.SnapToGrid();
 
             _rigidbody.bodyType = RigidbodyType2D.Kinematic;
+            _rigidbody.velocity = Vector2.zero;
             Stability = 100;
             _velocitySamples = null;
 
