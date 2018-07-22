@@ -68,14 +68,12 @@ namespace WorldObjects
         {
             if (IsStable)
             {
-                int impactMagniture = (int)impulse.magnitude;
-                if (impactMagniture > _impactDurability)
-                {
-                    int remainder = impactMagniture - _impactDurability;
-                    Hit(remainder, remainder);
-                }
+                ApplyImpact(impulse);
             }
-            else _rigidbody.AddForce(impulse);
+            else
+            {
+                StartCoroutine(TryApplyImpulse(transform.position, impulse));
+            }
         }
 
         public virtual void HandleNeighborUpdate() { }
@@ -173,6 +171,30 @@ namespace WorldObjects
                 }
 
                 yield return waitForFixedUpdate;
+            }
+        }
+
+        private IEnumerator TryApplyImpulse(Vector2 initialPosition, Vector2 impulse)
+        {
+            _rigidbody.AddForce(impulse);
+
+            var wffu = new WaitForFixedUpdate();
+
+            yield return wffu;
+
+            if (_rigidbody.velocity.magnitude < .1f)
+            {
+                ApplyImpact(impulse);
+            }
+        }
+
+        private void ApplyImpact(Vector2 impactVector)
+        {
+            int impactMagniture = (int)impactVector.magnitude;
+            if (impactMagniture > _impactDurability)
+            {
+                int remainder = impactMagniture - _impactDurability;
+                Hit(remainder, remainder);
             }
         }
 
