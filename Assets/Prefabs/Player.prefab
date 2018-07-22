@@ -195,7 +195,7 @@ MonoBehaviour:
   _range: 10
   _damage: 10
   _force: 50
-  _minLength: 3
+  _minLength: 1
   _maxLength: 10
   _pullForce: 25
   _selfPullRatio: 0.5
