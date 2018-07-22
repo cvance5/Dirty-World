@@ -54,6 +54,7 @@ namespace WorldObjects
             _rigidbody = GetComponent<Rigidbody2D>();
             _sprite = GetComponent<SpriteRenderer>();
             _baseColor = _sprite.color;
+            _rigidbody.mass = .2f; // Only matters when destabilized
         }
 
         public void Hit(int damage, int force)
