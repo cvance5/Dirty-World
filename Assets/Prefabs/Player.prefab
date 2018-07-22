@@ -45,7 +45,6 @@ GameObject:
   - component: {fileID: 212343200990117794}
   - component: {fileID: 61437638054683924}
   - component: {fileID: 50120577649415964}
-  - component: {fileID: 232031122462887514}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -193,14 +192,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _range: 10
-  _damage: 0
-  _force: 0
+  _damage: 10
+  _force: 50
   _minLength: 3
   _maxLength: 10
   _pullForce: 25
   _selfPullRatio: 0.5
+  _climbSpeed: 5
   _playerMovement: {fileID: 114742374633751546}
-  _joint: {fileID: 232031122462887514}
 --- !u!114 &114237843733034080
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -225,8 +224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f082d1ffc8b3b547b5cafac58f9c7e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _climbSpeed: 15
-  _harpoonGun: {fileID: 114058492963332348}
+  _primary: {fileID: 114058492963332348}
 --- !u!114 &114314006859040562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -432,21 +430,3 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
---- !u!232 &232031122462887514
-DistanceJoint2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1354266971631064}
-  m_Enabled: 1
-  serializedVersion: 4
-  m_EnableCollision: 0
-  m_ConnectedRigidBody: {fileID: 0}
-  m_BreakForce: Infinity
-  m_BreakTorque: Infinity
-  m_AutoConfigureConnectedAnchor: 0
-  m_Anchor: {x: 0, y: 0}
-  m_ConnectedAnchor: {x: 0, y: 0}
-  m_AutoConfigureDistance: 0
-  m_Distance: 1
-  m_MaxDistanceOnly: 1
