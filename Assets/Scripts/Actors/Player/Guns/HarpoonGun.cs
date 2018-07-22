@@ -38,6 +38,7 @@ namespace Actors.Player.Guns
 
             _joint = _playerMovement.gameObject.AddComponent<DistanceJoint2D>();
             _joint.maxDistanceOnly = true;
+            _joint.enableCollision = true;
             _joint.enabled = false;
         }
 
