@@ -21,13 +21,14 @@ namespace Actors.Player.Guns
         private float _selfPullRatio = .5f;
 
         [SerializeField]
-        private PlayerMovement _playerMovement = null;
+        private float _climbSpeed = 0;
+
         [SerializeField]
-        private DistanceJoint2D _joint = null;
+        private PlayerMovement _playerMovement = null;
 #pragma warning restore IDE0044 // Add readonly modifier
 
-
         private LineRenderer _renderer;
+        private DistanceJoint2D _joint;
         private WorldObject _attachedObject;
 
         protected override void OnAwake()
@@ -35,7 +36,22 @@ namespace Actors.Player.Guns
             _renderer = GetComponent<LineRenderer>();
             _renderer.enabled = false;
 
+            _joint = _playerMovement.gameObject.AddComponent<DistanceJoint2D>();
+            _joint.maxDistanceOnly = true;
             _joint.enabled = false;
+        }
+
+        private void Update()
+        {
+            if (IsAttached)
+            {
+                var ropeLengthChange = Input.GetAxis("Vertical");
+
+                if (ropeLengthChange != 0)
+                {
+                    ChangeLength(ropeLengthChange * _climbSpeed * Time.deltaTime);
+                }
+            }
         }
 
         public override void Fire()

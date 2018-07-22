@@ -130,7 +130,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &61176238624886260
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -195,9 +195,11 @@ MonoBehaviour:
   _range: 10
   _damage: 0
   _force: 0
+  _minLength: 3
+  _maxLength: 10
   _pullForce: 25
   _selfPullRatio: 0.5
-  _playerController: {fileID: 0}
+  _playerMovement: {fileID: 114742374633751546}
   _joint: {fileID: 232031122462887514}
 --- !u!114 &114237843733034080
 MonoBehaviour:
@@ -223,6 +225,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f082d1ffc8b3b547b5cafac58f9c7e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _climbSpeed: 15
   _harpoonGun: {fileID: 114058492963332348}
 --- !u!114 &114314006859040562
 MonoBehaviour:
@@ -277,8 +280,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _movementSpeed: 40
   _maximumSpeed: 80
-  _jumpForce: 10
-  _airborneMotionTolerance: 1
+  _jumpForce: 15
   _feet: {fileID: 114564596125641662}
 --- !u!114 &114955982425071790
 MonoBehaviour:
