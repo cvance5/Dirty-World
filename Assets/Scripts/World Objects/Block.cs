@@ -192,9 +192,8 @@ namespace WorldObjects
             if (!IsStable)
             {
                 var other = collision.collider.gameObject;
-                var impactVelocity = (collision.relativeVelocity - collision.rigidbody.velocity);
 
-                var impactMagnitude = Mathf.RoundToInt(impactVelocity.magnitude);
+                var impactMagnitude = Mathf.RoundToInt(collision.relativeVelocity.magnitude);
                 int unabsorbedImpactMagnitude = impactMagnitude - _impactAbsorption;
 
                 switch (other.tag)
