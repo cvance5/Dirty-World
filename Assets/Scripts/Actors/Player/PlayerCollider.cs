@@ -5,8 +5,6 @@ using WorldObjects;
 
 namespace Actors.Player
 {
-    [RequireComponent(typeof(Rigidbody2D))]
-    [RequireComponent(typeof(Collider2D))]
     public class PlayerCollider : MonoBehaviour
     {
         [SerializeField]
@@ -17,6 +15,17 @@ namespace Actors.Player
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
+        }
+
+        private void OnCollisionEnter2D(Collision2D collision)
+        {
+            var tag = collision.gameObject.tag;
+
+            switch (tag)
+            {
+                case Tags.Item: HandleItem(collision.gameObject.GetComponent<Item>()); break;
+                case Tags.Hazard: HandleHazard(collision.gameObject.GetComponent<Hazard>()); break;
+            }
         }
 
         private void OnTriggerEnter2D(Collider2D other)

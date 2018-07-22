@@ -20,12 +20,10 @@ namespace Actors.Player
 
         private PlayerState _state;
         private Rigidbody2D _rigidbody;
-        private PlayerData _data;
 
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
-            _data = GetComponent<PlayerData>();
 
             _feet.OnFootTouch += OnLand;
             _feet.OnFootLeave += OnAirborne;
@@ -45,6 +43,7 @@ namespace Actors.Player
             };
 
             AddForce(movementVector * _movementSpeed * Time.deltaTime);
+            
         }
 
         private void JumpUpdate()
