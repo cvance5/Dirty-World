@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using Newtonsoft.Json;
+using UnityEngine;
 
 public class IntVector2
 {
     public int X { get; set; }
     public int Y { get; set; }
 
+    [JsonConstructor]
     public IntVector2(int x, int y)
     {
         X = x;
