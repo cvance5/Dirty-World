@@ -1,38 +1,41 @@
-﻿namespace WorldObjects.Spaces
+﻿using WorldObjects.Blocks;
+using WorldObjects.Hazards;
+
+namespace WorldObjects.Spaces
 {
     public class Corridor : Space
     {
-        private bool _isHazardous;
+        private readonly bool _isHazardous;
         public override bool IsHazardous => _isHazardous;
 
-        private IntVector2 _bottomLeftCorner;
-        private IntVector2 _topRightCorner;
+        public IntVector2 BottomLeftCorner { get; }
+        public IntVector2 TopRightCorner { get; }
 
-        private int _spikeY;
+        private readonly int _spikeY;
 
         public Corridor(IntVector2 bottomLeftCorner, IntVector2 topRightCorner, bool isHazardous)
         {
-            _bottomLeftCorner = bottomLeftCorner;
-            _topRightCorner = topRightCorner;
+            BottomLeftCorner = bottomLeftCorner;
+            TopRightCorner = topRightCorner;
 
-            Extents.Add(_bottomLeftCorner);
-            Extents.Add(_topRightCorner);
+            Extents.Add(BottomLeftCorner);
+            Extents.Add(TopRightCorner);
 
-            Name = $"Corridor from {_bottomLeftCorner} to {_topRightCorner}.";
+            Name = $"Corridor from {BottomLeftCorner} to {TopRightCorner}.";
 
             _isHazardous = isHazardous;
 
             if (_isHazardous)
             {
-                _spikeY = _bottomLeftCorner.Y;
+                _spikeY = BottomLeftCorner.Y;
             }
         }
 
         public override bool Contains(IntVector2 position) =>
-            !(position.X < _bottomLeftCorner.X ||
-            position.Y < _bottomLeftCorner.Y ||
-            position.X > _topRightCorner.X ||
-            position.Y > _topRightCorner.Y);
+            !(position.X < BottomLeftCorner.X ||
+            position.Y < BottomLeftCorner.Y ||
+            position.X > TopRightCorner.X ||
+            position.Y > TopRightCorner.Y);
 
         public override BlockTypes GetBlock(IntVector2 position) => BlockTypes.None;
         public override HazardTypes GetHazard(IntVector2 position)

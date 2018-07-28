@@ -2,7 +2,7 @@
 
 namespace WorldObjects
 {
-    public class World : Singleton<World>
+    public static class World
     {
         public static int SurfaceDepth => GameManager.Instance.Settings.SurfaceDepth;
         public static int ChunkSize => GameManager.Instance.Settings.ChunkSize;
@@ -10,10 +10,8 @@ namespace WorldObjects
         private static List<Chunk> _activeChunks = new List<Chunk>();
         private static Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
 
-        public void Register(Chunk chunk)
+        public static void Register(Chunk chunk)
         {
-            chunk.transform.SetParent(transform);
-
             _activeChunks.Add(chunk);
             _chunksByWorldPosition.Add(chunk.Position, chunk);
         }
@@ -81,5 +79,11 @@ namespace WorldObjects
 
         public static IntVector2 GetChunkPosition(IntVector2 chunkPosition, IntVector2 direction) =>
             chunkPosition + new IntVector2(direction.X * ChunkSize, direction.Y * ChunkSize);
+
+        public static void Clear()
+        {
+            _activeChunks.Clear();
+            _chunksByWorldPosition.Clear();
+        }
     }
 }

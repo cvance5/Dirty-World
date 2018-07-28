@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Data.Saving;
+using System.Collections.Generic;
 using UnityEngine;
+using WorldObjects.Blocks;
 using WorldObjects.WorldGeneration.BlockGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 
@@ -34,7 +36,7 @@ namespace WorldObjects.WorldGeneration
             cBuilder.AddSpace(sBuilder)
                     .AddSpace(sBuilder2);
 
-            World.Instance.Register(cBuilder.Build());
+            RegisterNewChunk(cBuilder.Build());
 
             foreach (var dir in Directions.Compass)
             {
@@ -53,9 +55,15 @@ namespace WorldObjects.WorldGeneration
                     .AddBlocks(blocks)
                     .SetFill(GetFill(cBuilder.Depth));
 
-            World.Instance.Register(cBuilder.Build());
+            RegisterNewChunk(cBuilder.Build());
         }
-        
+
+        private static void RegisterNewChunk(Chunk chunk)
+        {
+            World.Register(chunk);
+            GameSave.TrackChunk(chunk);
+        }
+
         private static BlockTypes GetFill(int depth)
         {
             foreach (var fillRange in _fillRanges)

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using WorldObjects.Blocks;
 
 namespace WorldObjects.WorldGeneration.BlockGeneration
 {

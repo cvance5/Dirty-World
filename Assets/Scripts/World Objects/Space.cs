@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using WorldObjects.Blocks;
+using WorldObjects.Hazards;
 
 namespace WorldObjects
 {

@@ -1,34 +1,37 @@
-﻿namespace WorldObjects.Spaces
+﻿using WorldObjects.Blocks;
+using WorldObjects.Hazards;
+
+namespace WorldObjects.Spaces
 {
     public class Shaft : Space
     {
         public override bool IsHazardous => false;
 
-        private IntVector2 _bottomLeftCorner;
-        private IntVector2 _topRightCorner;
+        public IntVector2 BottomLeftCorner { get; }
+        public IntVector2 TopRightCorner { get; }
 
         public Shaft(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {
-            _bottomLeftCorner = bottomLeftCorner;
-            _topRightCorner = topRightCorner;
+            BottomLeftCorner = bottomLeftCorner;
+            TopRightCorner = topRightCorner;
 
-            Extents.Add(_bottomLeftCorner);
-            Extents.Add(_topRightCorner);
+            Extents.Add(BottomLeftCorner);
+            Extents.Add(TopRightCorner);
 
-            Name = $"Shaft from {_bottomLeftCorner} to {_topRightCorner}.";
+            Name = $"Shaft from {BottomLeftCorner} to {TopRightCorner}.";
         }
 
         public override bool Contains(IntVector2 position) =>
-            !(position.X < _bottomLeftCorner.X ||
-            position.Y < _bottomLeftCorner.Y ||
-            position.X > _topRightCorner.X ||
-            position.Y > _topRightCorner.Y);
+            !(position.X < BottomLeftCorner.X ||
+            position.Y < BottomLeftCorner.Y ||
+            position.X > TopRightCorner.X ||
+            position.Y > TopRightCorner.Y);
 
         public override BlockTypes GetBlock(IntVector2 position)
         {
             BlockTypes block = BlockTypes.None;
 
-            if (position.Y == _topRightCorner.Y)
+            if (position.Y == TopRightCorner.Y)
             {
                 if (Chance.CoinFlip)
                 {

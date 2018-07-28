@@ -6,11 +6,16 @@ namespace WorldObjects
 {
     public class Chunk : MonoBehaviour, IBoundary, ITrackable
     {
-        public IntVector2 Position => new IntVector2(transform.position);
+        public SmartEvent<Chunk> OnChunkChanged = new SmartEvent<Chunk>();
 
-        private List<Space> _spaces = new List<Space>();
-        private List<Hazard> _hazards = new List<Hazard>();
-        private Dictionary<IntVector2, Block> _blockMap = new Dictionary<IntVector2, Block>();
+        public IntVector2 Position => new IntVector2(transform.position);
+        public IntVector2 BottomLeftCorner { get; private set; }
+        public IntVector2 TopRightCorner { get; private set; }
+
+        public List<Space> Spaces { get; private set; } = new List<Space>();
+        public List<Hazard> Hazards { get; private set; } = new List<Hazard>();
+        public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
+
         private Dictionary<IntVector2, List<Space>> _spacesOverlappingEdges = new Dictionary<IntVector2, List<Space>>()
         {
             { Vector2.up, new List<Space>() },
@@ -19,18 +24,15 @@ namespace WorldObjects
             { Vector2.left, new List<Space>() }
         };
 
-        private IntVector2 _bottomLeftCorner;
-        private IntVector2 _topRightCorner;
-
         public void AssignExtents(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {
-            _bottomLeftCorner = bottomLeftCorner;
-            _topRightCorner = topRightCorner;
+            BottomLeftCorner = bottomLeftCorner;
+            TopRightCorner = topRightCorner;
         }
 
         public void Register(Block block)
         {
-            _blockMap[block.Position] = block;
+            BlockMap[block.Position] = block;
             block.transform.SetParent(transform, true);
 
             block.OnBlockDestroyed += OnBlockDestroyed;
@@ -45,7 +47,7 @@ namespace WorldObjects
             if (anchorPos != null)
             {
                 Block anchor = null;
-                _blockMap.TryGetValue(anchorPos, out anchor);
+                BlockMap.TryGetValue(anchorPos, out anchor);
                 hazard.SetAnchor(anchor);
             }
 
@@ -53,7 +55,7 @@ namespace WorldObjects
             // anchoring situation.
             if (hazard != null)
             {
-                _hazards.Add(hazard);
+                Hazards.Add(hazard);
                 hazard.transform.SetParent(transform, true);
                 hazard.OnHazardDestroyed += OnHazardRemoved;
             }
@@ -61,7 +63,7 @@ namespace WorldObjects
 
         public void Register(Space space)
         {
-            _spaces.Add(space);
+            Spaces.Add(space);
 
             List<IntVector2> edgesReached = new List<IntVector2>();
 
@@ -69,10 +71,10 @@ namespace WorldObjects
             {
                 if (!Contains(extentPoint))
                 {
-                    if (extentPoint.X < _bottomLeftCorner.X) edgesReached.Add(Vector2.left);
-                    if (extentPoint.Y < _bottomLeftCorner.Y) edgesReached.Add(Vector2.down);
-                    if (extentPoint.X > _bottomLeftCorner.X) edgesReached.Add(Vector2.right);
-                    if (extentPoint.Y > _bottomLeftCorner.Y) edgesReached.Add(Vector2.up);
+                    if (extentPoint.X < BottomLeftCorner.X) edgesReached.Add(Vector2.left);
+                    if (extentPoint.Y < BottomLeftCorner.Y) edgesReached.Add(Vector2.down);
+                    if (extentPoint.X > BottomLeftCorner.X) edgesReached.Add(Vector2.right);
+                    if (extentPoint.Y > BottomLeftCorner.Y) edgesReached.Add(Vector2.up);
                 }
 
                 // We are already overlapping all edges with 
@@ -92,7 +94,7 @@ namespace WorldObjects
         public Block GetBlockForPosition(IntVector2 position)
         {
             Block block = null;
-            _blockMap.TryGetValue(position, out block);
+            BlockMap.TryGetValue(position, out block);
             return block;
         }
 
@@ -100,7 +102,7 @@ namespace WorldObjects
         {
             if (!Contains(position)) throw new ArgumentOutOfRangeException($"Chunk does not contains {position}.");
 
-            foreach (var space in _spaces)
+            foreach (var space in Spaces)
             {
                 if (space.Contains(position)) return space;
             }
@@ -110,47 +112,55 @@ namespace WorldObjects
         public List<Space> GetSpacesReachingEdge(IntVector2 edge) => _spacesOverlappingEdges[edge];
 
         public bool Contains(IntVector2 position) =>
-            position.X >= _bottomLeftCorner.X &&
-            position.Y >= _bottomLeftCorner.Y &&
-            position.X <= _topRightCorner.X &&
-            position.Y <= _topRightCorner.Y;
+            position.X >= BottomLeftCorner.X &&
+            position.Y >= BottomLeftCorner.Y &&
+            position.X <= TopRightCorner.X &&
+            position.Y <= TopRightCorner.Y;
 
         private void OnBlockDestroyed(Block block)
         {
             block.OnBlockCrumbled -= OnBlockCrumbled;
             block.OnBlockDestroyed -= OnBlockDestroyed;
 
-            if (!_blockMap.Remove(block.Position)) _log.Info($"Attempted to destroy block, but could not find it at {block.Position}.");
+            if (!BlockMap.Remove(block.Position)) _log.Info($"Attempted to destroy block, but could not find it at {block.Position}.");
             else _log.Info($"Block destroyed at {block.Position}.");
+
+            OnChunkChanged.Raise(this);
         }
 
         private void OnBlockCrumbled(Block block)
         {
-            if (!_blockMap.Remove(block.Position)) throw new Exception($"Attempted to crumble block, but could not find it at {block.Position}.");
+            if (!BlockMap.Remove(block.Position)) throw new Exception($"Attempted to crumble block, but could not find it at {block.Position}.");
             else _log.Info($"Block crumbled at {block.Position}.");
+
+            OnChunkChanged.Raise(this);
         }
 
         private void OnBlockStabilized(Block block)
         {
-            if (_blockMap.ContainsKey(block.Position)) throw new Exception($"Attempted to add block, but one already exists at {block.Position}!");
+            if (BlockMap.ContainsKey(block.Position)) throw new Exception($"Attempted to add block, but one already exists at {block.Position}!");
             else
             {
-                _blockMap[block.Position] = block;
+                BlockMap[block.Position] = block;
             }
 
             _log.Info($"Block stabilized at {block.Position}.");
+
+            OnChunkChanged.Raise(this);
         }
 
         private void OnHazardRemoved(Hazard hazard)
         {
-            if (_hazards.Contains(hazard))
+            if (Hazards.Contains(hazard))
             {
-                _hazards.Remove(hazard);
+                Hazards.Remove(hazard);
                 _log.Info($"Hazard {hazard} has been removed.");
             }
             else throw new Exception($"Attempted to remove hazard {hazard} but it could not be found!");
 
             hazard.OnHazardDestroyed -= OnHazardRemoved;
+
+            OnChunkChanged.Raise(this);
         }
 
         public override bool Equals(object obj)
@@ -158,22 +168,22 @@ namespace WorldObjects
             var chunk = obj as Chunk;
             return chunk != null &&
                    base.Equals(obj) &&
-                   EqualityComparer<List<Space>>.Default.Equals(_spaces, chunk._spaces) &&
-                   EqualityComparer<Dictionary<IntVector2, Block>>.Default.Equals(_blockMap, chunk._blockMap) &&
+                   EqualityComparer<List<Space>>.Default.Equals(Spaces, chunk.Spaces) &&
+                   EqualityComparer<Dictionary<IntVector2, Block>>.Default.Equals(BlockMap, chunk.BlockMap) &&
                    EqualityComparer<Dictionary<IntVector2, List<Space>>>.Default.Equals(_spacesOverlappingEdges, chunk._spacesOverlappingEdges) &&
-                   EqualityComparer<IntVector2>.Default.Equals(_bottomLeftCorner, chunk._bottomLeftCorner) &&
-                   EqualityComparer<IntVector2>.Default.Equals(_topRightCorner, chunk._topRightCorner);
+                   EqualityComparer<IntVector2>.Default.Equals(BottomLeftCorner, chunk.BottomLeftCorner) &&
+                   EqualityComparer<IntVector2>.Default.Equals(TopRightCorner, chunk.TopRightCorner);
         }
 
         public override int GetHashCode()
         {
             var hashCode = 471642533;
             hashCode = hashCode * -1521134295 + base.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<Space>>.Default.GetHashCode(_spaces);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<IntVector2, Block>>.Default.GetHashCode(_blockMap);
+            hashCode = hashCode * -1521134295 + EqualityComparer<List<Space>>.Default.GetHashCode(Spaces);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<IntVector2, Block>>.Default.GetHashCode(BlockMap);
             hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<IntVector2, List<Space>>>.Default.GetHashCode(_spacesOverlappingEdges);
-            hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(_bottomLeftCorner);
-            hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(_topRightCorner);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(BottomLeftCorner);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(TopRightCorner);
             return hashCode;
         }
 

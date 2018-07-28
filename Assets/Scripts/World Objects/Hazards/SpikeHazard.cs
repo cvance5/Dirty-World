@@ -7,7 +7,9 @@ namespace WorldObjects.Hazards
         public override IntVector2 AnchoringPosition => new IntVector2(Position - transform.up);
 
         [SerializeField]
+#pragma warning disable IDE0044 // Add readonly modifier
         private int _damage = 25;
+#pragma warning restore IDE0044 // Add readonly modifier
         public int Damage => _damage;
 
         public Vector2 GetImpulse(Vector2 velocity) => -velocity * .75f;

@@ -6,9 +6,31 @@ public class GameManager : Singleton<GameManager>
 {
     public Settings Settings;
 
+    private void Awake()
+    {
+        Object.DontDestroyOnLoad(gameObject);
+    }
+
     private void Start()
     {
-        WorldBuilder.BuildInitialChunk();
+        DataSaver.InitialLoad();
+
+        if (DataSaver.HasSavedGames)
+        {
+            DataSaver.LoadGame("Default");
+        }
+        else
+        {
+            DataSaver.CreateSaveGame("Default");
+            WorldBuilder.BuildInitialChunk();
+            DataSaver.SaveGame();
+        }
+
+        InitializePlayer();
+    }
+
+    private void InitializePlayer()
+    {
         var playerObj = Instantiate(Settings.Player, Vector2.zero, Quaternion.identity);
         var playerData = playerObj.GetComponent<Actors.Player.PlayerData>();
         PositionTracker.BeginTracking(playerData);

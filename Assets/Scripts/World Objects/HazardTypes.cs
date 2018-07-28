@@ -1,5 +1,8 @@
-﻿public enum HazardTypes
+﻿namespace WorldObjects.Hazards
 {
-    None,
-    Spike
+    public enum HazardTypes
+    {
+        None,
+        Spike
+    }
 }

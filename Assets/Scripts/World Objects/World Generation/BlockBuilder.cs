@@ -1,4 +1,6 @@
-﻿namespace WorldObjects.WorldGeneration
+﻿using WorldObjects.Blocks;
+
+namespace WorldObjects.WorldGeneration
 {
     public class BlockBuilder
     {

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using WorldObjects.Blocks;
+using WorldObjects.Hazards;
 
 namespace WorldObjects.WorldGeneration
 {
@@ -169,7 +171,7 @@ namespace WorldObjects.WorldGeneration
 
                         if (hazardType != HazardTypes.None)
                         {
-                            hazardsToAdd.Add(ObjectLoader.CreateHazard(hazardType, position));
+                            hazardsToAdd.Add(HazardLoader.CreateHazard(hazardType, position));
                         }
                     }
                 }
@@ -181,7 +183,7 @@ namespace WorldObjects.WorldGeneration
 
                 if (blockToBuild != BlockTypes.None)
                 {
-                    chunk.Register(ObjectLoader.CreateBlock(blockToBuild, position));
+                    chunk.Register(BlockLoader.CreateBlock(blockToBuild, position));
                 }
             }
 

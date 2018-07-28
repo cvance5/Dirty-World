@@ -14,8 +14,8 @@ namespace WorldObjects
         public SmartEvent<Block> OnBlockDestroyed = new SmartEvent<Block>();
         public SmartEvent<Block> OnBlockStabilized = new SmartEvent<Block>();
 
-        public int Health { get; protected set; } = 100;
-        public int Stability { get; protected set; } = 100;
+        public int Health { get; set; } = 100;
+        public int Stability { get; set; } = 100;
 
         public bool CanStabalize { get; set; }
 

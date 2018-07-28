@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace WorldObjects.WorldGeneration
