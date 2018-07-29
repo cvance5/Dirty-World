@@ -1,6 +1,6 @@
 ﻿using WorldObjects;
 
-namespace Data.Saving.Serialization
+namespace Data.Serialization
 {
     public abstract class SerializableSpace : ISerializable<Space>
     {

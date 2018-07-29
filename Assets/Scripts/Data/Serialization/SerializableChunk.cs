@@ -1,10 +1,10 @@
-﻿using Data.Saving.Serialization.SerializableSpaces;
+﻿using Data.Serialization.SerializableSpaces;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using WorldObjects;
 using WorldObjects.Spaces;
 
-namespace Data.Saving.Serialization
+namespace Data.Serialization
 {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class SerializableChunk : ISerializable<Chunk>

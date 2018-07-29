@@ -2,7 +2,7 @@
 using WorldObjects;
 using WorldObjects.Spaces;
 
-namespace Data.Saving.Serialization.SerializableSpaces
+namespace Data.Serialization.SerializableSpaces
 {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class SerializableCorridor : SerializableSpace

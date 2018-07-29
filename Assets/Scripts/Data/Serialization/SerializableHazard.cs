@@ -3,7 +3,7 @@ using WorldObjects;
 using WorldObjects.Hazards;
 using WorldObjects.WorldGeneration;
 
-namespace Data.Saving.Serialization
+namespace Data.Serialization
 {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class SerializableHazard : ISerializable<Hazard>

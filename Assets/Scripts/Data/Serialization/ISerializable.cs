@@ -1,4 +1,4 @@
-﻿namespace Data.Saving.Serialization
+﻿namespace Data.Serialization
 {
     public interface ISerializable<T>
     {

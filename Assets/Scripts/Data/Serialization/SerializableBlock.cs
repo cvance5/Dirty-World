@@ -2,7 +2,7 @@
 using WorldObjects;
 using WorldObjects.Blocks;
 
-namespace Data.Saving.Serialization
+namespace Data.Serialization
 {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public class SerializableBlock : ISerializable<Block>
