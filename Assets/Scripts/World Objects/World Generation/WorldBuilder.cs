@@ -1,5 +1,4 @@
-﻿using Data.Saving;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Blocks;
 using WorldObjects.WorldGeneration.BlockGeneration;
@@ -36,12 +35,19 @@ namespace WorldObjects.WorldGeneration
             cBuilder.AddSpace(sBuilder)
                     .AddSpace(sBuilder2);
 
-            RegisterNewChunk(cBuilder.Build());
+            World.Register(cBuilder.Build());
 
             foreach (var dir in Directions.Compass)
             {
                 BuildChunk(new IntVector2(dir.X * _chunkSize, dir.Y * _chunkSize));
             }
+        }
+
+        public static void LoadChunk(string serializedChunk)
+        {
+            var serializableChunk = Data.Serialization.SerializableChunk.Deserialize(serializedChunk);
+            var chunk = serializableChunk.ToObject();
+            World.Register(chunk);
         }
 
         public static void BuildChunk(IntVector2 position)
@@ -55,13 +61,7 @@ namespace WorldObjects.WorldGeneration
                     .AddBlocks(blocks)
                     .SetFill(GetFill(cBuilder.Depth));
 
-            RegisterNewChunk(cBuilder.Build());
-        }
-
-        private static void RegisterNewChunk(Chunk chunk)
-        {
-            World.Register(chunk);
-            GameSave.TrackChunk(chunk);
+            World.Register(cBuilder.Build());
         }
 
         private static BlockTypes GetFill(int depth)

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using Data;
+using Data.IO;
+using UnityEngine;
 using WorldObjects;
 using WorldObjects.WorldGeneration;
 
@@ -8,25 +10,40 @@ public class GameManager : Singleton<GameManager>
 
     private void Awake()
     {
-        Object.DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
-        DataSaver.InitialLoad();
+        GameState.Initialize();
 
-        if (DataSaver.HasSavedGames)
+        GameSaves.Refresh();
+        GameSaves.SetCurrent("Default");
+
+        if (!GameSaves.HasSavedData)
         {
-            DataSaver.LoadGame("Default");
+            _log.Info("Creating new save...");
+            WorldBuilder.BuildInitialChunk();
+            GameSaves.SaveDirty();
         }
         else
         {
-            DataSaver.CreateSaveGame("Default");
-            WorldBuilder.BuildInitialChunk();
-            DataSaver.SaveGame();
+            _log.Info("Loading saved data...");
+            var initialChunkPosition = new IntVector2(0, 0);
+            WorldBuilder.LoadChunk(DataReader.Read(initialChunkPosition.ToString(), DataTypes.CurrentGame));
+            CheckForGenerateChunk(initialChunkPosition);
         }
 
         InitializePlayer();
+        _log.Info("Success.");
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            GameSaves.SaveDirty();
+        }
     }
 
     private void InitializePlayer()
@@ -34,19 +51,28 @@ public class GameManager : Singleton<GameManager>
         var playerObj = Instantiate(Settings.Player, Vector2.zero, Quaternion.identity);
         var playerData = playerObj.GetComponent<Actors.Player.PlayerData>();
         PositionTracker.BeginTracking(playerData);
-        PositionTracker.Subscribe(playerData, CheckForGenerateChunk);
+        PositionTracker.Subscribe(playerData, OnPlayerTrackingUpdate);
     }
 
-    private void CheckForGenerateChunk(PositionData oldData, PositionData newData)
+    private void OnPlayerTrackingUpdate(PositionData oldData, PositionData newData)
+    {
+        CheckForGenerateChunk(newData.Chunk.transform.position);
+    }
+
+    private void CheckForGenerateChunk(Vector2 currentChunkPosition)
     {
         foreach (var dir in Directions.Compass)
         {
-            var position = World.GetChunkPosition(new IntVector2(newData.Chunk.transform.position), dir);
+            var newChunkPosition = World.GetChunkPosition(new IntVector2(currentChunkPosition), dir);
 
-            if (World.GetChunkAtPosition(position) == null)
+            if (World.GetChunkAtPosition(newChunkPosition) != null) continue;
+            else if (GameSaves.HasGameData(newChunkPosition.ToString()))
             {
-                WorldBuilder.BuildChunk(position);
+                WorldBuilder.LoadChunk(DataReader.Read(newChunkPosition.ToString(), DataTypes.CurrentGame));
             }
+            else WorldBuilder.BuildChunk(newChunkPosition);
         }
     }
+
+    private static readonly Log _log = new Log("GameManager");
 }

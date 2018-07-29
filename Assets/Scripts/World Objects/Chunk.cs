@@ -6,7 +6,7 @@ namespace WorldObjects
 {
     public class Chunk : MonoBehaviour, IBoundary, ITrackable
     {
-        public SmartEvent<Chunk> OnChunkChanged = new SmartEvent<Chunk>();
+        public static SmartEvent<Chunk> OnChunkChanged = new SmartEvent<Chunk>();
 
         public IntVector2 Position => new IntVector2(transform.position);
         public IntVector2 BottomLeftCorner { get; private set; }
@@ -43,17 +43,18 @@ namespace WorldObjects
         public void Register(Hazard hazard)
         {
             var anchorPos = hazard.AnchoringPosition;
+            bool isAnchored = true;
 
             if (anchorPos != null)
             {
                 Block anchor = null;
                 BlockMap.TryGetValue(anchorPos, out anchor);
-                hazard.SetAnchor(anchor);
+                isAnchored = hazard.SetAnchor(anchor);
             }
 
             // The hazard may have destroyed itself because of its 
             // anchoring situation.
-            if (hazard != null)
+            if (isAnchored)
             {
                 Hazards.Add(hazard);
                 hazard.transform.SetParent(transform, true);

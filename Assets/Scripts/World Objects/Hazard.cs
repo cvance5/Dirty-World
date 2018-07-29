@@ -14,6 +14,6 @@ namespace WorldObjects
 
         protected abstract void InitializeEffects();
 
-        public abstract void SetAnchor(Block anchorBlock);
+        public abstract bool SetAnchor(Block anchorBlock);
     }
 }

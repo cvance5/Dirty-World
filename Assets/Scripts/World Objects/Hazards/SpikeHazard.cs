@@ -16,16 +16,18 @@ namespace WorldObjects.Hazards
 
         protected override void InitializeEffects() => Effects = new HazardEffects[] { HazardEffects.Damage, HazardEffects.Impulse };
 
-        public override void SetAnchor(Block anchor)
+        public override bool SetAnchor(Block anchor)
         {
             if (anchor != null)
             {
                 anchor.OnBlockCrumbled += OnAnchorRemoved;
                 anchor.OnBlockDestroyed += OnAnchorRemoved;
+                return true;
             }
             else
             {
                 Destroy(gameObject);
+                return false;
             }
         }
 

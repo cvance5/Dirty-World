@@ -195,6 +195,7 @@ namespace WorldObjects.WorldGeneration
             _blockBuilders.Clear();
             _spaceBuilders.Clear();
 
+            Chunk.OnChunkChanged.Raise(chunk);
             return chunk;
         }
     }
