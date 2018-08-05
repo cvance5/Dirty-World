@@ -23,6 +23,8 @@ namespace Effects.Audio
         private Range _volumeScale = new Range(0, 100);
 #pragma warning restore IDE0044 // Add readonly modifier
 
+        private AudioClip _lastPlayed;
+
         private void Awake()
         {
             var attachedHittable = GetComponent(typeof(IHittable)) as IHittable;
@@ -34,20 +36,23 @@ namespace Effects.Audio
         {
             AudioClip soundToPlay;
             int hitIntensity;
+
             if (damage > force)
             {
-                soundToPlay = _onDamageSounds.RandomItem();
+                soundToPlay = _onDamageSounds.RandomItem(_lastPlayed);
                 hitIntensity = damage;
             }
             else
             {
-                soundToPlay = _onForceSounds.RandomItem();
+                soundToPlay = _onForceSounds.RandomItem(_lastPlayed);
                 hitIntensity = force;
             }
 
             var scaledVolume = MathUtils.MapRange(hitIntensity * _hitExaggeration, _volumeScale.Min, _volumeScale.Max, 0f, 1f);
 
             AudioSource.PlayClipAtPoint(soundToPlay, transform.position, scaledVolume);
+
+            _lastPlayed = soundToPlay;
         }
     }
 }

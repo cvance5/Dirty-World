@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 public static class List
 {
@@ -6,6 +7,21 @@ public static class List
     {
         int randomValue = UnityEngine.Random.Range(0, list.Count);
         return list[randomValue];
+    }
+
+    public static T RandomItem<T>(this List<T> list, params T[] excludedItems)
+    {
+        var newList = new List<T>();
+
+        foreach (var item in list)
+        {
+            if (!excludedItems.Contains(item))
+            {
+                newList.Add(item);
+            }
+        }
+
+        return newList.RandomItem();
     }
 
     public static T LoopedNext<T>(this List<T> list, ref int index)
