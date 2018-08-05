@@ -21,6 +21,7 @@ namespace Effects.Audio
         [SerializeField]
         [Tooltip("Scales volume as damage and force increase in this range.")]
         private Range _volumeScale = new Range(0, 100);
+
 #pragma warning restore IDE0044 // Add readonly modifier
 
         private AudioClip _lastPlayed;
