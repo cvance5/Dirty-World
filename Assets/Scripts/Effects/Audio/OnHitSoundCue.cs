@@ -1,0 +1,53 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+namespace Effects.Audio
+{
+    public class OnHitSoundCue : MonoBehaviour
+    {
+#pragma warning disable IDE0044 // Add readonly modifier, Unity serialization requires it not be readonly
+        [SerializeField]
+        [Tooltip("One sound is randomly selected per hit, if the damage is strictly greater than the force.")]
+        private List<AudioClip> _onDamageSounds = null;
+
+        [SerializeField]
+        [Tooltip("One sound is randomly selected per hit, if the force is greater than or equal to the damage.")]
+        private List<AudioClip> _onForceSounds = null;
+
+        [SerializeField]
+        [Tooltip("Amount to scale the hit values for volume calculation.")]
+        private float _hitExaggeration = 1;
+
+        [SerializeField]
+        [Tooltip("Scales volume as damage and force increase in this range.")]
+        private Range _volumeScale = new Range(0, 100);
+#pragma warning restore IDE0044 // Add readonly modifier
+
+        private void Awake()
+        {
+            var attachedHittable = GetComponent(typeof(IHittable)) as IHittable;
+            if (attachedHittable == null) throw new MissingComponentException($"OnHitSoundCue on {gameObject.name} has no hittable to cue off of.");
+            else attachedHittable.OnHit += OnHit;
+        }
+
+        private void OnHit(int damage, int force)
+        {
+            AudioClip soundToPlay;
+            int hitIntensity;
+            if (damage > force)
+            {
+                soundToPlay = _onDamageSounds.RandomItem();
+                hitIntensity = damage;
+            }
+            else
+            {
+                soundToPlay = _onForceSounds.RandomItem();
+                hitIntensity = force;
+            }
+
+            var scaledVolume = MathUtils.MapRange(hitIntensity * _hitExaggeration, _volumeScale.Min, _volumeScale.Max, 0f, 1f);
+
+            AudioSource.PlayClipAtPoint(soundToPlay, transform.position, scaledVolume);
+        }
+    }
+}
