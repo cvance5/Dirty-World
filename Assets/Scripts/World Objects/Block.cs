@@ -61,11 +61,13 @@ namespace WorldObjects
 
         public void Hit(int damage, int force)
         {
-            OnHit.Raise(damage, force);
-
             ApplyDamage(damage);
 
-            if (Health > 0) ApplyForce(force);
+            if (Health > 0)
+            {
+                ApplyForce(force);
+                OnHit.Raise(damage, force);
+            }
         }
 
         public void Impulse(Vector2 impulse)
