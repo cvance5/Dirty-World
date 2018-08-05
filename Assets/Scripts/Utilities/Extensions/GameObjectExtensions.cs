@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public static class UnityExtensions
+public static class GameObjectExtensions
 {
     public static void Reset(this Transform transform)
     {
