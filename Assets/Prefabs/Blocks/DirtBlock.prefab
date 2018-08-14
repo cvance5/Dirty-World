@@ -103,7 +103,7 @@ MonoBehaviour:
   _onDamageSounds:
   - {fileID: 8300000, guid: 3d1ded6e8ba86d04c8484f4c6c4ec092, type: 3}
   - {fileID: 8300000, guid: 98ee2b516cd35bb47a3435787b18668a, type: 3}
-  - {fileID: 8300000, guid: 6c9acb77b7f6a274f8c577af4c0d428d, type: 3}
+  - {fileID: 8300000, guid: ba52be22a86a7ab47900bbdda0085470, type: 3}
   _onForceSounds:
   - {fileID: 8300000, guid: eb7bbb8f89707e643a331b7b9f573ffc, type: 3}
   - {fileID: 8300000, guid: 8d866b835b68257428ff817e873a5f78, type: 3}

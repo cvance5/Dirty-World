@@ -119,10 +119,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _onDamageSounds:
   - {fileID: 8300000, guid: 2258aaf8e71eb9e4aa66b13dc908a002, type: 3}
-  - {fileID: 8300000, guid: 51c7b5e6fc6eab0438ecd10b2e1b1880, type: 3}
   - {fileID: 8300000, guid: 28323c16a2930d349ba07b047d036268, type: 3}
   - {fileID: 8300000, guid: 22ad6952067701e40bed50772da8decb, type: 3}
-  _onForceSounds: []
+  - {fileID: 8300000, guid: 043a757ba1b923646b2672815f94b8db, type: 3}
+  - {fileID: 8300000, guid: af882f8b6d363a348b7f25569b1dc4e2, type: 3}
+  _onForceSounds:
+  - {fileID: 8300000, guid: 032f8cf77b24fb149a5f5880c983370d, type: 3}
+  - {fileID: 8300000, guid: 24f58c9c872690c46a24a6106b569a93, type: 3}
   _hitExaggeration: 0.85
 --- !u!212 &212624701635964486
 SpriteRenderer:
