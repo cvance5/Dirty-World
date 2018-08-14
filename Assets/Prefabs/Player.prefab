@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 212343200990117794}
   - component: {fileID: 58889932300391466}
   - component: {fileID: 50120577649415964}
+  - component: {fileID: 81535171257876088}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -170,6 +171,13 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.1, y: 0.05}
   m_EdgeRadius: 0
+--- !u!81 &81535171257876088
+AudioListener:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1354266971631064}
+  m_Enabled: 1
 --- !u!114 &114026367701671876
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -193,11 +201,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _range: 10
-  _damage: 10
-  _force: 50
+  _damage: 5
+  _force: 0
   _minLength: 1
   _maxLength: 10
-  _pullForce: 25
+  _pullForce: 15
   _selfPullRatio: 0.5
   _climbSpeed: 5
   _playerMovement: {fileID: 114742374633751546}
