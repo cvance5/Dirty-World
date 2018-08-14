@@ -15,12 +15,8 @@ namespace Effects.Audio
         private List<AudioClip> _onForceSounds = null;
 
         [SerializeField]
-        [Tooltip("Amount to scale the hit values for volume calculation.")]
-        private float _hitExaggeration = 1;
-
-        [SerializeField]
         [Tooltip("Scales volume as damage and force increase in this range.")]
-        private Range _volumeScale = new Range(0, 100);
+        private Range _volumeScale = new Range(0, 10);
 
 #pragma warning restore IDE0044 // Add readonly modifier
 
@@ -49,7 +45,7 @@ namespace Effects.Audio
                 hitIntensity = force;
             }
 
-            var scaledVolume = MathUtils.MapRange(hitIntensity * _hitExaggeration, _volumeScale.Min, _volumeScale.Max, 0f, 1f);
+            var scaledVolume = MathUtils.MapRange(hitIntensity, _volumeScale.Min, _volumeScale.Max, 0f, 1f);
 
             AudioSource.PlayClipAtPoint(soundToPlay, transform.position, scaledVolume);
 
