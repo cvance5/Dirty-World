@@ -25,7 +25,7 @@ namespace Effects.Audio
         private void Awake()
         {
             var attachedHittable = GetComponent(typeof(IHittable)) as IHittable;
-            if (attachedHittable == null) throw new MissingComponentException($"OnHitSoundCue on {gameObject.name} has no hittable to cue off of.");
+            if (attachedHittable == null) throw new MissingComponentException($"OnHitSoundCue on {gameObject.name} has no IHittable to cue off of.");
             else attachedHittable.OnHit += OnHit;
         }
 
