@@ -216,11 +216,11 @@ namespace UI
             {
                 _activePopup.SetVisible(true);
                 _activePopup.Activate();
-                _scrim.SetActive(_activePopup.UseScrim);
+                Scrimmer.ScrimOver(_popupLayer);
             }
             else
             {
-                _scrim.SetActive(false);
+                Scrimmer.ClearScrim(_popupLayer);
             }
         }
 

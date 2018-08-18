@@ -23,6 +23,15 @@ namespace UI
             return scrim;
         }
 
+        public static void ClearScrim(Transform target)
+        {
+            Scrim scrim;
+            if (_scrims.TryGetValue(target, out scrim))
+            {
+                Object.Destroy(scrim);
+            }
+        }
+
         private static Scrim CreateScrim()
         {
             var gameObject = new GameObject("Scrim");
