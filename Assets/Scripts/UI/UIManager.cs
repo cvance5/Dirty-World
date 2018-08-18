@@ -22,12 +22,19 @@ namespace UI
 
         [Header("Layers")]
         [SerializeField]
+        private RectTransform _baseLayer;
+        [SerializeField]
         private RectTransform _screenLayer;
         [SerializeField]
         private RectTransform _overlayLayer;
         [SerializeField]
-        private RectTransform _popupLayer;        
+        private RectTransform _popupLayer;
 #pragma warning restore IDE0044 // Add readonly modifier
+
+        public static RectTransform BaseLayer => Instance._baseLayer;
+        public static RectTransform ScreenLayer => Instance._screenLayer;
+        public static RectTransform OverlayLayer => Instance._overlayLayer;
+        public static RectTransform PopupLayer => Instance._popupLayer;
 
         public override void Initialize()
         {
@@ -157,7 +164,7 @@ namespace UI
             UIPopup selectedPopup = CreatePopup(type);
             UpdatePopupStack(selectedPopup);
 
-            if(selectedPopup.UseScrim)
+            if (selectedPopup.UseScrim)
             {
                 Scrimmer.ScrimOver(_popupLayer);
             }
