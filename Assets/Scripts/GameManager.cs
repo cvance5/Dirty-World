@@ -1,5 +1,7 @@
-﻿using Data;
+﻿using Actors;
+using Data;
 using Data.IO;
+using UI;
 using UnityEngine;
 using WorldObjects;
 using WorldObjects.WorldGeneration;
@@ -52,6 +54,8 @@ public class GameManager : Singleton<GameManager>
         var playerData = playerObj.GetComponent<Actors.Player.PlayerData>();
         PositionTracker.BeginTracking(playerData);
         PositionTracker.Subscribe(playerData, OnPlayerTrackingUpdate);
+
+        playerData.OnActorDeath += OnPlayerDeath;
     }
 
     private void OnPlayerTrackingUpdate(PositionData oldData, PositionData newData)
@@ -72,6 +76,14 @@ public class GameManager : Singleton<GameManager>
             }
             else WorldBuilder.BuildChunk(newChunkPosition);
         }
+    }
+
+    private void OnPlayerDeath(ActorData playerData)
+    {
+        PositionTracker.StopTracking(playerData);
+        var scrim = Scrimmer.ScrimOver(UIManager.BaseLayer);
+        scrim.Hide();
+        scrim.FadeTo(1f, 3f);
     }
 
     private static readonly Log _log = new Log("GameManager");
