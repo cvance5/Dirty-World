@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 50927949586040902}
   - component: {fileID: 114997434426918518}
   - component: {fileID: 114694867900717006}
+  - component: {fileID: 114895673017565152}
   m_Layer: 9
   m_Name: DirtBlock
   m_TagString: Block
@@ -108,7 +109,19 @@ MonoBehaviour:
   - {fileID: 8300000, guid: eb7bbb8f89707e643a331b7b9f573ffc, type: 3}
   - {fileID: 8300000, guid: 8d866b835b68257428ff817e873a5f78, type: 3}
   - {fileID: 8300000, guid: 04d46000ded39a04bafa532624453dcd, type: 3}
-  _hitExaggeration: 1.5
+--- !u!114 &114895673017565152
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1106346448946280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf94502a97199904e9e22c6f9ecb1b33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onWorldObjectDestroyedSounds:
+  - {fileID: 8300000, guid: 4ae9bd57bf097134d981a7dcdaad9f36, type: 3}
 --- !u!114 &114997434426918518
 MonoBehaviour:
   m_ObjectHideFlags: 1

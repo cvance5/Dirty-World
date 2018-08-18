@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 50927949586040902}
   - component: {fileID: 114336014862780570}
   - component: {fileID: 114514789480000980}
+  - component: {fileID: 114512755854945414}
   m_Layer: 9
   m_Name: StoneBlock
   m_TagString: Block
@@ -106,6 +107,19 @@ MonoBehaviour:
   _impactAbsorption: 0
   _impactDurability: 30
   _weight: 10
+--- !u!114 &114512755854945414
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1106346448946280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf94502a97199904e9e22c6f9ecb1b33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onWorldObjectDestroyedSounds:
+  - {fileID: 8300000, guid: 8929bd1e25720784a8d6080c5498dfc2, type: 3}
 --- !u!114 &114514789480000980
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -126,7 +140,6 @@ MonoBehaviour:
   _onForceSounds:
   - {fileID: 8300000, guid: 032f8cf77b24fb149a5f5880c983370d, type: 3}
   - {fileID: 8300000, guid: 24f58c9c872690c46a24a6106b569a93, type: 3}
-  _hitExaggeration: 0.85
 --- !u!212 &212624701635964486
 SpriteRenderer:
   m_ObjectHideFlags: 1

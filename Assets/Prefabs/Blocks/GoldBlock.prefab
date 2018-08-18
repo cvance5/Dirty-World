@@ -23,6 +23,8 @@ GameObject:
   - component: {fileID: 61819584787066844}
   - component: {fileID: 50927949586040902}
   - component: {fileID: 114659851415428286}
+  - component: {fileID: 114942445055339156}
+  - component: {fileID: 114991894999204300}
   m_Layer: 9
   m_Name: GoldBlock
   m_TagString: Block
@@ -105,6 +107,36 @@ MonoBehaviour:
   _impactAbsorption: 5
   _impactDurability: 5
   _weight: 1
+--- !u!114 &114942445055339156
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1106346448946280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f11124d38a8778f4786f38b1ce313a09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onDamageSounds:
+  - {fileID: 8300000, guid: 2969ae7b37bc0de46b980807c3bb48ee, type: 3}
+  - {fileID: 8300000, guid: 734d40d3e8348dd4e8776641ddfc505c, type: 3}
+  _onForceSounds:
+  - {fileID: 8300000, guid: a4840a87052fe8741b933589e80238f1, type: 3}
+  - {fileID: 8300000, guid: b91f7461bd11fa54ba43b6df50ba97b0, type: 3}
+--- !u!114 &114991894999204300
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1106346448946280}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf94502a97199904e9e22c6f9ecb1b33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onWorldObjectDestroyedSounds:
+  - {fileID: 8300000, guid: 8929bd1e25720784a8d6080c5498dfc2, type: 3}
 --- !u!212 &212624701635964486
 SpriteRenderer:
   m_ObjectHideFlags: 1

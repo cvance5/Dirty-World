@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _range: 10
-  _damage: 5
+  _damage: 1000
   _force: 0
   _minLength: 1
   _maxLength: 10
