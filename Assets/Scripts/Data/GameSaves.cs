@@ -9,6 +9,7 @@ namespace Data
         private static List<string> _savedGames;
         public static List<string> SavedGames => new List<string>(_savedGames);
         public static bool HasSavedData => _savedGames.Count > 0;
+        public static bool SaveExists(string gameName) => _savedGames.Contains(gameName);
 
         public static string CurrentGame { get; private set; }
 
@@ -17,12 +18,12 @@ namespace Data
 
         public static void Refresh()
         {
-            _savedGames = DataReader.FindAllDirectories(DataTypes.SaveGames);
+            _savedGames = DataReader.FindAllDirectories(DataTypes.SavedGames);
         }
 
-        public static void SetCurrent(string currentGame)
+        public static void LoadGame(string gameToLoad)
         {
-            CurrentGame = currentGame;
+            CurrentGame = gameToLoad;
 
             if (_savedGames.Contains(CurrentGame))
             {
@@ -32,8 +33,20 @@ namespace Data
             }
         }
 
+        public static void UnloadCurrent()
+        {
+            CurrentGame = null;
+
+            if (_currentGameData != null)
+            {
+                _currentGameData.Clear();
+            }
+        }
+
         public static void SaveDirty()
         {
+            _log.Info($"Saving {CurrentGame}...");
+
             if (!_savedGames.Contains(CurrentGame))
             {
                 Directory.CreateDirectory(Paths.ToPath(DataTypes.CurrentGame));
@@ -50,7 +63,7 @@ namespace Data
             foreach (var kvp in filesToWrite)
             {
                 _log.Info($"Updating {kvp.Key}...");
-                var writeLocation = Paths.ToPath(kvp.Key, DataTypes.CurrentGame);
+                var writeLocation = Paths.ToPath(DataTypes.CurrentGame, kvp.Key);
                 DataWriter.Write(writeLocation, kvp.Value);
             }
 
@@ -59,6 +72,18 @@ namespace Data
             GameState.Clear();
 
             Refresh();
+        }
+
+        public static void DeleteSave(string gameName)
+        {
+            _log.Info($"Deleting {gameName}...");
+
+            if (gameName == CurrentGame) throw new System.InvalidOperationException($"The currently loaded game cannot be deleted.");
+
+            var deleteLocation = Paths.ToPath(DataTypes.SavedGames, gameName);
+            DataWriter.DeleteRecursive(deleteLocation);
+
+            _log.Info($"Delete complete.");
         }
 
         private static readonly Log _log = new Log("GameSaves");

@@ -1,7 +1,7 @@
 ﻿using Data;
 using UnityEditor;
 
-public class CustomMenu
+public class CustomCreateMenu
 {
     [MenuItem("Assets/Create/Settings")]
     public static void CreateGameSettings()

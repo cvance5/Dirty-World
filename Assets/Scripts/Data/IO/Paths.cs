@@ -13,7 +13,7 @@ public static class Paths
     {
         switch (dataType)
         {
-            case DataTypes.SaveGames:
+            case DataTypes.SavedGames:
                 return Path.Combine(Application.persistentDataPath, DATAPATH, SAVESPATH);
             case DataTypes.CurrentGame:
                 if (string.IsNullOrEmpty(GameSaves.CurrentGame)) throw new System.ArgumentException($"No save game is selected. Cannot access current Save Game Data.");
@@ -24,5 +24,15 @@ public static class Paths
         }
     }
 
-    public static string ToPath(string fileName, DataTypes dataType) => Path.Combine(ToPath(dataType), fileName);
+    public static string ToPath(DataTypes dataType, params string[] fileNames)
+    {
+        var path = ToPath(dataType);
+
+        foreach (var fileName in fileNames)
+        {
+            path = Path.Combine(path, fileName);
+        }
+
+        return path;
+    }
 }

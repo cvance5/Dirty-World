@@ -16,6 +16,30 @@ namespace Data.IO
             }
         }
 
+        public static void Delete(string filePath)
+        {
+            try
+            {
+                File.Delete(filePath);
+            }
+            catch (System.Exception e)
+            {
+                _log.Error($"Failed to delete {filePath} with exception {e.Message}");
+            }
+        }
+
+        public static void DeleteRecursive(string directoryPath)
+        {
+            try
+            {
+                Directory.Delete(directoryPath, true);
+            }
+            catch (System.Exception e)
+            {
+                _log.Error($"Failed to delete {directoryPath} with exception {e.Message}");
+            }
+        }
+
         private static readonly Log _log = new Log("DataWriter");
     }
 }

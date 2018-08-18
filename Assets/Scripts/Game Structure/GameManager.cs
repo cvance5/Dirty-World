@@ -18,7 +18,7 @@ public class GameManager : Singleton<GameManager>
         GameState.Initialize();
 
         GameSaves.Refresh();
-        GameSaves.SetCurrent("Default");
+        GameSaves.LoadGame("Default");
 
         if (!GameSaves.HasSavedData)
         {
