@@ -3,14 +3,14 @@
 public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
-    private static object _lock = new object();
-    private static bool applicationIsQuitting = false;
+    private static readonly object _lock = new object();
+    private static bool _applicationIsQuitting = false;
 
     public static T Instance
     {
         get
         {
-            if (applicationIsQuitting)
+            if (_applicationIsQuitting)
             {
                 Debug.LogWarning("[Singleton] Instance '" + typeof(T) +
                     "' already destroyed on application quit." +
@@ -51,6 +51,6 @@ public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        applicationIsQuitting = true;
+        _applicationIsQuitting = true;
     }
 }
