@@ -1,5 +1,4 @@
-﻿using Data;
-using ItemManagement;
+﻿using ItemManagement;
 using System.Collections.Generic;
 
 namespace Actors.Player
@@ -19,12 +18,11 @@ namespace Actors.Player
             }
         }
 
-        protected override void Die()
-        {
-            PositionTracker.StopTracking(this);
-            _log.Info($"Score: {Wealth}", "blue");
+        protected override void OnDamage() { }
 
-            Destroy(gameObject);
+        protected override void OnDeath()
+        {
+            _log.Info($"Score: {Wealth}", "blue");
         }
 
         private static readonly Log _log = new Log("PlayerData");

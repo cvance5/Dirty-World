@@ -2,9 +2,14 @@
 {
     public class EnemyData : ActorData
     {
-        protected override void Die()
+        protected override void OnDamage()
         {
-            Destroy(gameObject);
+            throw new System.NotImplementedException();
+        }
+
+        protected override void OnDeath()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

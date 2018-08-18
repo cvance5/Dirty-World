@@ -16,6 +16,8 @@ namespace Actors.Player
 #pragma warning restore IDE0044 // Add readonly modifier
 
         [SerializeField]
+        private PlayerData _data = null;
+        [SerializeField]
         private PlayerFeet _feet = null;
 
         private PlayerState _state;
@@ -27,6 +29,8 @@ namespace Actors.Player
 
             _feet.OnFootTouch += OnLand;
             _feet.OnFootLeave += OnAirborne;
+
+            _data.OnActorDeath += OnPlayerDeath;
         }
 
         private void Update()
@@ -43,7 +47,6 @@ namespace Actors.Player
             };
 
             AddForce(movementVector * _movementSpeed * Time.deltaTime);
-            
         }
 
         private void JumpUpdate()
@@ -90,6 +93,13 @@ namespace Actors.Player
         private void OnAirborne()
         {
             _state = PlayerState.Airborne;
+        }
+
+        private void OnPlayerDeath(ActorData playerData)
+        {
+            playerData.OnActorDeath -= OnPlayerDeath;
+            Destroy(_feet);
+            Destroy(this);
         }
     }
 }

@@ -5,6 +5,9 @@ namespace Actors
 {
     public abstract class ActorData : MonoBehaviour, ITrackable
     {
+        public SmartEvent<ActorData> OnActorDamaged = new SmartEvent<ActorData>();
+        public SmartEvent<ActorData> OnActorDeath = new SmartEvent<ActorData>();
+
         public int Health { get; private set; } = 100;
         public IntVector2 Position => new IntVector2(transform.position);
 
@@ -25,6 +28,9 @@ namespace Actors
 
         public void ApplyDamage(int amount)
         {
+            // We don't desecrate corpses, here.
+            if (Health <= 0) return;
+
             if (amount < _damageResistance) return;
             else amount -= _damageResistance;
 
@@ -33,14 +39,22 @@ namespace Actors
                 Health -= amount;
 
                 if (Health <= 0) Die();
-                else StartCoroutine(FlashDamage());
+                else
+                {
+                    OnActorDamaged.Raise(this);
+                    StartCoroutine(FlashDamage());
+                }
             }
         }
 
+        /// <summary>
+        /// HACK: All OnDamage effects should be separete onDamageCue scripts that wait for OnActorDamaged raises
+        /// </summary>
+        /// <returns></returns>
         private IEnumerator FlashDamage()
         {
             _isTakingDamage = true;
-            var waitFor = new WaitForSeconds(_damageInvulnerabilityDuration / NUM_FLASHES);
+            var waitFor = new WaitForSeconds(_damageInvulnerabilityDuration / NUM_FLASHES / 2);
 
             for (int i = 0; i < NUM_FLASHES; i++)
             {
@@ -52,7 +66,15 @@ namespace Actors
             _isTakingDamage = false;
         }
 
-        protected abstract void Die();
+        protected void Die()
+        {
+            OnActorDeath.Raise(this);
+            OnDeath();
+        }
+
+        protected abstract void OnDamage();
+
+        protected abstract void OnDeath();
 
         private const int NUM_FLASHES = 4;
     }

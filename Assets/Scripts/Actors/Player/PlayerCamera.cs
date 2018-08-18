@@ -21,8 +21,15 @@ namespace Actors.Player
         [SerializeField]
         private PlayerMovement _movement = null;
         [SerializeField]
+        private PlayerData _data = null;
+        [SerializeField]
         private Rigidbody2D _rigidbody = null;
 #pragma warning restore IDE0044 // Add readonly modifier
+
+        private void Awake()
+        {
+            _data.OnActorDeath += OnPlayerDeath;
+        }
 
         private void Update()
         {
@@ -52,6 +59,12 @@ namespace Actors.Player
             var actualZoom = Mathf.Lerp(Camera.main.orthographicSize, targetZoom, Time.deltaTime);
 
             Camera.main.orthographicSize = actualZoom;
+        }
+
+        private void OnPlayerDeath(ActorData playerData)
+        {
+            playerData.OnActorDeath -= OnPlayerDeath;
+            Destroy(this);
         }
     }
 }

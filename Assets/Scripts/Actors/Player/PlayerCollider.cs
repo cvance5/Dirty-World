@@ -15,6 +15,7 @@ namespace Actors.Player
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
+            _data.OnActorDeath += OnPlayerDeath;
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -81,6 +82,12 @@ namespace Actors.Player
                     default: _log.Error($"Unknown effect '{effect}'."); break;
                 }
             }
+        }
+
+        private void OnPlayerDeath(ActorData playerData)
+        {
+            playerData.OnActorDeath -= OnPlayerDeath;
+            Destroy(this);
         }
 
         private static readonly Log _log = new Log("PlayerCollider");
