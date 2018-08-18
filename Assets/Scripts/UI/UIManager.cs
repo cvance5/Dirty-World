@@ -22,15 +22,11 @@ namespace UI
 
         [Header("Layers")]
         [SerializeField]
-        private Transform _overlayLayer;
+        private RectTransform _screenLayer;
         [SerializeField]
-        private Transform _screenLayer;
+        private RectTransform _overlayLayer;
         [SerializeField]
-        private Transform _popupLayer;
-
-        [Space]
-        [SerializeField]
-        private GameObject _scrim;
+        private RectTransform _popupLayer;        
 #pragma warning restore IDE0044 // Add readonly modifier
 
         public override void Initialize()
@@ -161,7 +157,10 @@ namespace UI
             UIPopup selectedPopup = CreatePopup(type);
             UpdatePopupStack(selectedPopup);
 
-            _scrim.SetActive(selectedPopup.UseScrim);
+            if(selectedPopup.UseScrim)
+            {
+                Scrimmer.ScrimOver(_popupLayer);
+            }
 
             return selectedPopup;
         }
