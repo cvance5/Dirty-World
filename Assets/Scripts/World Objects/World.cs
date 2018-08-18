@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace WorldObjects
 {
@@ -10,10 +11,19 @@ namespace WorldObjects
         private static List<Chunk> _activeChunks = new List<Chunk>();
         private static Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
 
+        private static readonly Transform _worldParent;
+
+        static World()
+        {
+            var world = new GameObject("World");
+            _worldParent = world.transform;
+        }
+
         public static void Register(Chunk chunk)
         {
             _activeChunks.Add(chunk);
             _chunksByWorldPosition.Add(chunk.Position, chunk);
+            chunk.transform.SetParent(_worldParent);
         }
 
         public static List<Block> GetNeighbors(Block block)
