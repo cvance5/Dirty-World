@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace WorldObjects
 {
-    public static class World
+    public class World : Singleton<World>
     {
         public static int SurfaceDepth => GameManager.Instance.Settings.SurfaceDepth;
         public static int ChunkSize => GameManager.Instance.Settings.ChunkSize;
@@ -11,19 +11,11 @@ namespace WorldObjects
         private static List<Chunk> _activeChunks = new List<Chunk>();
         private static Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
 
-        private static readonly Transform _worldParent;
-
-        static World()
-        {
-            var world = new GameObject("World");
-            _worldParent = world.transform;
-        }
-
         public static void Register(Chunk chunk)
         {
             _activeChunks.Add(chunk);
             _chunksByWorldPosition.Add(chunk.Position, chunk);
-            chunk.transform.SetParent(_worldParent);
+            chunk.transform.SetParent(Instance.transform);
         }
 
         public static List<Block> GetNeighbors(Block block)
