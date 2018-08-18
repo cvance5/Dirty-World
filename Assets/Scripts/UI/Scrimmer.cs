@@ -18,7 +18,7 @@ namespace UI
                 scrim.transform.SetParent(target);
                 scrim.transform.SetAsFirstSibling();
             }
-
+            scrim.Initialize();
             scrim.SetVisible(true);
             return scrim;
         }
