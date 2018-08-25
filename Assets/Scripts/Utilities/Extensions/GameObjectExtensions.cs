@@ -39,6 +39,11 @@ public static class GameObjectExtensions
         component.gameObject.SetActive(isActive);
     }
 
+    public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
+    {
+        return gameObject.GetComponent<T>() ?? gameObject.AddComponent<T>();
+    }
+
     public static List<Transform> GetAllChildren(this Transform parent)
     {
         List<Transform> children = new List<Transform>();

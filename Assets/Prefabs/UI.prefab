@@ -121,7 +121,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e75c78c11c48cd44186197d826415fa3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _screens: []
+  _screens:
+  - {fileID: 114949684758712442, guid: 2021ae547ee08e24caf7370d66e49853, type: 2}
   _overlays: []
   _popups: []
   _baseLayer: {fileID: 224750953426635250}
