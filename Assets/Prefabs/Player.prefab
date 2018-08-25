@@ -234,6 +234,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _primary: {fileID: 114058492963332348}
+  _data: {fileID: 114237843733034080}
 --- !u!114 &114314006859040562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -251,6 +252,7 @@ MonoBehaviour:
   _maxScroll: 10
   _scrollSensitivity: 0.5
   _movement: {fileID: 114742374633751546}
+  _data: {fileID: 114237843733034080}
   _rigidbody: {fileID: 50120577649415964}
 --- !u!114 &114678831079802082
 MonoBehaviour:
@@ -277,6 +279,7 @@ MonoBehaviour:
   _movementSpeed: 40
   _maximumSpeed: 80
   _jumpForce: 15
+  _data: {fileID: 114237843733034080}
   _feet: {fileID: 114026367701671876}
 --- !u!114 &114955982425071790
 MonoBehaviour:
