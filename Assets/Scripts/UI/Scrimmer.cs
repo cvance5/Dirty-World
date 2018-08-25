@@ -17,9 +17,18 @@ namespace UI
                 scrim = CreateScrim();
                 scrim.transform.SetParent(target);
                 scrim.transform.SetAsFirstSibling();
+
+                _scrims.Add(target, scrim);
             }
             scrim.Initialize();
             scrim.SetVisible(true);
+            return scrim;
+        }
+
+        public static Scrim GetScrim(Transform target)
+        {
+            Scrim scrim = null;
+            _scrims.TryGetValue(target, out scrim);
             return scrim;
         }
 
@@ -48,6 +57,7 @@ namespace UI
             {
                 _scrims.Remove(target);
                 scrim.OnScrimDestroyed -= OnScrimDestroyed;
+                _log.Info($"Scrim removed from {target.gameObject.name}.");
             }
             else
             {

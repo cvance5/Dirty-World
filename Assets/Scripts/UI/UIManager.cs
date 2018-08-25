@@ -8,27 +8,27 @@ namespace UI
     {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly to allow Unity Serialization
         [SerializeField]
-        private List<UIScreen> _screens;
-        private UIScreen _activeScreen;
+        private List<UIScreen> _screens = new List<UIScreen>();
+        public static UIScreen ActiveScreen = null;
 
         [SerializeField]
-        private List<UIOverlay> _overlays;
-        private UIOverlay _activeOverlay;
+        private List<UIOverlay> _overlays = new List<UIOverlay>();
+        public static UIOverlay ActiveOverlay = null;
 
         [SerializeField]
-        private List<UIPopup> _popups;
-        private Stack<UIPopup> _popupStack;
-        private UIPopup _activePopup => _popupStack.Count > 0 ? _popupStack.Peek() : null;
+        private List<UIPopup> _popups = new List<UIPopup>();
+        private Stack<UIPopup> _popupStack = new Stack<UIPopup>();
+        public static UIPopup ActivePopup => Instance._popupStack.Count > 0 ? Instance._popupStack.Peek() : null;
 
         [Header("Layers")]
         [SerializeField]
-        private RectTransform _baseLayer;
+        private RectTransform _baseLayer = null;
         [SerializeField]
-        private RectTransform _screenLayer;
+        private RectTransform _screenLayer = null;
         [SerializeField]
-        private RectTransform _overlayLayer;
+        private RectTransform _overlayLayer = null;
         [SerializeField]
-        private RectTransform _popupLayer;
+        private RectTransform _popupLayer = null;
 #pragma warning restore IDE0044 // Add readonly modifier
 
         public static RectTransform BaseLayer => Instance._baseLayer;
@@ -36,14 +36,7 @@ namespace UI
         public static RectTransform OverlayLayer => Instance._overlayLayer;
         public static RectTransform PopupLayer => Instance._popupLayer;
 
-        public override void Initialize()
-        {
-            _activeOverlay = null;
-            _activeScreen = null;
-            _popupStack = new Stack<UIPopup>();
-        }
-
-        public T Get<T>() where T : UIObject
+        public static T Get<T>() where T : UIObject
         {
             T uiObject;
             Type typeOfT = typeof(T);
@@ -62,7 +55,7 @@ namespace UI
             return uiObject;
         }
 
-        public void Show(UIObject objectToShow)
+        public static void Show(UIObject objectToShow)
         {
             Type type = objectToShow.GetType();
 
@@ -74,7 +67,7 @@ namespace UI
                 throw new InvalidCastException("Type of " + type.ToString() + "  is not a showable UI object!");
         }
 
-        public T Create<T>() where T : UIObject
+        public static T Create<T>() where T : UIObject
         {
             T uiObject;
             Type typeOfT = typeof(T);
@@ -91,7 +84,7 @@ namespace UI
             return uiObject;
         }
 
-        public void Clear(UIObject objectToClear)
+        public static void Clear(UIObject objectToClear)
         {
             Type type = objectToClear.GetType();
 
@@ -101,7 +94,7 @@ namespace UI
                 throw new InvalidCastException("Type of " + type.ToString() + "  is not a removable UI object!");
         }
 
-        public void SetVisibility<T>(bool isVisible)
+        public static void SetVisibility<T>(bool isVisible)
         {
             Type typeOfT = typeof(T);
 
@@ -111,27 +104,28 @@ namespace UI
                 throw new InvalidCastException("Type of " + typeOfT.ToString() + "  cannot have its visibility set by the manager!  Access the object directly instead.");
         }
 
-        private void SetOverlayVisibility(Type type, bool isVisible)
+        private static void SetOverlayVisibility(Type type, bool isVisible)
         {
-            if (_activeOverlay.GetType() == type)
-                SetActiveOverlay(_activeOverlay);
+            if (ActiveOverlay.GetType() == type)
+                SetActiveOverlay(ActiveOverlay);
             else
                 _log.Warning("Overlay of type " + type.ToString() + " is not active!");
         }
 
-        private UIScreen GetScreen(Type type)
+        private static UIScreen GetScreen(Type type)
         {
             UIScreen selectedScreen = null;
 
-            if (_activeScreen == null)
-                selectedScreen = CreateScreen(type);
-            else if (_activeScreen.GetType() != type)
+            if (ActiveScreen == null)
             {
-                _activeScreen.SetVisible(false);
                 selectedScreen = CreateScreen(type);
             }
-            else
-                _activeScreen.SetVisible(true);
+            else if (ActiveScreen.GetType() != type)
+            {
+                ActiveScreen.SetVisible(false);
+                selectedScreen = CreateScreen(type);
+            }
+            else ActiveScreen.SetVisible(true);
 
             if (selectedScreen != null)
                 SetActiveScreen(selectedScreen);
@@ -139,19 +133,20 @@ namespace UI
             return selectedScreen;
         }
 
-        private UIOverlay GetOverlay(Type type)
+        private static UIOverlay GetOverlay(Type type)
         {
             UIOverlay selectedOverlay = null;
 
-            if (_activeOverlay == null)
-                selectedOverlay = CreateOverlay(type);
-            else if (_activeOverlay.GetType() != type)
+            if (ActiveOverlay == null)
             {
-                _activeOverlay.SetVisible(false);
                 selectedOverlay = CreateOverlay(type);
             }
-            else
-                SetOverlayVisibility(type, true);
+            else if (ActiveOverlay.GetType() != type)
+            {
+                ActiveOverlay.SetVisible(false);
+                selectedOverlay = CreateOverlay(type);
+            }
+            else SetOverlayVisibility(type, true);
 
             if (selectedOverlay != null)
                 SetActiveOverlay(selectedOverlay);
@@ -159,83 +154,83 @@ namespace UI
             return selectedOverlay;
         }
 
-        private UIPopup GetPopup(Type type)
+        private static UIPopup GetPopup(Type type)
         {
             UIPopup selectedPopup = CreatePopup(type);
             UpdatePopupStack(selectedPopup);
 
             if (selectedPopup.UseScrim)
             {
-                Scrimmer.ScrimOver(_popupLayer);
+                Scrimmer.ScrimOver(Instance._popupLayer);
             }
 
             return selectedPopup;
         }
 
-        private void ShowOverlay(UIOverlay overlay)
+        private static void ShowOverlay(UIOverlay overlay)
         {
-            if (_activeOverlay != overlay)
+            if (ActiveOverlay != overlay)
                 SetActiveOverlay(overlay);
         }
 
-        private void SetActiveScreen(UIScreen screen)
+        private static void SetActiveScreen(UIScreen screen)
         {
-            if (_activeScreen != null)
+            if (ActiveScreen != null)
             {
-                _activeScreen.SetVisible(false);
-                _activeScreen.transform.SetParent(null, false);
+                ActiveScreen.SetVisible(false);
+                ActiveScreen.transform.SetParent(null, false);
             }
 
-            _activeScreen = screen;
-            _activeScreen.SetVisible(true);
-            _activeScreen.transform.SetParent(_screenLayer, false);
-            _activeScreen.ActivateScreen();
+            ActiveScreen = screen;
+            ActiveScreen.SetVisible(true);
+            ActiveScreen.transform.SetParent(Instance._screenLayer, false);
+            ActiveScreen.ActivateScreen();
         }
 
-        private void SetActiveOverlay(UIOverlay overlay)
+        private static void SetActiveOverlay(UIOverlay overlay)
         {
-            if (_activeOverlay != null)
+            if (ActiveOverlay != null)
             {
-                _activeOverlay.SetVisible(false);
+                ActiveOverlay.SetVisible(false);
             }
 
-            _activeOverlay = overlay;
-            _activeOverlay.SetVisible(true);
+            ActiveOverlay = overlay;
+            ActiveOverlay.SetVisible(true);
         }
 
-        private void UpdatePopupStack(UIPopup newPopup = null)
+        private static void UpdatePopupStack(UIPopup newPopup = null)
         {
             if (newPopup != null)
             {
-                newPopup.transform.SetParent(_popupLayer, false);
-                _popupStack.Push(newPopup);
+                newPopup.transform.SetParent(Instance._popupLayer, false);
+                Instance._popupStack.Push(newPopup);
             }
             else
             {
-                UIPopup oldPopup = _popupStack.Pop();
+                UIPopup oldPopup = Instance._popupStack.Pop();
                 Destroy(oldPopup.gameObject);
             }
 
-            foreach (UIPopup popup in _popupStack)
+            foreach (UIPopup popup in Instance._popupStack)
                 popup.SetVisible(false);
 
-            if (_activePopup != null)
+            if (ActivePopup != null)
             {
-                _activePopup.SetVisible(true);
-                _activePopup.Activate();
-                Scrimmer.ScrimOver(_popupLayer);
+                ActivePopup.SetVisible(true);
+                ActivePopup.Activate();
+                Scrimmer.ScrimOver(Instance._popupLayer);
             }
             else
             {
-                Scrimmer.ClearScrim(_popupLayer);
+                Scrimmer.ClearScrim(Instance._popupLayer);
             }
         }
 
-        private UIScreen CreateScreen(Type type)
+        private static UIScreen CreateScreen(Type type)
         {
             UIScreen selectedScreen = null;
 
-            foreach (UIScreen screen in _screens)
+            foreach (UIScreen screen in Instance._screens)
                 if (screen.GetType() == type)
                 {
                     selectedScreen = Instantiate(screen.gameObject).GetComponent(type) as UIScreen;
@@ -248,15 +243,15 @@ namespace UI
             return selectedScreen;
         }
 
-        private UIOverlay CreateOverlay(Type type)
+        private static UIOverlay CreateOverlay(Type type)
         {
             UIOverlay selectedOverlay = null;
 
-            foreach (UIOverlay overlay in _overlays)
+            foreach (UIOverlay overlay in Instance._overlays)
                 if (overlay.GetType() == type)
                 {
                     selectedOverlay = Instantiate(overlay.gameObject).GetComponent(type) as UIOverlay;
-                    selectedOverlay.transform.SetParent(_overlayLayer, false);
+                    selectedOverlay.transform.SetParent(Instance._overlayLayer, false);
                     break;
                 }
 
@@ -266,10 +261,10 @@ namespace UI
             return selectedOverlay;
         }
 
-        private UIPopup CreatePopup(Type type)
+        private static UIPopup CreatePopup(Type type)
         {
             UIPopup selectedPopup = null;
-            foreach (UIPopup popup in _popups)
+            foreach (UIPopup popup in Instance._popups)
             {
                 if (popup.GetType() == type)
                 {
@@ -284,7 +279,7 @@ namespace UI
             return selectedPopup;
         }
 
-        private UIActor CreateActor(Type type)
+        private static UIActor CreateActor(Type type)
         {
             GameObject newObject = new GameObject();
             newObject.transform.Reset();
@@ -293,9 +288,9 @@ namespace UI
             return selectedActor;
         }
 
-        private void ClearPopup(Type type)
+        private static void ClearPopup(Type type)
         {
-            if (type == typeof(UIPopup) || type == _activePopup.GetType())
+            if (type == typeof(UIPopup) || type == ActivePopup.GetType())
                 UpdatePopupStack();
             else
                 throw new ArgumentException("Can't clear a popup of type " + type + " because it is not displayed.");

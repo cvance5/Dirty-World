@@ -15,7 +15,7 @@
 
         protected void Close()
         {
-            UIManager.Instance.Clear(this);
+            UIManager.Clear(this);
         }
     }
 }

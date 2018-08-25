@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using UI.Effects;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -29,15 +30,11 @@ namespace UI
             _scrim.enabled = isVisible;
         }
 
-        public void Hide()
-        {
-            _scrim.color = _scrim.color.SwapAlpha(0);
-        }
+        public UIEffect Hide() =>
+            new InstantEffect(() => _scrim.color = _scrim.color.SwapAlpha(0));
 
-        public void FadeTo(float alpha, float duration)
-        {
-            _scrim.DOFade(alpha, duration);
-        }
+        public UIEffect FadeTo(float alpha, float duration) =>
+            new TweenEffect(_scrim.DOFade(alpha, duration));
 
         private void OnDestroy()
         {
