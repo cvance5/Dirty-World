@@ -7,11 +7,11 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
     {
         private static readonly Dictionary<BlockTypes, Range> _blockRanges = new Dictionary<BlockTypes, Range>()
         {
-            { BlockTypes.Stone, new Range(int.MinValue, World.SurfaceDepth) },
-            { BlockTypes.Copper, new Range(World.SurfaceDepth - 15, World.SurfaceDepth) },
-            { BlockTypes.Silver,  new Range(World.SurfaceDepth - 30, World.SurfaceDepth - 10) },
-            { BlockTypes.Gold,  new Range(World.SurfaceDepth - 45, World.SurfaceDepth - 25) },
-            { BlockTypes.Platinum, new Range(int.MinValue, World.SurfaceDepth - 40) }
+            { BlockTypes.Stone, new Range(int.MinValue, GameManager.World.SurfaceDepth) },
+            { BlockTypes.Copper, new Range(GameManager.World.SurfaceDepth - 15, GameManager.World.SurfaceDepth) },
+            { BlockTypes.Silver,  new Range(GameManager.World.SurfaceDepth - 30, GameManager.World.SurfaceDepth - 10) },
+            { BlockTypes.Gold,  new Range(GameManager.World.SurfaceDepth - 45, GameManager.World.SurfaceDepth - 25) },
+            { BlockTypes.Platinum, new Range(int.MinValue, GameManager.World.SurfaceDepth - 40) }
         };
 
         private static readonly Dictionary<BlockTypes, float> _blockScarcities = new Dictionary<BlockTypes, float>()

@@ -10,7 +10,7 @@ namespace WorldObjects.Blocks
         {
             yield return null;
 
-            var neighbors = World.GetNeighbors(this);
+            var neighbors = GameManager.World.GetNeighbors(this);
 
             foreach (var neighbor in neighbors)
             {
@@ -24,7 +24,7 @@ namespace WorldObjects.Blocks
         {
             yield return null;
 
-            var neighbors = World.GetNeighbors(this);
+            var neighbors = GameManager.World.GetNeighbors(this);
 
             foreach (var neighbor in neighbors)
             {

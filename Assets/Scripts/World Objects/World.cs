@@ -3,22 +3,22 @@ using UnityEngine;
 
 namespace WorldObjects
 {
-    public class World : Singleton<World>
+    public class World : MonoBehaviour
     {
-        public static int SurfaceDepth => GameManager.Instance.Settings.SurfaceDepth;
-        public static int ChunkSize => GameManager.Instance.Settings.ChunkSize;
+        public int SurfaceDepth => GameManager.Instance.Settings.SurfaceDepth;
+        public int ChunkSize => GameManager.Instance.Settings.ChunkSize;
 
-        private static List<Chunk> _activeChunks = new List<Chunk>();
-        private static Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
+        private List<Chunk> _activeChunks = new List<Chunk>();
+        private Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
 
-        public static void Register(Chunk chunk)
+        public void Register(Chunk chunk)
         {
             _activeChunks.Add(chunk);
             _chunksByWorldPosition.Add(chunk.Position, chunk);
-            chunk.transform.SetParent(Instance.transform);
+            chunk.transform.SetParent(transform);
         }
 
-        public static List<Block> GetNeighbors(Block block)
+        public List<Block> GetNeighbors(Block block)
         {
             var neighbors = new List<Block>();
 
@@ -41,7 +41,7 @@ namespace WorldObjects
             return neighbors;
         }
 
-        public static List<Chunk> GetNeighbors(Chunk chunk)
+        public List<Chunk> GetNeighbors(Chunk chunk)
         {
             var neighbors = new List<Chunk>();
 
@@ -54,7 +54,7 @@ namespace WorldObjects
             return neighbors;
         }
 
-        public static Chunk GetContainingChunk(IntVector2 position)
+        public Chunk GetContainingChunk(IntVector2 position)
         {
             foreach (var chunk in _activeChunks)
             {
@@ -66,26 +66,20 @@ namespace WorldObjects
             return null;
         }
 
-        public static Chunk GetNeighborOfChunk(IntVector2 chunkPosition, IntVector2 directionToCheck)
+        public Chunk GetNeighborOfChunk(IntVector2 chunkPosition, IntVector2 directionToCheck)
         {
             var neighborPosition = GetChunkPosition(chunkPosition, directionToCheck);
             return GetChunkAtPosition(neighborPosition);
         }
 
-        public static Chunk GetChunkAtPosition(IntVector2 chunkPosition)
+        public Chunk GetChunkAtPosition(IntVector2 chunkPosition)
         {
             Chunk chunk = null;
             _chunksByWorldPosition.TryGetValue(chunkPosition, out chunk);
             return chunk;
         }
 
-        public static IntVector2 GetChunkPosition(IntVector2 chunkPosition, IntVector2 direction) =>
+        public IntVector2 GetChunkPosition(IntVector2 chunkPosition, IntVector2 direction) =>
             chunkPosition + new IntVector2(direction.X * ChunkSize, direction.Y * ChunkSize);
-
-        public static void Clear()
-        {
-            _activeChunks.Clear();
-            _chunksByWorldPosition.Clear();
-        }
     }
 }

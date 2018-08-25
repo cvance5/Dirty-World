@@ -18,7 +18,7 @@ namespace WorldObjects.WorldGeneration
         private List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
         private List<IntVector2> _boundedDirections = new List<IntVector2>();
 
-        private static int _chunkSize = World.ChunkSize;
+        private static int _chunkSize = GameManager.World.ChunkSize;
         private static int _halfChunkSize = _chunkSize / 2;
 
         private static BlockTypes _fillBlock = BlockTypes.Dirt;
@@ -49,7 +49,7 @@ namespace WorldObjects.WorldGeneration
 
             foreach (var dir in Directions.Cardinals)
             {
-                if (World.GetNeighborOfChunk(chunkWorldCenterpoint, dir) != null)
+                if (GameManager.World.GetNeighborOfChunk(chunkWorldCenterpoint, dir) != null)
                 {
                     _boundedDirections.Add(dir);
                 }
@@ -139,7 +139,7 @@ namespace WorldObjects.WorldGeneration
 
             foreach (var dir in Directions.Cardinals)
             {
-                var neighbor = (World.GetNeighborOfChunk(_chunkWorldCenterpoint, dir));
+                var neighbor = (GameManager.World.GetNeighborOfChunk(_chunkWorldCenterpoint, dir));
 
                 if (neighbor != null)
                 {

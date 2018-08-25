@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using WorldObjects;
 
 namespace Data
 {
@@ -15,7 +14,7 @@ namespace Data
             = new Dictionary<ITrackable, List<Action<PositionData, PositionData>>>();
 
         private static Coroutine _updateMethod;
-        private static WaitForSeconds _positionUpdateTick = new WaitForSeconds(.25f);
+        private static readonly WaitForSeconds _positionUpdateTick = new WaitForSeconds(.25f);
 
         public static void BeginTracking(ITrackable target)
         {
@@ -23,7 +22,7 @@ namespace Data
             {
                 var position = target.Position;
 
-                var chunk = World.GetContainingChunk(position);
+                var chunk = GameManager.World.GetContainingChunk(position);
                 var space = chunk.GetSpaceForPosition(position);
 
                 var initialPositionData = new PositionData(chunk, space);
@@ -98,7 +97,7 @@ namespace Data
 
                     if (!oldPositionData.Chunk.Contains(position))
                     {
-                        newPositionData.Chunk = World.GetContainingChunk(position);
+                        newPositionData.Chunk = GameManager.World.GetContainingChunk(position);
                     }
                     else newPositionData.Chunk = oldPositionData.Chunk;
 

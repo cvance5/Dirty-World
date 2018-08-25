@@ -8,12 +8,12 @@ namespace WorldObjects.WorldGeneration
 {
     public static class WorldBuilder
     {
-        private static readonly int _chunkSize = World.ChunkSize;
+        private static readonly int _chunkSize = GameManager.World.ChunkSize;
 
         private static readonly Dictionary<BlockTypes, Range> _fillRanges = new Dictionary<BlockTypes, Range>()
         {
-            {BlockTypes.None, new Range(World.SurfaceDepth + 1, int.MaxValue) },
-            {BlockTypes.Dirt, new Range(int.MinValue, World.SurfaceDepth) }
+            {BlockTypes.None, new Range(GameManager.World.SurfaceDepth + 1, int.MaxValue) },
+            {BlockTypes.Dirt, new Range(int.MinValue, GameManager.World.SurfaceDepth) }
         };
 
         public static void BuildInitialChunk()
@@ -35,7 +35,7 @@ namespace WorldObjects.WorldGeneration
             cBuilder.AddSpace(sBuilder)
                     .AddSpace(sBuilder2);
 
-            World.Register(cBuilder.Build());
+            GameManager.World.Register(cBuilder.Build());
 
             foreach (var dir in Directions.Compass)
             {
@@ -47,7 +47,7 @@ namespace WorldObjects.WorldGeneration
         {
             var serializableChunk = Data.Serialization.SerializableChunk.Deserialize(serializedChunk);
             var chunk = serializableChunk.ToObject();
-            World.Register(chunk);
+            GameManager.World.Register(chunk);
         }
 
         public static void BuildChunk(IntVector2 position)
@@ -61,7 +61,7 @@ namespace WorldObjects.WorldGeneration
                     .AddBlocks(blocks)
                     .SetFill(GetFill(cBuilder.Depth));
 
-            World.Register(cBuilder.Build());
+            GameManager.World.Register(cBuilder.Build());
         }
 
         private static BlockTypes GetFill(int depth)

@@ -42,6 +42,6 @@ namespace WorldObjects.Hazards
 
         public override string ObjectName => $"Spike {Position}";
 
-        protected override void OnDestroyed() { }
+        protected override void OnWorldObjectDestroy() { }
     }
 }

@@ -39,7 +39,7 @@ namespace WorldObjects.Blocks
 
         private void DestabalizeNeighbors(int stabilityThreshold)
         {
-            var neighbors = World.GetNeighbors(this);
+            var neighbors = GameManager.World.GetNeighbors(this);
 
             foreach (var neighbor in neighbors)
             {
@@ -53,7 +53,7 @@ namespace WorldObjects.Blocks
 
         private void UpdateStability()
         {
-            _numNeighbors = World.GetNeighbors(this).Count;
+            _numNeighbors = GameManager.World.GetNeighbors(this).Count;
             Stability = Mathf.Min(Health, _numNeighbors * 25);
 
             if (_numNeighbors == 0) Crumble();

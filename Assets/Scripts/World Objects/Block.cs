@@ -51,7 +51,7 @@ namespace WorldObjects
         private Queue<float> _velocitySamples;
         public bool IsStable => _rigidbody.bodyType == RigidbodyType2D.Kinematic;
 
-        private void Awake()
+        protected override void OnWorldObjectAwake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
             _sprite = GetComponent<SpriteRenderer>();
@@ -206,7 +206,7 @@ namespace WorldObjects
 
         private void AlertNeighbors()
         {
-            var neighbors = World.GetNeighbors(this);
+            var neighbors = GameManager.World.GetNeighbors(this);
 
             foreach (var neighbor in neighbors)
             {
@@ -279,7 +279,7 @@ namespace WorldObjects
             actorData.ApplyDamage(impactMagnitude);
         }
 
-        protected override void OnDestroyed()
+        protected override void OnWorldObjectDestroy()
         {
             DropItem();
         }

@@ -13,19 +13,28 @@ namespace WorldObjects
 
         private static bool _isQuitting = false;
 
+        protected virtual void Awake()
+        {
+            SceneHelper.OnSceneIsEnding += OnApplicationQuit;
+            OnWorldObjectAwake();
+        }
+
+        protected virtual void OnWorldObjectAwake() { }
+
         protected void OnDestroy()
         {
-            if(!_isQuitting)
+            if (!_isQuitting)
             {
                 OnWorldObjectDestroyed.Raise(this);
-                OnDestroyed();
+                OnWorldObjectDestroy();
             }
         }
 
-        protected abstract void OnDestroyed();
+        protected abstract void OnWorldObjectDestroy();
 
         private void OnApplicationQuit()
         {
+            SceneHelper.OnSceneIsEnding -= OnApplicationQuit;
             _isQuitting = true;
         }
     }
