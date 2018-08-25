@@ -1,4 +1,5 @@
-﻿using ItemManagement;
+﻿using Data;
+using ItemManagement;
 using System.Collections.Generic;
 
 namespace Actors.Player
@@ -6,6 +7,11 @@ namespace Actors.Player
     public class PlayerData : ActorData
     {
         public int Wealth { get; private set; }
+
+        private void Awake()
+        {
+            PositionTracker.BeginTracking(this);
+        }
 
         public void AddCollectedItems(Dictionary<CollectibleType, int> collectedItems)
         {
@@ -23,6 +29,7 @@ namespace Actors.Player
         protected override void OnDeath()
         {
             _log.Info($"Score: {Wealth}", "blue");
+            PositionTracker.StopTracking(this);
         }
 
         private static readonly Log _log = new Log("PlayerData");
