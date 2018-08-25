@@ -1,8 +1,13 @@
 ﻿using Actors;
+using Actors.Player;
 using Data;
 using Data.IO;
+using System.Collections;
 using UI;
+using UI.Effects;
+using UI.UIScreens;
 using UnityEngine;
+using Utilities.CustomYieldInstructions;
 using WorldObjects;
 using WorldObjects.WorldGeneration;
 
@@ -10,52 +15,73 @@ public class GameManager : Singleton<GameManager>
 {
     public Settings Settings;
 
+    public static World World { get; private set; }
+
+    private PlayerData _player;
+
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(UIManager.Instance.gameObject);
+
+        StartGame();
     }
 
-    private void Start()
+    private void StartGame()
     {
         GameState.Initialize();
 
         GameSaves.Refresh();
         GameSaves.LoadGame("Default");
 
-        if (!GameSaves.HasSavedData)
+        SceneHelper.LoadScene(SceneHelper.Scenes.Gameplay);
+        SceneHelper.OnSceneIsReady += InitializeWorld;
+    }
+
+    private void InitializeWorld()
+    {
+        SceneHelper.OnSceneIsReady -= InitializeWorld;
+
+        if (World != null) throw new System.InvalidOperationException($"Cannot initialize world while one already exists.");
+
+        var worldGameObject = new GameObject("World");
+        World = worldGameObject.AddComponent<World>();
+
+        if (GameSaves.HasSavedData)
+        {
+            _log.Info("Loading saved data...");
+            LoadInitialChunk();
+        }
+        else
         {
             _log.Info("Creating new save...");
             WorldBuilder.BuildInitialChunk();
             GameSaves.SaveDirty();
         }
-        else
-        {
-            _log.Info("Loading saved data...");
-            var initialChunkPosition = new IntVector2(0, 0);
-            WorldBuilder.LoadChunk(DataReader.Read(initialChunkPosition.ToString(), DataTypes.CurrentGame));
-            CheckForGenerateChunk(initialChunkPosition);
-        }
 
-        InitializePlayer();
         _log.Info("Success.");
+        SpawnPlayer();
     }
 
-    private void Update()
+    private void SpawnPlayer()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (_player != null)
         {
-            GameSaves.SaveDirty();
+            DestroyImmediate(_player.gameObject);
         }
+
+        var playerObj = Instantiate(Settings.Player, Vector2.zero, Quaternion.identity);
+        _player = playerObj.GetComponent<PlayerData>();
+        PositionTracker.Subscribe(_player, OnPlayerTrackingUpdate);
+
+        _player.OnActorDeath += OnPlayerDeath;
     }
 
-    private void InitializePlayer()
+    private void LoadInitialChunk()
     {
-        var playerObj = Instantiate(Settings.Player, Vector2.zero, Quaternion.identity);
-        var playerData = playerObj.GetComponent<Actors.Player.PlayerData>();
-        PositionTracker.BeginTracking(playerData);
-        PositionTracker.Subscribe(playerData, OnPlayerTrackingUpdate);
-
-        playerData.OnActorDeath += OnPlayerDeath;
+        var initialChunkPosition = new IntVector2(0, 0);
+        WorldBuilder.LoadChunk(DataReader.Read(initialChunkPosition.ToString(), DataTypes.CurrentGame));
+        CheckForGenerateChunk(initialChunkPosition);
     }
 
     private void OnPlayerTrackingUpdate(PositionData oldData, PositionData newData)
@@ -67,9 +93,9 @@ public class GameManager : Singleton<GameManager>
     {
         foreach (var dir in Directions.Compass)
         {
-            var newChunkPosition = World.GetChunkPosition(new IntVector2(currentChunkPosition), dir);
+            var newChunkPosition = GameManager.World.GetChunkPosition(new IntVector2(currentChunkPosition), dir);
 
-            if (World.GetChunkAtPosition(newChunkPosition) != null) continue;
+            if (GameManager.World.GetChunkAtPosition(newChunkPosition) != null) continue;
             else if (GameSaves.HasGameData(newChunkPosition.ToString()))
             {
                 WorldBuilder.LoadChunk(DataReader.Read(newChunkPosition.ToString(), DataTypes.CurrentGame));
@@ -80,10 +106,35 @@ public class GameManager : Singleton<GameManager>
 
     private void OnPlayerDeath(ActorData playerData)
     {
-        PositionTracker.StopTracking(playerData);
+        GameSaves.SaveDirty();
+        StartCoroutine(HandleGameOverScreen());
+    }
+
+    private IEnumerator HandleGameOverScreen()
+    {
         var scrim = Scrimmer.ScrimOver(UIManager.BaseLayer);
-        scrim.Hide();
-        scrim.FadeTo(1f, 3f);
+        var activateScrimSequence = new SequenceEffect
+        (
+            scrim.Hide(),
+            scrim.FadeTo(0.85f, 3f)
+        );
+
+        var wfcc = new WaitForCustomCallback();
+        activateScrimSequence.Play(wfcc.Callback);
+        yield return wfcc;
+
+        var gameOverScreen = UIManager.Get<GameOverScreen>();
+        yield return new WaitForObjectDestroyed(gameOverScreen);
+
+        wfcc = new WaitForCustomCallback();
+        scrim.FadeTo(1f, .1f).Play(wfcc.Callback);
+        yield return wfcc;
+
+        SceneHelper.ReloadScene();
+        scrim.FadeTo(0, .5f).Play(() => Destroy(scrim));
+
+        World = null;
+        SceneHelper.OnSceneIsReady += InitializeWorld;
     }
 
     private static readonly Log _log = new Log("GameManager");
