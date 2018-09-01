@@ -22,6 +22,8 @@ namespace UI.UIScreens
             sequence.Play(FillUpgradeList);
         }
 
+        public void OnRespawnClicked() => DeactivateScreen();
+
         private void FillUpgradeList()
         {
 
@@ -29,7 +31,18 @@ namespace UI.UIScreens
 
         public override void DeactivateScreen()
         {
-            throw new System.NotImplementedException();
+            var sequence = new SequenceEffect
+            (
+                ScreenGroup.SetInteractable(false),
+                ScreenGroup.FadeTo(0f, .5f)
+            );
+
+            sequence.Play(() =>
+            {
+                OnScreenDeactivated.Raise(this);
+                Destroy(gameObject);
+                gameObject.SetActive(false);
+            });
         }
     }
 }
