@@ -24,7 +24,7 @@ namespace Actors.Player
 
             switch (tag)
             {
-                case Tags.Item: HandleItem(collision.gameObject.GetComponent<Item>()); break;
+                case Tags.Item: HandleItem(collision.gameObject.GetComponent<ItemActor>()); break;
                 case Tags.Hazard: HandleHazard(collision.gameObject.GetComponent<Hazard>()); break;
             }
         }
@@ -35,12 +35,12 @@ namespace Actors.Player
 
             switch (tag)
             {
-                case Tags.Item: HandleItem(other.GetComponent<Item>()); break;
+                case Tags.Item: HandleItem(other.GetComponent<ItemActor>()); break;
                 case Tags.Hazard: HandleHazard(other.GetComponent<Hazard>()); break;
             }
         }
 
-        private void HandleItem(Item item)
+        private void HandleItem(ItemActor item)
         {
             _log.ErrorIfNull(item, $"{item} has tag {Tags.Item} but does not have an item component.");
 
