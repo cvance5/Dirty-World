@@ -8,7 +8,7 @@ public class ItemLoader : Singleton<ItemLoader>
     public GameObject GoldPiece;
     public GameObject PlatinumPiece;
 
-    public static Item CreateItem(ItemType type, IntVector2 worldPosition)
+    public static ItemActor CreateItem(ItemType type, IntVector2 worldPosition)
     {
         GameObject itemObject;
 
@@ -25,7 +25,7 @@ public class ItemLoader : Singleton<ItemLoader>
         itemObject.transform.position = worldPosition;
         itemObject.name = $"[{worldPosition.X}, {worldPosition.Y}]";
 
-        var item = itemObject.GetComponent<Item>();
+        var item = itemObject.GetComponent<ItemActor>();
 
         _log.ErrorIfNull(item, $"Item of type {type} has not been given a 'item' component.");
 
