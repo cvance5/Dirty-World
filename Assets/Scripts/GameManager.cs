@@ -123,8 +123,12 @@ public class GameManager : Singleton<GameManager>
         activateScrimSequence.Play(wfcc.Callback);
         yield return wfcc;
 
-        var gameOverScreen = UIManager.Get<GameOverScreen>();
-        yield return new WaitForObjectDestroyed(gameOverScreen);
+        UIScreen activeScreen = UIManager.Get<GameOverScreen>();
+        while (activeScreen != null)
+        {
+            yield return new WaitForObjectDestroyed(activeScreen);
+            activeScreen = UIManager.ActiveScreen;
+        }
 
         wfcc = new WaitForCustomCallback();
         scrim.FadeTo(1f, .1f).Play(wfcc.Callback);

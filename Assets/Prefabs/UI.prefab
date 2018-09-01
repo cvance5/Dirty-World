@@ -123,6 +123,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _screens:
   - {fileID: 114949684758712442, guid: 2021ae547ee08e24caf7370d66e49853, type: 2}
+  - {fileID: 114864091468647458, guid: 15c74663ff066ad45a0dad2a4f435c2c, type: 2}
   _overlays: []
   _popups: []
   _baseLayer: {fileID: 224750953426635250}

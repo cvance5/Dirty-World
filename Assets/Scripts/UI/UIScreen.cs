@@ -2,8 +2,12 @@
 
 namespace UI
 {
+    [RequireComponent(typeof(CanvasGroup))]
     public abstract class UIScreen : UIObject
     {
+        public static SmartEvent<UIScreen> OnScreenActivated = new SmartEvent<UIScreen>();
+        public static SmartEvent<UIScreen> OnScreenDeactivated = new SmartEvent<UIScreen>();
+
         public CanvasGroup ScreenGroup { get; private set; }
 
         private void Awake()

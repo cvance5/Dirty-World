@@ -4,9 +4,6 @@ namespace UI.UIScreens
 {
     public class GameOverScreen : UIScreen
     {
-        public SmartEvent OnRespawn = new SmartEvent();
-        public SmartEvent OnUpgrade = new SmartEvent();
-
         public override void ActivateScreen()
         {
             var sequence = new SequenceEffect
@@ -17,16 +14,16 @@ namespace UI.UIScreens
                 ScreenGroup.SetInteractable(true)
             );
 
-            sequence.Play();
+            sequence.Play(() => OnScreenActivated.Raise(this));
         }
 
-        public void OnRespawnClicked()
+        public void OnRespawnClicked() => DeactivateScreen();
+
+        public void OnUpgradeClicked()
         {
-            OnRespawn.Raise();
             DeactivateScreen();
+            OnScreenDeactivated += ActivateUpgradesScreen;
         }
-
-        public void OnUpgradeClicked() => OnUpgrade.Raise();
 
         public override void DeactivateScreen()
         {
@@ -36,8 +33,18 @@ namespace UI.UIScreens
                 ScreenGroup.FadeTo(0f, .5f)
             );
 
-            sequence.Play(() => Destroy(gameObject));
-            enabled = false;
+            sequence.Play(() =>
+            {
+                OnScreenDeactivated.Raise(this);
+                Destroy(gameObject);
+                gameObject.SetActive(false);
+            });
+        }
+
+        private static void ActivateUpgradesScreen(UIScreen callingGameOverScreen)
+        {
+            OnScreenDeactivated -= ActivateUpgradesScreen;
+            UIManager.Get<PurchaseUpgradesScreen>();
         }
     }
 }
