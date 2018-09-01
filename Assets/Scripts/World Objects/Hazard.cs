@@ -10,7 +10,7 @@ namespace WorldObjects
         public abstract IntVector2 AnchoringPosition { get; }
         public HazardEffects[] Effects { get; protected set; }
 
-        private void Awake() => InitializeEffects();
+        protected override void OnWorldObjectAwake() => InitializeEffects();
 
         protected abstract void InitializeEffects();
 
