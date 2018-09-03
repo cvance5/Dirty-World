@@ -24,7 +24,11 @@ namespace Actors
         private void Awake()
         {
             _sprite = GetComponent<SpriteRenderer>();
+
+            OnActorAwake();
         }
+
+        protected virtual void OnActorAwake() { }
 
         public void ApplyDamage(int amount)
         {

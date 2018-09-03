@@ -1,32 +1,29 @@
 ﻿using Data;
-using ItemManagement;
-using Metadata;
+using Items;
+using Player;
 using System.Collections.Generic;
 
 namespace Actors.Player
 {
     public class PlayerData : ActorData
     {
-        private User _owner = null;
+        private Character _character = null;
 
-        private void Awake()
+        protected override void OnActorAwake()
         {
             PositionTracker.BeginTracking(this);
         }
 
-        public void AssignToUser(User user)
+        public void AssignCharacter(Character character)
         {
-            _owner = user;
+            _character = character;
         }
 
-        public void AddCollectedItems(Dictionary<CollectibleType, int> collectedItems)
+        public void AddCollectedItems(List<Item> collectedItems)
         {
-            foreach (var kvp in collectedItems)
+            foreach (var item in collectedItems)
             {
-                switch (kvp.Key)
-                {
-                    case CollectibleType.Wealth: Wealth += kvp.Value; break;
-                }
+                _character.Inventory.Add(item);
             }
         }
 
@@ -36,7 +33,5 @@ namespace Actors.Player
         {
             PositionTracker.StopTracking(this);
         }
-
-        private static readonly Log _log = new Log("PlayerData");
     }
 }
