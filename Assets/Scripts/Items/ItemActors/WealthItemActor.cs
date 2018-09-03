@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace ItemManagement.ItemActors
+namespace Items.ItemActors
 {
     public abstract class WealthItemActor : ItemActor, ICollectible
     {
-        public abstract Dictionary<CollectibleType, int> CollectedItems { get; }
+        public abstract List<Item> CollectedItems { get; }
 
         public void OnCollect()
         {

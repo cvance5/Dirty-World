@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace ItemManagement
+namespace Items
 {
     [RequireComponent(typeof(Collider2D))]
     public abstract class ItemActor : MonoBehaviour

@@ -1,4 +1,5 @@
-﻿using ItemManagement;
+﻿using Items;
+using Items.ItemActors;
 using UnityEngine;
 
 public class ItemLoader : Singleton<ItemLoader>
@@ -8,16 +9,16 @@ public class ItemLoader : Singleton<ItemLoader>
     public GameObject GoldPiece;
     public GameObject PlatinumPiece;
 
-    public static ItemActor CreateItem(ItemType type, IntVector2 worldPosition)
+    public static ItemActor CreateItem(ItemActorTypes type, IntVector2 worldPosition)
     {
         GameObject itemObject;
 
         switch (type)
         {
-            case ItemType.CopperPiece: itemObject = Instance.CopperPiece; break;
-            case ItemType.SilverPiece: itemObject = Instance.SilverPiece; break;
-            case ItemType.GoldPiece: itemObject = Instance.GoldPiece; break;
-            case ItemType.PlatinumPiece: itemObject = Instance.PlatinumPiece; break;
+            case ItemActorTypes.CopperPiece: itemObject = Instance.CopperPiece; break;
+            case ItemActorTypes.SilverPiece: itemObject = Instance.SilverPiece; break;
+            case ItemActorTypes.GoldPiece: itemObject = Instance.GoldPiece; break;
+            case ItemActorTypes.PlatinumPiece: itemObject = Instance.PlatinumPiece; break;
             default: throw new System.ArgumentException($"Unknown item type of {type}.");
         }
 

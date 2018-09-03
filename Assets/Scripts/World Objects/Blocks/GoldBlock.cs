@@ -1,4 +1,6 @@
-﻿namespace WorldObjects.Blocks
+﻿using Items.ItemActors;
+
+namespace WorldObjects.Blocks
 {
     public class GoldBlock : Block
     {
@@ -6,7 +8,7 @@
 
         protected override void DropItem()
         {
-            ItemLoader.CreateItem(ItemType.GoldPiece, Position);
+            ItemLoader.CreateItem(ItemActorTypes.GoldPiece, Position);
         }
     }
 }

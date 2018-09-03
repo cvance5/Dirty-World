@@ -1,4 +1,6 @@
-﻿namespace WorldObjects.Blocks
+﻿using Items.ItemActors;
+
+namespace WorldObjects.Blocks
 {
     public class PlatinumBlock : Block
     {
@@ -6,7 +8,7 @@
 
         protected override void DropItem()
         {
-            ItemLoader.CreateItem(ItemType.PlatinumPiece, Position);
+            ItemLoader.CreateItem(ItemActorTypes.PlatinumPiece, Position);
         }
     }
 }

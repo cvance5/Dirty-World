@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace ItemManagement
+namespace Items
 {
     public interface ICollectible
     {
-        Dictionary<CollectibleType, int> CollectedItems { get; }
+        List<Item> CollectedItems { get; }
         void OnCollect();
     }
 }

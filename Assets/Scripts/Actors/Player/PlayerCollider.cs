@@ -1,4 +1,4 @@
-﻿using ItemManagement;
+﻿using Items;
 using Metadata;
 using UnityEngine;
 using WorldObjects.Hazards;
@@ -40,17 +40,17 @@ namespace Actors.Player
             }
         }
 
-        private void HandleItem(ItemActor item)
+        private void HandleItem(ItemActor itemActor)
         {
-            _log.ErrorIfNull(item, $"{item} has tag {Tags.Item} but does not have an item component.");
+            _log.ErrorIfNull(itemActor, $"{itemActor} has tag {Tags.Item} but does not have an item component.");
 
-            foreach (var interaction in item.Interactions)
+            foreach (var interaction in itemActor.Interactions)
             {
                 switch (interaction)
                 {
                     case InteractionTypes.Collect:
-                        var collectibleItem = item as ICollectible;
-                        _log.ErrorIfNull(collectibleItem, $"{item} has interaction {interaction} but does not implement {typeof(ICollectible).Name}.");
+                        var collectibleItem = itemActor as ICollectible;
+                        _log.ErrorIfNull(collectibleItem, $"{itemActor} has interaction {interaction} but does not implement {typeof(ICollectible).Name}.");
                         _data.AddCollectedItems(collectibleItem.CollectedItems);
                         collectibleItem.OnCollect();
                         break;
