@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using WorldObjects.Blocks;
 
-namespace WorldObjects
+namespace WorldObjects.Hazards
 {
     [RequireComponent(typeof(Collider2D))]
     public abstract class Hazard : WorldObject

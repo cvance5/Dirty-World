@@ -1,4 +1,6 @@
-﻿namespace WorldObjects.WorldGeneration
+﻿using WorldObjects.Spaces;
+
+namespace WorldObjects.WorldGeneration
 {
     public abstract class SpaceBuilder
     {

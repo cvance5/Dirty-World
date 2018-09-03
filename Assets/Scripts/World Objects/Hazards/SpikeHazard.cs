@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using WorldObjects.Blocks;
 
 namespace WorldObjects.Hazards
 {

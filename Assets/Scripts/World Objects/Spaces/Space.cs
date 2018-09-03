@@ -2,7 +2,7 @@
 using WorldObjects.Blocks;
 using WorldObjects.Hazards;
 
-namespace WorldObjects
+namespace WorldObjects.Spaces
 {
     public abstract class Space : IBoundary
     {

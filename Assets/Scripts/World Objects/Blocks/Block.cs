@@ -3,8 +3,9 @@ using Metadata;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WorldObjects.Hazards;
 
-namespace WorldObjects
+namespace WorldObjects.Blocks
 {
     [RequireComponent(typeof(Collider2D))]
     [RequireComponent(typeof(Rigidbody2D))]

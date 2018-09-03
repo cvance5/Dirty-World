@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using WorldObjects;
 using WorldObjects.Blocks;
 
 namespace Data.Serialization

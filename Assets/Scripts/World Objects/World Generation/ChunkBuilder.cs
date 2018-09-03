@@ -3,6 +3,8 @@ using UnityEngine;
 using WorldObjects.Blocks;
 using WorldObjects.Hazards;
 
+using Space = WorldObjects.Spaces.Space;
+
 namespace WorldObjects.WorldGeneration
 {
     public class ChunkBuilder

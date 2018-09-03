@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using WorldObjects;
+using WorldObjects.Spaces;
 
 namespace Data
 {

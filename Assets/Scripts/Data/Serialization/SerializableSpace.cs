@@ -1,4 +1,4 @@
-﻿using WorldObjects;
+﻿using WorldObjects.Spaces;
 
 namespace Data.Serialization
 {

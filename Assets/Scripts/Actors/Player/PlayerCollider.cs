@@ -1,7 +1,7 @@
 ﻿using ItemManagement;
 using Metadata;
 using UnityEngine;
-using WorldObjects;
+using WorldObjects.Hazards;
 
 namespace Actors.Player
 {
