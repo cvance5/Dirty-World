@@ -1,16 +1,22 @@
 ﻿using Data;
 using ItemManagement;
+using Metadata;
 using System.Collections.Generic;
 
 namespace Actors.Player
 {
     public class PlayerData : ActorData
     {
-        public int Wealth { get; private set; }
+        private User _owner = null;
 
         private void Awake()
         {
             PositionTracker.BeginTracking(this);
+        }
+
+        public void AssignToUser(User user)
+        {
+            _owner = user;
         }
 
         public void AddCollectedItems(Dictionary<CollectibleType, int> collectedItems)
@@ -28,7 +34,6 @@ namespace Actors.Player
 
         protected override void OnDeath()
         {
-            _log.Info($"Score: {Wealth}", "blue");
             PositionTracker.StopTracking(this);
         }
 

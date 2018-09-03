@@ -2,6 +2,7 @@
 using Actors.Player;
 using Data;
 using Data.IO;
+using Metadata;
 using System.Collections;
 using UI;
 using UI.Effects;
@@ -16,6 +17,7 @@ public class GameManager : Singleton<GameManager>
     public Settings Settings;
 
     public static World World { get; private set; }
+    public static User User { get; private set; }
 
     private PlayerData _player;
 
@@ -24,7 +26,22 @@ public class GameManager : Singleton<GameManager>
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(UIManager.Instance.gameObject);
 
+        FindUser();
+
         StartGame();
+    }
+
+    private void FindUser()
+    {
+        UserSaves.Refresh();
+
+        if (!UserSaves.HasSavedData)
+        {
+            User = new User("default");
+            UserSaves.SaveUser();
+        }
+
+        User = UserSaves.LoadUser("default");
     }
 
     private void StartGame()
@@ -33,6 +50,8 @@ public class GameManager : Singleton<GameManager>
 
         GameSaves.Refresh();
         GameSaves.LoadGame("Default");
+
+        User.AssignCharacter(GameSaves.LoadCharacter());
 
         SceneHelper.LoadScene(SceneHelper.Scenes.Gameplay);
         SceneHelper.OnSceneIsReady += InitializeWorld;

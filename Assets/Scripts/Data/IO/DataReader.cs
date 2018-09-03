@@ -5,10 +5,22 @@ namespace Data.IO
 {
     public static class DataReader
     {
-        public static string Read(string fileName, DataTypes dataTypes)
+        public static string Read(string fileName, DataTypes dataType)
         {
-            var readLocation = Paths.ToPath(dataTypes, fileName);
+            var readLocation = Paths.ToPath(dataType, fileName);
             return File.ReadAllText(readLocation);
+        }
+
+        public static bool Exists(DataTypes dataType)
+        {
+            var readLocation = Paths.ToPath(dataType);
+            return File.Exists(readLocation);
+        }
+
+        public static bool Exists(string fileName, DataTypes dataType)
+        {
+            var readLocation = Paths.ToPath(dataType, fileName);
+            return File.Exists(readLocation);
         }
 
         public static List<string> FindAllFiles(DataTypes dataType)

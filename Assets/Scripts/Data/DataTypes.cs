@@ -2,5 +2,6 @@
 {
     SavedGames,
     CurrentGame,
-    Options
+    Options,
+    Users
 }

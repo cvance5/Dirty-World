@@ -8,6 +8,7 @@ public static class Paths
 
     private const string SAVESPATH = "Saves";
     private const string OPTIONSPATH = "Options";
+    private const string USERPATH = "Users";
 
     public static string ToPath(DataTypes dataType)
     {
@@ -20,6 +21,8 @@ public static class Paths
                 return Path.Combine(Application.persistentDataPath, DATAPATH, SAVESPATH, GameSaves.CurrentGame);
             case DataTypes.Options:
                 return Path.Combine(Application.persistentDataPath, DATAPATH, OPTIONSPATH);
+            case DataTypes.Users:
+                return Path.Combine(Application.persistentDataPath, DATAPATH, USERPATH);
             default: throw new System.ArgumentOutOfRangeException($"Unknown datatype of {dataType}.");
         }
     }
