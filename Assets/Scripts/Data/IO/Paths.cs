@@ -10,6 +10,8 @@ public static class Paths
     private const string OPTIONSPATH = "Options";
     private const string USERPATH = "Users";
 
+    public const string CHARACTERFILE = "Char";
+
     public static string ToPath(DataTypes dataType)
     {
         switch (dataType)
@@ -17,8 +19,11 @@ public static class Paths
             case DataTypes.SavedGames:
                 return Path.Combine(Application.persistentDataPath, DATAPATH, SAVESPATH);
             case DataTypes.CurrentGame:
-                if (string.IsNullOrEmpty(GameSaves.CurrentGame)) throw new System.ArgumentException($"No save game is selected. Cannot access current Save Game Data.");
+                if (string.IsNullOrEmpty(GameSaves.CurrentGame)) throw new System.InvalidOperationException($"No save game is selected. Cannot access current Save Game Data.");
                 return Path.Combine(Application.persistentDataPath, DATAPATH, SAVESPATH, GameSaves.CurrentGame);
+            case DataTypes.CurrentCharacter:
+                if (string.IsNullOrEmpty(GameSaves.CurrentGame)) throw new System.InvalidOperationException($"No save game is selected. Cannot access current Save Game Character.");
+                return Path.Combine(Application.persistentDataPath, DATAPATH, SAVESPATH, GameSaves.CurrentGame, CHARACTERFILE);
             case DataTypes.Options:
                 return Path.Combine(Application.persistentDataPath, DATAPATH, OPTIONSPATH);
             case DataTypes.Users:
@@ -27,11 +32,11 @@ public static class Paths
         }
     }
 
-    public static string ToPath(DataTypes dataType, params string[] fileNames)
+    public static string ToPath(DataTypes dataType, params string[] subDirectory)
     {
         var path = ToPath(dataType);
 
-        foreach (var fileName in fileNames)
+        foreach (var fileName in subDirectory)
         {
             path = Path.Combine(path, fileName);
         }

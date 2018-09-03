@@ -46,12 +46,8 @@ public class GameManager : Singleton<GameManager>
 
     private void StartGame()
     {
-        GameState.Initialize();
-
         GameSaves.Refresh();
         GameSaves.LoadGame("Default");
-
-        User.AssignCharacter(GameSaves.LoadCharacter());
 
         SceneHelper.LoadScene(SceneHelper.Scenes.Gameplay);
         SceneHelper.OnSceneIsReady += InitializeWorld;
@@ -91,6 +87,7 @@ public class GameManager : Singleton<GameManager>
 
         var playerObj = Instantiate(Settings.Player, Vector2.zero, Quaternion.identity);
         _player = playerObj.GetComponent<PlayerData>();
+        _player.AssignCharacter(GameState.CurrentCharacter);
         PositionTracker.Subscribe(_player, OnPlayerTrackingUpdate);
 
         _player.OnActorDeath += OnPlayerDeath;
@@ -112,9 +109,9 @@ public class GameManager : Singleton<GameManager>
     {
         foreach (var dir in Directions.Compass)
         {
-            var newChunkPosition = GameManager.World.GetChunkPosition(new IntVector2(currentChunkPosition), dir);
+            var newChunkPosition = World.GetChunkPosition(new IntVector2(currentChunkPosition), dir);
 
-            if (GameManager.World.GetChunkAtPosition(newChunkPosition) != null) continue;
+            if (World.GetChunkAtPosition(newChunkPosition) != null) continue;
             else if (GameSaves.HasGameData(newChunkPosition.ToString()))
             {
                 WorldBuilder.LoadChunk(DataReader.Read(newChunkPosition.ToString(), DataTypes.CurrentGame));
@@ -126,6 +123,7 @@ public class GameManager : Singleton<GameManager>
     private void OnPlayerDeath(ActorData playerData)
     {
         GameSaves.SaveDirty();
+        UserSaves.SaveUser();
         StartCoroutine(HandleGameOverScreen());
     }
 

@@ -24,7 +24,7 @@ namespace Data
         {
             CurrentUser = userToLoad;
 
-            var userJson = DataReader.Read(userToLoad + ".json", DataTypes.Users);
+            var userJson = DataReader.Read(userToLoad, DataTypes.Users);
             return SerializableUser.Deserialize(userJson).ToObject();
         }
 
@@ -37,7 +37,7 @@ namespace Data
 
             var userToSave = GameManager.User;
 
-            var writeLocation = Paths.ToPath(DataTypes.Users, userToSave.UserName + ".json");
+            var writeLocation = Paths.ToPath(DataTypes.Users, userToSave.UserName);
             var data = new SerializableUser(userToSave);
 
             DataWriter.Write(writeLocation, data.Serialize());

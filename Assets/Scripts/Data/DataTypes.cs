@@ -2,6 +2,7 @@
 {
     SavedGames,
     CurrentGame,
+    CurrentCharacter,
     Options,
     Users
 }

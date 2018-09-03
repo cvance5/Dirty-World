@@ -1,4 +1,6 @@
-﻿using Data.Serialization;
+﻿using Data.IO;
+using Data.Serialization;
+using Player;
 using System;
 using System.Collections.Generic;
 using WorldObjects;
@@ -7,12 +9,16 @@ namespace Data
 {
     public static class GameState
     {
+        public static Character CurrentCharacter { get; private set; }
+
         private static readonly Dictionary<IntVector2, Chunk>
              _dirtyChunks = new Dictionary<IntVector2, Chunk>();
 
         public static void Initialize()
         {
+            _dirtyChunks.Clear();
             Chunk.OnChunkChanged += LogDirty;
+            LoadCharacter();
         }
 
         public static void LogDirty(Chunk dirtyChunk)
@@ -25,7 +31,7 @@ namespace Data
 
         public static Dictionary<string, string> SerializeAll()
         {
-            var fileToWrite = new Dictionary<string, string>();
+            var filesToWrite = new Dictionary<string, string>();
 
             try
             {
@@ -33,8 +39,11 @@ namespace Data
                 {
                     var fileName = kvp.Key.ToString();
                     var data = new SerializableChunk(kvp.Value).Serialize();
-                    fileToWrite.Add(fileName, data);
+                    filesToWrite.Add(fileName, data);
                 }
+
+                var characterFile = new SerializableCharacter(CurrentCharacter);
+                filesToWrite.Add(Paths.CHARACTERFILE, characterFile.Serialize());
             }
             catch (Exception e)
             {
@@ -42,7 +51,21 @@ namespace Data
                 return new Dictionary<string, string>();
             }
 
-            return fileToWrite;
+            return filesToWrite;
+        }
+
+        private static void LoadCharacter()
+        {
+            Character character;
+
+            if (DataReader.Exists(DataTypes.CurrentCharacter))
+            {
+                var characterJson = DataReader.Read(DataTypes.CurrentCharacter);
+                character = SerializableCharacter.Deserialize(characterJson).ToObject();
+            }
+            else character = new Character();
+
+            CurrentCharacter = character;
         }
 
         public static void Clear()

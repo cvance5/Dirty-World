@@ -9,6 +9,9 @@ namespace Data.Serialization
         [JsonProperty("inventory")]
         public SerializableInventory Inventory;
 
+        [JsonConstructor]
+        public SerializableCharacter() { }
+
         public SerializableCharacter(Character character)
         {
             Inventory = new SerializableInventory(character.Inventory);

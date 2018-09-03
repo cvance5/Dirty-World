@@ -5,6 +5,12 @@ namespace Data.IO
 {
     public static class DataReader
     {
+        public static string Read(DataTypes dataType)
+        {
+            var readLocation = Paths.ToPath(dataType);
+            return File.ReadAllText(readLocation);
+        }
+
         public static string Read(string fileName, DataTypes dataType)
         {
             var readLocation = Paths.ToPath(dataType, fileName);
@@ -31,13 +37,16 @@ namespace Data.IO
 
         public static List<string> FindAllFiles(string readLocation)
         {
-            var allPaths = Directory.GetFiles(readLocation);
+            List<string> allFiles = new List<string>();
 
-            var allFiles = new List<string>();
-
-            foreach (var path in allPaths)
+            if (Directory.Exists(readLocation))
             {
-                allFiles.Add(Path.GetFileNameWithoutExtension(path));
+                var allPaths = Directory.GetFiles(readLocation);
+
+                foreach (var path in allPaths)
+                {
+                    allFiles.Add(Path.GetFileNameWithoutExtension(path));
+                }
             }
 
             return allFiles;

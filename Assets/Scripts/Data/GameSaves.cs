@@ -1,6 +1,4 @@
 ﻿using Data.IO;
-using Data.Serialization;
-using Player;
 using System.Collections.Generic;
 using System.IO;
 
@@ -18,8 +16,6 @@ namespace Data
         private static List<string> _currentGameData = new List<string>();
         public static bool HasGameData(string dataName) => _currentGameData.Contains(dataName);
 
-        private const string CHARACTERFILE = "character.json";
-
         public static void Refresh()
         {
             _savedGames = DataReader.FindAllDirectories(DataTypes.SavedGames);
@@ -35,20 +31,8 @@ namespace Data
 
                 _currentGameData = DataReader.FindAllFiles(DataTypes.CurrentGame);
             }
-        }
 
-        public static Character LoadCharacter()
-        {
-            Character character;
-
-            if (DataReader.Exists(CHARACTERFILE, DataTypes.CurrentGame))
-            {
-                var characterJson = DataReader.Read(CHARACTERFILE, DataTypes.CurrentGame);
-                character = SerializableCharacter.Deserialize(characterJson).ToObject();
-            }
-            else character = new Character();
-
-            return character;
+            GameState.Initialize();
         }
 
         public static void UnloadCurrent()
