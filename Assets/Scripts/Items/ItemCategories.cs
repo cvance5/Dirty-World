@@ -3,6 +3,6 @@
     public enum ItemCategories
     {
         Wealth,
-        Upgrade
+        Unlock
     }
 }

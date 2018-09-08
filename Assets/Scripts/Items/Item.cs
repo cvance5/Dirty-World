@@ -9,7 +9,6 @@
         {
             Category = category;
             Amount = amount;
-            Amount = amount;
         }
     }
 }
