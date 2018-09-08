@@ -1,6 +1,6 @@
 ﻿using UI.Effects;
 
-namespace UI.UIScreens
+namespace UI.Screens
 {
     public class GameOverScreen : UIScreen
     {
@@ -44,7 +44,7 @@ namespace UI.UIScreens
         private static void ActivateUpgradesScreen(UIScreen callingGameOverScreen)
         {
             OnScreenDeactivated -= ActivateUpgradesScreen;
-            UIManager.Get<PurchaseUpgradesScreen>();
+            UIManager.Get<WeaponSelectScreen>();
         }
     }
 }

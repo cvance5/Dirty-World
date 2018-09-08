@@ -1,12 +1,13 @@
 ﻿using Actors;
 using Actors.Player;
+using Characters;
 using Data;
 using Data.IO;
 using Metadata;
 using System.Collections;
 using UI;
 using UI.Effects;
-using UI.UIScreens;
+using UI.Screens;
 using UnityEngine;
 using Utilities.CustomYieldInstructions;
 using WorldObjects;
@@ -18,6 +19,7 @@ public class GameManager : Singleton<GameManager>
 
     public static World World { get; private set; }
     public static User User { get; private set; }
+    public static Character Character { get; private set; }
 
     private PlayerData _player;
 
@@ -74,6 +76,8 @@ public class GameManager : Singleton<GameManager>
             GameSaves.SaveDirty();
         }
 
+        Character = GameState.CurrentCharacter;
+
         _log.Info("Success.");
         SpawnPlayer();
     }
@@ -87,7 +91,7 @@ public class GameManager : Singleton<GameManager>
 
         var playerObj = Instantiate(Settings.Player, Vector2.zero, Quaternion.identity);
         _player = playerObj.GetComponent<PlayerData>();
-        _player.AssignCharacter(GameState.CurrentCharacter);
+        _player.AssignCharacter(Character);
         PositionTracker.Subscribe(_player, OnPlayerTrackingUpdate);
 
         _player.OnActorDeath += OnPlayerDeath;
