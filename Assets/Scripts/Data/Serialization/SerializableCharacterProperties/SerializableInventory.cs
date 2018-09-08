@@ -1,6 +1,6 @@
 ﻿using Items;
 using Newtonsoft.Json;
-using Player;
+using Characters;
 
 namespace Data.Serialization.SerializableCharacterProperties
 {
