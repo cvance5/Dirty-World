@@ -3,9 +3,9 @@ using UnityEngine;
 using WorldObjects;
 using WorldObjects.Blocks;
 
-namespace Actors.Player.Guns
+namespace Actors.Player.GunActors
 {
-    public class HarpoonGun : Gun
+    public class HarpoonGun : GunActor
     {
         public bool IsAttached => _attachedObject != null;
 

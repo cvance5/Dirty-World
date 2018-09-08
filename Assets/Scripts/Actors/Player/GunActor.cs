@@ -2,7 +2,7 @@
 
 namespace Actors.Player
 {
-    public abstract class Gun : MonoBehaviour
+    public abstract class GunActor : MonoBehaviour
     {
         [SerializeField]
         protected float _range;
