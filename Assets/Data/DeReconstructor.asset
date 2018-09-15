@@ -9,9 +9,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2dd9144c83efb9c4fa6fdf1f6f851ae4, type: 3}
-  m_Name: TestWeaponDisplay
+  m_Name: DeReconstructor
   m_EditorClassIdentifier: 
-  _type: 1
-  _name: test
+  _type: 3
+  _name: DeReconstructor
   _image: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  _description: test
+  _description: A cross between a medical device and a sadistic advancement of nanotechnology,
+    this raygun takes matter out of one thing and puts in it another.
