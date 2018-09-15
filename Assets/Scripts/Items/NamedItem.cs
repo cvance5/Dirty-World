@@ -14,6 +14,11 @@ namespace Items
             Name = name;
         }
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         public override bool Equals(object obj)
         {
             var item = obj as NamedItem;
@@ -27,7 +32,5 @@ namespace Items
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
             return hashCode;
         }
-
-        public override string ToString() => Name;
     }
 }

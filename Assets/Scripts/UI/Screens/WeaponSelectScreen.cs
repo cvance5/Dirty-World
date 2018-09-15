@@ -1,4 +1,8 @@
-﻿using Items.Weapons;
+﻿using Economy;
+using Items;
+using Items.Unlocking;
+using Items.Weapons;
+using System.Collections.Generic;
 using UI.Components.Weapons;
 using UI.Effects;
 using UnityEngine;
@@ -13,6 +17,8 @@ namespace UI.Screens
         [SerializeField]
         private Transform _contentAnchor = null;
 #pragma warning restore IDE0044 // Add readonly modifier
+
+        private List<GameObject> _activeFrames = new List<GameObject>();
 
         public override void ActivateScreen()
         {
@@ -33,6 +39,14 @@ namespace UI.Screens
 
         private void FillWeaponList()
         {
+            foreach (var activeFrame in _activeFrames)
+            {
+                Destroy(activeFrame);
+            }
+
+            var userInventory = GameManager.Character.Inventory;
+            var userEquipment = GameManager.Character.Equipment;
+
             foreach (var weapon in WeaponSorter.Secondaries)
             {
                 var weaponSelectGameobject = Instantiate(_weaponSelectFrameTemplate, _contentAnchor);
@@ -40,11 +54,43 @@ namespace UI.Screens
                 var weaponSelectFrame = weaponSelectGameobject.GetComponent<WeaponDisplayFrame>();
                 weaponSelectFrame.SetDisplay(WeaponDisplayData.GetDisplay(weapon));
 
-                var weaponStateToggle = weaponSelectGameobject.GetComponent<WeaponStateToggle>();
-                weaponStateToggle.SetState(false, false);
+                var weaponTransaction = _weaponOffers[weapon];
 
+                var weaponStateToggle = weaponSelectGameobject.GetComponent<WeaponStateToggle>();
+                weaponStateToggle.SetState(userInventory.HasUnlocked(weaponTransaction.Reward as UnlockItem));
+
+                var unownedWeaponDisplay = weaponStateToggle.UnownedWeaponDisplay;
+                unownedWeaponDisplay.SetTransaction(weaponTransaction, userInventory.CanAfford(weaponTransaction));
+
+                unownedWeaponDisplay.OnRequestPurchase += OnRequestWeaponPurchase;
+
+                var ownedWeaponDisplay = weaponStateToggle.OwnedWeaponDisplay;
+                ownedWeaponDisplay.SetEquipmentState(weapon, userEquipment.EquippedSecondaryWeapon == weapon);
+
+                ownedWeaponDisplay.OnRequestWeaponEquipmentToggle += OnRequestWeaponEquipmentToggle;
+
+                _activeFrames.Add(weaponSelectGameobject);
                 weaponSelectGameobject.SetActive(true);
             }
+        }
+
+        private void OnRequestWeaponPurchase(Transaction weaponTransaction)
+        {
+            if (Ledgerman.TryPurchase(weaponTransaction))
+            {
+                FillWeaponList();
+            }
+            else throw new System.ArgumentException($"User cannot purchase {weaponTransaction}.  This transaction should not have been available to them.");
+        }
+
+        private void OnRequestWeaponEquipmentToggle(WeaponTypes weapon, bool isEquipped)
+        {
+            var userEquipment = GameManager.Character.Equipment;
+
+            if (isEquipped) userEquipment.EquipWeapon(weapon);
+            else if (userEquipment.EquippedSecondaryWeapon == weapon) userEquipment.UnequipWeapon();
+
+            FillWeaponList();
         }
 
         public override void DeactivateScreen()
@@ -62,5 +108,12 @@ namespace UI.Screens
                 gameObject.SetActive(false);
             });
         }
+
+        private static readonly Dictionary<WeaponTypes, Transaction> _weaponOffers = new Dictionary<WeaponTypes, Transaction>()
+        {
+            { WeaponTypes.SeismicBomb, new Transaction(new Item(ItemCategories.Wealth, 1), new UnlockItem("Seismic Bomb", UnlockTypes.Weapon)) },
+            { WeaponTypes.DeReconstructor, new Transaction(new Item(ItemCategories.Wealth, 25), new UnlockItem("DeReconstructor", UnlockTypes.Weapon)) },
+            { WeaponTypes.DrillLauncher, new Transaction(new Item(ItemCategories.Wealth, 50), new UnlockItem("DrillLauncher", UnlockTypes.Weapon)) }
+        };
     }
 }

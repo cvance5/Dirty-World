@@ -1,4 +1,5 @@
-﻿using Items;
+﻿using Economy;
+using Items;
 using Items.Unlocking;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,33 @@ namespace Characters
             }
         }
 
+        public bool CanAfford(Transaction transaction)
+        {
+            switch (transaction.Price.Category)
+            {
+                case ItemCategories.Wealth:
+                    return Wealth >= transaction.Price.Amount;
 
+                default: throw new ArgumentException($"Cannot determine ability to pay {transaction.Price.Amount} of {transaction.Price.Category}.");
+            }
+        }
+
+        public void Remove(Item item)
+        {
+            switch (item.Category)
+            {
+                case ItemCategories.Wealth:
+                    if (Wealth < item.Amount) Wealth = 0;
+                    else Wealth -= item.Amount;
+                    break;
+
+                case ItemCategories.Unlock:
+                    RemoveUnlock(item as UnlockItem);
+                    break;
+            }
+        }
+
+        public bool HasUnlocked(UnlockItem unlockItem) => _unlockedItems[unlockItem.UnlockType].Contains(unlockItem);
 
         private void AddUnlock(UnlockItem unlockItem)
         {
@@ -47,6 +74,16 @@ namespace Characters
             }
 
             _unlockedItems[unlockItem.UnlockType].Add(unlockItem);
+        }
+
+        private void RemoveUnlock(UnlockItem unlockItem)
+        {
+            if (!_unlockedItems[unlockItem.UnlockType].Contains(unlockItem))
+            {
+                throw new InvalidOperationException($"Character has not unlocked {unlockItem} yet.");
+            }
+
+            _unlockedItems[unlockItem.UnlockType].Remove(unlockItem);
         }
     }
 }

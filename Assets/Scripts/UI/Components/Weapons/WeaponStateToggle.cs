@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UI.Components.Economy;
+using UnityEngine;
 
 namespace UI.Components.Weapons
 {
@@ -6,17 +7,17 @@ namespace UI.Components.Weapons
     {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly if we want Unity Serialization
         [SerializeField]
-        private UnownedWeaponDisplay _unownedWeaponDisplay = null;
+        private PurchaseItemDisplay _unownedWeaponDisplay = null;
+        public PurchaseItemDisplay UnownedWeaponDisplay => _unownedWeaponDisplay;
         [SerializeField]
-        private OwnedWeaponDisplay _ownedWeaponDisplay = null;
+        private EquipWeaponDisplay _ownedWeaponDisplay = null;
+        public EquipWeaponDisplay OwnedWeaponDisplay => _ownedWeaponDisplay;
 #pragma warning restore IDE0044 // Add readonly modifier
 
-        public void SetState(bool isOwned, bool isEquipped)
+        public void SetState(bool isOwned)
         {
             _unownedWeaponDisplay.SetActive(!isOwned);
             _ownedWeaponDisplay.SetActive(isOwned);
-
-            _ownedWeaponDisplay.SetEquipped(isEquipped);
-        }        
+        }
     }
 }

@@ -6,8 +6,8 @@ namespace Items.Weapons
     {
         public static List<WeaponTypes> Secondaries => new List<WeaponTypes>()
         {
-            //WeaponTypes.DeReconstructor,
-            //WeaponTypes.DrillLauncher,
+            WeaponTypes.DeReconstructor,
+            WeaponTypes.DrillLauncher,
             WeaponTypes.SeismicBomb
         };
     }

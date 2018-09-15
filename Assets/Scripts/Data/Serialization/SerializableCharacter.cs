@@ -1,6 +1,6 @@
-﻿using Data.Serialization.SerializableCharacterProperties;
+﻿using Characters;
+using Data.Serialization.SerializableCharacterProperties;
 using Newtonsoft.Json;
-using Characters;
 
 namespace Data.Serialization
 {
@@ -9,12 +9,16 @@ namespace Data.Serialization
         [JsonProperty("inventory")]
         public SerializableInventory Inventory;
 
+        [JsonProperty("equipment")]
+        public SerializableEquipment Equipment;
+
         [JsonConstructor]
         public SerializableCharacter() { }
 
         public SerializableCharacter(Character character)
         {
             Inventory = new SerializableInventory(character.Inventory);
+            Equipment = new SerializableEquipment(character.Equipment);
         }
 
         public string Serialize() => JsonConvert.SerializeObject(this);
@@ -24,7 +28,8 @@ namespace Data.Serialization
         {
             return new Character()
             {
-                Inventory = Inventory.ToObject()
+                Inventory = Inventory.ToObject(),
+                Equipment = Equipment.ToObject()
             };
         }
     }
