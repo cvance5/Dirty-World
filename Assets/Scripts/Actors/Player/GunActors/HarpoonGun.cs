@@ -100,8 +100,10 @@ namespace Actors.Player.GunActors
                 {
                     Attach(worldObject);
                 }
-
-                DrawLine(hit.point);
+                else
+                {
+                    DrawLine(hit.point);
+                }
             }
         }
 

@@ -387,68 +387,57 @@ Prefab:
     - target: {fileID: 224880061246869926, guid: 009dd89b12b374445a7cd080354a8b2c,
         type: 2}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224880061246869926, guid: 009dd89b12b374445a7cd080354a8b2c,
         type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224085751750296400, guid: 009dd89b12b374445a7cd080354a8b2c,
         type: 2}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224085751750296400, guid: 009dd89b12b374445a7cd080354a8b2c,
         type: 2}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224085751750296400, guid: 009dd89b12b374445a7cd080354a8b2c,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 140
       objectReference: {fileID: 0}
     - target: {fileID: 224085751750296400, guid: 009dd89b12b374445a7cd080354a8b2c,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 224085751750296400, guid: 009dd89b12b374445a7cd080354a8b2c,
         type: 2}
       propertyPath: m_SizeDelta.y
+      value: 410
+      objectReference: {fileID: 0}
+    - target: {fileID: 1125602178822014, guid: 009dd89b12b374445a7cd080354a8b2c, type: 2}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114022664222204586, guid: 009dd89b12b374445a7cd080354a8b2c,
+    - target: {fileID: 224227891344093824, guid: 009dd89b12b374445a7cd080354a8b2c,
         type: 2}
-      propertyPath: _equipToggleButton
-      value: 
-      objectReference: {fileID: 1857673403}
-    - target: {fileID: 114022664222204586, guid: 009dd89b12b374445a7cd080354a8b2c,
-        type: 2}
-      propertyPath: _equipToggleButtonLabel
-      value: 
-      objectReference: {fileID: 1857673402}
-    - target: {fileID: 1767097238888870, guid: 009dd89b12b374445a7cd080354a8b2c, type: 2}
-      propertyPath: m_Name
-      value: EquipToggleButton
+      propertyPath: m_AnchorMax.x
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1225488890841830, guid: 009dd89b12b374445a7cd080354a8b2c, type: 2}
-      propertyPath: m_Name
-      value: EquipToggleButtonLabel
+    - target: {fileID: 224227891344093824, guid: 009dd89b12b374445a7cd080354a8b2c,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224227891344093824, guid: 009dd89b12b374445a7cd080354a8b2c,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: -17
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 009dd89b12b374445a7cd080354a8b2c, type: 2}
   m_IsPrefabParent: 0
---- !u!114 &1857673402 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114761287753713436, guid: 009dd89b12b374445a7cd080354a8b2c,
-    type: 2}
-  m_PrefabInternal: {fileID: 1857673401}
-  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
---- !u!114 &1857673403 stripped
-MonoBehaviour:
-  m_PrefabParentObject: {fileID: 114830993751024036, guid: 009dd89b12b374445a7cd080354a8b2c,
-    type: 2}
-  m_PrefabInternal: {fileID: 1857673401}
-  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}

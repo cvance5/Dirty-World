@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Actors.Player.GunActors;
+using UnityEngine;
 
 namespace Actors.Player
 {
@@ -8,8 +9,12 @@ namespace Actors.Player
         [SerializeField]
         private GunActor _primary = null;
         [SerializeField]
+        private GunActor _secondary = null;
+        [SerializeField]
         private PlayerData _data = null;
 #pragma warning restore IDE0044 // Add readonly modifier
+
+        private WeaponMode _weaponMode = WeaponMode.Primary;
 
         private void Awake()
         {
@@ -18,13 +23,39 @@ namespace Actors.Player
 
         private void Update()
         {
-            if (Input.GetButtonDown("Alternate Fire"))
+            if (_weaponMode == WeaponMode.Primary)
             {
-                _primary.AlternateFire();
+                if (Input.GetButtonDown("Alternate Fire"))
+                {
+                    _primary.AlternateFire();
+                }
+                else if (Input.GetButtonDown("Fire"))
+                {
+                    _primary.Fire();
+                }
             }
-            else if (Input.GetButtonDown("Fire"))
+            else if (_weaponMode == WeaponMode.Secondary)
             {
-                _primary.Fire();
+                if (Input.GetButtonDown("Alternate Fire"))
+                {
+                    _secondary.AlternateFire();
+                }
+                else if (Input.GetButtonDown("Fire"))
+                {
+                    _secondary.Fire();
+                }
+            }
+
+            if (Input.GetButtonDown("Switch Weapon"))
+            {
+                if (_weaponMode == WeaponMode.Primary && _secondary != null)
+                {
+                    _weaponMode = WeaponMode.Secondary;
+                }
+                else if (_weaponMode == WeaponMode.Secondary)
+                {
+                    _weaponMode = WeaponMode.Primary;
+                }
             }
         }
 
@@ -32,6 +63,12 @@ namespace Actors.Player
         {
             playerData.OnActorDeath -= OnPlayerDeath;
             Destroy(this);
+        }
+
+        private enum WeaponMode
+        {
+            Primary,
+            Secondary
         }
     }
 }

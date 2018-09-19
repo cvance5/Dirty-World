@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace WorldObjects.Blocks
@@ -11,7 +12,7 @@ namespace WorldObjects.Blocks
 
         public override void HandleNeighborUpdate()
         {
-            UpdateStability();
+            if (Stability > 0) UpdateStability();
         }
 
         protected override IEnumerator Crumble()
@@ -39,9 +40,9 @@ namespace WorldObjects.Blocks
 
         private void DestabalizeNeighbors(int stabilityThreshold)
         {
-            var neighbors = GameManager.World.GetNeighbors(this);
+            List<Block> neighbors = GameManager.World.GetNeighbors(this);
 
-            foreach (var neighbor in neighbors)
+            foreach (Block neighbor in neighbors)
             {
                 if (neighbor.Stability <= stabilityThreshold)
                 {
