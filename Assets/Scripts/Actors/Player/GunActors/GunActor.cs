@@ -3,14 +3,7 @@
 namespace Actors.Player.GunActors
 {
     public abstract class GunActor : MonoBehaviour
-    {
-        [SerializeField]
-        protected float _range;
-        [SerializeField]
-        protected int _damage;
-        [SerializeField]
-        protected int _force;
-
+    {      
         protected ContactFilter2D _filter;
 
         protected RaycastHit2D[] _hits = new RaycastHit2D[1];

@@ -197,10 +197,10 @@ namespace WorldObjects.Blocks
 
         private void ApplyImpact(Vector2 impactVector)
         {
-            int impactMagniture = (int)impactVector.magnitude;
+            var impactMagniture = (int)impactVector.magnitude;
             if (impactMagniture > _impactDurability)
             {
-                int remainder = impactMagniture - _impactDurability;
+                var remainder = impactMagniture - _impactDurability;
                 Hit(remainder, remainder);
             }
         }
@@ -224,7 +224,7 @@ namespace WorldObjects.Blocks
                 var other = collision.collider.gameObject;
 
                 var impactMagnitude = Mathf.RoundToInt(collision.relativeVelocity.magnitude);
-                int unabsorbedImpactMagnitude = impactMagnitude - _impactAbsorption;
+                var unabsorbedImpactMagnitude = impactMagnitude - _impactAbsorption;
 
                 switch (other.tag)
                 {
@@ -275,10 +275,7 @@ namespace WorldObjects.Blocks
             }
         }
 
-        protected void HandleActor(ActorData actorData, int impactMagnitude)
-        {
-            actorData.ApplyDamage(impactMagnitude);
-        }
+        protected void HandleActor(ActorData actorData, int impactMagnitude) => actorData.ApplyDamage(impactMagnitude);
 
         protected override void OnWorldObjectDestroy()
         {

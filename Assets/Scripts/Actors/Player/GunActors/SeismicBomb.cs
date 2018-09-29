@@ -4,28 +4,26 @@ namespace Actors.Player.GunActors
 {
     public class SeismicBomb : MonoBehaviour
     {
-        private int _force;
-        private float _range;
-
-        public void Ignite(int force, float range)
-        {
-            _force = force;
-            _range = range;
-        }
+#pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
+        [SerializeField]
+        private int _force = 0;
+        [SerializeField]
+        private float _range = 0;
+#pragma warning restore IDE0044 // Add readonly modifier
 
         public void Explode()
         {
-            Collider2D[] targets = Physics2D.OverlapCircleAll(transform.position, _range);
+            var targets = Physics2D.OverlapCircleAll(transform.position, _range);
 
-            foreach (Collider2D target in targets)
+            foreach (var target in targets)
             {
-                Vector3 vector = target.transform.position - transform.position;
-                var _impactForce = Mathf.RoundToInt((_range - vector.magnitude) * _force);
+                var vector = target.transform.position - transform.position;
+                var impactForce = Mathf.RoundToInt((_range - vector.magnitude) * _force);
 
                 var hittable = (IHittable)target.GetComponent(typeof(IHittable));
                 if (hittable != null)
                 {
-                    hittable.Hit(0, _impactForce);
+                    hittable.Hit(0, impactForce);
                 }
             }
 

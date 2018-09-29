@@ -9,8 +9,15 @@ namespace Actors.Player.GunActors
     {
         public bool IsAttached => _attachedObject != null;
 
-        [SerializeField]
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
+        [SerializeField]
+        protected int _damage;
+        [SerializeField]
+        protected int _force;
+        [SerializeField]
+        protected float _range;
+
+        [SerializeField]
         private float _minLength = .5f;
         [SerializeField]
         private float _maxLength = 10;

@@ -7,17 +7,16 @@ namespace Actors.Player.GunActors
     {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [SerializeField]
-        private GameObject _bombActor;
+        private GameObject _bombActor = null;
         [SerializeField]
-        private int _maxBombs;
+        private int _maxBombs = 0;
+        [SerializeField]
+        protected float _range;
 #pragma warning restore IDE0044 // Add readonly modifier
 
         private readonly List<SeismicBomb> _activeBombs = new List<SeismicBomb>();
 
-        protected override void OnAwake()
-        {
-
-        }
+        protected override void OnAwake() { }
 
         public override void Fire()
         {
@@ -37,22 +36,20 @@ namespace Actors.Player.GunActors
 
         private void LaunchBomb()
         {
-            Vector3 throwForce = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position);
+            var throwVector = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position);
 
-            GameObject bombObject = Instantiate(_bombActor, transform);
+            var bombObject = Instantiate(_bombActor, transform.position, Quaternion.identity);
 
-            SeismicBomb seismicBomb = bombObject.GetComponent<SeismicBomb>();
-            seismicBomb.Ignite(_force, _range);
-
-            Rigidbody2D bombRigidbody = bombObject.GetComponent<Rigidbody2D>();
-            bombRigidbody.AddForce(throwForce, ForceMode2D.Impulse);
+            var seismicBomb = bombObject.GetComponent<SeismicBomb>();
+            var bombRigidbody = bombObject.GetComponent<Rigidbody2D>();
+            bombRigidbody.AddForce(throwVector, ForceMode2D.Impulse);
 
             _activeBombs.Add(seismicBomb);
         }
 
         private void ExplodeBombs()
         {
-            foreach (SeismicBomb activeBomb in _activeBombs)
+            foreach (var activeBomb in _activeBombs)
             {
                 activeBomb.Explode();
             }
