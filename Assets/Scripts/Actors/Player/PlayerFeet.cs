@@ -9,6 +9,7 @@ namespace Actors.Player
         public SmartEvent OnFootLeave = new SmartEvent();
 
         private List<Collider2D> _currentCollisions = new List<Collider2D>();
+        public bool IsColliding => _currentCollisions.Count > 0;
 
         private void OnTriggerEnter2D(Collider2D col)
         {

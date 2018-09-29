@@ -30,6 +30,9 @@ namespace Actors.Player
             _feet.OnFootTouch += OnLand;
             _feet.OnFootLeave += OnAirborne;
 
+            if (_feet.IsColliding) _state = PlayerState.Grounded;
+            else _state = PlayerState.Airborne;
+
             _data.OnActorDeath += OnPlayerDeath;
         }
 
@@ -41,7 +44,7 @@ namespace Actors.Player
 
         private void HorizontalMovementUpdate()
         {
-            Vector2 movementVector = new Vector2()
+            var movementVector = new Vector2()
             {
                 x = Input.GetAxis("Horizontal"),
             };
