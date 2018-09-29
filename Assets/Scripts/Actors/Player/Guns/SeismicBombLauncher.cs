@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Actors.Player.GunActors
+namespace Actors.Player.Guns
 {
-    public class SeismicBombLauncher : GunActor
+    public class SeismicBombLauncher : Gun
     {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [SerializeField]

@@ -1,4 +1,4 @@
-﻿using Actors.Player.GunActors;
+﻿using Actors.Player.Guns;
 using UnityEngine;
 
 namespace Actors.Player
@@ -7,9 +7,9 @@ namespace Actors.Player
     {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly for Unity Serialization
         [SerializeField]
-        private GunActor _primary = null;
+        private Gun _primary = null;
         [SerializeField]
-        private GunActor _secondary = null;
+        private Gun _secondary = null;
         [SerializeField]
         private PlayerData _data = null;
 #pragma warning restore IDE0044 // Add readonly modifier

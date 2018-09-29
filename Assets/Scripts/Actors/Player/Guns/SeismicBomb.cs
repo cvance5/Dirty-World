@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Actors.Player.GunActors
+namespace Actors.Player.Guns
 {
     public class SeismicBomb : MonoBehaviour
     {

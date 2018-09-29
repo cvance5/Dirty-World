@@ -2,7 +2,7 @@
 using UnityEngine;
 using WorldObjects;
 
-namespace Actors.Player.GunActors
+namespace Actors.Player.Guns
 {
     public class DrillDrone : MonoBehaviour
     {

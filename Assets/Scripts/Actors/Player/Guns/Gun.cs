@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace Actors.Player.GunActors
+namespace Actors.Player.Guns
 {
-    public abstract class GunActor : MonoBehaviour
+    public abstract class Gun : MonoBehaviour
     {      
         protected ContactFilter2D _filter;
 
