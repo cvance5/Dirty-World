@@ -20,7 +20,7 @@ namespace Actors.Player.Guns
             OnAwake();
         }
 
-        protected abstract void OnAwake();
+        protected virtual void OnAwake() { }
 
         public abstract void Fire();
         public abstract void AlternateFire();

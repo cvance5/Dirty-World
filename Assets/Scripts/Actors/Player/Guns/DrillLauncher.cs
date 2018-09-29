@@ -14,8 +14,6 @@ namespace Actors.Player.Guns
 
         private readonly List<DrillDrone> _activeDrones = new List<DrillDrone>();
 
-        protected override void OnAwake() { }
-
         public override void Fire()
         {
             if (_activeDrones.Count < _maxDrones)

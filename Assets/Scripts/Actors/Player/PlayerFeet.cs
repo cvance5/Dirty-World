@@ -1,40 +1,20 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
-namespace Actors.Player
+﻿namespace Actors.Player
 {
-    public class PlayerFeet : MonoBehaviour
+    public class PlayerFeet : TriggerList2D
     {
         public SmartEvent OnFootTouch = new SmartEvent();
         public SmartEvent OnFootLeave = new SmartEvent();
 
-        private List<Collider2D> _currentCollisions = new List<Collider2D>();
-        public bool IsColliding => _currentCollisions.Count > 0;
+        public bool IsColliding => _overlaps.Count > 0;
 
-        private void OnTriggerEnter2D(Collider2D col)
+        protected override void UpdateOverlaps()
         {
-            if (!_currentCollisions.Contains(col))
-            {
-                _currentCollisions.Add(col);
-            }
-
-            if (_currentCollisions.Count > 0)
+            base.UpdateOverlaps();
+            if (IsColliding)
             {
                 OnFootTouch.Raise();
             }
-        }
-
-        private void OnTriggerExit2D(Collider2D col)
-        {
-            if (_currentCollisions.Contains(col))
-            {
-                _currentCollisions.Remove(col);
-            }
-
-            if (_currentCollisions.Count == 0)
-            {
-                OnFootLeave.Raise();
-            }
+            else OnFootTouch.Raise();
         }
     }
 }

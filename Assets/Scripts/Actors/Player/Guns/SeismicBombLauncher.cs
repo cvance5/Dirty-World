@@ -16,8 +16,6 @@ namespace Actors.Player.Guns
 
         private readonly List<SeismicBomb> _activeBombs = new List<SeismicBomb>();
 
-        protected override void OnAwake() { }
-
         public override void Fire()
         {
             if (_activeBombs.Count < _maxBombs)

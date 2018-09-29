@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 114106992137399910}
   - component: {fileID: 68782834970730740}
   - component: {fileID: 50836189672596510}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: DrillDrone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,13 +93,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _lifespan: 5
-  _damagePerHit: 2
+  _damagePerHit: 5
   _forcePerHit: 0
   _hitsPerSecond: 5
   _movespeedPerSecond: 10
-  _explosionRange: 0
-  _explosionDamage: 0
-  _explosionForce: 0
+  _explosionRange: 2
+  _explosionDamage: 15
+  _explosionForce: 15
 --- !u!212 &212132859787177316
 SpriteRenderer:
   m_ObjectHideFlags: 1

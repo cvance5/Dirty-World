@@ -24,7 +24,6 @@ GameObject:
   - component: {fileID: 114237843733034080}
   - component: {fileID: 114955982425071790}
   - component: {fileID: 114277785067253532}
-  - component: {fileID: 114026367701671876}
   - component: {fileID: 212343200990117794}
   - component: {fileID: 58889932300391466}
   - component: {fileID: 50120577649415964}
@@ -32,22 +31,6 @@ GameObject:
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1408278882355048
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4825009781717682}
-  - component: {fileID: 114403503811602388}
-  m_Layer: 8
-  m_Name: DrillLauncher
-  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -81,6 +64,25 @@ GameObject:
   - component: {fileID: 61799195301264162}
   m_Layer: 8
   m_Name: Feet
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1967926456253514
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4918361026248174}
+  - component: {fileID: 60629887339859376}
+  - component: {fileID: 50718652768177226}
+  - component: {fileID: 114263299314599510}
+  - component: {fileID: 114529727069271504}
+  m_Layer: 0
+  m_Name: De_Reconstructor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -122,19 +124,19 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
-  - {fileID: 4825009781717682}
+  - {fileID: 4918361026248174}
   - {fileID: 4004712278230928}
   - {fileID: 4197081983587604}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4825009781717682
+--- !u!4 &4918361026248174
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1408278882355048}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_GameObject: {fileID: 1967926456253514}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -161,6 +163,26 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!50 &50718652768177226
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1967926456253514}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!58 &58889932300391466
 CircleCollider2D:
   m_ObjectHideFlags: 1
@@ -176,6 +198,34 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.09
+--- !u!60 &60629887339859376
+PolygonCollider2D:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1967926456253514}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: 1.5, y: 3}
+      - {x: -1.5, y: 3}
+      - {x: -0.5, y: 0}
+      - {x: 0.5, y: 0}
 --- !u!61 &61799195301264162
 BoxCollider2D:
   m_ObjectHideFlags: 1
@@ -208,17 +258,6 @@ AudioListener:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1354266971631064}
   m_Enabled: 1
---- !u!114 &114026367701671876
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1354266971631064}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5515542b71cc67409961a425d0a9501, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114058492963332348
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -252,6 +291,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _damageInvulnerabilityDuration: 1
   _damageResistance: 0
+--- !u!114 &114263299314599510
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1967926456253514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dd0befaa05ad6345865b0b713fbea38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _range: 5
+  _damagePerHit: 3
+  _hitsPerSecond: 3
+  _maxStoredMatter: 100
 --- !u!114 &114277785067253532
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -264,7 +318,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _primary: {fileID: 114058492963332348}
-  _secondary: {fileID: 114403503811602388}
+  _secondary: {fileID: 114263299314599510}
   _data: {fileID: 114237843733034080}
 --- !u!114 &114314006859040562
 MonoBehaviour:
@@ -285,20 +339,17 @@ MonoBehaviour:
   _movement: {fileID: 114742374633751546}
   _data: {fileID: 114237843733034080}
   _rigidbody: {fileID: 50120577649415964}
---- !u!114 &114403503811602388
+--- !u!114 &114529727069271504
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1408278882355048}
+  m_GameObject: {fileID: 1967926456253514}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 48b271d92391aac49ac56de3ea08b0e3, type: 3}
+  m_Script: {fileID: 11500000, guid: 3baa854caa5595f40835b8566890dba2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _droneActor: {fileID: 1382664748126324, guid: ef1aa2340893625438cccc78b162bf7f,
-    type: 2}
-  _maxDrones: 1
 --- !u!114 &114742374633751546
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -314,7 +365,7 @@ MonoBehaviour:
   _maximumSpeed: 80
   _jumpForce: 15
   _data: {fileID: 114237843733034080}
-  _feet: {fileID: 114026367701671876}
+  _feet: {fileID: 114836490637548964}
 --- !u!114 &114836490637548964
 MonoBehaviour:
   m_ObjectHideFlags: 1
