@@ -47,9 +47,11 @@ namespace Effects.Audio
 
             var scaledVolume = MathUtils.MapRange(hitIntensity, _volumeScale.Min, _volumeScale.Max, 0f, 1f);
 
-            AudioSource.PlayClipAtPoint(soundToPlay, transform.position, scaledVolume);
-
-            _lastPlayed = soundToPlay;
+            if (scaledVolume > 0)
+            {
+                AudioSource.PlayClipAtPoint(soundToPlay, transform.position, scaledVolume);
+                _lastPlayed = soundToPlay;
+            }
         }
     }
 }

@@ -170,7 +170,7 @@ Rigidbody2D:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1967926456253514}
-  m_BodyType: 2
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -302,10 +302,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dd0befaa05ad6345865b0b713fbea38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _range: 5
-  _damagePerHit: 3
-  _hitsPerSecond: 3
-  _maxStoredMatter: 100
+  _range: 2
+  _damagePerHit: 2
+  _hitsPerSecond: 2
+  _maxStoredMatter: 1000
 --- !u!114 &114277785067253532
 MonoBehaviour:
   m_ObjectHideFlags: 1

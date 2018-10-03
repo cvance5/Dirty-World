@@ -25,10 +25,7 @@ namespace UI
             _transform.localPosition = Vector2.zero;
         }
 
-        public override void SetVisible(bool isVisible)
-        {
-            _scrim.enabled = isVisible;
-        }
+        public override void SetVisible(bool isVisible) => _scrim.enabled = isVisible;
 
         public UIEffect Hide() =>
             new InstantEffect(() => _scrim.color = _scrim.color.SwapAlpha(0));
