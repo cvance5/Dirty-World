@@ -32,6 +32,13 @@ namespace Items.Weapons
             _registeredDisplays.Add(caller._type, caller);
         }
 
-        public static WeaponDisplayData GetDisplay(WeaponTypes type) => _registeredDisplays[type];
+        public static WeaponDisplayData GetDisplay(WeaponTypes type)
+        {
+            if (_registeredDisplays.TryGetValue(type, out var weaponDisplayData))
+            {
+                return weaponDisplayData;
+            }
+            else throw new System.ArgumentException($"No registered weapon display data for a weapon of type {type}.");
+        }
     }
 }

@@ -39,7 +39,7 @@ namespace UI
         public static T Get<T>() where T : UIObject
         {
             T uiObject;
-            Type typeOfT = typeof(T);
+            var typeOfT = typeof(T);
 
             if (typeof(UIScreen).IsAssignableFrom(typeOfT))
                 uiObject = GetScreen(typeOfT) as T;
@@ -57,7 +57,7 @@ namespace UI
 
         public static void Show(UIObject objectToShow)
         {
-            Type type = objectToShow.GetType();
+            var type = objectToShow.GetType();
 
             if (typeof(UIOverlay).IsAssignableFrom(type))
                 ShowOverlay(objectToShow as UIOverlay);
@@ -70,7 +70,7 @@ namespace UI
         public static T Create<T>() where T : UIObject
         {
             T uiObject;
-            Type typeOfT = typeof(T);
+            var typeOfT = typeof(T);
 
             if (typeof(UIOverlay).IsAssignableFrom(typeOfT))
                 uiObject = CreateOverlay(typeOfT) as T;
@@ -86,7 +86,7 @@ namespace UI
 
         public static void Clear(UIObject objectToClear)
         {
-            Type type = objectToClear.GetType();
+            var type = objectToClear.GetType();
 
             if (typeof(UIPopup).IsAssignableFrom(type))
                 ClearPopup(type);
@@ -96,7 +96,7 @@ namespace UI
 
         public static void SetVisibility<T>(bool isVisible)
         {
-            Type typeOfT = typeof(T);
+            var typeOfT = typeof(T);
 
             if (typeof(UIOverlay).IsAssignableFrom(typeOfT))
                 SetOverlayVisibility(typeOfT, isVisible);
@@ -156,7 +156,7 @@ namespace UI
 
         private static UIPopup GetPopup(Type type)
         {
-            UIPopup selectedPopup = CreatePopup(type);
+            var selectedPopup = CreatePopup(type);
             UpdatePopupStack(selectedPopup);
 
             if (selectedPopup.UseScrim)
@@ -207,11 +207,11 @@ namespace UI
             }
             else
             {
-                UIPopup oldPopup = Instance._popupStack.Pop();
+                var oldPopup = Instance._popupStack.Pop();
                 Destroy(oldPopup.gameObject);
             }
 
-            foreach (UIPopup popup in Instance._popupStack)
+            foreach (var popup in Instance._popupStack)
                 popup.SetVisible(false);
 
             if (ActivePopup != null)
@@ -230,10 +230,11 @@ namespace UI
         {
             UIScreen selectedScreen = null;
 
-            foreach (UIScreen screen in Instance._screens)
+            foreach (var screen in Instance._screens)
                 if (screen.GetType() == type)
                 {
-                    selectedScreen = Instantiate(screen.gameObject).GetComponent(type) as UIScreen;
+                    var screenObject = Instantiate(screen.gameObject);
+                    selectedScreen = screenObject.GetComponent(type) as UIScreen;
                     break;
                 }
 
@@ -247,7 +248,7 @@ namespace UI
         {
             UIOverlay selectedOverlay = null;
 
-            foreach (UIOverlay overlay in Instance._overlays)
+            foreach (var overlay in Instance._overlays)
                 if (overlay.GetType() == type)
                 {
                     selectedOverlay = Instantiate(overlay.gameObject).GetComponent(type) as UIOverlay;
@@ -264,7 +265,7 @@ namespace UI
         private static UIPopup CreatePopup(Type type)
         {
             UIPopup selectedPopup = null;
-            foreach (UIPopup popup in Instance._popups)
+            foreach (var popup in Instance._popups)
             {
                 if (popup.GetType() == type)
                 {
@@ -281,9 +282,9 @@ namespace UI
 
         private static UIActor CreateActor(Type type)
         {
-            GameObject newObject = new GameObject();
+            var newObject = new GameObject();
             newObject.transform.Reset();
-            UIActor selectedActor = newObject.AddComponent(type) as UIActor;
+            var selectedActor = newObject.AddComponent(type) as UIActor;
 
             return selectedActor;
         }

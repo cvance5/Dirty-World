@@ -16,10 +16,7 @@ namespace Actors.Player
 
         private WeaponMode _weaponMode = WeaponMode.Primary;
 
-        private void Awake()
-        {
-            _data.OnActorDeath += OnPlayerDeath;
-        }
+        private void Awake() => _data.OnActorDeath += OnPlayerDeath;
 
         private void Update()
         {
@@ -34,7 +31,7 @@ namespace Actors.Player
                     _primary.Fire();
                 }
             }
-            else if (_weaponMode == WeaponMode.Secondary)
+            else if (_weaponMode == WeaponMode.Secondary && _secondary != null)
             {
                 if (Input.GetButtonDown("Alternate Fire"))
                 {
@@ -56,6 +53,22 @@ namespace Actors.Player
                 {
                     _weaponMode = WeaponMode.Primary;
                 }
+            }
+        }
+
+        public void EquipSecondary(Gun newSecondary)
+        {
+            if (_secondary != null)
+            {
+                Destroy(_secondary.gameObject);
+            }
+
+            _secondary = newSecondary;
+
+            // You could be equipping nothing, i.e. unequipping
+            if (newSecondary != null)
+            {
+                _secondary.transform.SetParent(transform);
             }
         }
 

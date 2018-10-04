@@ -89,7 +89,7 @@ public class GameManager : Singleton<GameManager>
             DestroyImmediate(_player.gameObject);
         }
 
-        var playerObj = Instantiate(Settings.Player, Vector2.zero, Quaternion.identity);
+        var playerObj = PlayerSpawner.SpawnPlayer(Character.Equipment);
         _player = playerObj.GetComponent<PlayerData>();
         _player.AssignCharacter(Character);
         PositionTracker.Subscribe(_player, OnPlayerTrackingUpdate);
@@ -104,10 +104,7 @@ public class GameManager : Singleton<GameManager>
         CheckForGenerateChunk(initialChunkPosition);
     }
 
-    private void OnPlayerTrackingUpdate(PositionData oldData, PositionData newData)
-    {
-        CheckForGenerateChunk(newData.Chunk.transform.position);
-    }
+    private void OnPlayerTrackingUpdate(PositionData oldData, PositionData newData) => CheckForGenerateChunk(newData.Chunk.transform.position);
 
     private void CheckForGenerateChunk(Vector2 currentChunkPosition)
     {
