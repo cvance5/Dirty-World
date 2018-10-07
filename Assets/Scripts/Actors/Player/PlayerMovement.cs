@@ -13,14 +13,14 @@ namespace Actors.Player
 
         [SerializeField]
         private float _jumpForce = 10f;
-#pragma warning restore IDE0044 // Add readonly modifier
 
         [SerializeField]
         private PlayerData _data = null;
         [SerializeField]
-        private PlayerFeet _feet = null;
+        private ActorFeet _feet = null;
+#pragma warning restore IDE0044 // Add readonly modifier
 
-        private PlayerState _state;
+        private ActorFeetState _state;
         private Rigidbody2D _rigidbody;
 
         private void Awake()
@@ -30,8 +30,8 @@ namespace Actors.Player
             _feet.OnFootTouch += OnLand;
             _feet.OnFootLeave += OnAirborne;
 
-            if (_feet.IsColliding) _state = PlayerState.Grounded;
-            else _state = PlayerState.Airborne;
+            if (_feet.IsColliding) _state = ActorFeetState.Grounded;
+            else _state = ActorFeetState.Airborne;
 
             _data.OnActorDeath += OnPlayerDeath;
         }
@@ -54,7 +54,7 @@ namespace Actors.Player
 
         private void JumpUpdate()
         {
-            if (_state == PlayerState.Grounded)
+            if (_state == ActorFeetState.Grounded)
             {
                 if (Input.GetButtonDown("Jump"))
                 {
@@ -65,7 +65,7 @@ namespace Actors.Player
 
         public void Impulse(Vector2 impulseForce)
         {
-            if (_state == PlayerState.Airborne)
+            if (_state == ActorFeetState.Airborne)
             {
                 AddImpulse(impulseForce);
             }
@@ -83,20 +83,11 @@ namespace Actors.Player
             _rigidbody.velocity = currentForce;
         }
 
-        private void AddImpulse(Vector2 impulse)
-        {
-            _rigidbody.velocity += impulse;
-        }
+        private void AddImpulse(Vector2 impulse) => _rigidbody.velocity += impulse;
 
-        private void OnLand()
-        {
-            _state = PlayerState.Grounded;
-        }
+        private void OnLand() => _state = ActorFeetState.Grounded;
 
-        private void OnAirborne()
-        {
-            _state = PlayerState.Airborne;
-        }
+        private void OnAirborne() => _state = ActorFeetState.Airborne;
 
         private void OnPlayerDeath(ActorData playerData)
         {

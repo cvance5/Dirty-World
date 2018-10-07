@@ -5,10 +5,13 @@ using WorldObjects.Hazards;
 
 namespace Actors.Player
 {
+    [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
     public class PlayerCollider : MonoBehaviour
     {
+#pragma warning disable IDE0044 // Add readonly modifier, Unity serialization requires it not be readonly
         [SerializeField]
         private PlayerData _data = null;
+#pragma warning restore IDE0044 // Add readonly modifier
 
         private Rigidbody2D _rigidbody;
 

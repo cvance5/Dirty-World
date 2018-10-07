@@ -1,18 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using WorldObjects;
 using WorldObjects.Blocks;
 
 public class BlockLoader : Singleton<BlockLoader>
 {
+#pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
     [Header("Blocks")]
-    public GameObject DirtBlock;
-    public GameObject StoneBlock;
-    public GameObject CopperBlock;
-    public GameObject SilverBlock;
-    public GameObject GoldBlock;
-    public GameObject PlatinumBlock;
+    [SerializeField]
+    private GameObject _dirtBlock = null;
+    [SerializeField]
+    private GameObject _stoneBlock = null;
+    [SerializeField]
+    private GameObject _copperBlock = null;
+    [SerializeField]
+    private GameObject _silverBlock = null;
+    [SerializeField]
+    private GameObject _goldBlock = null;
+    [SerializeField]
+    private GameObject _platinumBlock = null;
+#pragma warning restore IDE0044 // Add readonly modifier
 
     public static Block CreateBlock(BlockTypes type, IntVector2 worldPosition)
     {
@@ -20,12 +27,12 @@ public class BlockLoader : Singleton<BlockLoader>
 
         switch (type)
         {
-            case BlockTypes.Dirt: blockObject = Instance.DirtBlock; break;
-            case BlockTypes.Stone: blockObject = Instance.StoneBlock; break;
-            case BlockTypes.Copper: blockObject = Instance.CopperBlock; break;
-            case BlockTypes.Silver: blockObject = Instance.SilverBlock; break;
-            case BlockTypes.Gold: blockObject = Instance.GoldBlock; break;
-            case BlockTypes.Platinum: blockObject = Instance.PlatinumBlock; break;
+            case BlockTypes.Dirt: blockObject = Instance._dirtBlock; break;
+            case BlockTypes.Stone: blockObject = Instance._stoneBlock; break;
+            case BlockTypes.Copper: blockObject = Instance._copperBlock; break;
+            case BlockTypes.Silver: blockObject = Instance._silverBlock; break;
+            case BlockTypes.Gold: blockObject = Instance._goldBlock; break;
+            case BlockTypes.Platinum: blockObject = Instance._platinumBlock; break;
             default: throw new ArgumentException($"Unknown block type of {type}.");
         }
 

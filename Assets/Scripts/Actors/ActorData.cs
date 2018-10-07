@@ -14,6 +14,7 @@ namespace Actors
         [SerializeField]
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         private float _damageInvulnerabilityDuration = 1f;
+        public float DamageInvulnerabilityDuration => _damageInvulnerabilityDuration;
         [SerializeField]
         private int _damageResistance = 5;
 #pragma warning restore IDE0044 // Add readonly modifier
@@ -45,29 +46,10 @@ namespace Actors
                 if (Health <= 0) Die();
                 else
                 {
+                    OnDamage();
                     OnActorDamaged.Raise(this);
-                    StartCoroutine(FlashDamage());
                 }
             }
-        }
-
-        /// <summary>
-        /// HACK: All OnDamage effects should be separete onDamageCue scripts that wait for OnActorDamaged raises
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerator FlashDamage()
-        {
-            _isTakingDamage = true;
-            var waitFor = new WaitForSeconds(_damageInvulnerabilityDuration / NUM_FLASHES / 2);
-
-            for (int i = 0; i < NUM_FLASHES; i++)
-            {
-                _sprite.color = Color.red;
-                yield return waitFor;
-                _sprite.color = Color.white;
-                yield return waitFor;
-            }
-            _isTakingDamage = false;
         }
 
         protected void Die()
@@ -79,7 +61,5 @@ namespace Actors
         protected abstract void OnDamage();
 
         protected abstract void OnDeath();
-
-        private const int NUM_FLASHES = 4;
     }
 }

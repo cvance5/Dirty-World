@@ -12,13 +12,10 @@ namespace Actors.Player
 
         [SerializeField]
         private GameObject _seismicBombLauncherActor = null;
-
         [SerializeField]
         private GameObject _drillDroneLauncherActor = null;
-
         [SerializeField]
         private GameObject _deReconstructorActor = null;
-
 #pragma warning restore IDE0044 // Add readonly modifier
 
         public static GameObject SpawnPlayer(Equipment equipment)

@@ -17,15 +17,13 @@ namespace Effects.Audio
         [SerializeField]
         [Tooltip("Scales volume as damage and force increase in this range.")]
         private Range _volumeScale = new Range(0, 10);
-
 #pragma warning restore IDE0044 // Add readonly modifier
 
         private AudioClip _lastPlayed;
 
         private void Awake()
         {
-            var attachedHittable = GetComponent(typeof(IHittable)) as IHittable;
-            if (attachedHittable == null) throw new MissingComponentException($"OnHitSoundCue on {gameObject.name} has no IHittable to cue off of.");
+            if (!(GetComponent(typeof(IHittable)) is IHittable attachedHittable)) throw new MissingComponentException($"OnHitSoundCue on {gameObject.name} has no IHittable to cue off of.");
             else attachedHittable.OnHit += OnHit;
         }
 

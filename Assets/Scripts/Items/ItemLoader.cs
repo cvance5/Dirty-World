@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class ItemLoader : Singleton<ItemLoader>
 {
-    public GameObject CopperPiece;
-    public GameObject SilverPiece;
-    public GameObject GoldPiece;
-    public GameObject PlatinumPiece;
+#pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
+    [Header("Items")]
+    [SerializeField]
+    private GameObject _copperPiece = null;
+    [SerializeField]
+    private GameObject _silverPiece = null;
+    [SerializeField]
+    private GameObject _goldPiece = null;
+    [SerializeField]
+    private GameObject _platinumPiece = null;
+#pragma warning restore IDE0044 // Add readonly modifier
 
     public static ItemActor CreateItem(ItemActorTypes type, IntVector2 worldPosition)
     {
@@ -15,10 +22,10 @@ public class ItemLoader : Singleton<ItemLoader>
 
         switch (type)
         {
-            case ItemActorTypes.CopperPiece: itemObject = Instance.CopperPiece; break;
-            case ItemActorTypes.SilverPiece: itemObject = Instance.SilverPiece; break;
-            case ItemActorTypes.GoldPiece: itemObject = Instance.GoldPiece; break;
-            case ItemActorTypes.PlatinumPiece: itemObject = Instance.PlatinumPiece; break;
+            case ItemActorTypes.CopperPiece: itemObject = Instance._copperPiece; break;
+            case ItemActorTypes.SilverPiece: itemObject = Instance._silverPiece; break;
+            case ItemActorTypes.GoldPiece: itemObject = Instance._goldPiece; break;
+            case ItemActorTypes.PlatinumPiece: itemObject = Instance._platinumPiece; break;
             default: throw new System.ArgumentException($"Unknown item type of {type}.");
         }
 

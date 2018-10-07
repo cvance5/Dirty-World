@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 114237843733034080}
   - component: {fileID: 114955982425071790}
   - component: {fileID: 114277785067253532}
+  - component: {fileID: 2087703057148338352}
   - component: {fileID: 212343200990117794}
   - component: {fileID: 58889932300391466}
   - component: {fileID: 50120577649415964}
@@ -120,6 +121,19 @@ MonoBehaviour:
   _primary: {fileID: 114058492963332348}
   _secondary: {fileID: 0}
   _data: {fileID: 114237843733034080}
+--- !u!114 &2087703057148338352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1354266971631064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7f9f411e272a434ca75657d0a64e0e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _numberFlashes: 4
 --- !u!212 &212343200990117794
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -257,8 +271,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2eaf8ccc1906ac84188e004db49a8c6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _damage: 1000
-  _force: 0
+  _damage: 25
+  _force: 15
   _range: 10
   _minLength: 1
   _maxLength: 10

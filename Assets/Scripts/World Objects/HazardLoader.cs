@@ -7,8 +7,11 @@ namespace WorldObjects.WorldGeneration
 {
     public class HazardLoader : Singleton<HazardLoader>
     {
+#pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [Header("Hazards")]
-        public GameObject SpikeHazard;
+        [SerializeField]
+        public GameObject _spikeHazard = null;
+#pragma warning restore IDE0044 // Add readonly modifier
 
         public static Hazard CreateHazard(HazardTypes type, IntVector2 worldPosition)
         {
@@ -16,7 +19,7 @@ namespace WorldObjects.WorldGeneration
 
             switch (type)
             {
-                case HazardTypes.Spike: hazardObject = Instance.SpikeHazard; break;
+                case HazardTypes.Spike: hazardObject = Instance._spikeHazard; break;
                 default: throw new ArgumentException($"Unknown hazard type of {type}.");
             }
 
