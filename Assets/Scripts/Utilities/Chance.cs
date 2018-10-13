@@ -14,10 +14,22 @@ public static class Chance
         return rand == 0;
     }
 
+    public static bool ChanceOf(float percent)
+    {
+        var rand = _rand.NextDouble();
+        return rand < percent;
+    }
+
+    public static bool ChanceOf(int percent)
+    {
+        var rand = _rand.Next(100);
+        return rand < percent;
+    }
+
     public static List<int> ExclusiveRandomOrder(int numNumbers)
     {
-        List<int> random = new List<int>();
-        for (int i = 0; i < numNumbers; i++)
+        var random = new List<int>();
+        for (var i = 0; i < numNumbers; i++)
         {
             random.Add(i);
         }

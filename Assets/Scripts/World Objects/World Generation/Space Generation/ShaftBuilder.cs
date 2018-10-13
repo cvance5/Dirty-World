@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration.EnemyGeneration;
 
 namespace WorldObjects.WorldGeneration
 {
@@ -21,7 +23,7 @@ namespace WorldObjects.WorldGeneration
             _width = rand.Next(1, 10);
             _height = rand.Next(1, 100);
 
-            IntVector2 startingPoint = new IntVector2(rand.Next(containingChunk.BottomLeft.X, containingChunk.TopRight.X),
+            var startingPoint = new IntVector2(rand.Next(containingChunk.BottomLeft.X, containingChunk.TopRight.X),
                                                       rand.Next(containingChunk.BottomLeft.Y, containingChunk.TopRight.Y));
 
             SetStartingPoint(startingPoint, Enum<ShaftAlignment>.Random);
@@ -93,6 +95,8 @@ namespace WorldObjects.WorldGeneration
         }
 
         public override Space Build() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y));
+
+        public override Dictionary<IntVector2, EnemyTypes> GenerateContainedEnemies() => new Dictionary<IntVector2, EnemyTypes>();
 
         private void FindAllPoints()
         {

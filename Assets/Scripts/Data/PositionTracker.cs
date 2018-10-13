@@ -10,8 +10,8 @@ namespace Data
     {
         private static Dictionary<ITrackable, PositionData> _trackedTargets
             = new Dictionary<ITrackable, PositionData>();
-        private static Dictionary<ITrackable, List<Action<PositionData, PositionData>>> _onPositionChangedCallbacks
-            = new Dictionary<ITrackable, List<Action<PositionData, PositionData>>>();
+        private static Dictionary<ITrackable, List<Action<ITrackable, PositionData, PositionData>>> _onPositionChangedCallbacks
+            = new Dictionary<ITrackable, List<Action<ITrackable, PositionData, PositionData>>>();
 
         private static Coroutine _updateMethod;
         private static readonly WaitForSeconds _positionUpdateTick = new WaitForSeconds(.25f);
@@ -25,7 +25,7 @@ namespace Data
                 var chunk = GameManager.World.GetContainingChunk(position);
                 var space = chunk.GetSpaceForPosition(position);
 
-                var initialPositionData = new PositionData(chunk, space);
+                var initialPositionData = new PositionData(chunk, space, position);
 
                 _trackedTargets.Add(target, initialPositionData);
 
@@ -57,26 +57,22 @@ namespace Data
             }
         }
 
-        public static void Subscribe(ITrackable target, Action<PositionData, PositionData> callback)
+        public static void Subscribe(ITrackable target, Action<ITrackable, PositionData, PositionData> callback)
         {
-            List<Action<PositionData, PositionData>> callbacks;
-
-            if (_onPositionChangedCallbacks.TryGetValue(target, out callbacks))
+            if (_onPositionChangedCallbacks.TryGetValue(target, out var callbacks))
             {
                 if (callbacks.Contains(callback)) throw new ArgumentException("Duplicate callbacks have been subscribed!");
                 else callbacks.Add(callback);
             }
             else
             {
-                _onPositionChangedCallbacks.Add(target, new List<Action<PositionData, PositionData>>() { callback });
+                _onPositionChangedCallbacks.Add(target, new List<Action<ITrackable, PositionData, PositionData>>() { callback });
             }
         }
 
-        public static void Unsubscribe(ITrackable target, Action<PositionData, PositionData> callback)
+        public static void Unsubscribe(ITrackable target, Action<ITrackable, PositionData, PositionData> callback)
         {
-            var callbacks = new List<Action<PositionData, PositionData>>();
-
-            if (_onPositionChangedCallbacks.TryGetValue(target, out callbacks))
+            if (_onPositionChangedCallbacks.TryGetValue(target, out var callbacks))
             {
                 if (!callbacks.Contains(callback)) throw new ArgumentException("Callback not found to unsubscribe!");
                 else callbacks.Remove(callback);
@@ -92,7 +88,10 @@ namespace Data
                 {
                     var target = trackedTarget.Key;
                     var position = target.Position;
-                    var newPositionData = new PositionData();
+                    var newPositionData = new PositionData()
+                    {
+                        Position = position
+                    };
                     var oldPositionData = trackedTarget.Value;
 
                     if (!oldPositionData.Chunk.Contains(position))
@@ -110,14 +109,11 @@ namespace Data
 
                     if (oldPositionData != newPositionData)
                     {
-                        _log.Info($"{target} has changed from {oldPositionData} to {newPositionData}.");
-
-                        List<Action<PositionData, PositionData>> callbacksToCall;
-                        if (_onPositionChangedCallbacks.TryGetValue(target, out callbacksToCall))
+                        if (_onPositionChangedCallbacks.TryGetValue(target, out var callbacksToCall))
                         {
                             foreach (var callback in callbacksToCall)
                             {
-                                callback?.Invoke(oldPositionData, newPositionData);
+                                callback?.Invoke(target, oldPositionData, newPositionData);
                             }
                         }
                         _trackedTargets[target] = newPositionData;

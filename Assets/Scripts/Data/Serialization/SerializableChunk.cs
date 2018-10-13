@@ -19,13 +19,16 @@ namespace Data.Serialization
         private readonly IntVector2 _bottomLeft;
 
         [JsonProperty("blocks")]
-        private readonly List<SerializableBlock> _blocks;
+        private readonly List<SerializableBlock> _blocks = new List<SerializableBlock>();
 
         [JsonProperty("spaces")]
-        private readonly List<SerializableSpace> _spaces;
+        private readonly List<SerializableSpace> _spaces = new List<SerializableSpace>();
 
         [JsonProperty("hazards")]
-        private readonly List<SerializableHazard> _hazards;
+        private readonly List<SerializableHazard> _hazards = new List<SerializableHazard>();
+
+        [JsonProperty("enemies")]
+        private readonly List<SerializableEnemy> _enemies = new List<SerializableEnemy>();
 
         [JsonConstructor]
         public SerializableChunk() { }
@@ -52,6 +55,12 @@ namespace Data.Serialization
             foreach (var hazard in chunk.Hazards)
             {
                 _hazards.Add(new SerializableHazard(hazard));
+            }
+
+            _enemies = new List<SerializableEnemy>();
+            foreach (var enemy in chunk.Enemies)
+            {
+                _enemies.Add(new SerializableEnemy(enemy));
             }
         }
 
@@ -80,6 +89,12 @@ namespace Data.Serialization
             {
                 var hazard = serializedHazard.ToObject();
                 chunk.Register(hazard);
+            }
+
+            foreach (var serializedEnemy in _enemies)
+            {
+                var enemy = serializedEnemy.ToObject();
+                chunk.Register(enemy);
             }
 
             return chunk;

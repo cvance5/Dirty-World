@@ -104,7 +104,7 @@ public class GameManager : Singleton<GameManager>
         CheckForGenerateChunk(initialChunkPosition);
     }
 
-    private void OnPlayerTrackingUpdate(PositionData oldData, PositionData newData) => CheckForGenerateChunk(newData.Chunk.transform.position);
+    private void OnPlayerTrackingUpdate(ITrackable player, PositionData oldData, PositionData newData) => CheckForGenerateChunk(newData.Chunk.transform.position);
 
     private void CheckForGenerateChunk(Vector2 currentChunkPosition)
     {

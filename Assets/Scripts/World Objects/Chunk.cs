@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Actors;
+using Actors.Enemies;
+using Data;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Blocks;
@@ -18,6 +21,8 @@ namespace WorldObjects
 
         public List<Space> Spaces { get; private set; } = new List<Space>();
         public List<Hazard> Hazards { get; private set; } = new List<Hazard>();
+        public List<EnemyData> Enemies { get; private set; } = new List<EnemyData>();
+
         public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
 
         private Dictionary<IntVector2, List<Space>> _spacesOverlappingEdges = new Dictionary<IntVector2, List<Space>>()
@@ -47,12 +52,11 @@ namespace WorldObjects
         public void Register(Hazard hazard)
         {
             var anchorPos = hazard.AnchoringPosition;
-            bool isAnchored = true;
+            var isAnchored = true;
 
             if (anchorPos != null)
             {
-                Block anchor = null;
-                BlockMap.TryGetValue(anchorPos, out anchor);
+                BlockMap.TryGetValue(anchorPos, out var anchor);
                 isAnchored = hazard.SetAnchor(anchor);
             }
 
@@ -70,7 +74,7 @@ namespace WorldObjects
         {
             Spaces.Add(space);
 
-            List<IntVector2> edgesReached = new List<IntVector2>();
+            var edgesReached = new List<IntVector2>();
 
             foreach (var extentPoint in space.Extents)
             {
@@ -96,10 +100,19 @@ namespace WorldObjects
             }
         }
 
+        public void Register(EnemyData enemy)
+        {
+            Enemies.Add(enemy);
+
+            PositionTracker.BeginTracking(enemy);
+            PositionTracker.Subscribe(enemy, OnEnemyPositionUpdate);
+
+            enemy.OnActorDeath += Unregister;
+        }
+
         public Block GetBlockForPosition(IntVector2 position)
         {
-            Block block = null;
-            BlockMap.TryGetValue(position, out block);
+            BlockMap.TryGetValue(position, out var block);
             return block;
         }
 
@@ -166,6 +179,27 @@ namespace WorldObjects
             hazard.OnHazardDestroyed -= OnHazardRemoved;
 
             OnChunkChanged.Raise(this);
+        }
+
+        private void Unregister(ActorData enemy)
+        {
+            Enemies.Remove(enemy as EnemyData);
+
+            PositionTracker.StopTracking(enemy);
+            PositionTracker.Unsubscribe(enemy, OnEnemyPositionUpdate);
+
+            enemy.OnActorDeath -= Unregister;
+        }
+
+        private void OnEnemyPositionUpdate(ITrackable trackedEnemy, PositionData oldPosition, PositionData newPosition)
+        {
+            var enemy = trackedEnemy as EnemyData;
+
+            if (newPosition.Chunk != this)
+            {
+                newPosition.Chunk.Register(enemy as EnemyData);
+                Unregister(enemy);
+            }
         }
 
         public override bool Equals(object obj)

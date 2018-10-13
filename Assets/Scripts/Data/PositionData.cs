@@ -8,13 +8,15 @@ namespace Data
     {
         public Chunk Chunk;
         public Space Space;
+        public IntVector2 Position;
 
         public PositionData() { }
 
-        public PositionData(Chunk chunk, Space space)
+        public PositionData(Chunk chunk, Space space, IntVector2 position)
         {
             Chunk = chunk;
             Space = space;
+            Position = position;
         }
 
         public override string ToString() => $"Chunk: {Chunk} Space: {Space}";

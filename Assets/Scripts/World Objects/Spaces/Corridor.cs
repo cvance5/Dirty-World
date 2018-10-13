@@ -40,7 +40,7 @@ namespace WorldObjects.Spaces
         public override BlockTypes GetBlock(IntVector2 position) => BlockTypes.None;
         public override HazardTypes GetHazard(IntVector2 position)
         {
-            HazardTypes hazard = HazardTypes.None;
+            var hazard = HazardTypes.None;
 
             if (position.Y == _spikeY)
             {

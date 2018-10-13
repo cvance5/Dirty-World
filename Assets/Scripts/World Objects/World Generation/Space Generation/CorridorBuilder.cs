@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration.EnemyGeneration;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
@@ -15,16 +17,16 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         private bool _isHazardous;
 
+        private static readonly Random _rand = new Random();
+
         public CorridorBuilder(ChunkBuilder containingChunk)
             : base(containingChunk)
         {
-            var rand = new Random();
+            _height = _rand.Next(1, 10);
+            _length = _rand.Next(1, 100);
 
-            _height = rand.Next(1, 10);
-            _length = rand.Next(1, 100);
-
-            IntVector2 startingPoint = new IntVector2(rand.Next(containingChunk.BottomLeft.X, containingChunk.TopRight.X), 
-                                                      rand.Next(containingChunk.BottomLeft.Y, containingChunk.TopRight.Y));
+            var startingPoint = new IntVector2(_rand.Next(_containingChunk.BottomLeft.X, _containingChunk.TopRight.X),
+                                               _rand.Next(_containingChunk.BottomLeft.Y, _containingChunk.TopRight.Y));
 
             SetStartingPoint(startingPoint, Enum<CorridorAlignment>.Random);
 
@@ -105,6 +107,36 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         }
 
         public override Space Build() => new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height), _isHazardous);
+
+        public override Dictionary<IntVector2, EnemyTypes> GenerateContainedEnemies()
+        {
+            var containedEnemies = new Dictionary<IntVector2, EnemyTypes>();
+
+            var likelyhoodOfEnemies = _containingChunk.Depth + _containingChunk.Remoteness;
+            while (likelyhoodOfEnemies > 0)
+            {
+                if (Chance.ChanceOf(likelyhoodOfEnemies))
+                {
+                    var enemy = EnemyPicker.RequestEnemy(new EnemyRequestCriteria()
+                    {
+                        HeightsAllowed = new Range(0, _height),
+                        LengthsAllowed = new Range(0, _length)
+                    });
+
+                    if (enemy != EnemyTypes.None)
+                    {
+                        var xPos = _rand.Next(_leftEnd.X, _rightEnd.X);
+                        var position = new IntVector2(xPos, _leftEnd.Y);
+
+                        containedEnemies.Add(position, enemy);
+                    }
+                }
+
+                likelyhoodOfEnemies -= 100;
+            }
+
+            return containedEnemies;
+        }
 
         private void FindAllPoints()
         {

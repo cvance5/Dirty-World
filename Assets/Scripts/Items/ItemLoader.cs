@@ -5,7 +5,6 @@ using UnityEngine;
 public class ItemLoader : Singleton<ItemLoader>
 {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
-    [Header("Items")]
     [SerializeField]
     private GameObject _copperPiece = null;
     [SerializeField]
