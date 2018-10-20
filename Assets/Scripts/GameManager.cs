@@ -74,6 +74,9 @@ public class GameManager : Singleton<GameManager>
             _log.Info("Creating new save...");
             WorldBuilder.BuildInitialChunk();
             GameSaves.SaveDirty();
+
+            User.RegisterGame("Default");
+            UserSaves.SaveUser();
         }
 
         Character = GameState.CurrentCharacter;
@@ -92,7 +95,9 @@ public class GameManager : Singleton<GameManager>
         var playerObj = PlayerSpawner.SpawnPlayer(Character.Equipment);
         _player = playerObj.GetComponent<PlayerData>();
         _player.AssignCharacter(Character);
+
         PositionTracker.Subscribe(_player, OnPlayerTrackingUpdate);
+        Timekeeper.StartStopwatch("PlaySession");
 
         _player.OnActorDeath += OnPlayerDeath;
     }
@@ -123,6 +128,9 @@ public class GameManager : Singleton<GameManager>
 
     private void OnPlayerDeath(ActorData playerData)
     {
+        var elapsedPlayTime = Timekeeper.EndStopwatch("PlaySession");
+        Character.Metadata.AddTimePlayed(elapsedPlayTime);
+
         GameSaves.SaveDirty();
         UserSaves.SaveUser();
         StartCoroutine(HandleGameOverScreen());

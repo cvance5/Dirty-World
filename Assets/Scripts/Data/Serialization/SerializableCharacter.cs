@@ -12,13 +12,17 @@ namespace Data.Serialization
         [JsonProperty("equipment")]
         public SerializableEquipment Equipment;
 
+        [JsonProperty("metadata")]
+        public SerializableMetadata Metadata;
+
         [JsonConstructor]
-        public SerializableCharacter() { }
+        private SerializableCharacter() { }
 
         public SerializableCharacter(Character character)
         {
             Inventory = new SerializableInventory(character.Inventory);
             Equipment = new SerializableEquipment(character.Equipment);
+            Metadata = new SerializableMetadata(character.Metadata);
         }
 
         public string Serialize() => JsonConvert.SerializeObject(this);
@@ -29,7 +33,8 @@ namespace Data.Serialization
             return new Character()
             {
                 Inventory = Inventory.ToObject(),
-                Equipment = Equipment.ToObject()
+                Equipment = Equipment.ToObject(),
+                Metadata = Metadata.ToObject()
             };
         }
     }

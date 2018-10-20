@@ -1,4 +1,5 @@
-﻿using UnityEngine.SceneManagement;
+﻿using Data;
+using UnityEngine.SceneManagement;
 
 public static class SceneHelper
 {

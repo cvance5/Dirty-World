@@ -1,5 +1,6 @@
 ﻿using Metadata;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Data.Serialization
 {
@@ -8,12 +9,16 @@ namespace Data.Serialization
         [JsonProperty("userName")]
         public string UserName;
 
+        [JsonProperty("games")]
+        public List<string> Games = new List<string>();
+
         [JsonConstructor]
         public SerializableUser() { }
 
         public SerializableUser(User user)
         {
             UserName = user.UserName;
+            Games = user.Games;
         }
 
         public string Serialize() => JsonConvert.SerializeObject(this);
@@ -21,7 +26,14 @@ namespace Data.Serialization
 
         public User ToObject()
         {
-            return new User(UserName);
+            var user = new User(UserName);
+
+            foreach (var game in Games)
+            {
+                user.RegisterGame(game);
+            }
+
+            return user;
         }
     }
 }
