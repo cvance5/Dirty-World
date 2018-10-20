@@ -12,6 +12,8 @@ namespace WorldObjects
         private List<Chunk> _activeChunks = new List<Chunk>();
         private Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
 
+        private Dictionary<IntVector2, ChunkBlueprint> _blueprintsByWorldPosition = new Dictionary<IntVector2, ChunkBlueprint>();
+
         public void Register(Chunk chunk)
         {
             _activeChunks.Add(chunk);
@@ -75,12 +77,28 @@ namespace WorldObjects
 
         public Chunk GetChunkAtPosition(IntVector2 chunkPosition)
         {
-            Chunk chunk = null;
-            _chunksByWorldPosition.TryGetValue(chunkPosition, out chunk);
+            _chunksByWorldPosition.TryGetValue(chunkPosition, out var chunk);
             return chunk;
         }
 
         public IntVector2 GetChunkPosition(IntVector2 chunkPosition, IntVector2 direction) =>
             chunkPosition + new IntVector2(direction.X * ChunkSize, direction.Y * ChunkSize);
+
+        public ChunkBlueprint GetBlueprintForPosition(IntVector2 worldPosition)
+        {
+            ChunkBlueprint blueprint;
+
+            if (_chunksByWorldPosition.ContainsKey(worldPosition))
+            {
+                throw new System.ArgumentException($"A chunk already exists at {worldPosition}.");
+            }
+            else if (!_blueprintsByWorldPosition.TryGetValue(worldPosition, out blueprint))
+            {
+                blueprint = new ChunkBlueprint(worldPosition);
+                _blueprintsByWorldPosition[worldPosition] = blueprint;
+            }
+
+            return blueprint;
+        }
     }
 }

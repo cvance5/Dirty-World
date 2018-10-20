@@ -12,6 +12,11 @@ public class CustomToolbarMenu
         {
             GameSaves.UnloadCurrent();
             GameSaves.DeleteSave("Default");
+
+            var user = UserSaves.LoadUser("Default");
+            user.UnregisterGame("Default");
+
+            UserSaves.SaveUser();            
         }
         else _log.Warning("No save data to delete.");
     }

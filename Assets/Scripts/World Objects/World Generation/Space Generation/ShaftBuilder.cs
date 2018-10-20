@@ -96,8 +96,6 @@ namespace WorldObjects.WorldGeneration
 
         public override Space Build() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y));
 
-        public override Dictionary<IntVector2, EnemyTypes> GenerateContainedEnemies() => new Dictionary<IntVector2, EnemyTypes>();
-
         private void FindAllPoints()
         {
             switch (_alignment)

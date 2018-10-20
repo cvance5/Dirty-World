@@ -13,19 +13,23 @@ namespace Data
         public static bool HasSavedData => _savedUsers.Count > 0;
         public static bool SaveExists(string userName) => _savedUsers.Contains(userName);
 
-        public static string CurrentUser { get; private set; }
+        public static User CurrentUser { get; private set; }
 
-        public static void Refresh()
-        {
-            _savedUsers = DataReader.FindAllFiles(DataTypes.Users);
-        }
+        public static void Refresh() => _savedUsers = DataReader.FindAllFiles(DataTypes.Users);
 
         public static User LoadUser(string userToLoad)
         {
-            CurrentUser = userToLoad;
-
             var userJson = DataReader.Read(userToLoad, DataTypes.Users);
-            return SerializableUser.Deserialize(userJson).ToObject();
+            CurrentUser = SerializableUser.Deserialize(userJson).ToObject();
+
+            return CurrentUser;
+        }
+
+        public static User CreateUser(string userName)
+        {
+            CurrentUser = new User(userName);
+            SaveUser();
+            return CurrentUser;
         }
 
         public static void SaveUser()
@@ -35,10 +39,8 @@ namespace Data
                 Directory.CreateDirectory(Paths.ToPath(DataTypes.Users));
             }
 
-            var userToSave = GameManager.User;
-
-            var writeLocation = Paths.ToPath(DataTypes.Users, userToSave.UserName);
-            var data = new SerializableUser(userToSave);
+            var writeLocation = Paths.ToPath(DataTypes.Users, CurrentUser.UserName);
+            var data = new SerializableUser(CurrentUser);
 
             DataWriter.Write(writeLocation, data.Serialize());
         }

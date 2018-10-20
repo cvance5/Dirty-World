@@ -39,11 +39,10 @@ public class GameManager : Singleton<GameManager>
 
         if (!UserSaves.HasSavedData)
         {
-            User = new User("default");
-            UserSaves.SaveUser();
+            User = UserSaves.CreateUser("Default");
         }
 
-        User = UserSaves.LoadUser("default");
+        User = UserSaves.LoadUser("Default");
     }
 
     private void StartGame()

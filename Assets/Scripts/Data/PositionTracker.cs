@@ -23,7 +23,7 @@ namespace Data
                 var position = target.Position;
 
                 var chunk = GameManager.World.GetContainingChunk(position);
-                var space = chunk.GetSpaceForPosition(position);
+                var space = chunk?.GetSpaceForPosition(position) ?? null;
 
                 var initialPositionData = new PositionData(chunk, space, position);
 
@@ -94,7 +94,8 @@ namespace Data
                     };
                     var oldPositionData = trackedTarget.Value;
 
-                    if (!oldPositionData.Chunk.Contains(position))
+                    if (oldPositionData.Chunk == null ||
+                        !oldPositionData.Chunk.Contains(position))
                     {
                         newPositionData.Chunk = GameManager.World.GetContainingChunk(position);
                     }
@@ -103,7 +104,7 @@ namespace Data
                     if (oldPositionData.Space == null ||
                         !oldPositionData.Space.Contains(position))
                     {
-                        newPositionData.Space = newPositionData.Chunk.GetSpaceForPosition(position);
+                        newPositionData.Space = newPositionData.Chunk?.GetSpaceForPosition(position) ?? null;
                     }
                     else newPositionData.Space = oldPositionData.Space;
 
@@ -111,7 +112,8 @@ namespace Data
                     {
                         if (_onPositionChangedCallbacks.TryGetValue(target, out var callbacksToCall))
                         {
-                            foreach (var callback in callbacksToCall)
+                            // Duplicate the list briefly, so that any callbacks that remove things from the list don't interrupt execution
+                            foreach (var callback in callbacksToCall.ToList())
                             {
                                 callback?.Invoke(target, oldPositionData, newPositionData);
                             }

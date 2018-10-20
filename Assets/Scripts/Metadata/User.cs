@@ -22,5 +22,13 @@ namespace Metadata
             }
             else Games.Add(gameName);
         }
+
+        public void UnregisterGame(string gameName)
+        {
+            if(!Games.Remove(gameName))
+            {
+                throw new System.ArgumentException($"User has not registed that game.");
+            }
+        }
     }
 }

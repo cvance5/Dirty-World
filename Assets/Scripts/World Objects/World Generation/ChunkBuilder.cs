@@ -1,5 +1,4 @@
-﻿using Actors.Enemies;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Blocks;
 using WorldObjects.Hazards;
@@ -21,12 +20,14 @@ namespace WorldObjects.WorldGeneration
         private List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
         private List<IntVector2> _boundedDirections = new List<IntVector2>();
 
-        private static int _chunkSize = GameManager.World.ChunkSize;
+        private readonly ChunkBlueprint _blueprint;
+
+        private static int _chunkSize = GameManager.Instance.Settings.ChunkSize;
         private static int _halfChunkSize = _chunkSize / 2;
 
         private static BlockTypes _fillBlock = BlockTypes.Dirt;
 
-        public ChunkBuilder(IntVector2 chunkWorldCenterpoint)
+        public ChunkBuilder(IntVector2 chunkWorldCenterpoint, ChunkBlueprint blueprint = null)
         {
             _chunkWorldCenterpoint = new IntVector2(chunkWorldCenterpoint);
 
@@ -57,6 +58,8 @@ namespace WorldObjects.WorldGeneration
                     _boundedDirections.Add(dir);
                 }
             }
+
+            _blueprint = blueprint;
         }
 
         public ChunkBuilder AddSpace(SpaceBuilder spaceBuilder)
@@ -131,31 +134,37 @@ namespace WorldObjects.WorldGeneration
                 new IntVector2(_chunkWorldCenterpoint.X - (_chunkSize / 2), _chunkWorldCenterpoint.Y - (_chunkSize / 2)),
                 new IntVector2(_chunkWorldCenterpoint.X + (_chunkSize / 2), _chunkWorldCenterpoint.Y + (_chunkSize / 2))
             );
-            var enemies = new Dictionary<IntVector2, EnemyData>();
+
             var spaces = new List<Space>();
+            var enemiesToAdd = new Dictionary<IntVector2, EnemyTypes>();
+
             foreach (var sBuilder in _spaceBuilders)
             {
                 var space = sBuilder.Build();
                 spaces.Add(space);
                 chunk.Register(space);
 
-                foreach (var enemy in sBuilder.GenerateContainedEnemies())
+                foreach (var enemy in space.GetEnemySpawnsInChunk(chunk))
                 {
-                    enemies[enemy.Key] = EnemySpawner.SpawnEnemy(enemy.Value, enemy.Key);
+                    enemiesToAdd.Add(enemy.Key, enemy.Value);
+                }
+
+                foreach (var dir in Directions.Cardinals)
+                {
+                    if (GameManager.World.GetNeighborOfChunk(chunk.Position, dir) == null)
+                    {
+                        var blueprint = GameManager.World.GetBlueprintForPosition(chunk.Position + (dir * _chunkSize));
+                        blueprint.Register(space);
+                    }
                 }
             }
 
-            foreach (var dir in Directions.Cardinals)
+            if (_blueprint != null)
             {
-                var neighbor = (GameManager.World.GetNeighborOfChunk(_chunkWorldCenterpoint, dir));
-
-                if (neighbor != null)
+                foreach (var space in _blueprint.Spaces)
                 {
-                    foreach (var overlappingSpace in neighbor.GetSpacesReachingEdge(-dir))
-                    {
-                        spaces.Add(overlappingSpace);
-                        chunk.Register(overlappingSpace);
-                    }
+                    spaces.Add(space);
+                    chunk.Register(space);
                 }
             }
 
@@ -198,6 +207,21 @@ namespace WorldObjects.WorldGeneration
             foreach (var hazardToAdd in hazardsToAdd)
             {
                 chunk.Register(hazardToAdd);
+            }
+
+            foreach (var enemyToAdd in enemiesToAdd)
+            {
+                var enemyData = EnemySpawner.SpawnEnemy(enemyToAdd.Value, enemyToAdd.Key);
+                chunk.Register(enemyData);
+            }
+
+            if (_blueprint != null)
+            {
+                foreach (var enemy in _blueprint.Enemies)
+                {
+                    enemy.SetActive(true);
+                    chunk.Register(enemy);
+                }
             }
 
             _blockBuilders.Clear();

@@ -29,6 +29,8 @@ public class IntVector2
     public static IntVector2 operator +(IntVector2 lhs, Vector2 rhs) => lhs + new IntVector2(rhs);
     public static IntVector2 operator -(IntVector2 vec) => new IntVector2(-vec.X, -vec.Y);
 
+    public static IntVector2 operator *(IntVector2 vec, int operand) => new IntVector2(vec.X * operand, vec.Y * operand);
+
     public static implicit operator IntVector2(Vector2 source) => new IntVector2(source);
     public static implicit operator Vector2(IntVector2 source) => new Vector2(source.X, source.Y);
     public static implicit operator Vector3(IntVector2 source) => new Vector3(source.X, source.Y, 0);

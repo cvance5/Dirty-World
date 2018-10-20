@@ -8,7 +8,7 @@ namespace WorldObjects.WorldGeneration
 {
     public static class WorldBuilder
     {
-        private static readonly int _chunkSize = GameManager.World.ChunkSize;
+        private static readonly int _chunkSize = GameManager.Instance.Settings.ChunkSize;
 
         private static readonly Dictionary<BlockTypes, Range> _fillRanges = new Dictionary<BlockTypes, Range>()
         {
@@ -50,9 +50,9 @@ namespace WorldObjects.WorldGeneration
             GameManager.World.Register(chunk);
         }
 
-        public static void BuildChunk(IntVector2 position)
+        public static void BuildChunk(IntVector2 worldPosition)
         {
-            var cBuilder = new ChunkBuilder(position);
+            var cBuilder = new ChunkBuilder(worldPosition, GameManager.World.GetBlueprintForPosition(worldPosition));
             var sBuilder = SpacePicker.Pick(cBuilder);
 
             var blocks = BlockPicker.Pick(cBuilder);

@@ -6,18 +6,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Blocks;
 using WorldObjects.Hazards;
-
 using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects
 {
-    public class Chunk : MonoBehaviour, IBoundary, ITrackable
+    public class Chunk : MonoBehaviour, ITrackable, IBoundary
     {
         public static SmartEvent<Chunk> OnChunkChanged = new SmartEvent<Chunk>();
-
+    
         public IntVector2 Position => new IntVector2(transform.position);
-        public IntVector2 BottomLeftCorner { get; private set; }
-        public IntVector2 TopRightCorner { get; private set; }
+        public IntVector2 BottomLeftCorner { get; protected set; }
+        public IntVector2 TopRightCorner { get; protected set; }
 
         public List<Space> Spaces { get; private set; } = new List<Space>();
         public List<Hazard> Hazards { get; private set; } = new List<Hazard>();
@@ -25,7 +24,9 @@ namespace WorldObjects
 
         public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
 
-        private Dictionary<IntVector2, List<Space>> _spacesOverlappingEdges = new Dictionary<IntVector2, List<Space>>()
+        private static int _chunkSize = GameManager.Instance.Settings.ChunkSize;
+
+        protected readonly Dictionary<IntVector2, List<Space>> _spacesOverlappingEdges = new Dictionary<IntVector2, List<Space>>()
         {
             { Vector2.up, new List<Space>() },
             { Vector2.right, new List<Space>() },
@@ -39,6 +40,13 @@ namespace WorldObjects
             TopRightCorner = topRightCorner;
         }
 
+        public bool Contains(IntVector2 position) =>
+            position.X >= BottomLeftCorner.X &&
+            position.Y >= BottomLeftCorner.Y &&
+            position.X <= TopRightCorner.X &&
+            position.Y <= TopRightCorner.Y;
+
+
         public void Register(Block block)
         {
             BlockMap[block.Position] = block;
@@ -47,6 +55,33 @@ namespace WorldObjects
             block.OnBlockDestroyed += OnBlockDestroyed;
             block.OnBlockCrumbled += OnBlockCrumbled;
             block.OnBlockStabilized += OnBlockStabilized;
+        }
+
+        public void Register(Space space)
+        {
+            Spaces.Add(space);
+
+            var edgesReached = new List<IntVector2>();
+
+            foreach (var extentPoint in space.Extents)
+            {
+                if (!Contains(extentPoint))
+                {
+                    edgesReached = GetEdgesReached(extentPoint);
+                }
+
+                // We are already overlapping all edges with 
+                // the previous extents, so don't check the rest.
+                if (edgesReached.Count == 4) break;
+            }
+
+            if (edgesReached.Count > 0)
+            {
+                foreach (var edgeReached in edgesReached)
+                {
+                    _spacesOverlappingEdges[edgeReached].Add(space);
+                }
+            }
         }
 
         public void Register(Hazard hazard)
@@ -70,41 +105,10 @@ namespace WorldObjects
             }
         }
 
-        public void Register(Space space)
-        {
-            Spaces.Add(space);
-
-            var edgesReached = new List<IntVector2>();
-
-            foreach (var extentPoint in space.Extents)
-            {
-                if (!Contains(extentPoint))
-                {
-                    if (extentPoint.X < BottomLeftCorner.X) edgesReached.Add(Vector2.left);
-                    if (extentPoint.Y < BottomLeftCorner.Y) edgesReached.Add(Vector2.down);
-                    if (extentPoint.X > BottomLeftCorner.X) edgesReached.Add(Vector2.right);
-                    if (extentPoint.Y > BottomLeftCorner.Y) edgesReached.Add(Vector2.up);
-                }
-
-                // We are already overlapping all edges with 
-                // the previous extents, so don't check the rest.
-                if (edgesReached.Count == 4) break;
-            }
-
-            if (edgesReached.Count > 0)
-            {
-                foreach (var edgeReached in edgesReached)
-                {
-                    _spacesOverlappingEdges[edgeReached].Add(space);
-                }
-            }
-        }
-
         public void Register(EnemyData enemy)
         {
             Enemies.Add(enemy);
 
-            PositionTracker.BeginTracking(enemy);
             PositionTracker.Subscribe(enemy, OnEnemyPositionUpdate);
 
             enemy.OnActorDeath += Unregister;
@@ -129,11 +133,17 @@ namespace WorldObjects
 
         public List<Space> GetSpacesReachingEdge(IntVector2 edge) => _spacesOverlappingEdges[edge];
 
-        public bool Contains(IntVector2 position) =>
-            position.X >= BottomLeftCorner.X &&
-            position.Y >= BottomLeftCorner.Y &&
-            position.X <= TopRightCorner.X &&
-            position.Y <= TopRightCorner.Y;
+        protected List<IntVector2> GetEdgesReached(IntVector2 extentPoint)
+        {
+            var edgesReached = new List<IntVector2>();
+
+            if (extentPoint.X < BottomLeftCorner.X) edgesReached.Add(Vector2.left);
+            if (extentPoint.Y < BottomLeftCorner.Y) edgesReached.Add(Vector2.down);
+            if (extentPoint.X > BottomLeftCorner.X) edgesReached.Add(Vector2.right);
+            if (extentPoint.Y > BottomLeftCorner.Y) edgesReached.Add(Vector2.up);
+
+            return edgesReached;
+        }
 
         private void OnBlockDestroyed(Block block)
         {
@@ -185,7 +195,6 @@ namespace WorldObjects
         {
             Enemies.Remove(enemy as EnemyData);
 
-            PositionTracker.StopTracking(enemy);
             PositionTracker.Unsubscribe(enemy, OnEnemyPositionUpdate);
 
             enemy.OnActorDeath -= Unregister;
@@ -197,7 +206,25 @@ namespace WorldObjects
 
             if (newPosition.Chunk != this)
             {
-                newPosition.Chunk.Register(enemy as EnemyData);
+                if (newPosition.Chunk != null)
+                {
+                    newPosition.Chunk.Register(enemy);
+                }
+                else
+                {
+                    var edgesPassed = GetEdgesReached(newPosition.Position);
+                    IntVector2 chunkDir = Vector2.zero;
+
+                    // Merge edges passed to determine a ordinal or cardinal direction
+                    foreach (var edgePassed in edgesPassed)
+                    {
+                        chunkDir += edgePassed;
+                    }
+
+                    var blueprintForChunk = GameManager.World.GetBlueprintForPosition(Position + (chunkDir * _chunkSize));
+                    blueprintForChunk.Register(enemy);
+                }
+
                 Unregister(enemy);
             }
         }

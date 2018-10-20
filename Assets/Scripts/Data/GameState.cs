@@ -1,6 +1,6 @@
-﻿using Data.IO;
+﻿using Characters;
+using Data.IO;
 using Data.Serialization;
-using Characters;
 using System;
 using System.Collections.Generic;
 using WorldObjects;
@@ -14,10 +14,14 @@ namespace Data
         private static readonly Dictionary<IntVector2, Chunk>
              _dirtyChunks = new Dictionary<IntVector2, Chunk>();
 
+        private static readonly Dictionary<IntVector2, ChunkBlueprint>
+            _dirtyBlueprints = new Dictionary<IntVector2, ChunkBlueprint>();
+
         public static void Initialize()
         {
             _dirtyChunks.Clear();
             Chunk.OnChunkChanged += LogDirty;
+            ChunkBlueprint.OnBlueprintChanged += LogDirty;
             LoadCharacter();
         }
 
@@ -26,6 +30,14 @@ namespace Data
             if (!_dirtyChunks.ContainsKey(dirtyChunk.Position))
             {
                 _dirtyChunks.Add(dirtyChunk.Position, dirtyChunk);
+            }
+        }
+
+        public static void LogDirty(ChunkBlueprint dirtyBlueprint)
+        {
+            if (_dirtyBlueprints.ContainsKey(dirtyBlueprint.Position))
+            {
+                _dirtyBlueprints.Add(dirtyBlueprint.Position, dirtyBlueprint);
             }
         }
 
@@ -39,6 +51,13 @@ namespace Data
                 {
                     var fileName = kvp.Key.ToString();
                     var data = new SerializableChunk(kvp.Value).Serialize();
+                    filesToWrite.Add(fileName, data);
+                }
+
+                foreach (var kvp in _dirtyBlueprints)
+                {
+                    var fileName = kvp.Key.ToString();
+                    var data = new SerializableChunkBlueprint(kvp.Value).Serialize();
                     filesToWrite.Add(fileName, data);
                 }
 
@@ -68,10 +87,7 @@ namespace Data
             CurrentCharacter = character;
         }
 
-        public static void Clear()
-        {
-            _dirtyChunks.Clear();
-        }
+        public static void Clear() => _dirtyChunks.Clear();
 
         private static readonly Log _log = new Log("GameState");
     }

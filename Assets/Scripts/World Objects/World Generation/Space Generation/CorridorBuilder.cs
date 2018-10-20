@@ -106,33 +106,31 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public override Space Build() => new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height), _isHazardous);
+        public override Space Build()
+        {
+            var corridor = new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height), _isHazardous);
+            corridor.AddEnemySpawns(GenerateContainedEnemies());
+            return corridor;
+        }
 
-        public override Dictionary<IntVector2, EnemyTypes> GenerateContainedEnemies()
+        private Dictionary<IntVector2, EnemyTypes> GenerateContainedEnemies()
         {
             var containedEnemies = new Dictionary<IntVector2, EnemyTypes>();
 
-            var likelyhoodOfEnemies = _containingChunk.Depth + _containingChunk.Remoteness;
-            while (likelyhoodOfEnemies > 0)
+            var riskPoints = EnemyPicker.DetermineRiskPoints(_containingChunk.Depth, _containingChunk.Remoteness);
+
+            var enemies = EnemyPicker.RequestEnemies(riskPoints, new EnemyRequestCriteria()
             {
-                if (Chance.ChanceOf(likelyhoodOfEnemies))
-                {
-                    var enemy = EnemyPicker.RequestEnemy(new EnemyRequestCriteria()
-                    {
-                        HeightsAllowed = new Range(0, _height),
-                        LengthsAllowed = new Range(0, _length)
-                    });
+                HeightsAllowed = new Range(0, _height),
+                LengthsAllowed = new Range(0, _length)
+            });
 
-                    if (enemy != EnemyTypes.None)
-                    {
-                        var xPos = _rand.Next(_leftEnd.X, _rightEnd.X);
-                        var position = new IntVector2(xPos, _leftEnd.Y);
+            foreach (var enemy in enemies)
+            {
+                var xPos = _rand.Next(_leftEnd.X, _rightEnd.X);
+                var position = new IntVector2(xPos, _leftEnd.Y);
 
-                        containedEnemies.Add(position, enemy);
-                    }
-                }
-
-                likelyhoodOfEnemies -= 100;
+                containedEnemies[position] = enemy;
             }
 
             return containedEnemies;
