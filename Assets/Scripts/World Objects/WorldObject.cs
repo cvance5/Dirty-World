@@ -28,9 +28,14 @@ namespace WorldObjects
                 OnWorldObjectDestroyed.Raise(this);
                 OnWorldObjectDestroy();
             }
+            else
+            {
+                OnWorldObjectUnloaded();
+            }
         }
 
-        protected abstract void OnWorldObjectDestroy();
+        protected virtual void OnWorldObjectDestroy() { }
+        protected virtual void OnWorldObjectUnloaded() { }
 
         private void OnApplicationQuit()
         {
