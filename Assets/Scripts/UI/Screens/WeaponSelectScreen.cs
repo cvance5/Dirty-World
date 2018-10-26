@@ -52,7 +52,7 @@ namespace UI.Screens
                 var weaponSelectGameobject = Instantiate(_weaponSelectFrameTemplate, _contentAnchor);
 
                 var weaponSelectFrame = weaponSelectGameobject.GetComponent<WeaponDisplayFrame>();
-                weaponSelectFrame.SetDisplay(WeaponDisplayData.GetDisplay(weapon));
+                weaponSelectFrame.SetDisplay(WeaponDisplayDataProvider.GetDisplay(weapon));
 
                 var weaponTransaction = _weaponOffers[weapon];
 
