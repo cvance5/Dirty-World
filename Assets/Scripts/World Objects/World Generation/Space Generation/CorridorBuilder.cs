@@ -16,6 +16,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private int _length;
 
         private bool _isHazardous;
+        private bool _allowEnemies = true;
 
         private static readonly Random _rand = new Random();
 
@@ -68,6 +69,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
+        public CorridorBuilder DisallowEnemies()
+        {
+            _allowEnemies = false;
+            return this;
+        }
+
         public override SpaceBuilder Clamp(IntVector2 direction, int amount)
         {
             if (direction == Directions.Up)
@@ -117,20 +124,23 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             var containedEnemies = new Dictionary<IntVector2, EnemyTypes>();
 
-            var riskPoints = EnemyPicker.DetermineRiskPoints(_containingChunk.Depth, _containingChunk.Remoteness);
-
-            var enemies = EnemyPicker.RequestEnemies(riskPoints, new EnemyRequestCriteria()
+            if (_allowEnemies)
             {
-                HeightsAllowed = new Range(0, _height),
-                LengthsAllowed = new Range(0, _length)
-            });
+                var riskPoints = EnemyPicker.DetermineRiskPoints(_containingChunk.Depth, _containingChunk.Remoteness);
 
-            foreach (var enemy in enemies)
-            {
-                var xPos = _rand.Next(_leftEnd.X, _rightEnd.X);
-                var position = new IntVector2(xPos, _leftEnd.Y);
+                var enemies = EnemyPicker.RequestEnemies(riskPoints, new EnemyRequestCriteria()
+                {
+                    HeightsAllowed = new Range(0, _height),
+                    LengthsAllowed = new Range(0, _length)
+                });
 
-                containedEnemies[position] = enemy;
+                foreach (var enemy in enemies)
+                {
+                    var xPos = _rand.Next(_leftEnd.X, _rightEnd.X);
+                    var position = new IntVector2(xPos, _leftEnd.Y);
+
+                    containedEnemies[position] = enemy;
+                }
             }
 
             return containedEnemies;
