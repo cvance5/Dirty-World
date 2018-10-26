@@ -1,5 +1,5 @@
-﻿using Actors;
-using Actors.Enemies;
+﻿using WorldObjects.Actors;
+using WorldObjects.Actors.Enemies;
 using Data;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace WorldObjects
     public class Chunk : MonoBehaviour, ITrackable, IBoundary
     {
         public static SmartEvent<Chunk> OnChunkChanged = new SmartEvent<Chunk>();
-    
+
         public IntVector2 Position => new IntVector2(transform.position);
         public IntVector2 BottomLeftCorner { get; protected set; }
         public IntVector2 TopRightCorner { get; protected set; }
@@ -24,7 +24,7 @@ namespace WorldObjects
 
         public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
 
-        private static int _chunkSize = GameManager.Instance.Settings.ChunkSize;
+        private static int _chunkSize => GameManager.Instance.Settings.ChunkSize;
 
         protected readonly Dictionary<IntVector2, List<Space>> _spacesOverlappingEdges = new Dictionary<IntVector2, List<Space>>()
         {

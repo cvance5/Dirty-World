@@ -1,13 +1,15 @@
-﻿using Data;
+﻿using Characters;
+using Data;
 using Items;
-using Characters;
 using System.Collections.Generic;
 
-namespace Actors.Player
+namespace WorldObjects.Actors.Player
 {
     public class PlayerData : ActorData
     {
         private Character _character = null;
+
+        public override string ObjectName => "Player";
 
         protected override void OnActorAwake()
         {

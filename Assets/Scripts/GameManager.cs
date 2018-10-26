@@ -1,5 +1,5 @@
-﻿using Actors;
-using Actors.Player;
+﻿using WorldObjects.Actors;
+using WorldObjects.Actors.Player;
 using Characters;
 using Data;
 using Data.IO;

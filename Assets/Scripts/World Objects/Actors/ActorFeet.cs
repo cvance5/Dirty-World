@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Actors
+namespace WorldObjects.Actors
 {
     [RequireComponent(typeof(Collider2D), typeof(Rigidbody2D))]
     public class ActorFeet : TriggerList2D

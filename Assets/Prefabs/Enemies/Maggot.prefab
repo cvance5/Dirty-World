@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4899545130705871747}
   - component: {fileID: 8210645439108318328}
   - component: {fileID: 6206838035801649804}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Feet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 1682684240}
   - component: {fileID: 1682684239}
   - component: {fileID: 1551236167465628512}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: BackHalf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -247,7 +247,7 @@ GameObject:
   - component: {fileID: 6862391273542158659}
   - component: {fileID: 3173149800315297647}
   - component: {fileID: 7557344578230686057}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Maggot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -378,7 +378,7 @@ GameObject:
   - component: {fileID: 1368489836}
   - component: {fileID: 1368489835}
   - component: {fileID: 5147851354062527900}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: FrontHalf
   m_TagString: Untagged
   m_Icon: {fileID: 0}

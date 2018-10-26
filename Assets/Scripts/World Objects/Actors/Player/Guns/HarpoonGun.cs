@@ -4,7 +4,7 @@ using UnityEngine;
 using WorldObjects;
 using WorldObjects.Blocks;
 
-namespace Actors.Player.Guns
+namespace WorldObjects.Actors.Player.Guns
 {
     public class HarpoonGun : Gun
     {

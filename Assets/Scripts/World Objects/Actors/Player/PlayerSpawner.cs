@@ -1,8 +1,8 @@
-﻿using Actors.Player.Guns;
+﻿using WorldObjects.Actors.Player.Guns;
 using Characters;
 using UnityEngine;
 
-namespace Actors.Player
+namespace WorldObjects.Actors.Player
 {
     public class PlayerSpawner : Singleton<PlayerSpawner>
     {

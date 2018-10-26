@@ -1,6 +1,6 @@
 ﻿using Data;
 
-namespace Actors.Enemies
+namespace WorldObjects.Actors.Enemies
 {
     public abstract class EnemyData : ActorData
     {
@@ -9,9 +9,14 @@ namespace Actors.Enemies
             PositionTracker.BeginTracking(this);
         }
 
-        protected void OnDestroy()
+        protected override void OnWorldObjectDestroy()
         {
             PositionTracker.StopTracking(this);    
+        }
+
+        protected override void OnWorldObjectUnloaded()
+        {
+            PositionTracker.StopTracking(this);
         }
     }
 }

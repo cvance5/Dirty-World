@@ -2,7 +2,7 @@
 using UnityEngine;
 using WorldObjects;
 
-namespace Actors.Enemies.Maggot
+namespace WorldObjects.Actors.Enemies.Maggot
 {
     public class MaggotMovement : MonoBehaviour
     {

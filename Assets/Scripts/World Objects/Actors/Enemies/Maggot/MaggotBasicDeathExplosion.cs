@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Actors.Enemies.Maggot
+namespace WorldObjects.Actors.Enemies.Maggot
 {
     [RequireComponent(typeof(CircleCollider2D), typeof(TriggerList2D))]
     public class MaggotBasicDeathExplosion : MaggotDeathExplosion

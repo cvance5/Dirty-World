@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-namespace Actors.Player.Guns
+namespace WorldObjects.Actors.Player.Guns
 {
     public class DeReconstructor : Gun
     {

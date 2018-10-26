@@ -1,7 +1,7 @@
-﻿using Actors.Player.Guns;
+﻿using WorldObjects.Actors.Player.Guns;
 using UnityEngine;
 
-namespace Actors.Player
+namespace WorldObjects.Actors.Player
 {
     public class PlayerWeapons : MonoBehaviour
     {

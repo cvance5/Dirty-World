@@ -1,15 +1,14 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
+using WorldObjects;
 
-namespace Actors
+namespace WorldObjects.Actors
 {
-    public abstract class ActorData : MonoBehaviour, ITrackable
+    public abstract class ActorData : WorldObject
     {
         public SmartEvent<ActorData> OnActorDamaged = new SmartEvent<ActorData>();
         public SmartEvent<ActorData> OnActorDeath = new SmartEvent<ActorData>();
 
         public int Health { get; private set; } = 100;
-        public IntVector2 Position => new IntVector2(transform.position);
 
         [SerializeField]
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
@@ -20,9 +19,9 @@ namespace Actors
 #pragma warning restore IDE0044 // Add readonly modifier
 
         private SpriteRenderer _sprite;
-        private bool _isTakingDamage = false;
+        private readonly bool _isTakingDamage = false;
 
-        private void Awake()
+        protected override void OnWorldObjectAwake()
         {
             _sprite = GetComponent<SpriteRenderer>();
 

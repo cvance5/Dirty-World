@@ -1,5 +1,5 @@
-﻿using Actors.Enemies;
-using Actors.Enemies.Maggot;
+﻿using WorldObjects.Actors.Enemies;
+using WorldObjects.Actors.Enemies.Maggot;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

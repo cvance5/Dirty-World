@@ -1,6 +1,6 @@
-﻿using Actors.Enemies;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using WorldObjects.Actors.Enemies;
 using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects
@@ -58,6 +58,8 @@ namespace WorldObjects
             Enemies.Add(enemy);
             enemy.SetActive(false);
 
+            _log.Info($"Hiding enemy {enemy.ObjectName}.");
+
             OnBlueprintChanged.Raise(this);
         }
 
@@ -72,5 +74,7 @@ namespace WorldObjects
 
             return edgesReached;
         }
+
+        private static readonly Log _log = new Log("Chunk Blueprint");
     }
 }

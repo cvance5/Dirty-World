@@ -2,7 +2,7 @@
 using UnityEngine;
 using WorldObjects;
 
-namespace Actors
+namespace WorldObjects.Actors
 {
     [RequireComponent(typeof(Collider2D), typeof(Rigidbody2D))]
     public class ActorBumpDetector : MonoBehaviour

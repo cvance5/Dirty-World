@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _damageInvulnerabilityDuration: 1
-  _damageResistance: 0
+  _damageResistance: 10
 --- !u!114 &114955982425071790
 MonoBehaviour:
   m_ObjectHideFlags: 0

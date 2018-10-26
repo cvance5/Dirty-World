@@ -1,4 +1,4 @@
-﻿using Actors.Enemies;
+﻿using WorldObjects.Actors.Enemies;
 using Newtonsoft.Json;
 using WorldObjects.WorldGeneration.EnemyGeneration;
 

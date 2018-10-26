@@ -1,16 +1,15 @@
-﻿using Items;
-using Metadata;
+﻿using Metadata;
 using UnityEngine;
 using WorldObjects.Hazards;
 
-namespace Actors.Player
+namespace WorldObjects.Actors.Enemies.Maggot
 {
     [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
-    public class PlayerCollider : MonoBehaviour
+    public class MaggotCollider : MonoBehaviour
     {
 #pragma warning disable IDE0044 // Add readonly modifier, Unity serialization requires it not be readonly
         [SerializeField]
-        private PlayerData _data = null;
+        private MaggotData _data = null;
 #pragma warning restore IDE0044 // Add readonly modifier
 
         private Rigidbody2D _rigidbody;
@@ -18,7 +17,6 @@ namespace Actors.Player
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody2D>();
-            _data.OnActorDeath += OnPlayerDeath;
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -27,7 +25,6 @@ namespace Actors.Player
 
             switch (tag)
             {
-                case Tags.Item: HandleItem(collision.gameObject.GetComponent<ItemActor>()); break;
                 case Tags.Hazard: HandleHazard(collision.gameObject.GetComponent<Hazard>()); break;
             }
         }
@@ -38,29 +35,7 @@ namespace Actors.Player
 
             switch (tag)
             {
-                case Tags.Item: HandleItem(other.GetComponent<ItemActor>()); break;
                 case Tags.Hazard: HandleHazard(other.GetComponent<Hazard>()); break;
-            }
-        }
-
-        private void HandleItem(ItemActor itemActor)
-        {
-            _log.ErrorIfNull(itemActor, $"{itemActor} has tag {Tags.Item} but does not have an item component.");
-
-            foreach (var interaction in itemActor.Interactions)
-            {
-                switch (interaction)
-                {
-                    case InteractionTypes.Collect:
-                        var collectibleItem = itemActor as ICollectible;
-                        _log.ErrorIfNull(collectibleItem, $"{itemActor} has interaction {interaction} but does not implement {typeof(ICollectible).Name}.");
-                        _data.AddCollectedItems(collectibleItem.CollectedItems);
-                        collectibleItem.OnCollect();
-                        break;
-                    case InteractionTypes.Damage:
-                        break;
-                    default: _log.Error($"Unknown interaction '{interaction}'."); break;
-                }
             }
         }
 
@@ -87,12 +62,6 @@ namespace Actors.Player
             }
         }
 
-        private void OnPlayerDeath(ActorData playerData)
-        {
-            playerData.OnActorDeath -= OnPlayerDeath;
-            Destroy(this);
-        }
-
-        private static readonly Log _log = new Log("PlayerCollider");
+        private static readonly Log _log = new Log("MaggotCollider");
     }
 }

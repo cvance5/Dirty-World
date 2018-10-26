@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 
-namespace Actors.Enemies.Maggot
+namespace WorldObjects.Actors.Enemies.Maggot
 {
     public class MaggotData : EnemyData, IHittable
     {
         public SmartEvent<int, int> OnHit { get; set; } = new SmartEvent<int, int>();
+
+        public override string ObjectName => "Maggot";
 
 #pragma warning disable IDE0044 // Add readonly modifier, Unity serialization requires it not be readonly
         [SerializeField]

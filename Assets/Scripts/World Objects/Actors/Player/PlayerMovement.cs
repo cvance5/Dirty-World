@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Actors.Player
+namespace WorldObjects.Actors.Player
 {
     public class PlayerMovement : MonoBehaviour, IImpulsable
     {

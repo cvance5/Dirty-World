@@ -1,4 +1,4 @@
-﻿using Actors.Player;
+﻿using WorldObjects.Actors.Player;
 using UnityEngine;
 
 public class DebugController : Singleton<DebugController>

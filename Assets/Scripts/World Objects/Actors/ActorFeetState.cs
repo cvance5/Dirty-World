@@ -1,4 +1,4 @@
-﻿namespace Actors
+﻿namespace WorldObjects.Actors
 {
     public enum ActorFeetState
     {
