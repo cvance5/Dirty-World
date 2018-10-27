@@ -62,6 +62,6 @@ namespace WorldObjects.Actors.Enemies.Maggot
             }
         }
 
-        private static readonly Log _log = new Log("MaggotCollider");
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("MaggotCollider");
     }
 }

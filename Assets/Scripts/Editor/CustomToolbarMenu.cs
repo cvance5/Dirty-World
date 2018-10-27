@@ -21,5 +21,5 @@ public class CustomToolbarMenu
         else _log.Warning("No save data to delete.");
     }
 
-    private static readonly Log _log = new Log("CustomToolbar");
+    private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("CustomToolbar");
 }

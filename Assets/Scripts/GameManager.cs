@@ -166,5 +166,5 @@ public class GameManager : Singleton<GameManager>
         SceneHelper.OnSceneIsReady += InitializeWorld;
     }
 
-    private static readonly Log _log = new Log("GameManager");
+    private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("GameManager");
 }

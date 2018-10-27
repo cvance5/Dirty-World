@@ -282,6 +282,6 @@ namespace WorldObjects.Blocks
             DropItem();
         }
 
-        protected static readonly Log _log = new Log("Block");
+        protected static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("Block");
     }
 }

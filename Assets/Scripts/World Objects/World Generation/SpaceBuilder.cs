@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using WorldObjects.Spaces;
-using WorldObjects.WorldGeneration.EnemyGeneration;
+﻿using WorldObjects.Spaces;
 
 namespace WorldObjects.WorldGeneration
 {

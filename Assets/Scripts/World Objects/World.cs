@@ -9,9 +9,13 @@ namespace WorldObjects
         public int SurfaceDepth => GameManager.Instance.Settings.SurfaceDepth;
         public int ChunkSize => GameManager.Instance.Settings.ChunkSize;
 
-        private List<Chunk> _activeChunks = new List<Chunk>();
-        private Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
+        private readonly List<Chunk> _activeChunks = new List<Chunk>();
+        public List<Chunk> ActiveChunks => new List<Chunk>(_activeChunks);
 
+        private readonly List<ChunkBlueprint> _pendingBlueprints = new List<ChunkBlueprint>();
+        public List<ChunkBlueprint> PendingBlueprints => new List<ChunkBlueprint>(_pendingBlueprints);
+
+        private Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
         private Dictionary<IntVector2, ChunkBlueprint> _blueprintsByWorldPosition = new Dictionary<IntVector2, ChunkBlueprint>();
 
         public void Register(Chunk chunk)
@@ -19,6 +23,12 @@ namespace WorldObjects
             _activeChunks.Add(chunk);
             _chunksByWorldPosition.Add(chunk.Position, chunk);
             chunk.transform.SetParent(transform);
+
+            if (_blueprintsByWorldPosition.TryGetValue(chunk.Position, out var blueprint))
+            {
+                _pendingBlueprints.Remove(blueprint);
+                _blueprintsByWorldPosition.Remove(chunk.Position);
+            }
         }
 
         public List<Block> GetNeighbors(Block block)
@@ -50,7 +60,7 @@ namespace WorldObjects
 
             foreach (var dir in Directions.Cardinals)
             {
-                var neighbor = GetNeighborOfChunk(chunk.Position, dir);
+                var neighbor = GetChunkNeighbor(chunk.Position, dir);
                 if (neighbor != null) neighbors.Add(neighbor);
             }
 
@@ -69,7 +79,7 @@ namespace WorldObjects
             return null;
         }
 
-        public Chunk GetNeighborOfChunk(IntVector2 chunkPosition, IntVector2 directionToCheck)
+        public Chunk GetChunkNeighbor(IntVector2 chunkPosition, IntVector2 directionToCheck)
         {
             var neighborPosition = GetChunkPosition(chunkPosition, directionToCheck);
             return GetChunkAtPosition(neighborPosition);
@@ -84,6 +94,12 @@ namespace WorldObjects
         public IntVector2 GetChunkPosition(IntVector2 chunkPosition, IntVector2 direction) =>
             chunkPosition + new IntVector2(direction.X * ChunkSize, direction.Y * ChunkSize);
 
+        public ChunkBlueprint GetBlueprintNeighbor(IntVector2 chunkPosition, IntVector2 directionToCheck)
+        {
+            var neighborPosition = GetChunkPosition(chunkPosition, directionToCheck);
+            return GetBlueprintForPosition(neighborPosition);
+        }
+
         public ChunkBlueprint GetBlueprintForPosition(IntVector2 worldPosition)
         {
             ChunkBlueprint blueprint;
@@ -95,6 +111,7 @@ namespace WorldObjects
             else if (!_blueprintsByWorldPosition.TryGetValue(worldPosition, out blueprint))
             {
                 blueprint = new ChunkBlueprint(worldPosition);
+                _pendingBlueprints.Add(blueprint);
                 _blueprintsByWorldPosition[worldPosition] = blueprint;
             }
 

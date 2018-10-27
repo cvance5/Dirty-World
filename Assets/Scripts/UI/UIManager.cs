@@ -297,6 +297,6 @@ namespace UI
                 throw new ArgumentException("Can't clear a popup of type " + type + " because it is not displayed.");
         }
 
-        private static readonly Log _log = new Log("UIManager");
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("UIManager");
     }
 }

@@ -53,7 +53,7 @@ namespace WorldObjects.WorldGeneration
 
             foreach (var dir in Directions.Cardinals)
             {
-                if (GameManager.World.GetNeighborOfChunk(chunkWorldCenterpoint, dir) != null)
+                if (GameManager.World.GetChunkNeighbor(chunkWorldCenterpoint, dir) != null)
                 {
                     _boundedDirections.Add(dir);
                 }
@@ -66,7 +66,23 @@ namespace WorldObjects.WorldGeneration
         {
             foreach (var boundedDir in _boundedDirections)
             {
-                spaceBuilder.Clamp(boundedDir, _chunkSize);
+                if (boundedDir == Directions.Up)
+                {
+                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.Y + _halfChunkSize);
+                }
+                else if (boundedDir == Directions.Right)
+                {
+                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.X + _halfChunkSize);
+                }
+                else if (boundedDir == Directions.Down)
+                {
+                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.Y - _halfChunkSize);
+                }
+                else if (boundedDir == Directions.Left)
+                {
+                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.X - _halfChunkSize);
+                }
+                else throw new System.ArgumentException($"Expected a cardinal direction. Cannot bound space by direction {boundedDir}.");
             }
 
             _spaceBuilders.Add(spaceBuilder);
@@ -147,15 +163,6 @@ namespace WorldObjects.WorldGeneration
                 foreach (var enemy in space.GetEnemySpawnsInChunk(chunk))
                 {
                     enemiesToAdd.Add(enemy.Key, enemy.Value);
-                }
-
-                foreach (var dir in Directions.Cardinals)
-                {
-                    if (GameManager.World.GetNeighborOfChunk(chunk.Position, dir) == null)
-                    {
-                        var blueprint = GameManager.World.GetBlueprintForPosition(chunk.Position + (dir * _chunkSize));
-                        blueprint.Register(space);
-                    }
                 }
             }
 

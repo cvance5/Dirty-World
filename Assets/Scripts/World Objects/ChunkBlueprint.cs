@@ -34,6 +34,8 @@ namespace WorldObjects
 
         public void Register(Space space)
         {
+            if (Spaces.Contains(space)) return;
+
             Spaces.Add(space);
 
             var edgesReached = new List<IntVector2>();
@@ -42,12 +44,27 @@ namespace WorldObjects
             {
                 if (!Contains(extentPoint))
                 {
-                    edgesReached = GetEdgesReached(extentPoint);
+                    edgesReached.AddRange(GetEdgesReached(extentPoint));
                 }
 
                 // We are already overlapping all edges with 
                 // the previous extents, so don't check the rest.
                 if (edgesReached.Count == 4) break;
+            }
+
+            foreach (var dir in edgesReached)
+            {
+                var neighbor = GameManager.World.GetChunkNeighbor(Position, dir);
+
+                if (neighbor != null)
+                {
+                    neighbor.Register(space);
+                }
+                else
+                {
+                    var blueprint = GameManager.World.GetBlueprintNeighbor(Position, dir);
+                    blueprint.Register(space);
+                }
             }
 
             OnBlueprintChanged.Raise(this);
@@ -69,12 +86,12 @@ namespace WorldObjects
 
             if (extentPoint.X < BottomLeftCorner.X) edgesReached.Add(Vector2.left);
             if (extentPoint.Y < BottomLeftCorner.Y) edgesReached.Add(Vector2.down);
-            if (extentPoint.X > BottomLeftCorner.X) edgesReached.Add(Vector2.right);
-            if (extentPoint.Y > BottomLeftCorner.Y) edgesReached.Add(Vector2.up);
+            if (extentPoint.X > TopRightCorner.X) edgesReached.Add(Vector2.right);
+            if (extentPoint.Y > TopRightCorner.Y) edgesReached.Add(Vector2.up);
 
             return edgesReached;
         }
 
-        private static readonly Log _log = new Log("Chunk Blueprint");
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("Chunk Blueprint");
     }
 }

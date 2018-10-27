@@ -65,6 +65,6 @@ namespace UI
             }
         }
 
-        private static readonly Log _log = new Log("Scrimmer");
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("Scrimmer");
     }
 }

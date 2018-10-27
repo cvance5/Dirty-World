@@ -1,0 +1,210 @@
+﻿using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+using WorldObjects;
+using WorldObjects.Spaces;
+using Space = WorldObjects.Spaces.Space;
+
+namespace Utilities.Debug
+{
+    public class ChunkGizmoDrawer : Singleton<ChunkGizmoDrawer>
+    {
+#pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
+        [Header("Chunks")]
+        [SerializeField]
+        private bool _showChunkLoadOrder = true;
+
+        [SerializeField]
+        private bool _showChunkBounderies = true;
+
+        [SerializeField]
+        private bool _showChunkSpaces = true;
+
+        [SerializeField]
+        private List<bool> _showChunk = new List<bool>();
+
+        [Header("Blueprints")]
+        [SerializeField]
+        private bool _showBlueprintCreationOrder = true;
+
+        [SerializeField]
+        private bool _showBlueprintBoundaries = true;
+
+        [SerializeField]
+        private bool _showBlueprintSpaces = true;
+
+        [SerializeField]
+        private List<bool> _showBlueprint = new List<bool>();
+
+#pragma warning restore IDE0044 // Add readonly modifier
+
+        private void Awake() => DontDestroyOnLoad(gameObject);
+
+        private void OnDrawGizmosSelected()
+        {
+            if (GameManager.World == null) return;
+
+            var chunksInLoadOrder = GameManager.World.ActiveChunks;
+
+            UpdateShowChunkList(chunksInLoadOrder.Count);
+
+            for (var loadOrder = 0; loadOrder < chunksInLoadOrder.Count; loadOrder++)
+            {
+                if (!_showChunk[loadOrder]) continue;
+
+                var chunk = chunksInLoadOrder[loadOrder];
+
+                if (_showChunkLoadOrder)
+                {
+                    LabelChunkLoadOrder(chunk, loadOrder);
+                }
+
+                if (_showChunkBounderies)
+                {
+                    DrawChunkBoundaries(chunk);
+                }
+
+                if (_showChunkSpaces)
+                {
+                    foreach (var space in chunk.Spaces)
+                    {
+                        DrawSpace(space);
+                    }
+                }
+            }
+
+            var blueprintsInCreationOrder = GameManager.World.PendingBlueprints;
+
+            UpdateShowBlueprintList(blueprintsInCreationOrder.Count);
+
+            for (var creationOrder = 0; creationOrder < blueprintsInCreationOrder.Count; creationOrder++)
+            {
+                if (!_showBlueprint[creationOrder]) continue;
+
+                var blueprint = blueprintsInCreationOrder[creationOrder];
+
+                if (_showBlueprintCreationOrder)
+                {
+                    LabelBlueprintCreationOrder(blueprint, creationOrder);
+                }
+
+                if (_showBlueprintBoundaries)
+                {
+                    DrawBlueprintBoundaries(blueprint);
+                }
+
+                if (_showBlueprintSpaces)
+                {
+                    foreach (var space in blueprint.Spaces)
+                    {
+                        DrawSpace(space);
+                    }
+                }
+            }
+        }
+
+        private void UpdateShowBlueprintList(int count)
+        {
+            while (_showBlueprint.Count < count)
+            {
+                _showBlueprint.Add(true);
+            }
+
+            while (_showBlueprint.Count > count)
+            {
+                _showBlueprint.RemoveAt(_showBlueprint.Count - 1);
+            }
+        }
+
+        private void UpdateShowChunkList(int count)
+        {
+            while (_showChunk.Count < count)
+            {
+                _showChunk.Add(true);
+            }
+
+            while (_showChunk.Count > count)
+            {
+                _showChunk.RemoveAt(_showChunk.Count - 1);
+            }
+        }
+
+        private void LabelChunkLoadOrder(Chunk chunk, int loadOrder)
+        {
+            var _loadOrderStyle = new GUIStyle()
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 25
+            };
+
+            var centerpoint = GeometryTools.CenterOfRectangle(chunk.TopRightCorner, chunk.BottomLeftCorner);
+
+            Handles.Label(centerpoint, loadOrder.ToString(), _loadOrderStyle);
+        }
+
+        private void LabelBlueprintCreationOrder(ChunkBlueprint blueprint, int creationOrder)
+        {
+            var _loadOrderStyle = new GUIStyle()
+            {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 25
+            };
+
+            var centerpoint = GeometryTools.CenterOfRectangle(blueprint.TopRightCorner, blueprint.BottomLeftCorner);
+
+            Handles.Label(centerpoint, creationOrder.ToString(), _loadOrderStyle);
+        }
+
+        private void DrawChunkBoundaries(Chunk chunk)
+        {
+            Gizmos.color = Color.white;
+            DrawRectangle(chunk.TopRightCorner, chunk.BottomLeftCorner);
+        }
+
+        private void DrawBlueprintBoundaries(ChunkBlueprint blueprint)
+        {
+            Gizmos.color = Color.blue;
+            DrawRectangle(blueprint.TopRightCorner, blueprint.BottomLeftCorner);
+        }
+
+        private void DrawSpace(Space space)
+        {
+            if (space is Corridor)
+            {
+                var corridor = space as Corridor;
+                Gizmos.color = Color.red;
+                DrawRectangle(corridor.TopRightCorner, corridor.BottomLeftCorner);
+            }
+            else if (space is Shaft)
+            {
+                var shaft = space as Shaft;
+                Gizmos.color = Color.green;
+                DrawRectangle(shaft.TopRightCorner, shaft.BottomLeftCorner);
+            }
+            else if (space is MonsterDen)
+            {
+                var monsterDen = space as MonsterDen;
+                Gizmos.color = Color.white;
+                DrawCircle(monsterDen.Center, monsterDen.Radius);
+            }
+        }
+
+        private void DrawRectangle(Vector2 topRight, Vector2 bottomLeft)
+        {
+            var topLeft = new Vector2(bottomLeft.x, topRight.y);
+            var bottomRight = new Vector2(topRight.x, bottomLeft.y);
+
+            DrawRectangle(topLeft, topRight, bottomRight, bottomLeft);
+        }
+
+        private void DrawRectangle(Vector2 topLeft, Vector2 topRight, Vector2 bottomRight, Vector2 bottomLeft)
+        {
+            Gizmos.DrawLine(topLeft, topRight);
+            Gizmos.DrawLine(topRight, bottomRight);
+            Gizmos.DrawLine(bottomRight, bottomLeft);
+            Gizmos.DrawLine(bottomLeft, topLeft);
+        }
+
+        private void DrawCircle(Vector2 center, float radius) => Gizmos.DrawSphere(center, radius);
+    }
+}

@@ -48,6 +48,6 @@ namespace WorldObjects.WorldGeneration
             { typeof(SpikeHazard), HazardTypes.Spike }
         };
 
-        private static readonly Log _log = new Log("HazardLoader");
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("HazardLoader");
     }
 }

@@ -1,9 +1,9 @@
-﻿using WorldObjects.Actors;
-using WorldObjects.Actors.Enemies;
-using Data;
+﻿using Data;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using WorldObjects.Actors;
+using WorldObjects.Actors.Enemies;
 using WorldObjects.Blocks;
 using WorldObjects.Hazards;
 using Space = WorldObjects.Spaces.Space;
@@ -25,14 +25,6 @@ namespace WorldObjects
         public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
 
         private static int _chunkSize => GameManager.Instance.Settings.ChunkSize;
-
-        protected readonly Dictionary<IntVector2, List<Space>> _spacesOverlappingEdges = new Dictionary<IntVector2, List<Space>>()
-        {
-            { Vector2.up, new List<Space>() },
-            { Vector2.right, new List<Space>() },
-            { Vector2.down, new List<Space>() },
-            { Vector2.left, new List<Space>() }
-        };
 
         public void AssignExtents(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {
@@ -59,6 +51,8 @@ namespace WorldObjects
 
         public void Register(Space space)
         {
+            if (Spaces.Contains(space)) return;
+
             Spaces.Add(space);
 
             var edgesReached = new List<IntVector2>();
@@ -67,7 +61,7 @@ namespace WorldObjects
             {
                 if (!Contains(extentPoint))
                 {
-                    edgesReached = GetEdgesReached(extentPoint);
+                    edgesReached.AddRange(GetEdgesReached(extentPoint));
                 }
 
                 // We are already overlapping all edges with 
@@ -75,11 +69,18 @@ namespace WorldObjects
                 if (edgesReached.Count == 4) break;
             }
 
-            if (edgesReached.Count > 0)
+            foreach (var dir in edgesReached)
             {
-                foreach (var edgeReached in edgesReached)
+                var neighbor = GameManager.World.GetChunkNeighbor(Position, dir);
+
+                if (neighbor != null)
                 {
-                    _spacesOverlappingEdges[edgeReached].Add(space);
+                    neighbor.Register(space);
+                }
+                else
+                {
+                    var blueprint = GameManager.World.GetBlueprintNeighbor(Position, dir);
+                    blueprint.Register(space);
                 }
             }
         }
@@ -131,16 +132,14 @@ namespace WorldObjects
             return null;
         }
 
-        public List<Space> GetSpacesReachingEdge(IntVector2 edge) => _spacesOverlappingEdges[edge];
-
         protected List<IntVector2> GetEdgesReached(IntVector2 extentPoint)
         {
             var edgesReached = new List<IntVector2>();
 
             if (extentPoint.X < BottomLeftCorner.X) edgesReached.Add(Vector2.left);
             if (extentPoint.Y < BottomLeftCorner.Y) edgesReached.Add(Vector2.down);
-            if (extentPoint.X > BottomLeftCorner.X) edgesReached.Add(Vector2.right);
-            if (extentPoint.Y > BottomLeftCorner.Y) edgesReached.Add(Vector2.up);
+            if (extentPoint.X > TopRightCorner.X) edgesReached.Add(Vector2.right);
+            if (extentPoint.Y > TopRightCorner.Y) edgesReached.Add(Vector2.up);
 
             return edgesReached;
         }
@@ -236,7 +235,6 @@ namespace WorldObjects
                    base.Equals(obj) &&
                    EqualityComparer<List<Space>>.Default.Equals(Spaces, chunk.Spaces) &&
                    EqualityComparer<Dictionary<IntVector2, Block>>.Default.Equals(BlockMap, chunk.BlockMap) &&
-                   EqualityComparer<Dictionary<IntVector2, List<Space>>>.Default.Equals(_spacesOverlappingEdges, chunk._spacesOverlappingEdges) &&
                    EqualityComparer<IntVector2>.Default.Equals(BottomLeftCorner, chunk.BottomLeftCorner) &&
                    EqualityComparer<IntVector2>.Default.Equals(TopRightCorner, chunk.TopRightCorner);
         }
@@ -247,12 +245,11 @@ namespace WorldObjects
             hashCode = hashCode * -1521134295 + base.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<List<Space>>.Default.GetHashCode(Spaces);
             hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<IntVector2, Block>>.Default.GetHashCode(BlockMap);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<IntVector2, List<Space>>>.Default.GetHashCode(_spacesOverlappingEdges);
             hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(BottomLeftCorner);
             hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(TopRightCorner);
             return hashCode;
         }
 
-        protected static readonly Log _log = new Log("Chunk");
+        protected static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("Chunk");
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Metadata;
 using UnityEngine;
-using WorldObjects;
 
 namespace WorldObjects.Actors
 {
@@ -26,6 +25,6 @@ namespace WorldObjects.Actors
             }
         }
 
-        private static readonly Log _log = new Log("ActorBumpDetector");
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("ActorBumpDetector");
     }
 }

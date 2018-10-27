@@ -71,5 +71,5 @@ public class BlockLoader : Singleton<BlockLoader>
         { typeof(PlatinumBlock), BlockTypes.Platinum }
     };
 
-    private static readonly Log _log = new Log("BlockLoader");
+    private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("BlockLoader");
 }

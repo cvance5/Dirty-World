@@ -89,6 +89,6 @@ namespace Data
 
         public static void Clear() => _dirtyChunks.Clear();
 
-        private static readonly Log _log = new Log("GameState");
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("GameState");
     }
 }

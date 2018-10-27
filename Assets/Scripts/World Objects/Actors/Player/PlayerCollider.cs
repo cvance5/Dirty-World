@@ -93,6 +93,6 @@ namespace WorldObjects.Actors.Player
             Destroy(this);
         }
 
-        private static readonly Log _log = new Log("PlayerCollider");
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("PlayerCollider");
     }
 }

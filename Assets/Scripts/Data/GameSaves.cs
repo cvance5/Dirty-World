@@ -88,6 +88,6 @@ namespace Data
             _log.Info($"Delete complete.");
         }
 
-        private static readonly Log _log = new Log("GameSaves");
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("GameSaves");
     }
 }

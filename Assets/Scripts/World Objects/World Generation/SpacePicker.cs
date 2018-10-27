@@ -9,8 +9,7 @@ namespace WorldObjects.WorldGeneration
         private static readonly List<Type> _spaces = new List<Type>()
         {
             typeof(CorridorBuilder),
-            typeof(ShaftBuilder),
-            typeof(MonsterDenBuilder)
+            typeof(ShaftBuilder)//,            typeof(MonsterDenBuilder)
         };
 
         public static SpaceBuilder Pick(ChunkBuilder cBuilder) => Activator.CreateInstance(_spaces.RandomItem(), cBuilder) as SpaceBuilder;

@@ -48,6 +48,6 @@ namespace WorldObjects.WorldGeneration.EnemyGeneration
             { typeof(MaggotData), EnemyTypes.Maggot }
         };
 
-        private static readonly Log _log = new Log("EnemySpawner");
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("EnemySpawner");
     }
 }

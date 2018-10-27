@@ -36,5 +36,5 @@ public class UnityStopwatch
         }
     }
 
-    private static readonly Log _log = new Log("Unity Stopwatch");
+    private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("Unity Stopwatch");
 }

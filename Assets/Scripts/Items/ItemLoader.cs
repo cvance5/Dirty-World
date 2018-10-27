@@ -39,5 +39,5 @@ public class ItemLoader : Singleton<ItemLoader>
         return item;
     }
 
-    private static readonly Log _log = new Log("ItemLoader");
+    private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("ItemLoader");
 }

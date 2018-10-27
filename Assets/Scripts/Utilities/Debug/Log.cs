@@ -1,50 +1,35 @@
-﻿using UnityEngine;
-
-public class Log
+﻿namespace Utilities.Debug
 {
-    private string _preface;
-
-    public Log(string preface)
+    public class Log
     {
-        _preface = $"[{preface}] ";
-    }
+        private readonly string _preface;
 
-    public void Info(string message, string colorName = "black")
-    {
-        PrintInfo($"<color={colorName}>" + _preface + message + "</color>");
-    }
+        public Log(string preface) => _preface = $"[{preface}] ";
 
-    public void Warning(string message)
-    {
-        PrintWarning(_preface + message);
-    }
+        public void Info(string message, string colorName = "black") => PrintInfo($"<color={colorName}>" + _preface + message + "</color>");
 
-    public void Error(string message)
-    {
-        PrintError(_preface + message);
-    }
+        public void Warning(string message) => PrintWarning(_preface + message);
 
-    public void ErrorIfNull(object obj, string message)
-    {
-        if (obj == null) PrintError(_preface + message);
-    }
+        public void Error(string message) => PrintError(_preface + message);
 
-    private static void PrintError(string message)
-    {
+        public void ErrorIfNull(object obj, string message)
+        {
+            if (obj == null) PrintError(_preface + message);
+        }
+
+        private static void PrintError(string message) =>
 #if UNITY_EDITOR
-        Debug.LogError(message);
-#endif 
-    }
-    private static void PrintWarning(string message)
-    {
-#if UNITY_EDITOR
-        Debug.LogWarning(message);
+            UnityEngine.Debug.LogError(message);
 #endif
-    }
-    private static void PrintInfo(string message)
-    {
+
+        private static void PrintWarning(string message) =>
 #if UNITY_EDITOR
-        Debug.Log(message);
+            UnityEngine.Debug.LogWarning(message);
+#endif
+
+        private static void PrintInfo(string message) =>
+#if UNITY_EDITOR
+            UnityEngine.Debug.Log(message);
 #endif
     }
 }
