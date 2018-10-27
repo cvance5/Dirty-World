@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.EnemyGeneration;
+using Random = UnityEngine.Random;
+using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
@@ -18,16 +20,14 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private bool _isHazardous;
         private bool _allowEnemies = true;
 
-        private static readonly Random _rand = new Random();
-
         public CorridorBuilder(ChunkBuilder containingChunk)
             : base(containingChunk)
         {
-            _height = _rand.Next(1, 10);
-            _length = _rand.Next(1, 100);
+            _height = Random.Range(1, 10);
+            _length = Random.Range(1, 100);
 
-            var startingPoint = new IntVector2(_rand.Next(_containingChunk.BottomLeft.X, _containingChunk.TopRight.X),
-                                               _rand.Next(_containingChunk.BottomLeft.Y, _containingChunk.TopRight.Y));
+            var startingPoint = new IntVector2(Random.Range(_containingChunk.BottomLeft.X, _containingChunk.TopRight.X),
+                                               Random.Range(_containingChunk.BottomLeft.Y, _containingChunk.TopRight.Y));
 
             SetStartingPoint(startingPoint, Enum<CorridorAlignment>.Random);
 
@@ -136,7 +136,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
                 foreach (var enemy in enemies)
                 {
-                    var xPos = _rand.Next(_leftEnd.X, _rightEnd.X);
+                    var xPos = Random.Range(_leftEnd.X, _rightEnd.X);
                     var position = new IntVector2(xPos, _leftEnd.Y);
 
                     containedEnemies[position] = enemy;
