@@ -136,10 +136,10 @@ namespace WorldObjects
         {
             var edgesReached = new List<IntVector2>();
 
-            if (extentPoint.X < BottomLeftCorner.X) edgesReached.Add(Vector2.left);
-            if (extentPoint.Y < BottomLeftCorner.Y) edgesReached.Add(Vector2.down);
-            if (extentPoint.X > TopRightCorner.X) edgesReached.Add(Vector2.right);
-            if (extentPoint.Y > TopRightCorner.Y) edgesReached.Add(Vector2.up);
+            if (extentPoint.X <= BottomLeftCorner.X) edgesReached.Add(Vector2.left);
+            if (extentPoint.Y <= BottomLeftCorner.Y) edgesReached.Add(Vector2.down);
+            if (extentPoint.X >= TopRightCorner.X) edgesReached.Add(Vector2.right);
+            if (extentPoint.Y >= TopRightCorner.Y) edgesReached.Add(Vector2.up);
 
             return edgesReached;
         }

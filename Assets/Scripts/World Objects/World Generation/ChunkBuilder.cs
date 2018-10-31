@@ -66,21 +66,26 @@ namespace WorldObjects.WorldGeneration
         {
             foreach (var boundedDir in _boundedDirections)
             {
+                // We subtract one so that the shared boundary block
+                // is not included in the Space.  Otherwise, the space may
+                // not be able to create the block it needs at the boundary, if the other
+                // chunk has mandated a block.
+
                 if (boundedDir == Directions.Up)
                 {
-                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.Y + _halfChunkSize);
+                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.Y + _halfChunkSize - 1);
                 }
                 else if (boundedDir == Directions.Right)
                 {
-                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.X + _halfChunkSize);
+                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.X + _halfChunkSize - 1);
                 }
                 else if (boundedDir == Directions.Down)
                 {
-                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.Y - _halfChunkSize);
+                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.Y - _halfChunkSize - 1);
                 }
                 else if (boundedDir == Directions.Left)
                 {
-                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.X - _halfChunkSize);
+                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.X - _halfChunkSize - 1);
                 }
                 else throw new System.ArgumentException($"Expected a cardinal direction. Cannot bound space by direction {boundedDir}.");
             }
