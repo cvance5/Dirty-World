@@ -16,7 +16,9 @@ namespace WorldObjects.Spaces
             TopRightCorner = topRightCorner;
 
             Extents.Add(BottomLeftCorner);
+            Extents.Add(new IntVector2(BottomLeftCorner.X, TopRightCorner.Y));
             Extents.Add(TopRightCorner);
+            Extents.Add(new IntVector2(TopRightCorner.X, BottomLeftCorner.Y));
 
             Name = $"Shaft from {BottomLeftCorner} to {TopRightCorner}.";
         }
@@ -29,7 +31,7 @@ namespace WorldObjects.Spaces
 
         public override BlockTypes GetBlock(IntVector2 position)
         {
-            BlockTypes block = BlockTypes.None;
+            var block = BlockTypes.None;
 
             if (position.Y == TopRightCorner.Y)
             {

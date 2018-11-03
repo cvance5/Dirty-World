@@ -19,7 +19,9 @@ namespace WorldObjects.Spaces
             TopRightCorner = topRightCorner;
 
             Extents.Add(BottomLeftCorner);
+            Extents.Add(new IntVector2(BottomLeftCorner.X, TopRightCorner.Y));
             Extents.Add(TopRightCorner);
+            Extents.Add(new IntVector2(TopRightCorner.X, BottomLeftCorner.Y));
 
             Name = $"Corridor from {BottomLeftCorner} to {TopRightCorner}.";
 

@@ -171,22 +171,18 @@ namespace Utilities.Debug
         {
             if (space is Corridor)
             {
-                var corridor = space as Corridor;
                 Gizmos.color = Color.red;
-                DrawRectangle(corridor.TopRightCorner, corridor.BottomLeftCorner);
             }
             else if (space is Shaft)
             {
-                var shaft = space as Shaft;
                 Gizmos.color = Color.green;
-                DrawRectangle(shaft.TopRightCorner, shaft.BottomLeftCorner);
             }
             else if (space is MonsterDen)
             {
-                var monsterDen = space as MonsterDen;
                 Gizmos.color = Color.white;
-                DrawCircle(monsterDen.Center, monsterDen.Radius);
             }
+
+            DrawByExtents(space.Extents);
         }
 
         private void DrawRectangle(Vector2 topRight, Vector2 bottomLeft)
@@ -203,6 +199,16 @@ namespace Utilities.Debug
             Gizmos.DrawLine(topRight, bottomRight);
             Gizmos.DrawLine(bottomRight, bottomLeft);
             Gizmos.DrawLine(bottomLeft, topLeft);
+        }
+
+        private void DrawByExtents(List<IntVector2> extents)
+        {
+            for (var i = 0; i < extents.Count - 1; i++)
+            {
+                Gizmos.DrawLine(extents[i], extents[i + 1]);
+            }
+
+            Gizmos.DrawLine(extents[extents.Count - 1], extents[0]);
         }
 
         private void DrawCircle(Vector2 center, float radius) => Gizmos.DrawSphere(center, radius);

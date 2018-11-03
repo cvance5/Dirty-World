@@ -42,6 +42,8 @@ namespace WorldObjects.WorldGeneration.EnemyGeneration
             return enemies;
         }
 
+        public static EnemyRequirements GetRequirementsForEnemy(EnemyTypes enemy) => _requirementsForEnemy[enemy];
+
         private static readonly Dictionary<EnemyTypes, EnemyRequirements> _requirementsForEnemy = new Dictionary<EnemyTypes, EnemyRequirements>()
         {
             {
@@ -55,7 +57,7 @@ namespace WorldObjects.WorldGeneration.EnemyGeneration
             }
         };
 
-        private class EnemyRequirements
+        public class EnemyRequirements
         {
             public int RiskPointCost;
 
