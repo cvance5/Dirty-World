@@ -3,7 +3,6 @@ using WorldObjects.Blocks;
 
 namespace WorldObjects.Hazards
 {
-    [RequireComponent(typeof(Collider2D))]
     public abstract class Hazard : WorldObject
     {
         public SmartEvent<Hazard> OnHazardDestroyed = new SmartEvent<Hazard>();

@@ -14,10 +14,7 @@ namespace WorldObjects.Actors.Enemies.Maggot
 
         private Rigidbody2D _rigidbody;
 
-        private void Awake()
-        {
-            _rigidbody = GetComponent<Rigidbody2D>();
-        }
+        private void Awake() => _rigidbody = GetComponent<Rigidbody2D>();
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
@@ -55,7 +52,7 @@ namespace WorldObjects.Actors.Enemies.Maggot
                     case HazardEffects.Impulse:
                         var knockbackHazard = hazard as IImpulsive;
                         _log.ErrorIfNull(knockbackHazard, $"{hazard} has effect {effect} but does not implement {typeof(IImpulsive).Name}.");
-                        _rigidbody.velocity = knockbackHazard.GetImpulse(_rigidbody.velocity);
+                        _rigidbody.velocity = knockbackHazard.GetImpulse(transform.position, _rigidbody.velocity);
                         break;
                     default: _log.Error($"Unknown effect '{effect}'."); break;
                 }

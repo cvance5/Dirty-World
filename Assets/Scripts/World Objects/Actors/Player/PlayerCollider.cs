@@ -80,7 +80,7 @@ namespace WorldObjects.Actors.Player
                     case HazardEffects.Impulse:
                         var knockbackHazard = hazard as IImpulsive;
                         _log.ErrorIfNull(knockbackHazard, $"{hazard} has effect {effect} but does not implement {typeof(IImpulsive).Name}.");
-                        _rigidbody.velocity = knockbackHazard.GetImpulse(_rigidbody.velocity);
+                        _rigidbody.velocity = knockbackHazard.GetImpulse(transform.position, _rigidbody.velocity);
                         break;
                     default: _log.Error($"Unknown effect '{effect}'."); break;
                 }

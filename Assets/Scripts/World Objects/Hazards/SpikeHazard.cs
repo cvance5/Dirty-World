@@ -7,13 +7,13 @@ namespace WorldObjects.Hazards
     {
         public override IntVector2 AnchoringPosition => new IntVector2(Position - transform.up);
 
+#pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [SerializeField]
-#pragma warning disable IDE0044 // Add readonly modifier
         private int _damage = 25;
-#pragma warning restore IDE0044 // Add readonly modifier
         public int Damage => _damage;
+#pragma warning restore IDE0044 // Add readonly modifier
 
-        public Vector2 GetImpulse(Vector2 velocity) => -velocity * .75f;
+        public Vector2 GetImpulse(Vector2 position, Vector2 velocity) => -velocity * .75f;
 
         protected override void InitializeEffects() => Effects = new HazardEffects[] { HazardEffects.Damage, HazardEffects.Impulse };
 

@@ -1,4 +1,7 @@
-﻿public interface IDamaging
+﻿namespace WorldObjects.Hazards
 {
-    int Damage { get; }
+    public interface IDamaging
+    {
+        int Damage { get; }
+    }
 }

@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 
-public interface IImpulsive
+namespace WorldObjects.Hazards
 {
-    Vector2 GetImpulse(Vector2 velocity);
+    public interface IImpulsive
+    {
+        Vector2 GetImpulse(Vector2 position, Vector2 velocity);
+    }
 }
