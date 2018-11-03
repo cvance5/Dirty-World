@@ -10,6 +10,9 @@ namespace WorldObjects.Spaces
         public IntVector2 BottomLeftCorner { get; }
         public IntVector2 TopRightCorner { get; }
 
+        public int Height => TopRightCorner.Y - BottomLeftCorner.Y;
+        public int Width => TopRightCorner.X - BottomLeftCorner.X;
+
         public Shaft(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {
             BottomLeftCorner = bottomLeftCorner;

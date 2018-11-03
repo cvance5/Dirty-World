@@ -9,8 +9,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class MonsterDenBuilder : SpaceBuilder
     {
-        private readonly IntVector2 _centerpoint;
-        private readonly int _radius;
+        private IntVector2 _centerpoint;
+        private int _radius;
 
         private static int _chunkSize => GameManager.Instance.Settings.ChunkSize;
 
@@ -21,6 +21,18 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                                           Random.Range(_containingChunk.BottomLeft.Y, _containingChunk.TopRight.Y));
 
             _radius = Random.Range(8, 20);
+        }
+
+        public SpaceBuilder SetCenterpoint(IntVector2 centerpoint)
+        {
+            _centerpoint = centerpoint;
+            return this;
+        }
+
+        public SpaceBuilder SetRadius(int radius)
+        {
+            _radius = radius;
+            return this;
         }
 
         public override Spaces.Space Build()

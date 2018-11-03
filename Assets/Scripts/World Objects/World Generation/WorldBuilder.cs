@@ -18,7 +18,7 @@ namespace WorldObjects.WorldGeneration
 
         public static void BuildInitialChunk()
         {
-            var cBuilder = new ChunkBuilder(Vector2.zero);
+            var cBuilder = new ChunkBuilder(Vector2.zero, _chunkSize);
 
             var sBuilder = new CorridorBuilder(cBuilder)
                 .SetStartingPoint(Vector2.zero, CorridorBuilder.CorridorAlignment.StartFromLeft)
@@ -54,7 +54,7 @@ namespace WorldObjects.WorldGeneration
 
         public static void BuildChunk(IntVector2 worldPosition)
         {
-            var cBuilder = new ChunkBuilder(worldPosition, GameManager.World.GetBlueprintForPosition(worldPosition));
+            var cBuilder = new ChunkBuilder(worldPosition, _chunkSize, GameManager.World.GetBlueprintForPosition(worldPosition));
             var sBuilder = SpacePicker.Pick(cBuilder);
 
             var blocks = BlockPicker.Pick(cBuilder);

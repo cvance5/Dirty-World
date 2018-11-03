@@ -11,6 +11,9 @@ namespace WorldObjects.Spaces
         public IntVector2 BottomLeftCorner { get; }
         public IntVector2 TopRightCorner { get; }
 
+        public int Height => TopRightCorner.Y - BottomLeftCorner.Y;
+        public int Length => TopRightCorner.X - BottomLeftCorner.X;
+
         private readonly int _spikeY;
 
         public Corridor(IntVector2 bottomLeftCorner, IntVector2 topRightCorner, bool isHazardous)

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using WorldObjects.Spaces;
-using WorldObjects.WorldGeneration.EnemyGeneration;
 
 namespace WorldObjects.WorldGeneration
 {
@@ -43,16 +41,15 @@ namespace WorldObjects.WorldGeneration
             return this;
         }
 
-        public ShaftBuilder SetLength(int blocksLong)
+        public ShaftBuilder SetWidth(int blocksWide)
         {
-            _width = blocksLong - 1;
-            FindAllPoints();
+            _width = blocksWide;
             return this;
         }
 
         public ShaftBuilder SetHeight(int blockHigh)
         {
-            _height = blockHigh - 1;
+            _height = blockHigh;
             FindAllPoints();
             return this;
         }

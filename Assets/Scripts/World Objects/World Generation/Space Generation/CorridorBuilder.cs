@@ -51,15 +51,14 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public CorridorBuilder SetLength(int blocksLong)
         {
-            _length = blocksLong - 1;
+            _length = blocksLong;
             FindAllPoints();
             return this;
         }
 
-        public CorridorBuilder SetHeight(int blockHigh)
+        public CorridorBuilder SetHeight(int blocksHigh)
         {
-            _height = blockHigh - 1;
-            FindAllPoints();
+            _height = blocksHigh;
             return this;
         }
 

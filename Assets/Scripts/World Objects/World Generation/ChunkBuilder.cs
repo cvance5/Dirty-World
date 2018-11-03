@@ -22,13 +22,14 @@ namespace WorldObjects.WorldGeneration
 
         private readonly ChunkBlueprint _blueprint;
 
-        private static int _chunkSize = GameManager.Instance.Settings.ChunkSize;
-        private static int _halfChunkSize = _chunkSize / 2;
+        private readonly int _chunkSize;
+        private int _halfChunkSize => _chunkSize / 2;
 
         private static BlockTypes _fillBlock = BlockTypes.Dirt;
 
-        public ChunkBuilder(IntVector2 chunkWorldCenterpoint, ChunkBlueprint blueprint = null)
+        public ChunkBuilder(IntVector2 chunkWorldCenterpoint, int chunkSize, ChunkBlueprint blueprint = null)
         {
+            _chunkSize = chunkSize;
             _chunkWorldCenterpoint = new IntVector2(chunkWorldCenterpoint);
 
             var startingPoint = new IntVector2(-_halfChunkSize, -_halfChunkSize);
@@ -53,7 +54,7 @@ namespace WorldObjects.WorldGeneration
 
             foreach (var dir in Directions.Cardinals)
             {
-                if (GameManager.World.GetChunkNeighbor(chunkWorldCenterpoint, dir) != null)
+                if (GameManager.World?.GetChunkNeighbor(chunkWorldCenterpoint, dir) != null)
                 {
                     _boundedDirections.Add(dir);
                 }
