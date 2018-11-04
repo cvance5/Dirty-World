@@ -20,7 +20,7 @@ namespace Tests.SpaceTests
         [Test]
         public void ShaftContainsTest()
         {
-            var shaft = new Shaft(new IntVector2(-2, -2), new IntVector2(2, 2));
+            var shaft = new Shaft(new IntVector2(-2, -2), new IntVector2(2, 2), false);
 
             for (var x = -5; x <= 5; x++)
             {

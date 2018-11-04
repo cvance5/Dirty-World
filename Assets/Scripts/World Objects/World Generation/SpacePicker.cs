@@ -13,6 +13,16 @@ namespace WorldObjects.WorldGeneration
             typeof(MonsterDenBuilder)
         };
 
-        public static SpaceBuilder Pick(ChunkBuilder cBuilder) => Activator.CreateInstance(_spaces.RandomItem(), cBuilder) as SpaceBuilder;
+        public static List<SpaceBuilder> Pick(ChunkBuilder cBuilder)
+        {
+            var spaceBuilders = new List<SpaceBuilder>();
+
+            if (cBuilder.Depth <= GameManager.World.SurfaceDepth)
+            {
+                spaceBuilders.Add(Activator.CreateInstance(_spaces.RandomItem(), cBuilder) as SpaceBuilder);
+            }
+
+            return spaceBuilders;
+        }
     }
 }

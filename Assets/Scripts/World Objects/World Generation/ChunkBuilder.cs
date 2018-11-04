@@ -58,6 +58,11 @@ namespace WorldObjects.WorldGeneration
                 {
                     _boundedDirections.Add(dir);
                 }
+
+                if (Depth == GameManager.World?.SurfaceDepth)
+                {
+                    _boundedDirections.Add(Directions.Up);
+                }
             }
 
             _blueprint = blueprint;

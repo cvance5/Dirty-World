@@ -24,7 +24,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             : base(containingChunk)
         {
             _height = Random.Range(1, 10);
-            _length = Random.Range(1, 100);
+            _length = Random.Range(_length + 1, 100);
 
             var startingPoint = new IntVector2(Random.Range(_containingChunk.BottomLeft.X, _containingChunk.TopRight.X),
                                                Random.Range(_containingChunk.BottomLeft.Y, _containingChunk.TopRight.Y));

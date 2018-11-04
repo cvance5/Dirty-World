@@ -55,12 +55,16 @@ namespace WorldObjects.WorldGeneration
         public static void BuildChunk(IntVector2 worldPosition)
         {
             var cBuilder = new ChunkBuilder(worldPosition, _chunkSize, GameManager.World.GetBlueprintForPosition(worldPosition));
-            var sBuilder = SpacePicker.Pick(cBuilder);
+            var sBuilders = SpacePicker.Pick(cBuilder);
 
             var blocks = BlockPicker.Pick(cBuilder);
 
-            cBuilder.AddSpace(sBuilder)
-                    .AddBlocks(blocks)
+            foreach (var sBuilder in sBuilders)
+            {
+                cBuilder.AddSpace(sBuilder);
+            }
+
+            cBuilder.AddBlocks(blocks)
                     .SetFill(GetFill(cBuilder.Depth));
 
             GameManager.World.Register(cBuilder.Build());

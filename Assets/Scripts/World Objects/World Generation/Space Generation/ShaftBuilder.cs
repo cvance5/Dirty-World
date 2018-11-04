@@ -13,13 +13,15 @@ namespace WorldObjects.WorldGeneration
         private int _height;
         private int _width;
 
+        private bool _wasClampedTop;
+
         public ShaftBuilder(ChunkBuilder containingChunk)
             : base(containingChunk)
         {
             var rand = new Random();
 
             _width = rand.Next(1, 10);
-            _height = rand.Next(1, 100);
+            _height = rand.Next(_width + 1, 100);
 
             var startingPoint = new IntVector2(rand.Next(containingChunk.BottomLeft.X, containingChunk.TopRight.X),
                                                       rand.Next(containingChunk.BottomLeft.Y, containingChunk.TopRight.Y));
@@ -60,6 +62,7 @@ namespace WorldObjects.WorldGeneration
             {
                 _top.Y = Math.Min(_top.Y, amount);
                 _alignment = ShaftAlignment.StartFromTop; // We have to enforce this boundary
+                _wasClampedTop = true; // We shouldn't spawn blocks here, as it may be clamped by another space or chunk
             }
             else if (direction == Directions.Right)
             {
@@ -91,7 +94,7 @@ namespace WorldObjects.WorldGeneration
             return this;
         }
 
-        public override Space Build() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y));
+        public override Space Build() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _wasClampedTop);
 
         private void FindAllPoints()
         {

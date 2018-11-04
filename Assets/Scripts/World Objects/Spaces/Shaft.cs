@@ -6,15 +6,17 @@ namespace WorldObjects.Spaces
     public class Shaft : Space
     {
         public override bool IsHazardous => false;
-
+        public bool IsUncapped { get; }
         public IntVector2 BottomLeftCorner { get; }
         public IntVector2 TopRightCorner { get; }
 
         public int Height => TopRightCorner.Y - BottomLeftCorner.Y;
         public int Width => TopRightCorner.X - BottomLeftCorner.X;
 
-        public Shaft(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
+        public Shaft(IntVector2 bottomLeftCorner, IntVector2 topRightCorner, bool isUncapped)
         {
+            IsUncapped = isUncapped;
+
             BottomLeftCorner = bottomLeftCorner;
             TopRightCorner = topRightCorner;
 
@@ -36,7 +38,8 @@ namespace WorldObjects.Spaces
         {
             var block = BlockTypes.None;
 
-            if (position.Y == TopRightCorner.Y)
+            if (!IsUncapped &&
+                position.Y == TopRightCorner.Y)
             {
                 if (Chance.CoinFlip)
                 {
