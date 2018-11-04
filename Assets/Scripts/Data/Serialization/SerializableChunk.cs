@@ -110,6 +110,10 @@ namespace Data.Serialization
             {
                 return new SerializableCorridor(space as Corridor);
             }
+            else if (space is MonsterDen)
+            {
+                return new SerializableMonsterDen(space as MonsterDen);
+            }
             else throw new System.Exception($"Unknown space type: {space.GetType().Name}. Cannot serialize.");
         }
     }

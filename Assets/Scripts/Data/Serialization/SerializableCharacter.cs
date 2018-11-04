@@ -28,14 +28,11 @@ namespace Data.Serialization
         public string Serialize() => JsonConvert.SerializeObject(this);
         public static SerializableCharacter Deserialize(string characterJson) => JsonConvert.DeserializeObject<SerializableCharacter>(characterJson);
 
-        public Character ToObject()
+        public Character ToObject() => new Character()
         {
-            return new Character()
-            {
-                Inventory = Inventory.ToObject(),
-                Equipment = Equipment.ToObject(),
-                Metadata = Metadata.ToObject()
-            };
-        }
+            Inventory = Inventory.ToObject(),
+            Equipment = Equipment.ToObject(),
+            Metadata = Metadata.ToObject()
+        };
     }
 }
