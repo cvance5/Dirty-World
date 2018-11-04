@@ -12,6 +12,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private IntVector2 _centerpoint;
         private int _radius;
 
+        private bool _allowEnemies;
+
         private static int _chunkSize => GameManager.Instance.Settings.ChunkSize;
 
         public MonsterDenBuilder(ChunkBuilder containingChunk)
@@ -23,15 +25,23 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _radius = Random.Range(8, 20);
         }
 
-        public SpaceBuilder SetCenterpoint(IntVector2 centerpoint)
+        public MonsterDenBuilder SetCenterpoint(IntVector2 centerpoint)
         {
             _centerpoint = centerpoint;
             return this;
         }
 
-        public SpaceBuilder SetRadius(int radius)
+        public MonsterDenBuilder SetRadius(int radius)
         {
             _radius = radius;
+            _radius = Mathf.Max(0, _radius);
+            if (_radius == 0) SetAllowEnemies(false);
+            return this;
+        }
+
+        public MonsterDenBuilder SetAllowEnemies(bool allowEnemies)
+        {
+            _allowEnemies = allowEnemies;
             return this;
         }
 
@@ -42,7 +52,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return monsterDen;
         }
 
-        public override SpaceBuilder Clamp(IntVector2 direction, int amount)
+        protected override void Clamp(IntVector2 direction, int amount)
         {
             if (direction == Directions.Up)
             {
@@ -74,34 +84,61 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 }
             }
             else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+        }
 
-            return this;
+        protected override void Cut(IntVector2 direction, int amount)
+        {
+            int difference;
+
+            if (direction == Directions.Up)
+            {
+                difference = (_centerpoint.Y + _radius) - amount;
+            }
+            else if (direction == Directions.Right)
+            {
+                difference = (_centerpoint.X + _radius) - amount;
+            }
+            else if (direction == Directions.Down)
+            {
+                difference = _centerpoint.Y - amount;
+            }
+            else if (direction == Directions.Left)
+            {
+                difference = -((_centerpoint.X - _radius) - amount);
+            }
+            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+
+            SetRadius(_radius - difference);
+            Clamp(direction, amount);
         }
 
         private Dictionary<IntVector2, EnemyTypes> GenerateContainedEnemies()
         {
             var containedEnemies = new Dictionary<IntVector2, EnemyTypes>();
 
-            var riskPoints = EnemyPicker.DetermineRiskPoints(_containingChunk.Depth, _containingChunk.Remoteness);
-            riskPoints = Math.Max(riskPoints, 10);
-
-            var enemies = EnemyPicker.RequestEnemies(riskPoints, new EnemyRequestCriteria()
+            if (_allowEnemies)
             {
-                HeightsAllowed = new Range(0, _radius / 2),
-                LengthsAllowed = new Range(0, _radius / 2)
-            });
+                var riskPoints = EnemyPicker.DetermineRiskPoints(_containingChunk.Depth, _containingChunk.Remoteness);
+                riskPoints = Math.Max(riskPoints, 10);
 
-            foreach (var enemy in enemies)
-            {
-                var requirementsForEnemy = EnemyPicker.GetRequirementsForEnemy(enemy);
+                var enemies = EnemyPicker.RequestEnemies(riskPoints, new EnemyRequestCriteria()
+                {
+                    HeightsAllowed = new Range(0, _radius / 2),
+                    LengthsAllowed = new Range(0, _radius / 2)
+                });
 
-                var requiredOffset = requirementsForEnemy.Height;
+                foreach (var enemy in enemies)
+                {
+                    var requirementsForEnemy = EnemyPicker.GetRequirementsForEnemy(enemy);
 
-                var xPosition = Random.Range(-_radius + requiredOffset, _radius - requiredOffset) + _centerpoint.X;
+                    var requiredOffset = requirementsForEnemy.Height;
 
-                var position = new IntVector2(xPosition, _centerpoint.Y);
+                    var xPosition = Random.Range(-_radius + requiredOffset, _radius - requiredOffset) + _centerpoint.X;
 
-                containedEnemies[position] = enemy;
+                    var position = new IntVector2(xPosition, _centerpoint.Y);
+
+                    containedEnemies[position] = enemy;
+                }
             }
 
             return containedEnemies;

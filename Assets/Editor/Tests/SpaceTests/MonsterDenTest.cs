@@ -65,9 +65,9 @@ namespace Tests.SpaceTests
         public void MonsterDenBuilderClampTest()
         {
             var clampLeftMonsterDen = new MonsterDenBuilder(_testChunk)
-                                       .SetCenterpoint(-Vector2.one)
-                                       .Clamp(Directions.Left, 0)
-                                       .Build();
+                                         .SetCenterpoint(-Vector2.one)
+                                         .AddBoundary(Directions.Left, 0)
+                                         .Build();
 
             foreach (var extent in clampLeftMonsterDen.Extents)
             {
@@ -75,9 +75,9 @@ namespace Tests.SpaceTests
             }
 
             var clampDownMonsterDen = new MonsterDenBuilder(_testChunk)
-                       .SetCenterpoint(-Vector2.one)
-                       .Clamp(Directions.Down, 0)
-                       .Build();
+                                         .SetCenterpoint(-Vector2.one)
+                                         .AddBoundary(Directions.Down, 0)
+                                         .Build();
 
             foreach (var extent in clampDownMonsterDen.Extents)
             {
@@ -85,9 +85,9 @@ namespace Tests.SpaceTests
             }
 
             var clampRightMonsterDen = new MonsterDenBuilder(_testChunk)
-                                         .SetCenterpoint(Vector2.one)
-                                         .Clamp(Directions.Right, 0)
-                                         .Build();
+                                          .SetCenterpoint(Vector2.one)
+                                          .AddBoundary(Directions.Right, 0)
+                                          .Build();
 
             foreach (var extent in clampRightMonsterDen.Extents)
             {
@@ -95,13 +95,62 @@ namespace Tests.SpaceTests
             }
 
             var clampUpMonsterDen = new MonsterDenBuilder(_testChunk)
-                                      .SetCenterpoint(Vector2.one)
-                                      .Clamp(Directions.Up, 0)
-                                      .Build();
+                                       .SetCenterpoint(Vector2.one)
+                                       .AddBoundary(Directions.Up, 0)
+                                       .Build();
 
             foreach (var extent in clampUpMonsterDen.Extents)
             {
                 Assert.LessOrEqual(extent.Y, 0, $"Failed to clamp up, as one extent is at {extent}.");
+            }
+        }
+
+        [Test]
+        public void MonsterDenBuilderCutTest()
+        {
+            var cutRightMonsterDen = new MonsterDenBuilder(_testChunk)
+                                         .SetCenterpoint(-Vector2.one)
+                                         .SetRadius(5)
+                                         .AddBoundary(Directions.Right, 0)
+                                         .AddBoundary(Directions.Left, 0)
+                                         .Build();
+
+            foreach (var extent in cutRightMonsterDen.Extents)
+            {
+                Assert.AreEqual(extent.X, 0, $"Failed to cut right, as one extent is at {extent}.");
+            }
+
+            var cutUpMonsterDen = new MonsterDenBuilder(_testChunk)
+                                         .SetCenterpoint(-Vector2.one)
+                                         .AddBoundary(Directions.Up, 0)
+                                         .AddBoundary(Directions.Down, 0)
+                                         .Build();
+
+            foreach (var extent in cutUpMonsterDen.Extents)
+            {
+                Assert.AreEqual(extent.Y, 0, $"Failed to cut up, as one extent is at {extent}.");
+            }
+
+            var cutLeftMonsterDen = new MonsterDenBuilder(_testChunk)
+                                          .SetCenterpoint(Vector2.one)
+                                          .AddBoundary(Directions.Left, 0)
+                                          .AddBoundary(Directions.Right, 0)
+                                          .Build();
+
+            foreach (var extent in cutRightMonsterDen.Extents)
+            {
+                Assert.AreEqual(extent.X, 0, $"Failed to cut left, as one extent is at {extent}.");
+            }
+
+            var cutDownMonsterDen = new MonsterDenBuilder(_testChunk)
+                                       .SetCenterpoint(Vector2.one)
+                                       .AddBoundary(Directions.Down, 0)
+                                       .AddBoundary(Directions.Up, 0)
+                                       .Build();
+
+            foreach (var extent in cutUpMonsterDen.Extents)
+            {
+                Assert.AreEqual(extent.Y, 0, $"Failed to cut down, as one extent is at {extent}.");
             }
         }
 

@@ -11,30 +11,30 @@ namespace WorldObjects
 
         public static readonly IntVector2[] Cardinals = new IntVector2[]
         {
-        Up,
-        Right,
-        Down,
-        Left
+            Up,
+            Right,
+            Down,
+            Left
         };
 
         public static readonly IntVector2[] Ordinals = new IntVector2[]
         {
-        Up + Left,
-        Up + Right,
-        Down + Right,
-        Down + Left
+            Up + Left,
+            Up + Right,
+            Down + Right,
+            Down + Left
         };
 
         public static readonly IntVector2[] Compass = new IntVector2[]
         {
-        Up + Left,
-        Up,
-        Up + Right,
-        Right,
-        Down + Right,
-        Down,
-        Down + Left,
-        Left
+            Up + Left,
+            Up,
+            Up + Right,
+            Right,
+            Down + Right,
+            Down,
+            Down + Left,
+            Left
         };
     }
 }

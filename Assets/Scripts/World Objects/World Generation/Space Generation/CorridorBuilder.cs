@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.EnemyGeneration;
 using Random = UnityEngine.Random;
@@ -52,6 +53,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public CorridorBuilder SetLength(int blocksLong)
         {
             _length = blocksLong;
+            _length = Mathf.Max(0, _length);
             FindAllPoints();
             return this;
         }
@@ -59,6 +61,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public CorridorBuilder SetHeight(int blocksHigh)
         {
             _height = blocksHigh;
+            _height = Mathf.Max(0, _height);
             return this;
         }
 
@@ -74,7 +77,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public override SpaceBuilder Clamp(IntVector2 direction, int amount)
+        protected override void Clamp(IntVector2 direction, int amount)
         {
             if (direction == Directions.Up)
             {
@@ -85,7 +88,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     _center.Y -= difference;
                     _rightEnd.Y -= difference;
                 }
-
             }
             else if (direction == Directions.Right)
             {
@@ -109,7 +111,32 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
 
             FindAllPoints();
-            return this;
+        }
+
+        protected override void Cut(IntVector2 direction, int amount)
+        {
+            if (direction == Directions.Up)
+            {
+                var difference = (_center.Y + _height) - amount;
+                if (difference > 0) SetHeight(_height - difference);
+            }
+            else if (direction == Directions.Right)
+            {
+                var difference = _rightEnd.X - amount;
+                if (difference > 0) SetLength(_length - difference);
+            }
+            else if (direction == Directions.Down)
+            {
+                var difference = _center.Y - amount;
+                if (difference < 0) SetHeight(_height + difference);
+                Clamp(Directions.Down, amount); // We have to shift the amount up, since we originate down
+            }
+            else if (direction == Directions.Left)
+            {
+                var difference = _leftEnd.X - amount;
+                if (difference < 0) SetLength(_length + difference);
+            }
+            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
         }
 
         public override Space Build()

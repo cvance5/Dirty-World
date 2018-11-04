@@ -48,42 +48,93 @@ namespace Tests.SpaceTests
             {
                 var clampLeftCorridor = new CorridorBuilder(_testChunk)
                                            .SetStartingPoint(-Vector2.one, alignment)
-                                           .Clamp(Directions.Left, 0)
+                                           .AddBoundary(Directions.Left, 0)
                                            .Build();
 
                 foreach (var extent in clampLeftCorridor.Extents)
                 {
-                    Assert.GreaterOrEqual(extent.X, 0, $"Failed to clamp left for {alignment}, as one extent is at {extent}.");
+                    Assert.LessOrEqual(0, extent.X, $"Failed to clamp left for {alignment}, as one extent is at {extent}.");
                 }
 
                 var clampDownCorridor = new CorridorBuilder(_testChunk)
-                           .SetStartingPoint(-Vector2.one, alignment)
-                           .Clamp(Directions.Down, 0)
-                           .Build();
+                                           .SetStartingPoint(-Vector2.one, alignment)
+                                           .AddBoundary(Directions.Down, 0)
+                                           .Build();
 
                 foreach (var extent in clampDownCorridor.Extents)
                 {
-                    Assert.GreaterOrEqual(extent.Y, 0, $"Failed to clamp down for {alignment}, as one extent is at {extent}.");
+                    Assert.LessOrEqual(0, extent.Y, $"Failed to clamp down for {alignment}, as one extent is at {extent}.");
                 }
 
                 var clampRightCorridor = new CorridorBuilder(_testChunk)
-                                             .SetStartingPoint(Vector2.one, alignment)
-                                             .Clamp(Directions.Right, 0)
-                                             .Build();
+                                            .SetStartingPoint(Vector2.one, alignment)
+                                            .AddBoundary(Directions.Right, 0)
+                                            .Build();
 
                 foreach (var extent in clampRightCorridor.Extents)
                 {
-                    Assert.LessOrEqual(extent.X, 0, $"Failed to clamp right for {alignment}, as one extent is at {extent}.");
+                    Assert.GreaterOrEqual(0, extent.X, $"Failed to clamp right for {alignment}, as one extent is at {extent}.");
                 }
 
                 var clampUpCorridor = new CorridorBuilder(_testChunk)
-                                          .SetStartingPoint(Vector2.one, alignment)
-                                          .Clamp(Directions.Up, 0)
-                                          .Build();
+                                         .SetStartingPoint(Vector2.one, alignment)
+                                         .AddBoundary(Directions.Up, 0)
+                                         .Build();
 
                 foreach (var extent in clampUpCorridor.Extents)
                 {
-                    Assert.LessOrEqual(extent.Y, 0, $"Failed to clamp up for {alignment}, as one extent is at {extent}.");
+                    Assert.GreaterOrEqual(0, extent.Y, $"Failed to clamp up for {alignment}, as one extent is at {extent}.");
+                }
+            }
+        }
+
+        [Test]
+        public void CorridorBuilderCutTest()
+        {
+            foreach (var alignment in (CorridorBuilder.CorridorAlignment[])System.Enum.GetValues(typeof(CorridorBuilder.CorridorAlignment)))
+            {
+                var cutRightCorridor = new CorridorBuilder(_testChunk)
+                                           .SetStartingPoint(-Vector2.one, alignment)
+                                           .AddBoundary(Directions.Right, 0)
+                                           .AddBoundary(Directions.Left, 0)
+                                           .Build();
+
+                foreach (var extent in cutRightCorridor.Extents)
+                {
+                    Assert.AreEqual(0, extent.X, $"Failed to cut right for {alignment}, as one extent is at {extent}.");
+                }
+
+                var cutUpCorridor = new CorridorBuilder(_testChunk)
+                                           .SetStartingPoint(-Vector2.one, alignment)
+                                           .AddBoundary(Directions.Up, 0)
+                                           .AddBoundary(Directions.Down, 0)
+                                           .Build();
+
+                foreach (var extent in cutUpCorridor.Extents)
+                {
+                    Assert.AreEqual(0, extent.Y, $"Failed to cut up for {alignment}, as one extent is at {extent}.");
+                }
+
+                var cutLeftCorridor = new CorridorBuilder(_testChunk)
+                                            .SetStartingPoint(Vector2.one, alignment)
+                                            .AddBoundary(Directions.Left, 0)
+                                            .AddBoundary(Directions.Right, 0)
+                                            .Build();
+
+                foreach (var extent in cutLeftCorridor.Extents)
+                {
+                    Assert.AreEqual(0, extent.X, $"Failed to cut left for {alignment}, as one extent is at {extent}.");
+                }
+
+                var cutDownCorridor = new CorridorBuilder(_testChunk)
+                                         .SetStartingPoint(Vector2.one, alignment)
+                                         .AddBoundary(Directions.Down, 0)
+                                         .AddBoundary(Directions.Up, 0)
+                                         .Build();
+
+                foreach (var extent in cutDownCorridor.Extents)
+                {
+                    Assert.AreEqual(0, extent.Y, $"Failed to cut down for {alignment}, as one extent is at {extent}.");
                 }
             }
         }
@@ -120,11 +171,11 @@ namespace Tests.SpaceTests
                 {
                     if (y == setHazardousCorridor.BottomLeftCorner.Y)
                     {
-                        Assert.AreEqual(setHazardousCorridor.GetHazard(new IntVector2(x, y)), HazardTypes.Spike, $"No spikes found at [{x},{y}].");
+                        Assert.AreEqual(HazardTypes.Spike, setHazardousCorridor.GetHazard(new IntVector2(x, y)), $"No spikes found at [{x},{y}].");
                     }
                     else
                     {
-                        Assert.AreEqual(setHazardousCorridor.GetHazard(new IntVector2(x, y)), HazardTypes.None, $"Spikes found at [{x},{y}].");
+                        Assert.AreEqual(HazardTypes.None, setHazardousCorridor.GetHazard(new IntVector2(x, y)), $"Spikes found at [{x},{y}].");
                     }
                 }
             }
@@ -142,7 +193,7 @@ namespace Tests.SpaceTests
                 for (var y = corridor.BottomLeftCorner.Y; y <= corridor.TopRightCorner.Y; y++)
                 {
                     var block = corridor.GetBlock(new IntVector2(x, y));
-                    Assert.AreEqual(block, BlockTypes.None, $"Found the wrong block at [{x},{y}].");
+                    Assert.AreEqual(BlockTypes.None, block, $"Found the wrong block at [{x},{y}].");
                 }
             }
         }

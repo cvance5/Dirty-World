@@ -44,43 +44,94 @@ namespace Tests.SpaceTests
             foreach (var alignment in (ShaftBuilder.ShaftAlignment[])System.Enum.GetValues(typeof(ShaftBuilder.ShaftAlignment)))
             {
                 var clampLeftShaft = new ShaftBuilder(_testChunk)
-                                           .SetStartingPoint(-Vector2.one, alignment)
-                                           .Clamp(Directions.Left, 0)
-                                           .Build();
+                                        .SetStartingPoint(-Vector2.one, alignment)
+                                        .AddBoundary(Directions.Left, 0)
+                                        .Build();
 
                 foreach (var extent in clampLeftShaft.Extents)
                 {
-                    Assert.GreaterOrEqual(extent.X, 0, $"Failed to clamp left for {alignment}, as one extent is at {extent}.");
+                    Assert.LessOrEqual(0, extent.X, $"Failed to clamp left for {alignment}, as one extent is at {extent}.");
                 }
 
                 var clampDownShaft = new ShaftBuilder(_testChunk)
-                           .SetStartingPoint(-Vector2.one, alignment)
-                           .Clamp(Directions.Down, 0)
-                           .Build();
+                                        .SetStartingPoint(-Vector2.one, alignment)
+                                        .AddBoundary(Directions.Down, 0)
+                                        .Build();
 
                 foreach (var extent in clampDownShaft.Extents)
                 {
-                    Assert.GreaterOrEqual(extent.Y, 0, $"Failed to clamp down for {alignment}, as one extent is at {extent}.");
+                    Assert.LessOrEqual(0, extent.Y, $"Failed to clamp down for {alignment}, as one extent is at {extent}.");
                 }
 
                 var clampRightShaft = new ShaftBuilder(_testChunk)
-                                             .SetStartingPoint(Vector2.one, alignment)
-                                             .Clamp(Directions.Right, 0)
-                                             .Build();
+                                         .SetStartingPoint(Vector2.one, alignment)
+                                         .AddBoundary(Directions.Right, 0)
+                                         .Build();
 
                 foreach (var extent in clampRightShaft.Extents)
                 {
-                    Assert.LessOrEqual(extent.X, 0, $"Failed to clamp right for {alignment}, as one extent is at {extent}.");
+                    Assert.GreaterOrEqual(0, extent.X, $"Failed to clamp right for {alignment}, as one extent is at {extent}.");
                 }
 
                 var clampUpShaft = new ShaftBuilder(_testChunk)
-                                          .SetStartingPoint(Vector2.one, alignment)
-                                          .Clamp(Directions.Up, 0)
-                                          .Build();
+                                      .SetStartingPoint(Vector2.one, alignment)
+                                      .AddBoundary(Directions.Up, 0)
+                                      .Build();
 
                 foreach (var extent in clampUpShaft.Extents)
                 {
-                    Assert.LessOrEqual(extent.Y, 0, $"Failed to clamp up for {alignment}, as one extent is at {extent}.");
+                    Assert.GreaterOrEqual(0, extent.Y, $"Failed to clamp up for {alignment}, as one extent is at {extent}.");
+                }
+            }
+        }
+
+        [Test]
+        public void ShaftBuilderCutTest()
+        {
+            foreach (var alignment in (ShaftBuilder.ShaftAlignment[])System.Enum.GetValues(typeof(ShaftBuilder.ShaftAlignment)))
+            {
+                var cutRightShaft = new ShaftBuilder(_testChunk)
+                                        .SetStartingPoint(-Vector2.one, alignment)
+                                        .AddBoundary(Directions.Right, 0)
+                                        .AddBoundary(Directions.Left, 0)
+                                        .Build();
+
+                foreach (var extent in cutRightShaft.Extents)
+                {
+                    Assert.AreEqual(0, extent.X, $"Failed to cut right for {alignment}, as one extent is at {extent}.");
+                }
+
+                var cutUpShaft = new ShaftBuilder(_testChunk)
+                                        .SetStartingPoint(-Vector2.one, alignment)
+                                        .AddBoundary(Directions.Up, 0)
+                                        .AddBoundary(Directions.Down, 0)
+                                        .Build();
+
+                foreach (var extent in cutUpShaft.Extents)
+                {
+                    Assert.AreEqual(0, extent.Y, $"Failed to cut up for {alignment}, as one extent is at {extent}.");
+                }
+
+                var cutLeftShaft = new ShaftBuilder(_testChunk)
+                                         .SetStartingPoint(Vector2.one, alignment)
+                                         .AddBoundary(Directions.Left, 0)
+                                         .AddBoundary(Directions.Right, 0)
+                                         .Build();
+
+                foreach (var extent in cutLeftShaft.Extents)
+                {
+                    Assert.AreEqual(0, extent.X, $"Failed to cut left for {alignment}, as one extent is at {extent}.");
+                }
+
+                var cutDownShaft = new ShaftBuilder(_testChunk)
+                                      .SetStartingPoint(Vector2.one, alignment)
+                                      .AddBoundary(Directions.Down, 0)
+                                      .AddBoundary(Directions.Up, 0)
+                                      .Build();
+
+                foreach (var extent in cutDownShaft.Extents)
+                {
+                    Assert.AreEqual(0, extent.Y, $"Failed to cut down for {alignment}, as one extent is at {extent}.");
                 }
             }
         }
@@ -118,11 +169,11 @@ namespace Tests.SpaceTests
 
                     if (y == shaft.TopRightCorner.Y)
                     {
-                        Assert.AreNotEqual(block, BlockTypes.None, $"Didn't find a block at [{x},{y}].");
+                        Assert.AreNotEqual(BlockTypes.None, block, $"Didn't find a block at [{x},{y}].");
                     }
                     else
                     {
-                        Assert.AreEqual(block, BlockTypes.None, $"Found the wrong block at [{x},{y}].");
+                        Assert.AreEqual(BlockTypes.None, block, $"Found the wrong block at [{x},{y}].");
                     }
                 }
             }

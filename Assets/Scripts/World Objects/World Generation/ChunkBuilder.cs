@@ -79,19 +79,19 @@ namespace WorldObjects.WorldGeneration
 
                 if (boundedDir == Directions.Up)
                 {
-                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.Y + _halfChunkSize - 1);
+                    spaceBuilder.AddBoundary(boundedDir, _chunkWorldCenterpoint.Y + _halfChunkSize - 1);
                 }
                 else if (boundedDir == Directions.Right)
                 {
-                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.X + _halfChunkSize - 1);
+                    spaceBuilder.AddBoundary(boundedDir, _chunkWorldCenterpoint.X + _halfChunkSize - 1);
                 }
                 else if (boundedDir == Directions.Down)
                 {
-                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.Y - _halfChunkSize - 1);
+                    spaceBuilder.AddBoundary(boundedDir, _chunkWorldCenterpoint.Y - _halfChunkSize - 1);
                 }
                 else if (boundedDir == Directions.Left)
                 {
-                    spaceBuilder.Clamp(boundedDir, _chunkWorldCenterpoint.X - _halfChunkSize - 1);
+                    spaceBuilder.AddBoundary(boundedDir, _chunkWorldCenterpoint.X - _halfChunkSize - 1);
                 }
                 else throw new System.ArgumentException($"Expected a cardinal direction. Cannot bound space by direction {boundedDir}.");
             }

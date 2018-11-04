@@ -10,7 +10,7 @@ public struct Range
 
     public Range(int min, int max)
     {
-        if (min > max) throw new System.ArgumentOutOfRangeException("Min cannot be greater than max.");
+        if (min > max) throw new ArgumentOutOfRangeException("Min cannot be greater than max.");
 
         Min = min;
         Max = max;
