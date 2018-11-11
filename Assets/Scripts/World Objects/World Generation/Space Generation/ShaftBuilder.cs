@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration.SpaceGeneration;
 using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects.WorldGeneration

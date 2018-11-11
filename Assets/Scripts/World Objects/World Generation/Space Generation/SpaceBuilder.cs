@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using WorldObjects.Spaces;
 
-namespace WorldObjects.WorldGeneration
+namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public abstract class SpaceBuilder
     {

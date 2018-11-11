@@ -3,6 +3,7 @@ using UnityEngine;
 using WorldObjects.Blocks;
 using WorldObjects.Hazards;
 using WorldObjects.WorldGeneration.EnemyGeneration;
+using WorldObjects.WorldGeneration.SpaceGeneration;
 using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects.WorldGeneration
