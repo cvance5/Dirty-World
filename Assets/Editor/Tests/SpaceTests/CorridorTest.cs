@@ -6,6 +6,7 @@ using WorldObjects.Blocks;
 using WorldObjects.Hazards;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration;
+using WorldObjects.WorldGeneration.EnemyGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace Tests.SpaceTests
@@ -37,6 +38,30 @@ namespace Tests.SpaceTests
                     var actual = corridor.Contains(new IntVector2(x, y));
 
                     Assert.AreEqual(actual, expectation, $"Position: [{x},{y}] | Expected: {expectation} | Actual: {actual}");
+                }
+            }
+        }
+
+        [Test]
+        public void CorridorEnemyGenerationTest()
+        {
+            for (var repeat = 0; repeat < 1; repeat++)
+            {
+                var corridor = new CorridorBuilder(_testChunk)
+                                  .SetLength(5)
+                                  .SetHeight(5)
+                                  .SetExtraRiskPoints(5)
+                                  .SetAllowEnemies(true)
+                                  .Build();
+
+                var enemySpawns = corridor.EnemySpawns;
+
+                Assert.IsNotEmpty(enemySpawns, $"No enemies were spawned.");
+
+                foreach (var enemy in enemySpawns)
+                {
+                    Assert.True(corridor.Contains(enemy.Position), $"Enemy spawned outside of monster den.");
+                    Assert.AreNotEqual(EnemyTypes.None, enemy.Type, $"Enemy spawned as `none`.");
                 }
             }
         }

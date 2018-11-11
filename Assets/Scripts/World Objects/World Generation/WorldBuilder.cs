@@ -25,7 +25,7 @@ namespace WorldObjects.WorldGeneration
                 .SetStartingPoint(Vector2.zero, CorridorBuilder.CorridorAlignment.StartFromLeft)
                 .SetHeight(1)
                 .SetLength(100)
-                .DisallowEnemies()
+                .SetAllowEnemies(false)
                 .SetHazards(false)
                 .AddModifier(ModifierTypes.Cavernous);
 
@@ -33,7 +33,7 @@ namespace WorldObjects.WorldGeneration
                 .SetStartingPoint(Vector2.zero + (Vector2.up), CorridorBuilder.CorridorAlignment.StartFromLeft)
                 .SetHeight(3)
                 .SetLength(5)
-                .DisallowEnemies()
+                .SetAllowEnemies(false)
                 .SetHazards(false)
                 .AddModifier(ModifierTypes.Cavernous);
 

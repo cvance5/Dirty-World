@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace WorldObjects.WorldGeneration.EnemyGeneration
 {
@@ -8,7 +9,7 @@ namespace WorldObjects.WorldGeneration.EnemyGeneration
         public static int DetermineRiskPoints(int chunkDepth, int chunkRemoteness)
         {
             var randomizedValue = UnityEngine.Random.Range(-5, 5);
-            return chunkDepth + chunkRemoteness + randomizedValue;
+            return Mathf.Max(0, chunkDepth + chunkRemoteness + randomizedValue);
         }
 
         public static List<EnemyTypes> RequestEnemies(int riskPoints, EnemyRequestCriteria requestCriteria)

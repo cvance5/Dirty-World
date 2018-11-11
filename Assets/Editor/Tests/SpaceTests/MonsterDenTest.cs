@@ -5,6 +5,7 @@ using WorldObjects;
 using WorldObjects.Blocks;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration;
+using WorldObjects.WorldGeneration.EnemyGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace Tests.SpaceTests
@@ -58,7 +59,29 @@ namespace Tests.SpaceTests
 
             var doesNotContainFarDown = monsterDen.Contains(new IntVector2(0, -1));
             Assert.False(doesNotContainFarDown, "Monster den contains a point too far down.");
+        }
 
+        [Test]
+        public void MonsterDenEnemyGenerationTest()
+        {
+            for (var repeat = 0; repeat < 50; repeat++)
+            {
+                var monsterDen = new MonsterDenBuilder(_testChunk)
+                                    .SetCenterpoint(Vector2.zero)
+                                    .SetRadius(5)
+                                    .SetExtraRiskPoints(5)
+                                    .Build();
+
+                var enemySpawns = monsterDen.EnemySpawns;
+
+                Assert.IsNotEmpty(enemySpawns, $"No enemies were spawned.");
+
+                foreach (var enemy in enemySpawns)
+                {
+                    Assert.True(monsterDen.Contains(enemy.Position), $"Enemy spawned outside of monster den.");
+                    Assert.AreNotEqual(EnemyTypes.None, enemy.Type, $"Enemy spawned as `none`.");
+                }
+            }
         }
 
         [Test]

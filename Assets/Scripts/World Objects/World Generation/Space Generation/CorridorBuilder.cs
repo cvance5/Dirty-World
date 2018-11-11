@@ -18,6 +18,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private int _height;
         private int _length;
 
+        private int _extraRiskPoints;
         private bool _isHazardous;
         private bool _allowEnemies = true;
 
@@ -71,9 +72,15 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public CorridorBuilder DisallowEnemies()
+        public CorridorBuilder SetExtraRiskPoints(int riskPoints)
         {
-            _allowEnemies = false;
+            _extraRiskPoints = riskPoints;
+            return this;
+        }
+
+        public CorridorBuilder SetAllowEnemies(bool allowEnemies)
+        {
+            _allowEnemies = allowEnemies;
             return this;
         }
 
@@ -153,6 +160,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             if (_allowEnemies)
             {
                 var riskPoints = EnemyPicker.DetermineRiskPoints(_containingChunk.Depth, _containingChunk.Remoteness);
+                riskPoints += _extraRiskPoints;
 
                 var enemies = EnemyPicker.RequestEnemies(riskPoints, new EnemyRequestCriteria()
                 {

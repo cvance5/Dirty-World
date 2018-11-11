@@ -12,7 +12,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private IntVector2 _centerpoint;
         private int _radius;
 
-        private bool _allowEnemies;
+        private int _extraRiskPoints;
+        private bool _allowEnemies = true;
 
         private static int _chunkSize => GameManager.Instance.Settings.ChunkSize;
 
@@ -42,6 +43,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public MonsterDenBuilder SetAllowEnemies(bool allowEnemies)
         {
             _allowEnemies = allowEnemies;
+            return this;
+        }
+
+        public MonsterDenBuilder SetExtraRiskPoints(int riskPoints)
+        {
+            _extraRiskPoints = riskPoints;
             return this;
         }
 
@@ -120,6 +127,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             {
                 var riskPoints = EnemyPicker.DetermineRiskPoints(_containingChunk.Depth, _containingChunk.Remoteness);
                 riskPoints = Math.Max(riskPoints, 10);
+                riskPoints += _extraRiskPoints;
 
                 var enemies = EnemyPicker.RequestEnemies(riskPoints, new EnemyRequestCriteria()
                 {
