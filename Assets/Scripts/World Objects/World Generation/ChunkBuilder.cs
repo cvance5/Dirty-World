@@ -2,6 +2,7 @@
 using UnityEngine;
 using WorldObjects.Blocks;
 using WorldObjects.Hazards;
+using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.EnemyGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 using Space = WorldObjects.Spaces.Space;
@@ -164,7 +165,7 @@ namespace WorldObjects.WorldGeneration
             );
 
             var spaces = new List<Space>();
-            var enemiesToAdd = new Dictionary<IntVector2, EnemyTypes>();
+            var enemiesToAdd = new List<EnemySpawn>();
 
             foreach (var sBuilder in _spaceBuilders)
             {
@@ -172,9 +173,9 @@ namespace WorldObjects.WorldGeneration
                 spaces.Add(space);
                 chunk.Register(space);
 
-                foreach (var enemy in space.GetEnemySpawnsInChunk(chunk))
+                foreach (var enemySpawn in space.GetEnemySpawnsInChunk(chunk))
                 {
-                    enemiesToAdd.Add(enemy.Key, enemy.Value);
+                    enemiesToAdd.Add(enemySpawn);
                 }
             }
 
@@ -230,7 +231,7 @@ namespace WorldObjects.WorldGeneration
 
             foreach (var enemyToAdd in enemiesToAdd)
             {
-                var enemyData = EnemySpawner.SpawnEnemy(enemyToAdd.Value, enemyToAdd.Key);
+                var enemyData = EnemySpawner.SpawnEnemy(enemyToAdd.Type, enemyToAdd.Position);
                 chunk.Register(enemyData);
             }
 

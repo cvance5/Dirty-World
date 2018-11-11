@@ -146,9 +146,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return ApplyModifiers(corridor);
         }
 
-        private Dictionary<IntVector2, EnemyTypes> GenerateContainedEnemies()
+        private List<EnemySpawn> GenerateContainedEnemies()
         {
-            var containedEnemies = new Dictionary<IntVector2, EnemyTypes>();
+            var containedEnemies = new List<EnemySpawn>();
 
             if (_allowEnemies)
             {
@@ -165,7 +165,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     var xPos = Random.Range(_leftEnd.X, _rightEnd.X);
                     var position = new IntVector2(xPos, _leftEnd.Y);
 
-                    containedEnemies[position] = enemy;
+                    containedEnemies.Add(new EnemySpawn(position, enemy));
                 }
             }
 

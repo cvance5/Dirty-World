@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using WorldObjects.Blocks;
 using WorldObjects.Hazards;
-using WorldObjects.WorldGeneration.EnemyGeneration;
 
 namespace WorldObjects.Spaces
 {
@@ -11,10 +10,8 @@ namespace WorldObjects.Spaces
         public List<IntVector2> Extents { get; protected set; }
             = new List<IntVector2>();
 
-        private readonly Dictionary<IntVector2, EnemyTypes> _enemySpawns
-            = new Dictionary<IntVector2, EnemyTypes>();
-        public Dictionary<IntVector2, EnemyTypes> EnemySpawns =>
-            new Dictionary<IntVector2, EnemyTypes>(_enemySpawns);
+        private readonly List<EnemySpawn> _enemySpawns = new List<EnemySpawn>();
+        public List<EnemySpawn> EnemySpawns => new List<EnemySpawn>(_enemySpawns);
 
         private readonly List<ModifierTypes> _modifiers = new List<ModifierTypes>();
         public virtual List<ModifierTypes> Modifiers => new List<ModifierTypes>(_modifiers);
@@ -25,29 +22,23 @@ namespace WorldObjects.Spaces
         public abstract BlockTypes GetBlock(IntVector2 position);
         public abstract HazardTypes GetHazard(IntVector2 position);
 
-        public void AddEnemySpawns(Dictionary<IntVector2, EnemyTypes> enemiesToSpawn)
-        {
-            foreach (var kvp in enemiesToSpawn)
-            {
-                _enemySpawns.Add(kvp.Key, kvp.Value);
-            }
-        }
+        public void AddEnemySpawns(List<EnemySpawn> enemySpawns) => _enemySpawns.AddRange(enemySpawns);
 
-        public Dictionary<IntVector2, EnemyTypes> GetEnemySpawnsInChunk(Chunk chunk)
+        public List<EnemySpawn> GetEnemySpawnsInChunk(Chunk chunk)
         {
-            var enemySpawnsInChunk = new Dictionary<IntVector2, EnemyTypes>();
+            var enemySpawnsInChunk = new List<EnemySpawn>();
 
-            foreach (var kvp in _enemySpawns)
+            foreach (var enemySpawn in _enemySpawns)
             {
-                if (chunk.Contains(kvp.Key))
+                if (chunk.Contains(enemySpawn.Position))
                 {
-                    enemySpawnsInChunk.Add(kvp.Key, kvp.Value);
+                    enemySpawnsInChunk.Add(enemySpawn);
                 }
             }
 
-            foreach (var kvp in enemySpawnsInChunk)
+            foreach (var enemySpawn in enemySpawnsInChunk)
             {
-                _enemySpawns.Remove(kvp.Key);
+                _enemySpawns.Remove(enemySpawn);
             }
 
             return enemySpawnsInChunk;
