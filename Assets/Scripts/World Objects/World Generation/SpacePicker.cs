@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace WorldObjects.WorldGeneration
@@ -23,6 +24,15 @@ namespace WorldObjects.WorldGeneration
             }
 
             return spaceBuilders;
+        }
+
+        public static Space ApplyModifier(Space space, ModifierTypes type)
+        {
+            switch (type)
+            {
+                case ModifierTypes.Cavernous: return new CavernousModifier(space);
+                default: throw new ArgumentException($"Unknown modifier type: {type}.");
+            }
         }
     }
 }

@@ -5,6 +5,8 @@ namespace WorldObjects.Spaces
 {
     public class Shaft : Space
     {
+        public override string Name => $"Shaft from {BottomLeftCorner} to {TopRightCorner}.";
+
         public override bool IsHazardous => false;
         public bool IsUncapped { get; }
         public IntVector2 BottomLeftCorner { get; }
@@ -24,8 +26,6 @@ namespace WorldObjects.Spaces
             Extents.Add(new IntVector2(BottomLeftCorner.X, TopRightCorner.Y));
             Extents.Add(TopRightCorner);
             Extents.Add(new IntVector2(TopRightCorner.X, BottomLeftCorner.Y));
-
-            Name = $"Shaft from {BottomLeftCorner} to {TopRightCorner}.";
         }
 
         public override bool Contains(IntVector2 position) =>

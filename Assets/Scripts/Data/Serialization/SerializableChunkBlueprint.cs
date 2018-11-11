@@ -66,6 +66,12 @@ namespace Data.Serialization
 
         private SerializableSpace ToSerializableSpace(Space space)
         {
+            while (space is SpaceModifier)
+            {
+                var modifier = space as SpaceModifier;
+                space = modifier.ModifiedSpace;
+            }
+
             if (space is Shaft)
             {
                 return new SerializableShaft(space as Shaft);
@@ -73,6 +79,10 @@ namespace Data.Serialization
             else if (space is Corridor)
             {
                 return new SerializableCorridor(space as Corridor);
+            }
+            else if(space is MonsterDen)
+            {
+                return new SerializableMonsterDen(space as MonsterDen);
             }
             else throw new System.Exception($"Unknown space type: {space.GetType().Name}. Cannot serialize.");
         }

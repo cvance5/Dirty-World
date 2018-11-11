@@ -124,7 +124,11 @@ namespace WorldObjects.WorldGeneration
             else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
         }
 
-        public override Space Build() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _wasClampedTop);
+        public override Space Build()
+        {
+            var shaft = new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _wasClampedTop);
+            return ApplyModifiers(shaft);
+        }
 
         private void FindAllPoints()
         {

@@ -171,7 +171,7 @@ namespace Tests.SpaceTests
                 {
                     if (y == setHazardousCorridor.BottomLeftCorner.Y)
                     {
-                        Assert.AreEqual(HazardTypes.Spike, setHazardousCorridor.GetHazard(new IntVector2(x, y)), $"No spikes found at [{x},{y}].");
+                        Assert.AreEqual(HazardTypes.Stalagmite, setHazardousCorridor.GetHazard(new IntVector2(x, y)), $"No spikes found at [{x},{y}].");
                     }
                     else
                     {

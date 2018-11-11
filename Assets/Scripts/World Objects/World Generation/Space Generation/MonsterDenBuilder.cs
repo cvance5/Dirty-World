@@ -49,7 +49,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             var monsterDen = new MonsterDen(_centerpoint, _radius);
             monsterDen.AddEnemySpawns(GenerateContainedEnemies());
-            return monsterDen;
+            return ApplyModifiers(monsterDen);
         }
 
         protected override void Clamp(IntVector2 direction, int amount)

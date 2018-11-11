@@ -7,12 +7,17 @@ namespace WorldObjects.Spaces
 {
     public abstract class Space : IBoundary
     {
-        public string Name { get; protected set; }
+        public abstract string Name { get; }
         public List<IntVector2> Extents { get; protected set; }
             = new List<IntVector2>();
 
-        private Dictionary<IntVector2, EnemyTypes> _enemySpawns
-        = new Dictionary<IntVector2, EnemyTypes>();
+        private readonly Dictionary<IntVector2, EnemyTypes> _enemySpawns
+            = new Dictionary<IntVector2, EnemyTypes>();
+        public Dictionary<IntVector2, EnemyTypes> EnemySpawns =>
+            new Dictionary<IntVector2, EnemyTypes>(_enemySpawns);
+
+        private readonly List<ModifierTypes> _modifiers = new List<ModifierTypes>();
+        public virtual List<ModifierTypes> Modifiers => new List<ModifierTypes>(_modifiers);
 
         public abstract bool IsHazardous { get; }
 
@@ -48,21 +53,30 @@ namespace WorldObjects.Spaces
             return enemySpawnsInChunk;
         }
 
+        public void AddModifier(ModifierTypes modifier)
+        {
+            if (!_modifiers.Contains(modifier))
+            {
+                _modifiers.Add(modifier);
+            }
+            else throw new System.InvalidOperationException($"Cannot apply the same modifier twice.  Applied {modifier} twice to {Name}.");
+        }
+
         public override string ToString() => Name;
 
         public bool Equals(Space other)
         {
-            bool isEqual = true;
+            var isEqual = true;
 
-            if(Extents.Count != other.Extents.Count)
+            if (Extents.Count != other.Extents.Count)
             {
                 isEqual = false;
             }
             else
             {
-                foreach(var extent in other.Extents)
+                foreach (var extent in other.Extents)
                 {
-                    if(!Extents.Contains(extent))
+                    if (!Extents.Contains(extent))
                     {
                         isEqual = false;
                         break;

@@ -6,6 +6,8 @@ namespace WorldObjects.Spaces
 {
     public class MonsterDen : Space
     {
+        public override string Name => $"Monster Den starting {Centerpoint} extending {Radius}.";
+
         public override bool IsHazardous => true;
 
         public IntVector2 Centerpoint { get; }

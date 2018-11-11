@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
-using WorldObjects;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration;
 
 namespace Data.Serialization.SerializableSpaces
 {
@@ -22,8 +22,22 @@ namespace Data.Serialization.SerializableSpaces
             _bottomLeftCorner = corridor.BottomLeftCorner;
             _topRightCorner = corridor.TopRightCorner;
             _isHazardous = corridor.IsHazardous;
+
+            _modifiers = corridor.Modifiers;
+            _enemySpawns = corridor.EnemySpawns;
         }
 
-        public override Space ToObject() => new Corridor(_bottomLeftCorner, _topRightCorner, _isHazardous);
+        public override Space ToObject()
+        {
+            Space corridor = new Corridor(_bottomLeftCorner, _topRightCorner, _isHazardous);
+            corridor.AddEnemySpawns(_enemySpawns);
+
+            foreach (var modifier in _modifiers)
+            {
+                corridor = SpacePicker.ApplyModifier(corridor, modifier);
+            }
+
+            return corridor;
+        }
     }
 }

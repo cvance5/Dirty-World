@@ -5,6 +5,8 @@ namespace WorldObjects.Spaces
 {
     public class Corridor : Space
     {
+        public override string Name => $"Corridor from {BottomLeftCorner} to {TopRightCorner}.";
+
         private readonly bool _isHazardous;
         public override bool IsHazardous => _isHazardous;
 
@@ -26,8 +28,6 @@ namespace WorldObjects.Spaces
             Extents.Add(TopRightCorner);
             Extents.Add(new IntVector2(TopRightCorner.X, BottomLeftCorner.Y));
 
-            Name = $"Corridor from {BottomLeftCorner} to {TopRightCorner}.";
-
             _isHazardous = isHazardous;
 
             if (_isHazardous)
@@ -43,16 +43,6 @@ namespace WorldObjects.Spaces
             position.Y > TopRightCorner.Y);
 
         public override BlockTypes GetBlock(IntVector2 position) => BlockTypes.None;
-        public override HazardTypes GetHazard(IntVector2 position)
-        {
-            var hazard = HazardTypes.None;
-
-            if (position.Y == _spikeY)
-            {
-                hazard = HazardTypes.Spike;
-            }
-
-            return hazard;
-        }
+        public override HazardTypes GetHazard(IntVector2 position) => HazardTypes.None;
     }
 }

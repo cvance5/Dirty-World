@@ -19,7 +19,7 @@ namespace WorldObjects.WorldGeneration
 
             switch (type)
             {
-                case HazardTypes.Spike: hazardObject = Instance._spikeHazard; break;
+                case HazardTypes.Stalagmite: hazardObject = Instance._spikeHazard; break;
                 default: throw new ArgumentException($"Unknown hazard type of {type}.");
             }
 
@@ -40,12 +40,12 @@ namespace WorldObjects.WorldGeneration
         private static readonly Dictionary<HazardTypes, Type> _enumToType = new Dictionary<HazardTypes, Type>()
         {
             { HazardTypes.None, null },
-            { HazardTypes.Spike, typeof(SpikeHazard) }
+            { HazardTypes.Stalagmite, typeof(SpikeHazard) }
         };
 
         private static readonly Dictionary<Type, HazardTypes> _typeToEnum = new Dictionary<Type, HazardTypes>()
         {
-            { typeof(SpikeHazard), HazardTypes.Spike }
+            { typeof(SpikeHazard), HazardTypes.Stalagmite }
         };
 
         private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("HazardLoader");

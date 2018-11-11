@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration;
 
 namespace Data.Serialization.SerializableSpaces
 {
@@ -18,8 +19,22 @@ namespace Data.Serialization.SerializableSpaces
         {
             _centerpoint = monsterDen.Centerpoint;
             _radius = monsterDen.Radius;
+
+            _modifiers = monsterDen.Modifiers;
+            _enemySpawns = monsterDen.EnemySpawns;
         }
 
-        public override Space ToObject() => new MonsterDen(_centerpoint, _radius);
+        public override Space ToObject()
+        {
+            Space monsterDen = new MonsterDen(_centerpoint, _radius);
+            monsterDen.AddEnemySpawns(_enemySpawns);
+
+            foreach (var modifier in _modifiers)
+            {
+                monsterDen = SpacePicker.ApplyModifier(monsterDen, modifier);
+            }
+
+            return monsterDen;
+        }
     }
 }

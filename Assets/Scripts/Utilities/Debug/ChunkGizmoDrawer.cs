@@ -183,6 +183,7 @@ namespace Utilities.Debug
             }
 
             DrawByExtents(space.Extents);
+            Handles.Label(space.Extents[0], space.Name);
         }
 
         private void DrawRectangle(Vector2 topRight, Vector2 bottomLeft)

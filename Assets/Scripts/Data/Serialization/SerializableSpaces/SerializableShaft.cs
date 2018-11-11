@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration;
 
 namespace Data.Serialization.SerializableSpaces
 {
@@ -22,8 +23,22 @@ namespace Data.Serialization.SerializableSpaces
             _isUncapped = shaft.IsUncapped;
             _bottomLeftCorner = shaft.BottomLeftCorner;
             _topRightCorner = shaft.TopRightCorner;
+
+            _modifiers = shaft.Modifiers;
+            _enemySpawns = shaft.EnemySpawns;
         }
 
-        public override Space ToObject() => new Shaft(_bottomLeftCorner, _topRightCorner, _isUncapped);
+        public override Space ToObject()
+        {
+            Space shaft = new Shaft(_bottomLeftCorner, _topRightCorner, _isUncapped);
+            shaft.AddEnemySpawns(_enemySpawns);
+
+            foreach (var modifier in _modifiers)
+            {
+                shaft = SpacePicker.ApplyModifier(shaft, modifier);
+            }
+
+            return shaft;
+        }
     }
 }

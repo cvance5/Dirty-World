@@ -143,7 +143,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             var corridor = new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height), _isHazardous);
             corridor.AddEnemySpawns(GenerateContainedEnemies());
-            return corridor;
+            return ApplyModifiers(corridor);
         }
 
         private Dictionary<IntVector2, EnemyTypes> GenerateContainedEnemies()

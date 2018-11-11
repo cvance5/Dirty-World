@@ -26,7 +26,7 @@ namespace WorldObjects.WorldGeneration
         private readonly int _chunkSize;
         private int _halfChunkSize => _chunkSize / 2;
 
-        private static BlockTypes _fillBlock = BlockTypes.Dirt;
+        public BlockTypes FillBlock { get; private set; } = BlockTypes.Dirt;
 
         public ChunkBuilder(IntVector2 chunkWorldCenterpoint, int chunkSize, ChunkBlueprint blueprint = null)
         {
@@ -148,7 +148,7 @@ namespace WorldObjects.WorldGeneration
 
         public ChunkBuilder SetFill(BlockTypes fillBlock)
         {
-            _fillBlock = fillBlock;
+            FillBlock = fillBlock;
 
             return this;
         }
@@ -213,7 +213,7 @@ namespace WorldObjects.WorldGeneration
                 }
                 else
                 {
-                    if (builder.IsFill) builder.SetType(_fillBlock);
+                    if (builder.IsFill) builder.SetType(FillBlock);
                     blockToBuild = builder.Build();
                 }
 

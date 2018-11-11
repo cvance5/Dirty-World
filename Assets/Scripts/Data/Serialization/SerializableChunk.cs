@@ -102,6 +102,12 @@ namespace Data.Serialization
 
         private SerializableSpace ToSerializableSpace(Space space)
         {
+            while (space is SpaceModifier)
+            {
+                var modifier = space as SpaceModifier;
+                space = modifier.ModifiedSpace;
+            }
+
             if (space is Shaft)
             {
                 return new SerializableShaft(space as Shaft);

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Blocks;
+using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.BlockGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 
@@ -25,14 +26,16 @@ namespace WorldObjects.WorldGeneration
                 .SetHeight(1)
                 .SetLength(100)
                 .DisallowEnemies()
-                .SetHazards(false);
+                .SetHazards(false)
+                .AddModifier(ModifierTypes.Cavernous);
 
             var sBuilder2 = new CorridorBuilder(cBuilder)
                 .SetStartingPoint(Vector2.zero + (Vector2.up), CorridorBuilder.CorridorAlignment.StartFromLeft)
                 .SetHeight(3)
                 .SetLength(5)
                 .DisallowEnemies()
-                .SetHazards(false);
+                .SetHazards(false)
+                .AddModifier(ModifierTypes.Cavernous);
 
             cBuilder.AddSpace(sBuilder)
                     .AddSpace(sBuilder2);
