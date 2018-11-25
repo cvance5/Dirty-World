@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using WorldObjects.Blocks;
-using WorldObjects.Hazards;
+using WorldObjects.WorldGeneration.HazardGeneration;
 
 namespace WorldObjects.Spaces
 {
@@ -9,22 +9,26 @@ namespace WorldObjects.Spaces
         public abstract string Name { get; }
         public List<IntVector2> Extents { get; protected set; }
             = new List<IntVector2>();
+        public abstract int Area { get; }
 
-        private readonly List<EnemySpawn> _enemySpawns = new List<EnemySpawn>();
-        public List<EnemySpawn> EnemySpawns => new List<EnemySpawn>(_enemySpawns);
+        protected readonly List<EnemySpawn> _enemySpawns = new List<EnemySpawn>();
+        public virtual List<EnemySpawn> EnemySpawns => new List<EnemySpawn>(_enemySpawns);
 
-        private readonly List<ModifierTypes> _modifiers = new List<ModifierTypes>();
+        protected readonly List<HazardBuilder> _hazardBuilders = new List<HazardBuilder>();
+        public virtual List<HazardBuilder> HazardBuilders => new List<HazardBuilder>(_hazardBuilders);
+
+        protected readonly List<ModifierTypes> _modifiers = new List<ModifierTypes>();
         public virtual List<ModifierTypes> Modifiers => new List<ModifierTypes>(_modifiers);
 
-        public abstract bool IsHazardous { get; }
-
         public abstract bool Contains(IntVector2 position);
-        public abstract BlockTypes GetBlock(IntVector2 position);
-        public abstract HazardTypes GetHazard(IntVector2 position);
+        public abstract IntVector2 GetRandomPosition();
 
-        public void AddEnemySpawns(List<EnemySpawn> enemySpawns) => _enemySpawns.AddRange(enemySpawns);
+        public abstract BlockTypes GetBlockType(IntVector2 position);
 
-        public List<EnemySpawn> GetEnemySpawnsInChunk(Chunk chunk)
+        public virtual void AddEnemySpawns(List<EnemySpawn> enemySpawns) => _enemySpawns.AddRange(enemySpawns);
+        public virtual void AddHazardBuilders(List<HazardBuilder> hazardBuilders) => _hazardBuilders.AddRange(hazardBuilders);
+
+        public virtual List<EnemySpawn> GetEnemySpawnsInChunk(Chunk chunk)
         {
             var enemySpawnsInChunk = new List<EnemySpawn>();
 
@@ -44,13 +48,24 @@ namespace WorldObjects.Spaces
             return enemySpawnsInChunk;
         }
 
-        public void AddModifier(ModifierTypes modifier)
+        public virtual List<HazardBuilder> GetHazardBuildersInChunk(Chunk chunk)
         {
-            if (!_modifiers.Contains(modifier))
+            var hazardBuildersInChunk = new List<HazardBuilder>();
+
+            foreach (var hazardBuilder in _hazardBuilders)
             {
-                _modifiers.Add(modifier);
+                if (chunk.Contains(hazardBuilder.Position))
+                {
+                    hazardBuildersInChunk.Add(hazardBuilder);
+                }
             }
-            else throw new System.InvalidOperationException($"Cannot apply the same modifier twice.  Applied {modifier} twice to {Name}.");
+
+            foreach (var hazardSpawn in hazardBuildersInChunk)
+            {
+                _hazardBuilders.Remove(hazardSpawn);
+            }
+
+            return hazardBuildersInChunk;
         }
 
         public override string ToString() => Name;

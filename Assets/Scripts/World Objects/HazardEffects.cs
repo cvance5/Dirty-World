@@ -1,5 +1,6 @@
 ﻿public enum HazardEffects
 {
     Damage,
-    Impulse
+    Impulse,
+    Blocking
 }

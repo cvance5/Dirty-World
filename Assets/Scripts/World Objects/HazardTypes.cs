@@ -3,8 +3,7 @@
     public enum HazardTypes
     {
         None,
-        Stalagmite,
-        Stalagtite,
+        Stalag,
         SharpRocks
     }
 }

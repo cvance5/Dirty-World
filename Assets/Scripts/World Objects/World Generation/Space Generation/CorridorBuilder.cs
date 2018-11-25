@@ -19,7 +19,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private int _length;
 
         private int _extraRiskPoints;
-        private bool _isHazardous;
         private bool _allowEnemies = true;
 
         public CorridorBuilder(ChunkBuilder containingChunk)
@@ -28,12 +27,10 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _height = Random.Range(1, 10);
             _length = Random.Range(_length + 1, 100);
 
-            var startingPoint = new IntVector2(Random.Range(_containingChunk.BottomLeft.X, _containingChunk.TopRight.X),
-                                               Random.Range(_containingChunk.BottomLeft.Y, _containingChunk.TopRight.Y));
+            var startingPoint = new IntVector2(Random.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
+                                               Random.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
 
             SetStartingPoint(startingPoint, Enum<CorridorAlignment>.Random);
-
-            _isHazardous = Chance.OneIn(5);
         }
 
         public CorridorBuilder SetStartingPoint(IntVector2 startingPoint, CorridorAlignment alignment)
@@ -63,12 +60,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _height = blocksHigh;
             _height = Mathf.Max(0, _height);
-            return this;
-        }
-
-        public CorridorBuilder SetHazards(bool hasHazards)
-        {
-            _isHazardous = hasHazards;
             return this;
         }
 
@@ -146,11 +137,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
         }
 
-        public override Space Build()
+        protected override Space BuildRaw()
         {
-            var corridor = new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height), _isHazardous);
+            var corridor = new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height));
             corridor.AddEnemySpawns(GenerateContainedEnemies());
-            return ApplyModifiers(corridor);
+            return corridor;
         }
 
         private List<EnemySpawn> GenerateContainedEnemies()
@@ -159,7 +150,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             if (_allowEnemies)
             {
-                var riskPoints = EnemyPicker.DetermineRiskPoints(_containingChunk.Depth, _containingChunk.Remoteness);
+                var riskPoints = EnemyPicker.DetermineRiskPoints(_chunkBuilder.Depth, _chunkBuilder.Remoteness);
                 riskPoints += _extraRiskPoints;
 
                 var enemies = EnemyPicker.RequestEnemies(riskPoints, new EnemyRequestCriteria()

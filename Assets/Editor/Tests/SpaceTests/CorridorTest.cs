@@ -3,7 +3,6 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using WorldObjects;
 using WorldObjects.Blocks;
-using WorldObjects.Hazards;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration;
 using WorldObjects.WorldGeneration.EnemyGeneration;
@@ -24,7 +23,7 @@ namespace Tests.SpaceTests
         [Test]
         public void CorridorContainsTest()
         {
-            var corridor = new Corridor(new IntVector2(-2, -2), new IntVector2(2, 2), false);
+            var corridor = new Corridor(new IntVector2(-2, -2), new IntVector2(2, 2));
 
             for (var x = -5; x <= 5; x++)
             {
@@ -184,40 +183,16 @@ namespace Tests.SpaceTests
         }
 
         [Test]
-        public void CorridorBuilderSetHazardsTest()
-        {
-            var setHazardousCorridor = new CorridorBuilder(_testChunk)
-                                           .SetHazards(true)
-                                           .Build() as Corridor;
-
-            for (var y = setHazardousCorridor.BottomLeftCorner.Y; y <= setHazardousCorridor.TopRightCorner.Y; y++)
-            {
-                for (var x = setHazardousCorridor.BottomLeftCorner.X; x <= setHazardousCorridor.TopRightCorner.X; x++)
-                {
-                    if (y == setHazardousCorridor.BottomLeftCorner.Y)
-                    {
-                        Assert.AreEqual(HazardTypes.Stalagmite, setHazardousCorridor.GetHazard(new IntVector2(x, y)), $"No spikes found at [{x},{y}].");
-                    }
-                    else
-                    {
-                        Assert.AreEqual(HazardTypes.None, setHazardousCorridor.GetHazard(new IntVector2(x, y)), $"Spikes found at [{x},{y}].");
-                    }
-                }
-            }
-        }
-
-        [Test]
         public void CorridorGetBlockTest()
         {
             var corridor = new CorridorBuilder(_testChunk)
-                               .SetHazards(false)
                                .Build() as Corridor;
 
             for (var x = corridor.BottomLeftCorner.X; x <= corridor.TopRightCorner.X; x++)
             {
                 for (var y = corridor.BottomLeftCorner.Y; y <= corridor.TopRightCorner.Y; y++)
                 {
-                    var block = corridor.GetBlock(new IntVector2(x, y));
+                    var block = corridor.GetBlockType(new IntVector2(x, y));
                     Assert.AreEqual(BlockTypes.None, block, $"Found the wrong block at [{x},{y}].");
                 }
             }

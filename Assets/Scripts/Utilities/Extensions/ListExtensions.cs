@@ -5,7 +5,7 @@ public static class List
 {
     public static T RandomItem<T>(this List<T> list)
     {
-        int randomValue = UnityEngine.Random.Range(0, list.Count);
+        var randomValue = UnityEngine.Random.Range(0, list.Count);
         return list[randomValue];
     }
 
@@ -24,7 +24,13 @@ public static class List
         return newList.RandomItem();
     }
 
-    public static T LoopedNext<T>(this List<T> list, ref int index)
+    public static void RemoveAtRandom<T>(this List<T> list)
+    {
+        var randomValue = UnityEngine.Random.Range(0, list.Count);
+        list.RemoveAt(randomValue);
+    }
+
+    public static T LoopedNext<T>(this List<T> list, int index)
     {
         if (list == null || list.Count == 0 || index > list.Count || index < 0)
         {
@@ -42,7 +48,7 @@ public static class List
         return list[index];
     }
 
-    public static T LoopedNext<T>(this T[] array, ref int index)
+    public static T LoopedNext<T>(this T[] array, int index)
     {
         if (array == null || array.Length == 0 || index > array.Length || index < 0)
         {
@@ -59,7 +65,7 @@ public static class List
 
         return array[index];
     }
-    public static T LoopedPrevious<T>(this List<T> list, ref int index)
+    public static T LoopedPrevious<T>(this List<T> list, int index)
     {
         if (list == null || list.Count == 0 || index > list.Count || index < 0)
         {
@@ -76,7 +82,7 @@ public static class List
 
         return list[index];
     }
-    public static T LoopedPrevious<T>(this T[] array, ref int index)
+    public static T LoopedPrevious<T>(this T[] array, int index)
     {
         if (array == null || array.Length == 0 || index > array.Length || index < 0)
         {

@@ -26,8 +26,8 @@ namespace WorldObjects.WorldGeneration
             _width = rand.Next(1, 10);
             _height = rand.Next(_width + 1, 100);
 
-            var startingPoint = new IntVector2(rand.Next(containingChunk.BottomLeft.X, containingChunk.TopRight.X),
-                                               rand.Next(containingChunk.BottomLeft.Y, containingChunk.TopRight.Y));
+            var startingPoint = new IntVector2(rand.Next(containingChunk.BottomLeftCorner.X, containingChunk.TopRightCorner.X),
+                                               rand.Next(containingChunk.BottomLeftCorner.Y, containingChunk.TopRightCorner.Y));
 
             SetStartingPoint(startingPoint, Enum<ShaftAlignment>.Random);
         }
@@ -124,11 +124,7 @@ namespace WorldObjects.WorldGeneration
             else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
         }
 
-        public override Space Build()
-        {
-            var shaft = new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _wasClampedTop);
-            return ApplyModifiers(shaft);
-        }
+        protected override Space BuildRaw() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _wasClampedTop);
 
         private void FindAllPoints()
         {

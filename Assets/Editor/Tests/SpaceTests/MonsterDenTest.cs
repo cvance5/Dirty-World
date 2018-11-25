@@ -199,7 +199,7 @@ namespace Tests.SpaceTests
 
                 for (var y = MonsterDen.Centerpoint.Y; y <= MonsterDen.Centerpoint.Y + MonsterDen.Radius - offsetFromCenter; y++)
                 {
-                    var block = MonsterDen.GetBlock(new IntVector2(x, y));
+                    var block = MonsterDen.GetBlockType(new IntVector2(x, y));
                     Assert.AreEqual(block, BlockTypes.None, $"Found the wrong block at [{x},{y}].");
                 }
             }

@@ -165,7 +165,7 @@ namespace Tests.SpaceTests
             {
                 for (var y = shaft.BottomLeftCorner.Y; y <= shaft.TopRightCorner.Y; y++)
                 {
-                    var block = shaft.GetBlock(new IntVector2(x, y));
+                    var block = shaft.GetBlockType(new IntVector2(x, y));
 
                     if (y == shaft.TopRightCorner.Y)
                     {

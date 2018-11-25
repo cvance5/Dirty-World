@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Blocks;
-using WorldObjects.Hazards;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.EnemyGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
@@ -11,8 +10,8 @@ namespace WorldObjects.WorldGeneration
 {
     public class ChunkBuilder
     {
-        public IntVector2 BottomLeft { get; private set; }
-        public IntVector2 TopRight { get; private set; }
+        public IntVector2 BottomLeftCorner { get; private set; }
+        public IntVector2 TopRightCorner { get; private set; }
 
         public int Depth { get; private set; }
         public int Remoteness { get; private set; }
@@ -21,6 +20,9 @@ namespace WorldObjects.WorldGeneration
         private List<BlockBuilder> _blockBuilders = new List<BlockBuilder>();
         private List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
         private List<IntVector2> _boundedDirections = new List<IntVector2>();
+
+        private readonly Dictionary<IntVector2, BlockBuilder> _blockMap
+                   = new Dictionary<IntVector2, BlockBuilder>();
 
         private readonly ChunkBlueprint _blueprint;
 
@@ -36,8 +38,8 @@ namespace WorldObjects.WorldGeneration
 
             var startingPoint = new IntVector2(-_halfChunkSize, -_halfChunkSize);
 
-            BottomLeft = new IntVector2(chunkWorldCenterpoint.X - _halfChunkSize, chunkWorldCenterpoint.Y - _halfChunkSize);
-            TopRight = new IntVector2(chunkWorldCenterpoint.X + _halfChunkSize, chunkWorldCenterpoint.Y + _halfChunkSize);
+            BottomLeftCorner = new IntVector2(chunkWorldCenterpoint.X - _halfChunkSize, chunkWorldCenterpoint.Y - _halfChunkSize);
+            TopRightCorner = new IntVector2(chunkWorldCenterpoint.X + _halfChunkSize - 1, chunkWorldCenterpoint.Y + _halfChunkSize - 1);
 
             Depth = _chunkWorldCenterpoint.Y / _chunkSize;
             Remoteness = Mathf.Abs(_chunkWorldCenterpoint.X / _chunkSize) + Mathf.Abs(_chunkWorldCenterpoint.Y / _chunkSize);
@@ -51,6 +53,7 @@ namespace WorldObjects.WorldGeneration
                     var positionInChunk = startingPoint + offset;
                     var blockBuilder = new BlockBuilder(_chunkWorldCenterpoint + positionInChunk);
                     _blockBuilders.Add(blockBuilder);
+                    _blockMap.Add(blockBuilder.Position, blockBuilder);
                 }
             }
 
@@ -69,6 +72,12 @@ namespace WorldObjects.WorldGeneration
 
             _blueprint = blueprint;
         }
+
+        public bool Contains(IntVector2 position) =>
+                position.X >= BottomLeftCorner.X &&
+                position.Y >= BottomLeftCorner.Y &&
+                position.X <= TopRightCorner.X &&
+                position.Y <= TopRightCorner.Y;
 
         public ChunkBuilder AddSpace(SpaceBuilder spaceBuilder)
         {
@@ -154,6 +163,14 @@ namespace WorldObjects.WorldGeneration
             return this;
         }
 
+        public BlockTypes GetAnticipatedBlockType(IntVector2 position)
+        {
+            var builder = _blockMap[position];
+
+            if (builder.IsFill) return FillBlock;
+            else return builder.Type;
+        }
+
         public Chunk Build()
         {
             var chunk = new GameObject($"Chunk [{_chunkWorldCenterpoint.X}, {_chunkWorldCenterpoint.Y}]").AddComponent<Chunk>();
@@ -188,45 +205,37 @@ namespace WorldObjects.WorldGeneration
                 }
             }
 
-            var hazardsToAdd = new List<Hazard>();
-
             foreach (var builder in _blockBuilders)
             {
-                var position = builder.WorldPosition;
+                var position = builder.Position;
 
-                var blockToBuild = BlockTypes.None;
+                var block = BlockTypes.None;
 
                 var containingSpace = spaces.Find(space => space.Contains(position));
 
                 if (containingSpace != null)
                 {
-                    blockToBuild = containingSpace.GetBlock(position);
-
-                    if (containingSpace.IsHazardous)
-                    {
-                        var hazardType = containingSpace.GetHazard(position);
-
-                        if (hazardType != HazardTypes.None)
-                        {
-                            hazardsToAdd.Add(HazardLoader.CreateHazard(hazardType, position));
-                        }
-                    }
+                    block = containingSpace.GetBlockType(position);
                 }
                 else
                 {
                     if (builder.IsFill) builder.SetType(FillBlock);
-                    blockToBuild = builder.Build();
+                    block = builder.Build();
                 }
 
-                if (blockToBuild != BlockTypes.None)
+                if (block != BlockTypes.None)
                 {
-                    chunk.Register(BlockLoader.CreateBlock(blockToBuild, position));
+                    chunk.Register(BlockLoader.CreateBlock(block, position));
                 }
             }
 
-            foreach (var hazardToAdd in hazardsToAdd)
+            foreach (var space in chunk.Spaces)
             {
-                chunk.Register(hazardToAdd);
+                foreach (var hazardSpawn in space.GetHazardBuildersInChunk(chunk))
+                {
+                    var hazard = hazardSpawn.Build(chunk, space);
+                    if (hazard != null) chunk.Register(hazard);
+                }
             }
 
             foreach (var enemyToAdd in enemiesToAdd)
@@ -245,6 +254,7 @@ namespace WorldObjects.WorldGeneration
             }
 
             _blockBuilders.Clear();
+            _blockMap.Clear();
             _spaceBuilders.Clear();
 
             Chunk.OnChunkChanged.Raise(chunk);

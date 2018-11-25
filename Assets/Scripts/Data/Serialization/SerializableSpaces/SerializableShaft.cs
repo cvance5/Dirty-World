@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using WorldObjects.Spaces;
-using WorldObjects.WorldGeneration;
 
 namespace Data.Serialization.SerializableSpaces
 {
@@ -32,12 +31,6 @@ namespace Data.Serialization.SerializableSpaces
         {
             Space shaft = new Shaft(_bottomLeftCorner, _topRightCorner, _isUncapped);
             shaft.AddEnemySpawns(_enemySpawns);
-
-            foreach (var modifier in _modifiers)
-            {
-                shaft = SpacePicker.ApplyModifier(shaft, modifier);
-            }
-
             return shaft;
         }
     }

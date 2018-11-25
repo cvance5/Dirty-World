@@ -1,9 +1,12 @@
 ﻿using Newtonsoft.Json;
 using UnityEngine;
 
+[JsonObject(MemberSerialization = MemberSerialization.OptIn)]
 public class IntVector2
 {
+    [JsonProperty("X")]
     public int X { get; set; }
+    [JsonProperty("Y")]
     public int Y { get; set; }
 
     [JsonConstructor]
@@ -20,6 +23,14 @@ public class IntVector2
     }
 
     public float Magnitude => Mathf.Sqrt((X * X) + (Y * Y));
+    public Vector2 Normalized
+    {
+        get
+        {
+            var mag = Magnitude;
+            return new Vector2(X / mag, Y / mag);
+        }
+    }
 
     public static float Distance(IntVector2 pos1, IntVector2 pos2) => ((pos1.X - pos2.X) * (pos1.X - pos2.X) + (pos1.Y - pos2.Y) * (pos1.Y - pos2.Y));
     public static float Distance(IntVector2 pos1, Vector2 pos2) => ((pos1.X - pos2.x) * (pos1.X - pos2.x) + (pos1.Y - pos2.y) * (pos1.Y - pos2.y));
@@ -27,11 +38,13 @@ public class IntVector2
 
     public static IntVector2 operator +(IntVector2 lhs, IntVector2 rhs) => new IntVector2(lhs.X + rhs.X, lhs.Y + rhs.Y);
     public static IntVector2 operator +(IntVector2 lhs, Vector2 rhs) => lhs + new IntVector2(rhs);
+    public static IntVector2 operator -(IntVector2 lhs, IntVector2 rhs) => new IntVector2(lhs.X - rhs.X, lhs.Y - rhs.Y);
     public static IntVector2 operator -(IntVector2 vec) => new IntVector2(-vec.X, -vec.Y);
 
     public static IntVector2 operator *(IntVector2 vec, int operand) => new IntVector2(vec.X * operand, vec.Y * operand);
+    public static IntVector2 operator /(IntVector2 vec, float operand) => new IntVector2(Mathf.CeilToInt(vec.X / operand), Mathf.CeilToInt(vec.Y / operand));
 
-    public static bool operator ==(IntVector2 lhs, object rhs) => lhs.Equals(rhs);
+    public static bool operator ==(IntVector2 lhs, object rhs) => lhs is null ? rhs == null : lhs.Equals(rhs);
     public static bool operator !=(IntVector2 lhs, object rhs) => !(lhs == rhs);
 
     public static implicit operator IntVector2(Vector2 source) => new IntVector2(source);

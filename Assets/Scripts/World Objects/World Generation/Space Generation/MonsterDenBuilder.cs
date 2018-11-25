@@ -20,8 +20,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public MonsterDenBuilder(ChunkBuilder containingChunk)
             : base(containingChunk)
         {
-            _centerpoint = new IntVector2(Random.Range(_containingChunk.BottomLeft.X, _containingChunk.TopRight.X),
-                                          Random.Range(_containingChunk.BottomLeft.Y, _containingChunk.TopRight.Y));
+            _centerpoint = new IntVector2(Random.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
+                                          Random.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
 
             _radius = Random.Range(8, 20);
         }
@@ -52,11 +52,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public override Spaces.Space Build()
+        protected override Spaces.Space BuildRaw()
         {
             var monsterDen = new MonsterDen(_centerpoint, _radius);
             monsterDen.AddEnemySpawns(GenerateContainedEnemies());
-            return ApplyModifiers(monsterDen);
+            return monsterDen;
         }
 
         protected override void Clamp(IntVector2 direction, int amount)
@@ -125,7 +125,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             if (_allowEnemies)
             {
-                var riskPoints = EnemyPicker.DetermineRiskPoints(_containingChunk.Depth, _containingChunk.Remoteness);
+                var riskPoints = EnemyPicker.DetermineRiskPoints(_chunkBuilder.Depth, _chunkBuilder.Remoteness);
                 riskPoints = Math.Max(riskPoints, 10);
                 riskPoints += _extraRiskPoints;
 

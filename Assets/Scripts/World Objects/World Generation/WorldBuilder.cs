@@ -26,7 +26,6 @@ namespace WorldObjects.WorldGeneration
                 .SetHeight(1)
                 .SetLength(100)
                 .SetAllowEnemies(false)
-                .SetHazards(false)
                 .AddModifier(ModifierTypes.Cavernous);
 
             var sBuilder2 = new CorridorBuilder(cBuilder)
@@ -34,7 +33,6 @@ namespace WorldObjects.WorldGeneration
                 .SetHeight(3)
                 .SetLength(5)
                 .SetAllowEnemies(false)
-                .SetHazards(false)
                 .AddModifier(ModifierTypes.Cavernous);
 
             cBuilder.AddSpace(sBuilder)

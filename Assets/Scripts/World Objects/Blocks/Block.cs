@@ -1,8 +1,8 @@
-﻿using WorldObjects.Actors;
-using Metadata;
+﻿using Metadata;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WorldObjects.Actors;
 using WorldObjects.Hazards;
 
 namespace WorldObjects.Blocks
@@ -21,6 +21,8 @@ namespace WorldObjects.Blocks
         public int Stability { get; set; } = 100;
 
         public bool CanStabalize { get; set; }
+
+        public abstract BlockTypes Type { get; }
 
         [SerializeField]
         [Range(0, 1)]
@@ -277,10 +279,7 @@ namespace WorldObjects.Blocks
 
         protected void HandleActor(ActorData actorData, int impactMagnitude) => actorData.ApplyDamage(impactMagnitude);
 
-        protected override void OnWorldObjectDestroy()
-        {
-            DropItem();
-        }
+        protected override void OnWorldObjectDestroy() => DropItem();
 
         protected static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("Block");
     }

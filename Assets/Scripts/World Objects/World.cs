@@ -31,22 +31,27 @@ namespace WorldObjects
             }
         }
 
+        public Block GetBlock(IntVector2 position)
+        {
+            foreach (var chunk in _activeChunks)
+            {
+                if (chunk.Contains(position))
+                {
+                    return chunk.GetBlockForPosition(position);
+                }
+            }
+
+            throw new System.NotImplementedException($"Check inactive chunks too!");
+        }
+
         public List<Block> GetNeighbors(Block block)
         {
             var neighbors = new List<Block>();
 
             foreach (var dir in Directions.Cardinals)
             {
-                Block neighbor = null;
                 var neighborPos = block.Position + dir;
-
-                foreach (var chunk in _activeChunks)
-                {
-                    if (chunk.Contains(neighborPos))
-                    {
-                        neighbor = chunk.GetBlockForPosition(neighborPos);
-                    }
-                }
+                var neighbor = GetBlock(neighborPos);
 
                 if (neighbor != null) neighbors.Add(neighbor);
             }

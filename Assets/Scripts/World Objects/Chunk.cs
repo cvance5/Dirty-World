@@ -87,18 +87,8 @@ namespace WorldObjects
 
         public void Register(Hazard hazard)
         {
-            var anchorPos = hazard.AnchoringPosition;
-            var isAnchored = true;
-
-            if (anchorPos != null)
-            {
-                BlockMap.TryGetValue(anchorPos, out var anchor);
-                isAnchored = hazard.SetAnchor(anchor);
-            }
-
-            // The hazard may have destroyed itself because of its 
-            // anchoring situation.
-            if (isAnchored)
+            // Hazards may not survive initialization
+            if (hazard != null)
             {
                 Hazards.Add(hazard);
                 hazard.transform.SetParent(transform, true);

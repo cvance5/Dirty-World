@@ -5,13 +5,13 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public abstract class SpaceBuilder
     {
-        protected ChunkBuilder _containingChunk { get; private set; }
+        protected ChunkBuilder _chunkBuilder { get; private set; }
         protected Dictionary<IntVector2, int> _boundedDirections { get; private set; } =
               new Dictionary<IntVector2, int>();
 
-        private readonly List<ModifierTypes> _modifiersApplied = new List<ModifierTypes>();
+        private readonly List<SpaceModifier> _modifiersApplied = new List<SpaceModifier>();
 
-        public SpaceBuilder(ChunkBuilder containingChunk) => _containingChunk = containingChunk;
+        public SpaceBuilder(ChunkBuilder chunkBuilder) => _chunkBuilder = chunkBuilder;
 
         public SpaceBuilder AddBoundary(IntVector2 direction, int amount)
         {
@@ -30,9 +30,13 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public SpaceBuilder AddModifier(ModifierTypes modifier)
         {
-            if (!_modifiersApplied.Contains(modifier))
+            switch (modifier)
             {
-                _modifiersApplied.Add(modifier);
+                case ModifierTypes.Cavernous:
+                    _modifiersApplied.Add(new CavernousModifier(_chunkBuilder, this));
+                    break;
+
+                default: throw new System.ArgumentException($"Unknown modifier of type `{modifier}`.  Cannot construct.");
             }
 
             return this;
@@ -41,16 +45,18 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         protected abstract void Clamp(IntVector2 direction, int amount);
         protected abstract void Cut(IntVector2 direction, int amount);
 
-        protected Space ApplyModifiers(Space builtSpace)
+        public Space Build()
         {
-            foreach (var modifier in _modifiersApplied)
+            var rawSpace = BuildRaw();
+
+            foreach (var modifierApplied in _modifiersApplied)
             {
-                builtSpace = SpacePicker.ApplyModifier(builtSpace, modifier);
+                modifierApplied.Modify(rawSpace);
             }
 
-            return builtSpace;
+            return rawSpace;
         }
 
-        public abstract Space Build();
+        protected abstract Space BuildRaw();
     }
 }

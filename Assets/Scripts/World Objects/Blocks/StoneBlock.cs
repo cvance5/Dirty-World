@@ -5,6 +5,7 @@ namespace WorldObjects.Blocks
     public class StoneBlock : Block
     {
         public override string ObjectName => $"Stone {Position}";
+        public override BlockTypes Type => BlockTypes.Stone;
 
         protected override IEnumerator Crumble()
         {

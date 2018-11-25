@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using WorldObjects.Blocks;
-using WorldObjects.Hazards;
 
 namespace WorldObjects.Spaces
 {
@@ -8,10 +7,10 @@ namespace WorldObjects.Spaces
     {
         public override string Name => $"Monster Den starting {Centerpoint} extending {Radius}.";
 
-        public override bool IsHazardous => true;
-
         public IntVector2 Centerpoint { get; }
         public int Radius { get; }
+
+        public override int Area => Mathf.RoundToInt(Mathf.PI * (Radius * Radius) / 2);
 
         public MonsterDen(IntVector2 centerpoint, int radius)
         {
@@ -34,14 +33,25 @@ namespace WorldObjects.Spaces
             }
             else
             {
-                var distanceFromCenterpoint = Mathf.Abs(Centerpoint.X - position.X);
-                var maxHeightAtDistance = Centerpoint.Y + Radius - distanceFromCenterpoint;
-
+                var maxHeightAtDistance = Centerpoint.Y + Radius - DistanceFromCenterpoint(position.X);
                 return position.Y <= maxHeightAtDistance;
             }
         }
 
-        public override BlockTypes GetBlock(IntVector2 position) => BlockTypes.None;
-        public override HazardTypes GetHazard(IntVector2 position) => HazardTypes.None;
+        public override IntVector2 GetRandomPosition()
+        {
+            var randomX = Random.Range(Centerpoint.X - Radius, Centerpoint.X + Radius);
+            var randomY = Random.Range(Centerpoint.Y, Centerpoint.Y + Radius - DistanceFromCenterpoint(randomX));
+
+            return new IntVector2(randomX, randomY);
+        }
+
+        public override BlockTypes GetBlockType(IntVector2 position)
+        {
+            if (!Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
+            return BlockTypes.None;
+        }
+
+        private int DistanceFromCenterpoint(int x) => Mathf.Abs(Centerpoint.X - x);
     }
 }

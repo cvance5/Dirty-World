@@ -9,6 +9,7 @@ namespace WorldObjects.Blocks
         private int _numNeighbors;
 
         public override string ObjectName => $"Dirt {Position}";
+        public override BlockTypes Type => BlockTypes.Dirt;
 
         public override void HandleNeighborUpdate()
         {

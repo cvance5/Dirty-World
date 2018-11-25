@@ -63,7 +63,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6416edd38b49054dbe184981f6b89f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spikeHazard: {fileID: 1798226161578446, guid: f5386b2b2e8b54046be4c107b8e3049d, type: 3}
+  _stalag: {fileID: 3996498084922597456, guid: bb2b05b637b611441b0a0c4b5c18ccb4, type: 3}
 --- !u!114 &114229974030424468
 MonoBehaviour:
   m_ObjectHideFlags: 0

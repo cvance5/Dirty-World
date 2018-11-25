@@ -11,8 +11,6 @@ namespace Data.Serialization.SerializableSpaces
         private readonly IntVector2 _bottomLeftCorner;
         [JsonProperty("topRightCorner")]
         private readonly IntVector2 _topRightCorner;
-        [JsonProperty("isHazardous")]
-        private readonly bool _isHazardous;
 
         [JsonConstructor]
         public SerializableCorridor() { }
@@ -21,7 +19,6 @@ namespace Data.Serialization.SerializableSpaces
         {
             _bottomLeftCorner = corridor.BottomLeftCorner;
             _topRightCorner = corridor.TopRightCorner;
-            _isHazardous = corridor.IsHazardous;
 
             _modifiers = corridor.Modifiers;
             _enemySpawns = corridor.EnemySpawns;
@@ -29,14 +26,8 @@ namespace Data.Serialization.SerializableSpaces
 
         public override Space ToObject()
         {
-            Space corridor = new Corridor(_bottomLeftCorner, _topRightCorner, _isHazardous);
+            Space corridor = new Corridor(_bottomLeftCorner, _topRightCorner);
             corridor.AddEnemySpawns(_enemySpawns);
-
-            foreach (var modifier in _modifiers)
-            {
-                corridor = SpacePicker.ApplyModifier(corridor, modifier);
-            }
-
             return corridor;
         }
     }

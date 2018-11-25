@@ -28,12 +28,6 @@ namespace Data.Serialization.SerializableSpaces
         {
             Space monsterDen = new MonsterDen(_centerpoint, _radius);
             monsterDen.AddEnemySpawns(_enemySpawns);
-
-            foreach (var modifier in _modifiers)
-            {
-                monsterDen = SpacePicker.ApplyModifier(monsterDen, modifier);
-            }
-
             return monsterDen;
         }
     }

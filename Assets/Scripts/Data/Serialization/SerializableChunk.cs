@@ -1,7 +1,9 @@
-﻿using Data.Serialization.SerializableSpaces;
+﻿using Data.Serialization.SerializableHazards;
+using Data.Serialization.SerializableSpaces;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using WorldObjects;
+using WorldObjects.Hazards;
 using WorldObjects.Spaces;
 
 namespace Data.Serialization
@@ -54,7 +56,7 @@ namespace Data.Serialization
             _hazards = new List<SerializableHazard>();
             foreach (var hazard in chunk.Hazards)
             {
-                _hazards.Add(new SerializableHazard(hazard));
+                _hazards.Add(ToSerializableHazard(hazard));
             }
 
             _enemies = new List<SerializableEnemy>();
@@ -102,12 +104,6 @@ namespace Data.Serialization
 
         private SerializableSpace ToSerializableSpace(Space space)
         {
-            while (space is SpaceModifier)
-            {
-                var modifier = space as SpaceModifier;
-                space = modifier.ModifiedSpace;
-            }
-
             if (space is Shaft)
             {
                 return new SerializableShaft(space as Shaft);
@@ -121,6 +117,15 @@ namespace Data.Serialization
                 return new SerializableMonsterDen(space as MonsterDen);
             }
             else throw new System.Exception($"Unknown space type: {space.GetType().Name}. Cannot serialize.");
+        }
+
+        private SerializableHazard ToSerializableHazard(Hazard hazard)
+        {
+            if (hazard is StalagHazard)
+            {
+                return new SerializableStalag(hazard as StalagHazard);
+            }
+            else throw new System.Exception($"Unknown hazard type: {hazard.GetType().Name}.  Cannot serialize.");
         }
     }
 }

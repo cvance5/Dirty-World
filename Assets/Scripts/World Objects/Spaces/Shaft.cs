@@ -1,5 +1,4 @@
 ﻿using WorldObjects.Blocks;
-using WorldObjects.Hazards;
 
 namespace WorldObjects.Spaces
 {
@@ -7,13 +6,14 @@ namespace WorldObjects.Spaces
     {
         public override string Name => $"Shaft from {BottomLeftCorner} to {TopRightCorner}.";
 
-        public override bool IsHazardous => false;
         public bool IsUncapped { get; }
+
         public IntVector2 BottomLeftCorner { get; }
         public IntVector2 TopRightCorner { get; }
 
         public int Height => TopRightCorner.Y - BottomLeftCorner.Y;
         public int Width => TopRightCorner.X - BottomLeftCorner.X;
+        public override int Area => Height * Width;
 
         public Shaft(IntVector2 bottomLeftCorner, IntVector2 topRightCorner, bool isUncapped)
         {
@@ -34,8 +34,14 @@ namespace WorldObjects.Spaces
             position.X > TopRightCorner.X ||
             position.Y > TopRightCorner.Y);
 
-        public override BlockTypes GetBlock(IntVector2 position)
+        public override IntVector2 GetRandomPosition() => 
+            new IntVector2(UnityEngine.Random.Range(BottomLeftCorner.X, TopRightCorner.X),
+                           UnityEngine.Random.Range(BottomLeftCorner.Y, TopRightCorner.Y));
+
+        public override BlockTypes GetBlockType(IntVector2 position)
         {
+            if (!Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
+
             var block = BlockTypes.None;
 
             if (!IsUncapped &&
@@ -53,7 +59,5 @@ namespace WorldObjects.Spaces
 
             return block;
         }
-
-        public override HazardTypes GetHazard(IntVector2 position) => HazardTypes.None;
     }
 }
