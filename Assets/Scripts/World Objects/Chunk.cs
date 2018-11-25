@@ -87,13 +87,9 @@ namespace WorldObjects
 
         public void Register(Hazard hazard)
         {
-            // Hazards may not survive initialization
-            if (hazard != null)
-            {
-                Hazards.Add(hazard);
-                hazard.transform.SetParent(transform, true);
-                hazard.OnHazardDestroyed += OnHazardRemoved;
-            }
+            Hazards.Add(hazard);
+            hazard.transform.SetParent(transform, true);
+            hazard.OnHazardDestroyed += OnHazardRemoved;
         }
 
         public void Register(EnemyData enemy)
