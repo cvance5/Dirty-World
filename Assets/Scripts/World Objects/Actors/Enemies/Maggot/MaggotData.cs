@@ -4,7 +4,7 @@ namespace WorldObjects.Actors.Enemies.Maggot
 {
     public class MaggotData : EnemyData, IHittable
     {
-        public SmartEvent<int, int> OnHit { get; set; } = new SmartEvent<int, int>();
+        public SmartEvent<IHittable, int, int> OnHit { get; set; } = new SmartEvent<IHittable, int, int>();
 
         public override string ObjectName => "Maggot";
 
@@ -16,7 +16,7 @@ namespace WorldObjects.Actors.Enemies.Maggot
         public void Hit(int damage, int force)
         {
             ApplyDamage(damage + (force / 2));
-            OnHit.Raise(damage, force);
+            OnHit.Raise(this, damage, force);
         }
 
         protected override void OnDamage() { }

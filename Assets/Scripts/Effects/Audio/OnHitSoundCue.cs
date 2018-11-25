@@ -27,7 +27,7 @@ namespace Effects.Audio
             else attachedHittable.OnHit += OnHit;
         }
 
-        private void OnHit(int damage, int force)
+        private void OnHit(IHittable hitObject, int damage, int force)
         {
             AudioClip soundToPlay;
             int hitIntensity;

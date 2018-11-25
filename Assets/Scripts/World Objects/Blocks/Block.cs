@@ -11,7 +11,7 @@ namespace WorldObjects.Blocks
     [RequireComponent(typeof(Rigidbody2D))]
     public abstract class Block : WorldObject, IHittable, IImpulsable
     {
-        public SmartEvent<int, int> OnHit { get; set; } = new SmartEvent<int, int>();
+        public SmartEvent<IHittable, int, int> OnHit { get; set; } = new SmartEvent<IHittable, int, int>();
 
         public SmartEvent<Block> OnBlockCrumbled { get; set; } = new SmartEvent<Block>();
         public SmartEvent<Block> OnBlockDestroyed { get; set; } = new SmartEvent<Block>();
@@ -69,7 +69,7 @@ namespace WorldObjects.Blocks
             if (Health > 0)
             {
                 ApplyForce(force);
-                OnHit.Raise(damage, force);
+                OnHit.Raise(this, damage, force);
             }
         }
 

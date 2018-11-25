@@ -1,7 +1,6 @@
 ﻿using Data;
 using System.Collections;
 using UnityEngine;
-using WorldObjects;
 using WorldObjects.Blocks;
 
 namespace WorldObjects.Actors.Player.Guns
