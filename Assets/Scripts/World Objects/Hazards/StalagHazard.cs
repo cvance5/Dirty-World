@@ -124,7 +124,12 @@ namespace WorldObjects.Hazards
 
             if (_stalagSegments.Count == 0)
             {
+                OnHazardDestroyed.Raise(this);
                 Destroy(this);
+            }
+            else
+            {
+                OnHazardChanged.Raise(this);
             }
         }
 

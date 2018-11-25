@@ -89,7 +89,9 @@ namespace WorldObjects
         {
             Hazards.Add(hazard);
             hazard.transform.SetParent(transform, true);
-            hazard.OnHazardDestroyed += OnHazardRemoved;
+
+            hazard.OnHazardChanged += OnHazardChanged;
+            hazard.OnHazardDestroyed += OnHazardDestroyed;
         }
 
         public void Register(EnemyData enemy)
@@ -162,16 +164,26 @@ namespace WorldObjects
             OnChunkChanged.Raise(this);
         }
 
-        private void OnHazardRemoved(Hazard hazard)
+        private void OnHazardChanged(Hazard hazard)
+        {
+            if (!Hazards.Contains(hazard))
+            {
+                throw new InvalidOperationException($"Attempted to updated hazard `{hazard}` but it could not be found!");
+            }
+            else OnChunkChanged.Raise(this);
+        }
+
+        private void OnHazardDestroyed(Hazard hazard)
         {
             if (Hazards.Contains(hazard))
             {
                 Hazards.Remove(hazard);
                 _log.Info($"Hazard {hazard} has been removed.");
             }
-            else throw new Exception($"Attempted to remove hazard {hazard} but it could not be found!");
+            else throw new InvalidOperationException($"Attempted to remove hazard {hazard} but it could not be found!");
 
-            hazard.OnHazardDestroyed -= OnHazardRemoved;
+            hazard.OnHazardChanged -= OnHazardChanged;
+            hazard.OnHazardDestroyed -= OnHazardDestroyed;
 
             OnChunkChanged.Raise(this);
         }
