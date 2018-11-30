@@ -17,19 +17,25 @@
             if (obj == null) PrintError(_preface + message);
         }
 
-        private static void PrintError(string message) =>
+        private static void PrintError(string message)
+        {
 #if UNITY_EDITOR
             UnityEngine.Debug.LogError(message);
 #endif
+        }
 
-        private static void PrintWarning(string message) =>
+        private static void PrintWarning(string message)
+        {
 #if UNITY_EDITOR
             UnityEngine.Debug.LogWarning(message);
 #endif
+        }
 
-        private static void PrintInfo(string message) =>
+        private static void PrintInfo(string message)
+        {
 #if UNITY_EDITOR
             UnityEngine.Debug.Log(message);
 #endif
+        }
     }
 }
