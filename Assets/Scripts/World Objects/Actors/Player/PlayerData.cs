@@ -5,8 +5,10 @@ using System.Collections.Generic;
 
 namespace WorldObjects.Actors.Player
 {
-    public class PlayerData : ActorData
+    public class PlayerData : ActorData, IHittable
     {
+        public SmartEvent<IHittable, int, int> OnHit { get; set; } = new SmartEvent<IHittable, int, int>();
+
         private Character _character = null;
 
         public override string ObjectName => "Player";
@@ -27,6 +29,11 @@ namespace WorldObjects.Actors.Player
             {
                 _character.Inventory.Add(item);
             }
+        }
+
+        public void Hit(int damage, int force)
+        {
+            ApplyDamage(damage);
         }
 
         protected override void OnDamage() { }
