@@ -5,7 +5,7 @@ using WorldObjects;
 using WorldObjects.Spaces;
 using Space = WorldObjects.Spaces.Space;
 
-namespace Utilities.Debug
+namespace Utilities.Editor
 {
     public class ChunkGizmoDrawer : Singleton<ChunkGizmoDrawer>
     {

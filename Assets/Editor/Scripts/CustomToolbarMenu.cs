@@ -3,6 +3,7 @@ using UnityEditor;
 
 public class CustomToolbarMenu
 {
+#if UNITY_EDITOR
     [MenuItem("Data/Clear User Data")]
     public static void ClearUserData()
     {
@@ -22,4 +23,5 @@ public class CustomToolbarMenu
     }
 
     private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("CustomToolbar");
+#endif
 }

@@ -1,9 +1,11 @@
 ﻿using Data;
 using Items.Weapons;
 using UnityEditor;
+using Utilities.Editor;
 
 public class CustomCreateMenu
 {
+#if UNITY_EDITOR
     [MenuItem("Assets/Create/Settings")]
     public static void CreateGameSettings()
     {
@@ -15,4 +17,5 @@ public class CustomCreateMenu
     {
         ScriptableObjectUtility.CreateAsset<WeaponDisplayData>();
     }
+#endif
 }
