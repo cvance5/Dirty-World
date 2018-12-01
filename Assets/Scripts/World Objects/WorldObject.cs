@@ -12,10 +12,11 @@ namespace WorldObjects
         public override string ToString() => ObjectName;
 
         private static bool _isQuitting = false;
+        private static bool _isLoadingNewScene = false;
 
         protected virtual void Awake()
         {
-            SceneHelper.OnSceneIsEnding += OnApplicationQuit;
+            SceneHelper.OnSceneIsEnding += OnSceneIsEnding;
             OnWorldObjectAwake();
         }
 
@@ -25,21 +26,30 @@ namespace WorldObjects
         {
             if (!_isQuitting)
             {
-                OnWorldObjectDestroyed.Raise(this);
-                OnWorldObjectDestroy();
-            }
-            else
-            {
-                OnWorldObjectUnloaded();
+                if (_isLoadingNewScene)
+                {
+                    OnWorldObjectUnloaded();
+                }
+                else
+                {
+                    OnWorldObjectDestroyed.Raise(this);
+                    OnWorldObjectDestroy();
+                }
             }
         }
 
         protected virtual void OnWorldObjectDestroy() { }
         protected virtual void OnWorldObjectUnloaded() { }
 
+        private void OnSceneIsEnding()
+        {
+            _isLoadingNewScene = true;
+            SceneHelper.OnSceneIsEnding -= OnSceneIsEnding;
+        }
+
         private void OnApplicationQuit()
         {
-            SceneHelper.OnSceneIsEnding -= OnApplicationQuit;
+            SceneHelper.OnSceneIsEnding -= OnSceneIsEnding;
             _isQuitting = true;
         }
     }
