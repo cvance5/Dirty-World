@@ -2,12 +2,17 @@
 using Data;
 using Items;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace WorldObjects.Actors.Player
 {
-    public class PlayerData : ActorData, IHittable
+    public class PlayerData : ActorData
     {
-        public SmartEvent<IHittable, int, int> OnHit { get; set; } = new SmartEvent<IHittable, int, int>();
+#pragma warning disable IDE0044 // Add readonly modifier
+        [Header("Actor Components")]
+        [SerializeField]
+        private PlayerCollider _collider = null;
+#pragma warning restore IDE0044 // Add readonly modifier
 
         private Character _character = null;
 
@@ -16,12 +21,14 @@ namespace WorldObjects.Actors.Player
         protected override void OnActorAwake()
         {
             PositionTracker.BeginTracking(this);
+
+            _collider = GetComponent<PlayerCollider>();
+
+            _collider.OnDamageTaken += ApplyDamage;
+            _collider.OnItemsCollected += AddCollectedItems;
         }
 
-        public void AssignCharacter(Character character)
-        {
-            _character = character;
-        }
+        public void AssignCharacter(Character character) => _character = character;
 
         public void AddCollectedItems(List<Item> collectedItems)
         {
@@ -31,16 +38,18 @@ namespace WorldObjects.Actors.Player
             }
         }
 
-        public void Hit(int damage, int force)
-        {
-            ApplyDamage(damage);
-        }
+        public override void Hit(int damage, int force) => ApplyDamage(damage);
 
         protected override void OnDamage() { }
 
         protected override void OnDeath()
         {
             PositionTracker.StopTracking(this);
+
+            _collider.OnDamageTaken -= ApplyDamage;
+            _collider.OnItemsCollected -= AddCollectedItems;
+
+            Destroy(_collider);
         }
     }
 }

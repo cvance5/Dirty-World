@@ -2,10 +2,8 @@
 
 namespace WorldObjects.Actors.Enemies.Maggot
 {
-    public class MaggotData : EnemyData, IHittable
+    public class MaggotData : EnemyData
     {
-        public SmartEvent<IHittable, int, int> OnHit { get; set; } = new SmartEvent<IHittable, int, int>();
-
         public override string ObjectName => "Maggot";
 
 #pragma warning disable IDE0044 // Add readonly modifier, Unity serialization requires it not be readonly
@@ -13,7 +11,7 @@ namespace WorldObjects.Actors.Enemies.Maggot
         private MaggotDeathExplosion _deathExplosion = null;
 #pragma warning restore IDE0044 // Add readonly modifier
 
-        public void Hit(int damage, int force)
+        public override void Hit(int damage, int force)
         {
             ApplyDamage(damage + (force / 2));
             OnHit.Raise(this, damage, force);

@@ -1,25 +1,15 @@
 ﻿using Items;
 using Metadata;
+using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Hazards;
 
 namespace WorldObjects.Actors.Player
 {
     [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
-    public class PlayerCollider : MonoBehaviour
+    public class PlayerCollider : ActorCollider
     {
-#pragma warning disable IDE0044 // Add readonly modifier, Unity serialization requires it not be readonly
-        [SerializeField]
-        private PlayerData _data = null;
-#pragma warning restore IDE0044 // Add readonly modifier
-
-        private Rigidbody2D _rigidbody;
-
-        private void Awake()
-        {
-            _rigidbody = GetComponent<Rigidbody2D>();
-            _data.OnActorDeath += OnPlayerDeath;
-        }
+        public SmartEvent<List<Item>> OnItemsCollected = new SmartEvent<List<Item>>();
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
@@ -54,7 +44,7 @@ namespace WorldObjects.Actors.Player
                     case InteractionTypes.Collect:
                         var collectibleItem = itemActor as ICollectible;
                         _log.ErrorIfNull(collectibleItem, $"{itemActor} has interaction {interaction} but does not implement {typeof(ICollectible).Name}.");
-                        _data.AddCollectedItems(collectibleItem.CollectedItems);
+                        OnItemsCollected.Raise(collectibleItem.CollectedItems);
                         collectibleItem.OnCollect();
                         break;
                     case InteractionTypes.Damage:
@@ -62,35 +52,6 @@ namespace WorldObjects.Actors.Player
                     default: _log.Error($"Unknown interaction '{interaction}'."); break;
                 }
             }
-        }
-
-        private void HandleHazard(Hazard hazard)
-        {
-            _log.ErrorIfNull(hazard, $"{hazard} has tag {Tags.Hazard} but does not have an item component.");
-
-            foreach (var effect in hazard.Effects)
-            {
-                switch (effect)
-                {
-                    case HazardEffects.Damage:
-                        var damagingHazard = hazard as IDamaging;
-                        _log.ErrorIfNull(damagingHazard, $"{hazard} has effect {effect} but does not implement {typeof(IDamaging).Name}.");
-                        _data.ApplyDamage(damagingHazard.Damage);
-                        break;
-                    case HazardEffects.Impulse:
-                        var knockbackHazard = hazard as IImpulsive;
-                        _log.ErrorIfNull(knockbackHazard, $"{hazard} has effect {effect} but does not implement {typeof(IImpulsive).Name}.");
-                        _rigidbody.velocity = knockbackHazard.GetImpulse(transform.position, _rigidbody.velocity);
-                        break;
-                    default: _log.Error($"Unknown effect '{effect}'."); break;
-                }
-            }
-        }
-
-        private void OnPlayerDeath(ActorData playerData)
-        {
-            playerData.OnActorDeath -= OnPlayerDeath;
-            Destroy(this);
         }
 
         private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("PlayerCollider");

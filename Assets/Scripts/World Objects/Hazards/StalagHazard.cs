@@ -12,7 +12,7 @@ namespace WorldObjects.Hazards
 
         public override string ObjectName => $"Stalag {Position}";
 
-        public override HazardEffects[] Effects { get; } = new HazardEffects[] { HazardEffects.Blocking };
+        public override HazardEffects[] Effects { get; } = new HazardEffects[] { };
         public override HazardTypes Type => HazardTypes.Stalag;
 
         private Stack<StalagSegment> _stalagSegments;

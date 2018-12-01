@@ -14,9 +14,11 @@ GameObject:
   - component: {fileID: 2109913638274587865}
   - component: {fileID: 5394810988273741417}
   - component: {fileID: 3271345641627715906}
+  - component: {fileID: 2917096158723588872}
+  - component: {fileID: 5490643556103454303}
   m_Layer: 9
-  m_Name: Stalag
-  m_TagString: Untagged
+  m_Name: StalagBase
+  m_TagString: Hazard
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -95,7 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06fa88250e2ef924cbfc05d45621f1be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _segmentObject: {fileID: 6142274372694431005, guid: 704b41ba3ade9214c9ad2b93bedfc0a8, type: 3}
+  _segmentObject: {fileID: 8432097471157424369, guid: 097fcba42462f214190e0554ceb7337c, type: 3}
 --- !u!61 &2109913638274587865
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -120,7 +122,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.9846154, y: 0.9846154}
+  m_Size: {x: 0.8, y: 0.8}
   m_EdgeRadius: 0
 --- !u!114 &5394810988273741417
 MonoBehaviour:
@@ -134,6 +136,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19040539b72ddf644818c1bb9331187f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _baseImpactDamage: 10
+  _weight: 1.75
+  _impactAbsorption: 5
 --- !u!50 &3271345641627715906
 Rigidbody2D:
   serializedVersion: 4
@@ -155,3 +160,38 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &2917096158723588872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3996498084922597456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f11124d38a8778f4786f38b1ce313a09, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onDamageSounds:
+  - {fileID: 8300000, guid: 2258aaf8e71eb9e4aa66b13dc908a002, type: 3}
+  - {fileID: 8300000, guid: 28323c16a2930d349ba07b047d036268, type: 3}
+  - {fileID: 8300000, guid: 22ad6952067701e40bed50772da8decb, type: 3}
+  - {fileID: 8300000, guid: 043a757ba1b923646b2672815f94b8db, type: 3}
+  - {fileID: 8300000, guid: af882f8b6d363a348b7f25569b1dc4e2, type: 3}
+  _onForceSounds:
+  - {fileID: 8300000, guid: 032f8cf77b24fb149a5f5880c983370d, type: 3}
+  - {fileID: 8300000, guid: 24f58c9c872690c46a24a6106b569a93, type: 3}
+--- !u!114 &5490643556103454303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3996498084922597456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf94502a97199904e9e22c6f9ecb1b33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _onWorldObjectDestroyedSounds:
+  - {fileID: 8300000, guid: 8929bd1e25720784a8d6080c5498dfc2, type: 3}
