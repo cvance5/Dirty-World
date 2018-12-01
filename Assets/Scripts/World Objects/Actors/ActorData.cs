@@ -9,9 +9,10 @@ namespace WorldObjects.Actors
         public SmartEvent<ActorData> OnActorDamaged = new SmartEvent<ActorData>();
         public SmartEvent<ActorData> OnActorDeath = new SmartEvent<ActorData>();
 
-        public int Health { get; private set; } = 100;
-
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
+        [SerializeField]
+        private int Health = 100;
+
         [SerializeField]
         private float _damageInvulnerabilityDuration = 1f;
         public float DamageInvulnerabilityDuration => _damageInvulnerabilityDuration;
