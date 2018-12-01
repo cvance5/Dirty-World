@@ -1,63 +1,43 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4040690142055907274 stripped
+--- !u!1 &5530759694735604410 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1106346448946280, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
-  m_PrefabInstance: {fileID: 4039874490102758306}
+  m_PrefabInstance: {fileID: 5531223624873541330}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1372199793976890049
+--- !u!114 &3667688750193598506
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4040690142055907274}
+  m_GameObject: {fileID: 5530759694735604410}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f11124d38a8778f4786f38b1ce313a09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _onDamageSounds:
-  - {fileID: 8300000, guid: 3d1ded6e8ba86d04c8484f4c6c4ec092, type: 3}
-  - {fileID: 8300000, guid: 98ee2b516cd35bb47a3435787b18668a, type: 3}
-  - {fileID: 8300000, guid: ba52be22a86a7ab47900bbdda0085470, type: 3}
+  - {fileID: 8300000, guid: 2969ae7b37bc0de46b980807c3bb48ee, type: 3}
+  - {fileID: 8300000, guid: 734d40d3e8348dd4e8776641ddfc505c, type: 3}
   _onForceSounds:
-  - {fileID: 8300000, guid: eb7bbb8f89707e643a331b7b9f573ffc, type: 3}
-  - {fileID: 8300000, guid: 8d866b835b68257428ff817e873a5f78, type: 3}
-  - {fileID: 8300000, guid: 04d46000ded39a04bafa532624453dcd, type: 3}
---- !u!114 &7937239762365100740
+  - {fileID: 8300000, guid: a4840a87052fe8741b933589e80238f1, type: 3}
+  - {fileID: 8300000, guid: b91f7461bd11fa54ba43b6df50ba97b0, type: 3}
+--- !u!114 &4939076651812863905
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4040690142055907274}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 08617acf7a039424abf900b45d37265e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _damageResistance: 0
-  _forceResistance: 0
-  _restabilizationThreshold: 0.01
-  _impactAbsorption: 0
-  _impactDurability: 0
-  _weight: 0.75
---- !u!114 &7625389617070798383
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4040690142055907274}
+  m_GameObject: {fileID: 5530759694735604410}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf94502a97199904e9e22c6f9ecb1b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _onWorldObjectDestroyedSounds:
-  - {fileID: 8300000, guid: 4ae9bd57bf097134d981a7dcdaad9f36, type: 3}
---- !u!1001 &4039874490102758306
+  - {fileID: 8300000, guid: 8929bd1e25720784a8d6080c5498dfc2, type: 3}
+--- !u!1001 &5531223624873541330
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -110,39 +90,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1106346448946280, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_Name
-      value: DirtBlock 1
+      value: CopperBlock
       objectReference: {fileID: 0}
     - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: bfc04ca71beb57f42b1dff15aa8c9d6d, type: 3}
-    - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
-      propertyPath: m_Size.x
-      value: 2.56
+      propertyPath: m_Color.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
-      propertyPath: m_Size.y
-      value: 2.56
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: m_Color.b
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 61819584787066844, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.x
-      value: 2.56
-      objectReference: {fileID: 0}
-    - target: {fileID: 61819584787066844, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
-      propertyPath: m_SpriteTilingProperty.oldSize.y
-      value: 2.56
-      objectReference: {fileID: 0}
-    - target: {fileID: 61819584787066844, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
-      propertyPath: m_SpriteTilingProperty.newSize.x
-      value: 2.56
-      objectReference: {fileID: 0}
-    - target: {fileID: 61819584787066844, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
-      propertyPath: m_SpriteTilingProperty.newSize.y
-      value: 2.56
-      objectReference: {fileID: 0}
+    - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4767bdcdf12fe1c4588cb2adf0f34c19, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}

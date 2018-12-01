@@ -12,11 +12,10 @@ GameObject:
   - component: {fileID: 212624701635964486}
   - component: {fileID: 61819584787066844}
   - component: {fileID: 50927949586040902}
-  - component: {fileID: 114682243519879826}
-  - component: {fileID: 114717522117152382}
-  - component: {fileID: 114044056413273070}
+  - component: {fileID: 7769509403571646998}
+  - component: {fileID: 5265625727937323701}
   m_Layer: 9
-  m_Name: CopperBlock
+  m_Name: BlockBase
   m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,15 +72,15 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 4767bdcdf12fe1c4588cb2adf0f34c19, type: 3}
-  m_Color: {r: 0.72156864, g: 0.301, b: 0.2, a: 1}
+  m_Sprite: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 10.24, y: 10.24}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!61 &61819584787066844
@@ -131,25 +130,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &114682243519879826
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1106346448946280}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 647961fafc542d54399358a887884e8d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _damageResistance: 0.333
-  _forceResistance: 0
-  _restabilizationThreshold: 0.01
-  _impactAbsorption: 5
-  _impactDurability: 5
-  _weight: 1
---- !u!114 &114717522117152382
+--- !u!114 &7769509403571646998
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -161,13 +142,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f11124d38a8778f4786f38b1ce313a09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _onDamageSounds:
-  - {fileID: 8300000, guid: 2969ae7b37bc0de46b980807c3bb48ee, type: 3}
-  - {fileID: 8300000, guid: 734d40d3e8348dd4e8776641ddfc505c, type: 3}
-  _onForceSounds:
-  - {fileID: 8300000, guid: a4840a87052fe8741b933589e80238f1, type: 3}
-  - {fileID: 8300000, guid: b91f7461bd11fa54ba43b6df50ba97b0, type: 3}
---- !u!114 &114044056413273070
+  _onDamageSounds: []
+  _onForceSounds: []
+--- !u!114 &5265625727937323701
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -179,5 +156,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf94502a97199904e9e22c6f9ecb1b33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _onWorldObjectDestroyedSounds:
-  - {fileID: 8300000, guid: 8929bd1e25720784a8d6080c5498dfc2, type: 3}
+  _onWorldObjectDestroyedSounds: []
