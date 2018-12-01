@@ -19,7 +19,13 @@ namespace WorldObjects.WorldGeneration
 
             if (cBuilder.Depth <= GameManager.World.SurfaceDepth)
             {
-                spaceBuilders.Add(Activator.CreateInstance(_spaces.RandomItem(), cBuilder) as SpaceBuilder);
+                var spaceBuilder = Activator.CreateInstance(_spaces.RandomItem(), cBuilder) as SpaceBuilder;
+                if(Chance.OneIn(4))
+                {
+                    spaceBuilder.AddModifier(Spaces.ModifierTypes.Cavernous);
+                }
+
+                spaceBuilders.Add(spaceBuilder);
             }
 
             return spaceBuilders;
