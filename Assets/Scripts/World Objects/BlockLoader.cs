@@ -19,7 +19,17 @@ public class BlockLoader : Singleton<BlockLoader>
     private GameObject _goldBlock = null;
     [SerializeField]
     private GameObject _platinumBlock = null;
+
+    [Header("sourceTextures")]
+    [SerializeField]
+    private Texture2D _dirtTexture = null;
+    [SerializeField]
+    private Texture2D _stoneTexture = null;
 #pragma warning restore IDE0044 // Add readonly modifier
+
+    private const int TEXTURE_SCALE = 64;
+    private static readonly Vector2 SPRITE_SIZE = new Vector2(TEXTURE_SCALE, TEXTURE_SCALE);
+    private static readonly Vector2 SPRITE_ANCHOR = new Vector2(0.5f, 0.5f);
 
     public static Block CreateBlock(BlockTypes type, IntVector2 worldPosition)
     {
@@ -39,6 +49,17 @@ public class BlockLoader : Singleton<BlockLoader>
         blockObject = Instantiate(blockObject);
         blockObject.transform.position = worldPosition;
 
+        if (type == BlockTypes.Dirt)
+        {
+            var spriteRenderer = blockObject.GetComponent<SpriteRenderer>();
+            spriteRenderer.sprite = CreateBlockSprite(Instance._dirtTexture, worldPosition);
+        }
+        else if (type == BlockTypes.Stone)
+        {
+            var spriteRenderer = blockObject.GetComponent<SpriteRenderer>();
+            spriteRenderer.sprite = CreateBlockSprite(Instance._stoneTexture, worldPosition);
+        }
+
         var block = blockObject.GetComponent<Block>();
         blockObject.name = block.ObjectName;
 
@@ -49,6 +70,16 @@ public class BlockLoader : Singleton<BlockLoader>
 
     public static Type ConvertToType(BlockTypes enumType) => _enumToType[enumType];
     public static BlockTypes ConvertToEnum(Type type) => _typeToEnum[type];
+
+    private static Sprite CreateBlockSprite(Texture2D source, IntVector2 worldPosition)
+    {
+        var pixelPositionX = (worldPosition.X * TEXTURE_SCALE) % source.width;
+        var pixelPositionY = (worldPosition.Y * TEXTURE_SCALE) % source.height;
+
+        var pixelPosition = new Vector2(pixelPositionX, pixelPositionY);
+
+        return Sprite.Create(source, new Rect(pixelPosition, SPRITE_SIZE), SPRITE_ANCHOR, TEXTURE_SCALE);
+    }
 
     private static readonly Dictionary<BlockTypes, Type> _enumToType = new Dictionary<BlockTypes, Type>()
     {

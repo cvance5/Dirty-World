@@ -88,28 +88,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1106346448946280, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_Name
-      value: StoneBlock 1
+      value: StoneBlock
       objectReference: {fileID: 0}
     - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_Color.r
-      value: 0.30882353
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_Color.g
-      value: 0.29559967
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_Color.b
-      value: 0.28384516
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_WasSpriteAssigned
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 4767bdcdf12fe1c4588cb2adf0f34c19, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: _onDamageSounds.Array.data[0]
       value: 

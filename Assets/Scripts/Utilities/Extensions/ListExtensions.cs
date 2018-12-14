@@ -3,13 +3,13 @@ using System.Linq;
 
 public static class List
 {
-    public static T RandomItem<T>(this List<T> list)
+    public static T RandomItem<T>(this IEnumerable<T> list)
     {
-        var randomValue = UnityEngine.Random.Range(0, list.Count);
-        return list[randomValue];
+        var randomValue = UnityEngine.Random.Range(0, list.Count());
+        return list.ElementAt(randomValue);
     }
 
-    public static T RandomItem<T>(this List<T> list, params T[] excludedItems)
+    public static T RandomItem<T>(this IEnumerable<T> list, params T[] excludedItems)
     {
         var newList = new List<T>();
 

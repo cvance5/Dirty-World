@@ -76,7 +76,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5530759694735604410, guid: bd59f4cc42d92d2499ac2d1c0a256c92, type: 3}
       propertyPath: m_Name
-      value: SilverBlock 1
+      value: SilverBlock
       objectReference: {fileID: 0}
     - target: {fileID: 5634495298012827796, guid: bd59f4cc42d92d2499ac2d1c0a256c92, type: 3}
       propertyPath: m_Color.r
@@ -90,5 +90,7 @@ PrefabInstance:
       propertyPath: m_Color.b
       value: 0.7529412
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3667688750193598506, guid: bd59f4cc42d92d2499ac2d1c0a256c92, type: 3}
+    - {fileID: 4939076651812863905, guid: bd59f4cc42d92d2499ac2d1c0a256c92, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: bd59f4cc42d92d2499ac2d1c0a256c92, type: 3}

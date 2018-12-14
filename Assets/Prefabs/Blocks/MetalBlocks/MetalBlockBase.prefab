@@ -1,42 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5530759694735604410 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1106346448946280, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
-  m_PrefabInstance: {fileID: 5531223624873541330}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &3667688750193598506
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5530759694735604410}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f11124d38a8778f4786f38b1ce313a09, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _onDamageSounds:
-  - {fileID: 8300000, guid: 2969ae7b37bc0de46b980807c3bb48ee, type: 3}
-  - {fileID: 8300000, guid: 734d40d3e8348dd4e8776641ddfc505c, type: 3}
-  _onForceSounds:
-  - {fileID: 8300000, guid: a4840a87052fe8741b933589e80238f1, type: 3}
-  - {fileID: 8300000, guid: b91f7461bd11fa54ba43b6df50ba97b0, type: 3}
---- !u!114 &4939076651812863905
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5530759694735604410}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf94502a97199904e9e22c6f9ecb1b33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _onWorldObjectDestroyedSounds:
-  - {fileID: 8300000, guid: 8929bd1e25720784a8d6080c5498dfc2, type: 3}
 --- !u!1001 &5531223624873541330
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44,6 +7,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onForceSounds.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onDamageSounds.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5265625727937323701, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onWorldObjectDestroyedSounds.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4839526608996278, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -90,7 +65,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1106346448946280, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_Name
-      value: CopperBlock
+      value: MetalBlockBase
       objectReference: {fileID: 0}
     - target: {fileID: 212624701635964486, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_Color.r
@@ -112,5 +87,25 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 4767bdcdf12fe1c4588cb2adf0f34c19, type: 3}
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onDamageSounds.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 2969ae7b37bc0de46b980807c3bb48ee, type: 3}
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onDamageSounds.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 734d40d3e8348dd4e8776641ddfc505c, type: 3}
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onForceSounds.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: a4840a87052fe8741b933589e80238f1, type: 3}
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onForceSounds.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: b91f7461bd11fa54ba43b6df50ba97b0, type: 3}
+    - target: {fileID: 5265625727937323701, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onWorldObjectDestroyedSounds.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 8929bd1e25720784a8d6080c5498dfc2, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
