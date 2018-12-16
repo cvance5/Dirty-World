@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Blocks;
+using WorldObjects.WorldGeneration;
 
 namespace WorldObjects
 {
@@ -9,8 +11,8 @@ namespace WorldObjects
         public int SurfaceDepth => GameManager.Instance.Settings.SurfaceDepth;
         public int ChunkSize => GameManager.Instance.Settings.ChunkSize;
 
-        private readonly List<Chunk> _activeChunks = new List<Chunk>();
-        public List<Chunk> ActiveChunks => new List<Chunk>(_activeChunks);
+        private readonly List<Chunk> _loadedChunks = new List<Chunk>();
+        public List<Chunk> LoadedChunks => new List<Chunk>(_loadedChunks);
 
         private readonly List<ChunkBlueprint> _pendingBlueprints = new List<ChunkBlueprint>();
         public List<ChunkBlueprint> PendingBlueprints => new List<ChunkBlueprint>(_pendingBlueprints);
@@ -18,9 +20,17 @@ namespace WorldObjects
         private Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
         private Dictionary<IntVector2, ChunkBlueprint> _blueprintsByWorldPosition = new Dictionary<IntVector2, ChunkBlueprint>();
 
+        private WorldBuilder _builder;
+
+        public void Register(WorldBuilder worldBuilder)
+        {
+            if (_builder != null) throw new InvalidOperationException($"This world already has a registed builder.");
+            else _builder = worldBuilder;
+        }
+
         public void Register(Chunk chunk)
         {
-            _activeChunks.Add(chunk);
+            _loadedChunks.Add(chunk);
             _chunksByWorldPosition.Add(chunk.Position, chunk);
             chunk.transform.SetParent(transform);
 
@@ -31,9 +41,29 @@ namespace WorldObjects
             }
         }
 
+        public void SetActiveChunks(List<IntVector2> activeChunkList)
+        {
+            foreach (var chunk in _loadedChunks)
+            {
+                if (!activeChunkList.Contains(chunk.Position))
+                {
+                    chunk.SetActive(false);
+                }
+            }
+
+            foreach (var activeChunkPosition in activeChunkList)
+            {
+                if (_chunksByWorldPosition.TryGetValue(activeChunkPosition, out var chunk))
+                {
+                    chunk.SetActive(true);
+                }
+                else _builder.ActivateChunk(activeChunkPosition);
+            }
+        }
+
         public Block GetBlock(IntVector2 position)
         {
-            foreach (var chunk in _activeChunks)
+            foreach (var chunk in _loadedChunks)
             {
                 if (chunk.Contains(position))
                 {
@@ -74,7 +104,7 @@ namespace WorldObjects
 
         public Chunk GetContainingChunk(IntVector2 position)
         {
-            foreach (var chunk in _activeChunks)
+            foreach (var chunk in _loadedChunks)
             {
                 if (chunk.Contains(position))
                 {

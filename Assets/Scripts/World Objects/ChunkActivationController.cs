@@ -1,19 +1,17 @@
 ﻿using Data;
-using WorldObjects.WorldGeneration;
+using System.Collections.Generic;
 
 namespace WorldObjects
 {
     public class ChunkActivationController
     {
         private readonly World _world;
-        private readonly WorldBuilder _worldBuilder;
 
-        public ChunkActivationController(World world, WorldBuilder worldBuilder)
+        public ChunkActivationController(World world)
         {
             _world = world;
-            _worldBuilder = worldBuilder;
 
-            CheckForGenerateChunk(new IntVector2(0, 0), 0);
+            BuildActiveChunkList(new IntVector2(0, 0), 0);
         }
 
         public void ListenTo(ITrackable activationCatalyst)
@@ -33,22 +31,28 @@ namespace WorldObjects
             else
             {
                 Timekeeper.TogglePause(false);
-                CheckForGenerateChunk(newPosition.Chunk.Position, 0);
+                var activeChunkList = BuildActiveChunkList(newPosition.Chunk.Position, 0);
+
+                _world.SetActiveChunks(activeChunkList);
             }
         }
 
-        private void CheckForGenerateChunk(IntVector2 currentChunkPosition, int depth)
+        private List<IntVector2> BuildActiveChunkList(IntVector2 currentChunkPosition, int depth)
         {
+            var activeChunks = new List<IntVector2>();
+
             foreach (var dir in Directions.Compass)
             {
                 var newChunkPosition = _world.GetChunkPosition(new IntVector2(currentChunkPosition), dir);
-                _worldBuilder.ActivateChunk(newChunkPosition);
 
                 if (depth < ACTIVATION_DEPTH)
                 {
-                    CheckForGenerateChunk(newChunkPosition, depth + 1);
+                    activeChunks.AddRange(BuildActiveChunkList(newChunkPosition, depth + 1));
                 }
+                activeChunks.Add(newChunkPosition);
             }
+
+            return activeChunks;
         }
 
         private const int ACTIVATION_DEPTH = 2;

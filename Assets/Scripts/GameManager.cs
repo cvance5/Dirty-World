@@ -63,6 +63,7 @@ public class GameManager : Singleton<GameManager>
         var worldGameObject = new GameObject("World");
         World = worldGameObject.AddComponent<World>();
         WorldBuilder = new WorldBuilder(World);
+        World.Register(WorldBuilder);
 
         if (GameSaves.HasSavedData)
         {
@@ -80,7 +81,7 @@ public class GameManager : Singleton<GameManager>
             UserSaves.SaveUser();
         }
 
-        ChunkActivationController = new ChunkActivationController(World, WorldBuilder);
+        ChunkActivationController = new ChunkActivationController(World);
 
         Character = GameState.CurrentCharacter;
 

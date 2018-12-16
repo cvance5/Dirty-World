@@ -44,7 +44,7 @@ namespace Utilities.Editor
         {
             if (GameManager.World == null) return;
 
-            var chunksInLoadOrder = GameManager.World.ActiveChunks;
+            var chunksInLoadOrder = GameManager.World.LoadedChunks;
 
             UpdateShowChunkList(chunksInLoadOrder.Count);
 
