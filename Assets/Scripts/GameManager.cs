@@ -68,7 +68,7 @@ public class GameManager : Singleton<GameManager>
         {
             _log.Info("Loading saved data...");
             var initialChunkPosition = new IntVector2(0, 0);
-            WorldBuilder.LoadChunk(initialChunkPosition);
+            WorldBuilder.ActivateChunk(initialChunkPosition);
             CheckForGenerateChunk(initialChunkPosition);
         }
         else
@@ -111,7 +111,7 @@ public class GameManager : Singleton<GameManager>
         foreach (var dir in Directions.Compass)
         {
             var newChunkPosition = World.GetChunkPosition(new IntVector2(currentChunkPosition), dir);
-            WorldBuilder.LoadOrBuildChunk(newChunkPosition);
+            WorldBuilder.ActivateChunk(newChunkPosition);
         }
     }
 

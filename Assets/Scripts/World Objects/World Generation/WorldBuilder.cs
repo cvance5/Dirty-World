@@ -55,7 +55,7 @@ namespace WorldObjects.WorldGeneration
             }
         }
 
-        public void LoadOrBuildChunk(IntVector2 worldPosition)
+        public void ActivateChunk(IntVector2 worldPosition)
         {
             if (_world.GetChunkAtPosition(worldPosition) != null) return;
             else if (GameSaves.HasGameData(worldPosition.ToString()))
@@ -65,20 +65,14 @@ namespace WorldObjects.WorldGeneration
             else BuildChunk(worldPosition);
         }
 
-        public void LoadChunk(IntVector2 worldPosition)
+        private void LoadChunk(IntVector2 worldPosition)
         {
             var serializedChunk = DataReader.Read(worldPosition.ToString(), DataTypes.CurrentGame);
-            LoadChunk(serializedChunk);
-        }
-
-        private void LoadChunk(string serializedChunk)
-        {
             var serializableChunk = Data.Serialization.SerializableChunk.Deserialize(serializedChunk);
-            var chunk = serializableChunk.ToObject();
-            _world.Register(chunk);
+            _world.Register(serializableChunk.ToObject());
         }
 
-        public void BuildChunk(IntVector2 worldPosition)
+        private void BuildChunk(IntVector2 worldPosition)
         {
             var cBuilder = new ChunkBuilder(worldPosition, _chunkSize, _world.GetBlueprintForPosition(worldPosition));
             var sBuilders = SpacePicker.Pick(cBuilder);
