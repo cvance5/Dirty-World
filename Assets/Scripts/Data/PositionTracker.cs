@@ -14,7 +14,7 @@ namespace Data
             = new Dictionary<ITrackable, List<Action<ITrackable, PositionData, PositionData>>>();
 
         private static Coroutine _updateMethod;
-        private static readonly WaitForSeconds _positionUpdateTick = new WaitForSeconds(.25f);
+        private static readonly WaitForSecondsRealtime _positionUpdateTick = new WaitForSecondsRealtime(.1f);
 
         public static void BeginTracking(ITrackable target)
         {
@@ -78,6 +78,16 @@ namespace Data
                 else callbacks.Remove(callback);
             }
             else throw new ArgumentException("Target does not have any callbacks!");
+        }
+
+        public static PositionData GetCurrentPosition(ITrackable target)
+        {
+            if(!_trackedTargets.TryGetValue(target, out var data))
+            {
+                throw new InvalidOperationException($"Cannot get data of untracked target.");
+            }
+
+            return data;
         }
 
         private static IEnumerator PositionUpdate()

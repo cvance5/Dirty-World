@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Data;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Blocks;
-using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.EnemyGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 using Space = WorldObjects.Spaces.Space;
@@ -10,6 +11,8 @@ namespace WorldObjects.WorldGeneration
 {
     public class ChunkBuilder
     {
+        public static SmartEvent<Chunk> OnChunkBuilt = new SmartEvent<Chunk>();
+
         public IntVector2 BottomLeftCorner { get; private set; }
         public IntVector2 TopRightCorner { get; private set; }
 
@@ -171,7 +174,7 @@ namespace WorldObjects.WorldGeneration
             else return builder.Type;
         }
 
-        public Chunk Build()
+        public IEnumerator Build()
         {
             var chunk = new GameObject($"Chunk [{_chunkWorldCenterpoint.X}, {_chunkWorldCenterpoint.Y}]").AddComponent<Chunk>();
             chunk.transform.position = _chunkWorldCenterpoint;
@@ -182,17 +185,32 @@ namespace WorldObjects.WorldGeneration
             );
 
             var spaces = new List<Space>();
-            var enemiesToAdd = new List<EnemySpawn>();
 
+            // Never use more than 1/3 of a frame
+            var yieldTimer = new IncrementalTimer(Time.realtimeSinceStartup, 1f / 180f);
+
+            yield return BuildSpaces(chunk, spaces, yieldTimer);
+            yield return BuildBlocks(chunk, spaces, yieldTimer);
+            yield return BuildHazardsAndEnemies(chunk, spaces, yieldTimer);
+
+            OnChunkBuilt.Raise(chunk);
+            Chunk.OnChunkChanged.Raise(chunk);
+        }
+
+        private IEnumerator BuildSpaces(Chunk chunk, List<Space> spaces, IncrementalTimer timer)
+        {
+            // Build and register the spaces, as the chunk may realize they are bounded
+            // and need to change before any other work happens
             foreach (var sBuilder in _spaceBuilders)
             {
                 var space = sBuilder.Build();
                 spaces.Add(space);
                 chunk.Register(space);
 
-                foreach (var enemySpawn in space.GetEnemySpawnsInChunk(chunk))
+                if (timer.CheckIncrement(Time.realtimeSinceStartup))
                 {
-                    enemiesToAdd.Add(enemySpawn);
+                    yield return null;
+                    timer.AdvanceIncrement(Time.realtimeSinceStartup);
                 }
             }
 
@@ -202,9 +220,18 @@ namespace WorldObjects.WorldGeneration
                 {
                     spaces.Add(space);
                     chunk.Register(space);
+
+                    if (timer.CheckIncrement(Time.realtimeSinceStartup))
+                    {
+                        yield return null;
+                        timer.AdvanceIncrement(Time.realtimeSinceStartup);
+                    }
                 }
             }
+        }
 
+        private IEnumerator BuildBlocks(Chunk chunk, List<Space> spaces, IncrementalTimer timer)
+        {
             foreach (var builder in _blockBuilders)
             {
                 var position = builder.Position;
@@ -227,8 +254,17 @@ namespace WorldObjects.WorldGeneration
                 {
                     chunk.Register(BlockLoader.CreateBlock(block, position));
                 }
-            }
 
+                if (timer.CheckIncrement(Time.realtimeSinceStartup))
+                {
+                    yield return null;
+                    timer.AdvanceIncrement(Time.realtimeSinceStartup);
+                }
+            }
+        }
+
+        private IEnumerator BuildHazardsAndEnemies(Chunk chunk, List<Space> spaces, IncrementalTimer timer)
+        {
             foreach (var space in chunk.Spaces)
             {
                 foreach (var hazardSpawn in space.GetHazardBuildersInChunk(chunk))
@@ -236,12 +272,18 @@ namespace WorldObjects.WorldGeneration
                     var hazard = hazardSpawn.Build(chunk, space);
                     if (hazard != null) chunk.Register(hazard);
                 }
-            }
 
-            foreach (var enemyToAdd in enemiesToAdd)
-            {
-                var enemyData = EnemySpawner.SpawnEnemy(enemyToAdd.Type, enemyToAdd.Position);
-                chunk.Register(enemyData);
+                foreach (var enemySpawn in space.GetEnemySpawnsInChunk(chunk))
+                {
+                    var enemyData = EnemySpawner.SpawnEnemy(enemySpawn.Type, enemySpawn.Position);
+                    chunk.Register(enemyData);
+                }
+
+                if (timer.CheckIncrement(Time.realtimeSinceStartup))
+                {
+                    yield return null;
+                    timer.AdvanceIncrement(Time.realtimeSinceStartup);
+                }
             }
 
             if (_blueprint != null)
@@ -252,13 +294,6 @@ namespace WorldObjects.WorldGeneration
                     chunk.Register(enemy);
                 }
             }
-
-            _blockBuilders.Clear();
-            _blockMap.Clear();
-            _spaceBuilders.Clear();
-
-            Chunk.OnChunkChanged.Raise(chunk);
-            return chunk;
         }
     }
 }

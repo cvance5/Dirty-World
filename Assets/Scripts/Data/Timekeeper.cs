@@ -7,7 +7,26 @@ namespace Data
 {
     public class Timekeeper : Singleton<Timekeeper>
     {
+        public static SmartEvent OnPause = new SmartEvent();
+        public static SmartEvent OnUnpause = new SmartEvent();
+
         private static Dictionary<string, UnityStopwatch> _stopwatches = new Dictionary<string, UnityStopwatch>();
+
+        public static void TogglePause(bool isPaused)
+        {
+            if (isPaused)
+            {
+                Time.timeScale = 0;
+                _log.Info($"Pausing game...");
+            }
+            else
+            {
+                Time.timeScale = 1;
+                _log.Info($"Unpausing game.");
+            }
+
+            Instance.OnApplicationPause(isPaused);
+        }
 
         public static UnityStopwatch StartStopwatch(string stopwatchName)
         {

@@ -1,40 +1,43 @@
 ﻿using UnityEngine;
 
-public class UnityStopwatch
+namespace Data
 {
-    private readonly double _startTime;
-
-    private double? _pauseTime;
-    public bool IsPaused => _pauseTime.HasValue;
-
-    private double _cumulativePauseOffset;
-
-    public double Delta => (Time.time - _startTime) - _cumulativePauseOffset;
-
-    public UnityStopwatch() => _startTime = Time.time;
-
-    public void Pause()
+    public class UnityStopwatch
     {
-        if (_pauseTime.HasValue)
-        {
-            _log.Warning($"Stopwatch is already paused, cannot be paused again.");
-        }
-        else _pauseTime = Time.time;
-    }
+        private readonly double _startTime;
 
-    public void Unpause()
-    {
-        if (!_pauseTime.HasValue)
-        {
-            _log.Warning($"Stopwatch is not paused, cannot be unpaused.");
-        }
-        else
-        {
-            var pauseDelta = Time.time - _pauseTime;
-            _cumulativePauseOffset += pauseDelta.Value;
-            _pauseTime = null;
-        }
-    }
+        private double? _pauseTime;
+        public bool IsPaused => _pauseTime.HasValue;
 
-    private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("Unity Stopwatch");
+        private double _cumulativePauseOffset;
+
+        public double Delta => (Time.time - _startTime) - _cumulativePauseOffset;
+
+        public UnityStopwatch() => _startTime = Time.time;
+
+        public void Pause()
+        {
+            if (_pauseTime.HasValue)
+            {
+                _log.Warning($"Stopwatch is already paused, cannot be paused again.");
+            }
+            else _pauseTime = Time.time;
+        }
+
+        public void Unpause()
+        {
+            if (!_pauseTime.HasValue)
+            {
+                _log.Warning($"Stopwatch is not paused, cannot be unpaused.");
+            }
+            else
+            {
+                var pauseDelta = Time.time - _pauseTime;
+                _cumulativePauseOffset += pauseDelta.Value;
+                _pauseTime = null;
+            }
+        }
+
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("Unity Stopwatch");
+    }
 }

@@ -18,6 +18,8 @@ public class GameManager : Singleton<GameManager>
 
     public static World World { get; private set; }
     public static WorldBuilder WorldBuilder { get; private set; }
+    public static ChunkActivationController ChunkActivationController { get; private set; }
+
     public static User User { get; private set; }
     public static Character Character { get; private set; }
 
@@ -58,8 +60,6 @@ public class GameManager : Singleton<GameManager>
     {
         SceneHelper.OnSceneIsReady -= InitializeWorld;
 
-        if (World != null) throw new System.InvalidOperationException($"Cannot initialize world while one already exists.");
-
         var worldGameObject = new GameObject("World");
         World = worldGameObject.AddComponent<World>();
         WorldBuilder = new WorldBuilder(World);
@@ -69,7 +69,6 @@ public class GameManager : Singleton<GameManager>
             _log.Info("Loading saved data...");
             var initialChunkPosition = new IntVector2(0, 0);
             WorldBuilder.ActivateChunk(initialChunkPosition);
-            CheckForGenerateChunk(initialChunkPosition);
         }
         else
         {
@@ -80,6 +79,8 @@ public class GameManager : Singleton<GameManager>
             User.RegisterGame("Default");
             UserSaves.SaveUser();
         }
+
+        ChunkActivationController = new ChunkActivationController(World, WorldBuilder);
 
         Character = GameState.CurrentCharacter;
 
@@ -98,23 +99,12 @@ public class GameManager : Singleton<GameManager>
         _player = playerObj.GetComponent<PlayerData>();
         _player.AssignCharacter(Character);
 
-        PositionTracker.Subscribe(_player, OnPlayerTrackingUpdate);
+        ChunkActivationController.ListenTo(_player);
         Timekeeper.StartStopwatch("PlaySession");
 
         _player.OnActorDeath += OnPlayerDeath;
     }
-    
-    private void OnPlayerTrackingUpdate(ITrackable player, PositionData oldData, PositionData newData) => CheckForGenerateChunk(newData.Chunk.transform.position);
-
-    private void CheckForGenerateChunk(Vector2 currentChunkPosition)
-    {
-        foreach (var dir in Directions.Compass)
-        {
-            var newChunkPosition = World.GetChunkPosition(new IntVector2(currentChunkPosition), dir);
-            WorldBuilder.ActivateChunk(newChunkPosition);
-        }
-    }
-
+   
     private void OnPlayerDeath(ActorData playerData)
     {
         var elapsedPlayTime = Timekeeper.EndStopwatch("PlaySession");
@@ -152,7 +142,6 @@ public class GameManager : Singleton<GameManager>
         SceneHelper.ReloadScene();
         scrim.FadeTo(0, .5f).Play(() => Destroy(scrim));
 
-        World = null;
         SceneHelper.OnSceneIsReady += InitializeWorld;
     }
 

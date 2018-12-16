@@ -203,6 +203,8 @@ namespace WorldObjects
 
             if (newPosition.Chunk != this)
             {
+                Unregister(enemy);
+
                 if (newPosition.Chunk != null)
                 {
                     newPosition.Chunk.Register(enemy);
@@ -221,8 +223,6 @@ namespace WorldObjects
                     var blueprintForChunk = GameManager.World.GetBlueprintForPosition(Position + (chunkDir * _chunkSize));
                     blueprintForChunk.Register(enemy);
                 }
-
-                Unregister(enemy);
             }
         }
 
