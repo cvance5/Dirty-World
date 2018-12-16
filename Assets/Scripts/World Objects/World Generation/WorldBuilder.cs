@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Data;
+using Data.IO;
+using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Blocks;
 using WorldObjects.Spaces;
@@ -7,17 +9,24 @@ using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace WorldObjects.WorldGeneration
 {
-    public static class WorldBuilder
+    public class WorldBuilder
     {
         private static readonly int _chunkSize = GameManager.Instance.Settings.ChunkSize;
+        private readonly World _world;
 
-        private static readonly Dictionary<BlockTypes, Range> _fillRanges = new Dictionary<BlockTypes, Range>()
+        private readonly Dictionary<BlockTypes, Range> _fillRanges;
+
+        public WorldBuilder(World world)
         {
-            {BlockTypes.None, new Range(GameManager.World.SurfaceDepth + 1, int.MaxValue) },
-            {BlockTypes.Dirt, new Range(int.MinValue, GameManager.World.SurfaceDepth) }
-        };
+            _world = world;
+            _fillRanges = new Dictionary<BlockTypes, Range>()
+            {
+                {BlockTypes.None, new Range(_world.SurfaceDepth + 1, int.MaxValue) },
+                {BlockTypes.Dirt, new Range(int.MinValue, _world.SurfaceDepth) }
+            };
+        }
 
-        public static void BuildInitialChunk()
+        public void BuildInitialChunk()
         {
             var cBuilder = new ChunkBuilder(Vector2.zero, _chunkSize);
 
@@ -38,7 +47,7 @@ namespace WorldObjects.WorldGeneration
             cBuilder.AddSpace(sBuilder)
                     .AddSpace(sBuilder2);
 
-            GameManager.World.Register(cBuilder.Build());
+            _world.Register(cBuilder.Build());
 
             foreach (var dir in Directions.Compass)
             {
@@ -46,16 +55,32 @@ namespace WorldObjects.WorldGeneration
             }
         }
 
-        public static void LoadChunk(string serializedChunk)
+        public void LoadOrBuildChunk(IntVector2 worldPosition)
+        {
+            if (_world.GetChunkAtPosition(worldPosition) != null) return;
+            else if (GameSaves.HasGameData(worldPosition.ToString()))
+            {
+                LoadChunk(worldPosition);
+            }
+            else BuildChunk(worldPosition);
+        }
+
+        public void LoadChunk(IntVector2 worldPosition)
+        {
+            var serializedChunk = DataReader.Read(worldPosition.ToString(), DataTypes.CurrentGame);
+            LoadChunk(serializedChunk);
+        }
+
+        private void LoadChunk(string serializedChunk)
         {
             var serializableChunk = Data.Serialization.SerializableChunk.Deserialize(serializedChunk);
             var chunk = serializableChunk.ToObject();
-            GameManager.World.Register(chunk);
+            _world.Register(chunk);
         }
 
-        public static void BuildChunk(IntVector2 worldPosition)
+        public void BuildChunk(IntVector2 worldPosition)
         {
-            var cBuilder = new ChunkBuilder(worldPosition, _chunkSize, GameManager.World.GetBlueprintForPosition(worldPosition));
+            var cBuilder = new ChunkBuilder(worldPosition, _chunkSize, _world.GetBlueprintForPosition(worldPosition));
             var sBuilders = SpacePicker.Pick(cBuilder);
 
             var blocks = BlockPicker.Pick(cBuilder);
@@ -68,10 +93,10 @@ namespace WorldObjects.WorldGeneration
             cBuilder.AddBlocks(blocks)
                     .SetFill(GetFill(cBuilder.Depth));
 
-            GameManager.World.Register(cBuilder.Build());
+            _world.Register(cBuilder.Build());
         }
 
-        private static BlockTypes GetFill(int depth)
+        private BlockTypes GetFill(int depth)
         {
             foreach (var fillRange in _fillRanges)
             {

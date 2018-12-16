@@ -1,8 +1,5 @@
-﻿using WorldObjects.Actors;
-using WorldObjects.Actors.Player;
-using Characters;
+﻿using Characters;
 using Data;
-using Data.IO;
 using Metadata;
 using System.Collections;
 using UI;
@@ -11,6 +8,8 @@ using UI.Screens;
 using UnityEngine;
 using Utilities.CustomYieldInstructions;
 using WorldObjects;
+using WorldObjects.Actors;
+using WorldObjects.Actors.Player;
 using WorldObjects.WorldGeneration;
 
 public class GameManager : Singleton<GameManager>
@@ -18,6 +17,7 @@ public class GameManager : Singleton<GameManager>
     public Settings Settings;
 
     public static World World { get; private set; }
+    public static WorldBuilder WorldBuilder { get; private set; }
     public static User User { get; private set; }
     public static Character Character { get; private set; }
 
@@ -62,11 +62,14 @@ public class GameManager : Singleton<GameManager>
 
         var worldGameObject = new GameObject("World");
         World = worldGameObject.AddComponent<World>();
+        WorldBuilder = new WorldBuilder(World);
 
         if (GameSaves.HasSavedData)
         {
             _log.Info("Loading saved data...");
-            LoadInitialChunk();
+            var initialChunkPosition = new IntVector2(0, 0);
+            WorldBuilder.LoadChunk(initialChunkPosition);
+            CheckForGenerateChunk(initialChunkPosition);
         }
         else
         {
@@ -100,14 +103,7 @@ public class GameManager : Singleton<GameManager>
 
         _player.OnActorDeath += OnPlayerDeath;
     }
-
-    private void LoadInitialChunk()
-    {
-        var initialChunkPosition = new IntVector2(0, 0);
-        WorldBuilder.LoadChunk(DataReader.Read(initialChunkPosition.ToString(), DataTypes.CurrentGame));
-        CheckForGenerateChunk(initialChunkPosition);
-    }
-
+    
     private void OnPlayerTrackingUpdate(ITrackable player, PositionData oldData, PositionData newData) => CheckForGenerateChunk(newData.Chunk.transform.position);
 
     private void CheckForGenerateChunk(Vector2 currentChunkPosition)
@@ -115,13 +111,7 @@ public class GameManager : Singleton<GameManager>
         foreach (var dir in Directions.Compass)
         {
             var newChunkPosition = World.GetChunkPosition(new IntVector2(currentChunkPosition), dir);
-
-            if (World.GetChunkAtPosition(newChunkPosition) != null) continue;
-            else if (GameSaves.HasGameData(newChunkPosition.ToString()))
-            {
-                WorldBuilder.LoadChunk(DataReader.Read(newChunkPosition.ToString(), DataTypes.CurrentGame));
-            }
-            else WorldBuilder.BuildChunk(newChunkPosition);
+            WorldBuilder.LoadOrBuildChunk(newChunkPosition);
         }
     }
 
