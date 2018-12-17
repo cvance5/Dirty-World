@@ -1,7 +1,9 @@
 ﻿using Data.Serialization.SerializableHazards;
 using Data.Serialization.SerializableSpaces;
 using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using WorldObjects;
 using WorldObjects.Hazards;
 using WorldObjects.Spaces;
@@ -9,8 +11,10 @@ using WorldObjects.Spaces;
 namespace Data.Serialization
 {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class SerializableChunk : ISerializable<Chunk>
+    public class SerializableChunk
     {
+        public static SmartEvent<Chunk> OnChunkLoaded = new SmartEvent<Chunk>();
+
         [JsonProperty("position")]
         private readonly IntVector2 _position;
 
@@ -69,40 +73,67 @@ namespace Data.Serialization
         public string Serialize() => JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
         public static SerializableChunk Deserialize(string chunkJson) => JsonConvert.DeserializeObject<SerializableChunk>(chunkJson, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
 
-        public Chunk ToObject()
+        public IEnumerator ToObject()
         {
-            var chunk = new UnityEngine.GameObject($"Chunk [{_position.X}, {_position.Y}]").AddComponent<Chunk>();
+            var chunk = new GameObject($"Chunk [{_position.X}, {_position.Y}]").AddComponent<Chunk>();
             chunk.transform.position = _position;
             chunk.AssignExtents(_bottomLeft, _topRight);
+
+            // Never use more than 1/3 of a frame
+            var yieldTimer = new IncrementalTimer(Time.realtimeSinceStartup, 1f / 180f);
 
             foreach (var serializableBlock in _blocks)
             {
                 var block = serializableBlock.ToObject();
                 chunk.Register(block);
+
+                if(yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
+                {
+                    yield return null;
+                    yieldTimer.AdvanceIncrement(Time.realtimeSinceStartup);
+                }
             }
 
             foreach (var serializedSpace in _spaces)
             {
                 var space = serializedSpace.ToObject();
                 chunk.Register(space);
+
+                if (yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
+                {
+                    yield return null;
+                    yieldTimer.AdvanceIncrement(Time.realtimeSinceStartup);
+                }
             }
 
             foreach (var serializedHazard in _hazards)
             {
                 var hazard = serializedHazard.ToObject();
                 chunk.Register(hazard);
+
+                if (yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
+                {
+                    yield return null;
+                    yieldTimer.AdvanceIncrement(Time.realtimeSinceStartup);
+                }
             }
 
             foreach (var serializedEnemy in _enemies)
             {
                 var enemy = serializedEnemy.ToObject();
                 chunk.Register(enemy);
+
+                if (yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
+                {
+                    yield return null;
+                    yieldTimer.AdvanceIncrement(Time.realtimeSinceStartup);
+                }
             }
 
-            return chunk;
+            OnChunkLoaded.Raise(chunk);
         }
 
-        private SerializableSpace ToSerializableSpace(Space space)
+        private SerializableSpace ToSerializableSpace(WorldObjects.Spaces.Space space)
         {
             if (space is Shaft)
             {
