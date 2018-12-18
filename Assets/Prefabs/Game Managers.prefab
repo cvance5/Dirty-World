@@ -99,8 +99,11 @@ MonoBehaviour:
   _silverBlock: {fileID: 7410329923676514162, guid: e90b09a51ff97674eb32521ec8c1a202, type: 3}
   _goldBlock: {fileID: 2028876217510456154, guid: e0dc53840138e944c9e37bb9e23711e6, type: 3}
   _platinumBlock: {fileID: 9013483178209601111, guid: 5c9eda4bf97405e4b97484ab3d30ec07, type: 3}
-  _dirtTexture: {fileID: 2800000, guid: 5468c8cb0a894e74c867407666f64ba0, type: 3}
-  _stoneTexture: {fileID: 2800000, guid: d6010dcbbc2ad484caabeabba0ea1fdb, type: 3}
+  _blockTextures:
+    keys: 0100000002000000
+    values:
+    - {fileID: 2800000, guid: 5468c8cb0a894e74c867407666f64ba0, type: 3}
+    - {fileID: 2800000, guid: d6010dcbbc2ad484caabeabba0ea1fdb, type: 3}
 --- !u!114 &1123659114
 MonoBehaviour:
   m_ObjectHideFlags: 0

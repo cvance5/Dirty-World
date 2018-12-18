@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
+using WorldObjects.Construction;
 using WorldObjects.Hazards;
-using WorldObjects.WorldGeneration;
 
 namespace Data.Serialization.SerializableHazards
 {
