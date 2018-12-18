@@ -7,7 +7,6 @@ using WorldObjects.Blocks;
 
 namespace WorldObjects.Construction
 {
-    [Serializable]
     public class SpriteMapper
     {
         private readonly BlockTypes _type;
@@ -23,23 +22,16 @@ namespace WorldObjects.Construction
 
         public Sprite Fetch(IntVector2 worldPosition)
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
+            var pixelPositionX = (worldPosition.X * TEXTURE_SCALE) % _source.width;
+            var pixelPositionY = (worldPosition.Y * TEXTURE_SCALE) % _source.height;
 
-            if (!_cache.TryGetValue(worldPosition, out var sprite))
+            var pixelPosition = new Vector2(pixelPositionX, pixelPositionY);
+
+            if (!_cache.TryGetValue(pixelPosition, out var sprite))
             {
-                var pixelPositionX = (worldPosition.X * TEXTURE_SCALE) % _source.width;
-                var pixelPositionY = (worldPosition.Y * TEXTURE_SCALE) % _source.height;
-
-                var pixelPosition = new Vector2(pixelPositionX, pixelPositionY);
-
                 sprite = Sprite.Create(_source, new Rect(pixelPosition, SPRITE_SIZE), SPRITE_ANCHOR, TEXTURE_SCALE);
-                _cache.Add(worldPosition, sprite);
+                _cache.Add(pixelPosition, sprite);
             }
-
-            stopwatch.Stop();
-            var log = new Log("TEST");
-            log.Warning(stopwatch.Elapsed.ToString());
 
             return sprite;
         }
