@@ -132,9 +132,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a780278bc2e630e4b8f2193fe90eb076, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _explosionExpansionTime: 0.15
-  _explosionSize: 10
-  _maxDamage: 3000
+  _explosionExpansionTime: 0.25
+  _explosionSize: 7.5
+  _maxDamage: 100
   _maxForce: 75
   _maxImpulse: 25
 --- !u!114 &9163491578202917624
