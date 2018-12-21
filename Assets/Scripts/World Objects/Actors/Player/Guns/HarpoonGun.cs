@@ -38,6 +38,7 @@ namespace WorldObjects.Actors.Player.Guns
 
         private LineRenderer _renderer;
         private DistanceJoint2D _joint;
+        private Vector3 _attachementOffset;
         private WorldObject _attachedObject;
 
         protected override void OnAwake()
@@ -103,10 +104,9 @@ namespace WorldObjects.Actors.Player.Guns
                 var worldObject = hit.collider.GetComponent<WorldObject>();
                 if (worldObject != null)
                 {
-                    Attach(worldObject);
-                    StartCoroutine(ExtendLine(worldObject.transform.position));
+                    Attach(worldObject, hit.point);
                 }
-                else StartCoroutine(ExtendLine(hit.point));
+                StartCoroutine(ExtendLine(hit.point));
             }
         }
 
@@ -131,7 +131,7 @@ namespace WorldObjects.Actors.Player.Guns
         {
             if (IsAttached)
             {
-                var pullDirection = transform.position - _attachedObject.Position;
+                var pullDirection = transform.position - ((Vector3)_attachedObject.Position + _attachementOffset);
                 var pullVector = pullDirection.normalized * _pullForce;
 
                 _playerMovement.Impulse(-pullVector * _selfPullRatio);
@@ -144,10 +144,11 @@ namespace WorldObjects.Actors.Player.Guns
             }
         }
 
-        private void Attach(WorldObject target)
+        private void Attach(WorldObject target, Vector3 hitPosition)
         {
             target.OnWorldObjectDestroyed += Detach;
             _attachedObject = target;
+            _attachementOffset = hitPosition - _attachedObject.Position;
 
             if (_attachedObject is Block)
             {
@@ -164,7 +165,7 @@ namespace WorldObjects.Actors.Player.Guns
         {
             while (IsAttached)
             {
-                DrawLine(_attachedObject.transform.position);
+                DrawLine(_attachedObject.transform.position + _attachementOffset);
                 yield return null;
             }
 
@@ -182,6 +183,7 @@ namespace WorldObjects.Actors.Player.Guns
             }
 
             _attachedObject = null;
+            _attachementOffset = Vector3.zero;
             _joint.enabled = false;
             _joint.connectedBody = null;
         }

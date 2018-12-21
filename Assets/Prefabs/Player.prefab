@@ -91,8 +91,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5026b787fc53f734499fe4c33b6e4e86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Health: 100
   _damageInvulnerabilityDuration: 1
   _damageResistance: 10
+  _collider: {fileID: 0}
 --- !u!114 &114955982425071790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -105,7 +107,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5edaf1a639a9c114abcb43c18880edbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _data: {fileID: 114237843733034080}
 --- !u!114 &114277785067253532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,6 +277,7 @@ MonoBehaviour:
   _range: 10
   _minLength: 1
   _maxLength: 10
+  _projectileSpeed: 100
   _pullForce: 15
   _selfPullRatio: 0.5
   _climbSpeed: 5
