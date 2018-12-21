@@ -115,9 +115,6 @@ public class GameManager : Singleton<GameManager>
 
         WorldBuilder.Destroy();
 
-        GameSaves.SaveDirty();
-        UserSaves.SaveUser();
-
         StartCoroutine(HandleGameOverScreen());
     }
 
@@ -144,6 +141,9 @@ public class GameManager : Singleton<GameManager>
         wfcc = new WaitForCustomCallback();
         scrim.FadeTo(1f, .1f).Play(wfcc.Callback);
         yield return wfcc;
+
+        UserSaves.SaveUser();
+        GameSaves.SaveDirty();
 
         SceneHelper.ReloadScene();
         scrim.FadeTo(0, .5f).Play(() => Destroy(scrim));
