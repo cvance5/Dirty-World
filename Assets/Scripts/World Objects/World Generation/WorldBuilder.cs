@@ -4,6 +4,7 @@ using Data.Serialization;
 using System.Collections.Generic;
 using UnityEngine;
 using Utilities;
+using Utilities.Debug;
 using WorldObjects.Blocks;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.BlockGeneration;
@@ -73,10 +74,12 @@ namespace WorldObjects.WorldGeneration
             {
                 if (GameSaves.HasGameData(worldPosition.ToString()))
                 {
+                    _log.Info($"Loading Chunk at {worldPosition}.");
                     LoadChunk(worldPosition);
                 }
                 else
                 {
+                    _log.Info($"Building Chunk at {worldPosition}.");
                     BuildChunk(worldPosition);
                 }
             }
@@ -90,6 +93,7 @@ namespace WorldObjects.WorldGeneration
             var serializedChunk = DataReader.Read(worldPosition.ToString(), DataTypes.CurrentGame);
             var serializableChunk = SerializableChunk.Deserialize(serializedChunk);
 
+            // Calls OnChunkReadyToActivate when finished
             CoroutineHandler.StartCoroutine(serializableChunk.ToObject);
         }
 
@@ -134,5 +138,15 @@ namespace WorldObjects.WorldGeneration
 
             throw new System.ArgumentOutOfRangeException($"Unhandled depth {depth}.  No fill block found.");
         }
+
+        public void Destroy()
+        {
+            _chunksToActivate.Clear();
+
+            ChunkBuilder.OnChunkBuilt -= OnChunkReadyToActivate;
+            SerializableChunk.OnChunkLoaded -= OnChunkReadyToActivate;
+        }
+
+        private static readonly Log _log = new Log("WorldBuilder");
     }
 }

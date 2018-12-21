@@ -65,6 +65,8 @@ public class GameManager : Singleton<GameManager>
         WorldBuilder = new WorldBuilder(World);
         World.Register(WorldBuilder);
 
+        GameState.Initialize();
+
         if (GameSaves.HasSavedData)
         {
             _log.Info("Loading saved data...");
@@ -105,14 +107,17 @@ public class GameManager : Singleton<GameManager>
 
         _player.OnActorDeath += OnPlayerDeath;
     }
-   
+
     private void OnPlayerDeath(ActorData playerData)
     {
         var elapsedPlayTime = Timekeeper.EndStopwatch("PlaySession");
         Character.Metadata.AddTimePlayed(elapsedPlayTime);
 
+        WorldBuilder.Destroy();
+
         GameSaves.SaveDirty();
         UserSaves.SaveUser();
+
         StartCoroutine(HandleGameOverScreen());
     }
 
