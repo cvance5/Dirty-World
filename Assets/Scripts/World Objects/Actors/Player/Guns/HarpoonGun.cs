@@ -1,5 +1,4 @@
-﻿using Data;
-using System.Collections;
+﻿using System.Collections;
 using UnityEngine;
 using WorldObjects.Blocks;
 
@@ -21,6 +20,8 @@ namespace WorldObjects.Actors.Player.Guns
         private float _minLength = .5f;
         [SerializeField]
         private float _maxLength = 10;
+        [SerializeField]
+        private float _projectileSpeed = 150f;
 
         [SerializeField]
         private float _pullForce = 100f;
@@ -75,10 +76,7 @@ namespace WorldObjects.Actors.Player.Guns
             }
         }
 
-        public override void AlternateFire()
-        {
-            RetractHarpoon();
-        }
+        public override void AlternateFire() => PullHarpoon();
 
         private void LaunchHarpoon()
         {
@@ -88,7 +86,7 @@ namespace WorldObjects.Actors.Player.Guns
 
             if (Physics2D.Raycast(transform.position, targetVector, _filter, _hits, _range) == 0)
             {
-                DrawLine(transform.position + (targetVector * _range));
+                StartCoroutine(ExtendLine(transform.position + (targetVector * _range)));
                 return;
             }
 
@@ -106,11 +104,9 @@ namespace WorldObjects.Actors.Player.Guns
                 if (worldObject != null)
                 {
                     Attach(worldObject);
+                    StartCoroutine(ExtendLine(worldObject.transform.position));
                 }
-                else
-                {
-                    DrawLine(hit.point);
-                }
+                else StartCoroutine(ExtendLine(hit.point));
             }
         }
 
@@ -120,7 +116,7 @@ namespace WorldObjects.Actors.Player.Guns
             {
                 _joint.distance = Mathf.Clamp(ropeLengthChange + _joint.distance, _minLength, _maxLength);
 
-                if(ropeLengthChange > 0)
+                if (ropeLengthChange > 0)
                 {
                     _joint.attachedRigidbody.AddForce(Vector2.down * Time.deltaTime);
                 }
@@ -131,7 +127,7 @@ namespace WorldObjects.Actors.Player.Guns
             }
         }
 
-        private void RetractHarpoon()
+        private void PullHarpoon()
         {
             if (IsAttached)
             {
@@ -153,8 +149,6 @@ namespace WorldObjects.Actors.Player.Guns
             target.OnWorldObjectDestroyed += Detach;
             _attachedObject = target;
 
-            StartCoroutine(AttachmentUpdate());
-
             if (_attachedObject is Block)
             {
                 var attachedBlock = _attachedObject as Block;
@@ -174,7 +168,7 @@ namespace WorldObjects.Actors.Player.Guns
                 yield return null;
             }
 
-            BreakLine();
+            StartCoroutine(RetractLine());
         }
 
         private void Detach(WorldObject target)
@@ -192,21 +186,59 @@ namespace WorldObjects.Actors.Player.Guns
             _joint.connectedBody = null;
         }
 
+        private IEnumerator ExtendLine(Vector3 target)
+        {
+            var initialPosition = transform.position;
+            var currentPosition = initialPosition;
+            _renderer.enabled = true;
+
+            var timePassed = 0f;
+            var distance = Vector3.Distance(initialPosition, target);
+            var percentOfTheWayThere = 0f;
+
+            while (currentPosition != target)
+            {
+                currentPosition = Vector3.Lerp(initialPosition, target, percentOfTheWayThere);
+                DrawLine(currentPosition);
+                timePassed += Time.deltaTime;
+                percentOfTheWayThere = (timePassed * _projectileSpeed) / distance;
+
+                yield return null;
+            }
+
+            if (!IsAttached)
+            {
+                StartCoroutine(RetractLine());
+            }
+            else StartCoroutine(AttachmentUpdate());
+        }
+
+        private IEnumerator RetractLine()
+        {
+            var initialPosition = _renderer.GetPosition(1);
+            var currentPosition = initialPosition;
+
+            var timePassed = 0f;
+            var distance = Vector3.Distance(initialPosition, transform.position);
+            var percentOfTheWayThere = 0f;
+
+            while (currentPosition != transform.position)
+            {
+                currentPosition = Vector3.Lerp(initialPosition, transform.position, percentOfTheWayThere);
+                DrawLine(currentPosition);
+                timePassed += Time.deltaTime;
+                percentOfTheWayThere = (timePassed * _projectileSpeed) / distance;
+
+                yield return null;
+            }
+
+            _renderer.enabled = false;
+        }
+
         private void DrawLine(Vector3 target)
         {
             _renderer.SetPosition(0, transform.position);
             _renderer.SetPosition(1, target);
-            _renderer.enabled = true;
-
-            if (!IsAttached)
-            {
-                Timekeeper.SetTimer(.1f, BreakLine);
-            }
-        }
-
-        private void BreakLine()
-        {
-            _renderer.enabled = false;
         }
     }
 }
