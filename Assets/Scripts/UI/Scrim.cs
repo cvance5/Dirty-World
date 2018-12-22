@@ -27,6 +27,9 @@ namespace UI
 
         public override void SetVisible(bool isVisible) => _scrim.enabled = isVisible;
 
+        public UIEffect Show() =>
+            new InstantEffect(() => _scrim.color = Color.black);
+
         public UIEffect Hide() =>
             new InstantEffect(() => _scrim.color = _scrim.color.SwapAlpha(0));
 

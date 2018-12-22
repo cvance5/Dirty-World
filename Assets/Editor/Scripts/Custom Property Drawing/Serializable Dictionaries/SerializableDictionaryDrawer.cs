@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace CustomPropertyDrawering.SerializedDictionaries
+namespace CustomPropertyDrawing.SerializedDictionaries
 {
     public abstract class SerializableKeyValueTemplate<K, V> : ScriptableObject
     {

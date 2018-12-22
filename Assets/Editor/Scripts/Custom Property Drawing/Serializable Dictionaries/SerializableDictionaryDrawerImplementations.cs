@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Utilities.UnitySerialization;
 
-namespace CustomPropertyDrawering.SerializedDictionaries
+namespace CustomPropertyDrawing.SerializedDictionaries
 {
     // ---------------
     //  Block Types => Texture2D

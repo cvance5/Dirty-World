@@ -52,6 +52,15 @@ public class GameManager : Singleton<GameManager>
         GameSaves.Refresh();
         GameSaves.LoadGame("Default");
 
+        if (!GameSaves.HasSavedData)
+        {
+            StartCoroutine(HandlePrologueScreen());
+        }
+        else InitializeScene();
+    }
+
+    private void InitializeScene()
+    {
         SceneHelper.LoadScene(SceneHelper.Scenes.Gameplay);
         SceneHelper.OnSceneIsReady += InitializeWorld;
     }
@@ -131,6 +140,9 @@ public class GameManager : Singleton<GameManager>
         activateScrimSequence.Play(wfcc.Callback);
         yield return wfcc;
 
+        // Still loading things now. Eventually handle this more cleanly than just waiting...
+        yield return new WaitForSecondsRealtime(6f);
+
         UIScreen activeScreen = UIManager.Get<GameOverScreen>();
         while (activeScreen != null)
         {
@@ -149,6 +161,23 @@ public class GameManager : Singleton<GameManager>
         scrim.FadeTo(0, .5f).Play(() => Destroy(scrim));
 
         SceneHelper.OnSceneIsReady += InitializeWorld;
+    }
+
+    private IEnumerator HandlePrologueScreen()
+    {
+        var scrim = Scrimmer.ScrimOver(UIManager.BaseLayer);
+        scrim.Show().Play();
+
+        UIScreen activeScreen = UIManager.Get<PrologueScreen>();
+        while (activeScreen != null)
+        {
+            yield return new WaitForObjectDestroyed(activeScreen);
+            activeScreen = UIManager.ActiveScreen;
+        }
+
+        scrim.FadeTo(0, .5f).Play(() => Destroy(scrim));
+
+        InitializeScene();
     }
 
     private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("GameManager");

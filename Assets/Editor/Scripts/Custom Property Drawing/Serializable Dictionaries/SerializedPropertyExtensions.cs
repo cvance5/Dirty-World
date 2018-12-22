@@ -1,6 +1,6 @@
 ﻿using UnityEditor;
 
-namespace CustomPropertyDrawering.SerializedDictionaries
+namespace CustomPropertyDrawing.SerializedDictionaries
 {
     public static class SerializedPropertyExtension
     {
