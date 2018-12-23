@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using WorldObjects;
@@ -7,7 +9,7 @@ using Space = WorldObjects.Spaces.Space;
 
 namespace Utilities.Editor
 {
-    public class ChunkGizmoDrawer : Singleton<ChunkGizmoDrawer>
+    public class ChunkGizmoDrawer : MonoBehaviour
     {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [Header("Chunks")]
@@ -215,3 +217,4 @@ namespace Utilities.Editor
         private void DrawCircle(Vector2 center, float radius) => Gizmos.DrawSphere(center, radius);
     }
 }
+#endif
