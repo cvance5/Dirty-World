@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
 
 namespace Utilities.UnitySerialization
 {
-    abstract public class SerializableDictionary<K, V> : ISerializationCallbackReceiver, IDictionary<K, V>
+    public abstract class SerializableDictionary<K, V> : ISerializationCallbackReceiver, IDictionary<K, V>
     {
         [SerializeField]
         private K[] keys;

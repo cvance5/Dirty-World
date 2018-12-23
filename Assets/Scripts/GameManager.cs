@@ -1,6 +1,7 @@
 ﻿using Characters;
 using Data;
 using Metadata;
+using Narrative;
 using System.Collections;
 using UI;
 using UI.Effects;
@@ -15,6 +16,7 @@ using WorldObjects.WorldGeneration;
 public class GameManager : Singleton<GameManager>
 {
     public Settings Settings;
+    public Script Script;
 
     public static World World { get; private set; }
     public static WorldBuilder WorldBuilder { get; private set; }

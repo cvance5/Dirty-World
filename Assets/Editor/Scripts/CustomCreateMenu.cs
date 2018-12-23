@@ -1,5 +1,6 @@
 ﻿using Data;
 using Items.Weapons;
+using Narrative;
 using UnityEditor;
 using Utilities.Editor;
 
@@ -16,6 +17,12 @@ public class CustomCreateMenu
     public static void CreateWeaponDisplay()
     {
         ScriptableObjectUtility.CreateAsset<WeaponDisplayData>();
+    }
+
+    [MenuItem("Assets/Create/Script")]
+    public static void CreateScript()
+    {
+        ScriptableObjectUtility.CreateAsset<Script>();
     }
 #endif
 }

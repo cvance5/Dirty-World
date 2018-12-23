@@ -63,6 +63,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 452c1fcd82dd58f44a901dadf05057fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _fadeInKey:
+    _key: prologueFadeIn
   _textFader: {fileID: 9198465078349884658}
 --- !u!1 &1554432862061456819
 GameObject:
@@ -146,7 +148,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 656173512939832477}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
