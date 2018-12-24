@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Data;
+using UnityEngine;
 
 namespace WorldObjects.Actors
 {
@@ -9,9 +10,12 @@ namespace WorldObjects.Actors
         public SmartEvent<ActorData> OnActorDamaged = new SmartEvent<ActorData>();
         public SmartEvent<ActorData> OnActorDeath = new SmartEvent<ActorData>();
 
+        public SmartEvent<int> OnHealthChanged = new SmartEvent<int>();
+
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [SerializeField]
-        protected int MaxHealth = 100;
+        protected int _maxHealth = 100;
+        public int MaxHealth => _maxHealth;
 
         [SerializeField]
         protected float _damageInvulnerabilityDuration = 1f;
@@ -23,7 +27,7 @@ namespace WorldObjects.Actors
         protected int _health;
 
         private SpriteRenderer _sprite;
-        private readonly bool _isTakingDamage = false;
+        private bool _isTakingDamage = false;
 
         protected override void OnWorldObjectAwake()
         {
@@ -53,7 +57,12 @@ namespace WorldObjects.Actors
                 {
                     OnDamage();
                     OnActorDamaged.Raise(this);
+
+                    OnHealthChanged.Raise(_health);
                 }
+
+                _isTakingDamage = true;
+                Timekeeper.SetTimer(_damageInvulnerabilityDuration, () => _isTakingDamage = false);
             }
         }
 

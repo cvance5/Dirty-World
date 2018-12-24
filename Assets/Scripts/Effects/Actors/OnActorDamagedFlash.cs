@@ -42,6 +42,8 @@ namespace Effects.Actors
                 _sprite.color = Color.white;
                 yield return waitFor;
             }
+
+            _flashDamageCoroutine = null;
         }
     }
 }

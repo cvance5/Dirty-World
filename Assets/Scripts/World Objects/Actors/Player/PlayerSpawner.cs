@@ -1,6 +1,8 @@
-﻿using WorldObjects.Actors.Player.Guns;
-using Characters;
+﻿using Characters;
+using UI;
+using UI.Overlays;
 using UnityEngine;
+using WorldObjects.Actors.Player.Guns;
 
 namespace WorldObjects.Actors.Player
 {
@@ -49,6 +51,10 @@ namespace WorldObjects.Actors.Player
 
             var playerWeapons = player.GetComponent<PlayerWeapons>();
             playerWeapons.EquipSecondary(secondaryWeapon);
+
+            var playerData = player.GetComponent<PlayerData>();
+            var healthOverlay = UIManager.Get<HealthOverlay>();
+            healthOverlay.AssignPlayer(playerData);
 
             return player;
         }

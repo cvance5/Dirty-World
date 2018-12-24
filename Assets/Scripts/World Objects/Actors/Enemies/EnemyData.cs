@@ -7,6 +7,7 @@ namespace WorldObjects.Actors.Enemies
         protected override void OnActorAwake()
         {
             PositionTracker.BeginTracking(this);
+            OnEnemyAwake();
         }
 
         protected abstract void OnEnemyAwake();

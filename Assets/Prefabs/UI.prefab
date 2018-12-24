@@ -60,7 +60,8 @@ MonoBehaviour:
   - {fileID: 114949684758712442, guid: 2021ae547ee08e24caf7370d66e49853, type: 3}
   - {fileID: 114671471624497304, guid: 009dd89b12b374445a7cd080354a8b2c, type: 3}
   - {fileID: 9016456635072229436, guid: a33205743f4ca6f4b82d32e28f331a11, type: 3}
-  _overlays: []
+  _overlays:
+  - {fileID: 8704357981681886459, guid: 97e447955fe88d34f968c9abf2802f04, type: 3}
   _popups: []
   _baseLayer: {fileID: 224750953426635250}
   _screenLayer: {fileID: 224291488128696780}

@@ -39,6 +39,7 @@ namespace WorldObjects.Actors.Player
             if (_health > 0)
             {
                 _health = Mathf.Min(MaxHealth, _health + amount);
+                OnHealthChanged.Raise(_health);
             }
         }
 

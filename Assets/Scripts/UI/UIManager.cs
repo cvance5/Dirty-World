@@ -13,7 +13,7 @@ namespace UI
 
         [SerializeField]
         private List<UIOverlay> _overlays = new List<UIOverlay>();
-        public static UIOverlay ActiveOverlay = null;
+        public static Dictionary<Type, UIOverlay> ActiveOverlays = new Dictionary<Type, UIOverlay>();
 
         [SerializeField]
         private List<UIPopup> _popups = new List<UIPopup>();
@@ -59,9 +59,7 @@ namespace UI
         {
             var type = objectToShow.GetType();
 
-            if (typeof(UIOverlay).IsAssignableFrom(type))
-                ShowOverlay(objectToShow as UIOverlay);
-            else if (typeof(UIPopup).IsAssignableFrom(type))
+            if (typeof(UIPopup).IsAssignableFrom(type))
                 UpdatePopupStack(objectToShow as UIPopup);
             else
                 throw new InvalidCastException("Type of " + type.ToString() + "  is not a showable UI object!");
@@ -94,23 +92,7 @@ namespace UI
                 throw new InvalidCastException("Type of " + type.ToString() + "  is not a removable UI object!");
         }
 
-        public static void SetVisibility<T>(bool isVisible)
-        {
-            var typeOfT = typeof(T);
-
-            if (typeof(UIOverlay).IsAssignableFrom(typeOfT))
-                SetOverlayVisibility(typeOfT, isVisible);
-            else
-                throw new InvalidCastException("Type of " + typeOfT.ToString() + "  cannot have its visibility set by the manager!  Access the object directly instead.");
-        }
-
-        private static void SetOverlayVisibility(Type type, bool isVisible)
-        {
-            if (ActiveOverlay.GetType() == type)
-                SetActiveOverlay(ActiveOverlay);
-            else
-                _log.Warning("Overlay of type " + type.ToString() + " is not active!");
-        }
+        private static void SetOverlayVisibility(UIOverlay overlay, bool isVisible) => overlay.SetVisible(isVisible);
 
         private static UIScreen GetScreen(Type type)
         {
@@ -135,21 +117,11 @@ namespace UI
 
         private static UIOverlay GetOverlay(Type type)
         {
-            UIOverlay selectedOverlay = null;
-
-            if (ActiveOverlay == null)
+            if (!ActiveOverlays.TryGetValue(type, out var selectedOverlay))
             {
                 selectedOverlay = CreateOverlay(type);
             }
-            else if (ActiveOverlay.GetType() != type)
-            {
-                ActiveOverlay.SetVisible(false);
-                selectedOverlay = CreateOverlay(type);
-            }
-            else SetOverlayVisibility(type, true);
-
-            if (selectedOverlay != null)
-                SetActiveOverlay(selectedOverlay);
+            else SetOverlayVisibility(selectedOverlay, true);
 
             return selectedOverlay;
         }
@@ -167,12 +139,6 @@ namespace UI
             return selectedPopup;
         }
 
-        private static void ShowOverlay(UIOverlay overlay)
-        {
-            if (ActiveOverlay != overlay)
-                SetActiveOverlay(overlay);
-        }
-
         private static void SetActiveScreen(UIScreen screen)
         {
             if (ActiveScreen != null)
@@ -187,15 +153,16 @@ namespace UI
             ActiveScreen.ActivateScreen();
         }
 
-        private static void SetActiveOverlay(UIOverlay overlay)
+        private static void SetActiveOverlay(Type type, UIOverlay overlay)
         {
-            if (ActiveOverlay != null)
+            if (ActiveOverlays.TryGetValue(type, out var existingOverlay))
             {
-                ActiveOverlay.SetVisible(false);
+                throw new InvalidOperationException($"Cannot set two of the same overlay active at a time.  Type: `{type}.");
             }
 
-            ActiveOverlay = overlay;
-            ActiveOverlay.SetVisible(true);
+            ActiveOverlays.Add(type, overlay);
+            overlay.SetVisible(true);
+            overlay.transform.SetParent(OverlayLayer, false);
         }
 
         private static void UpdatePopupStack(UIPopup newPopup = null)
@@ -228,36 +195,27 @@ namespace UI
 
         private static UIScreen CreateScreen(Type type)
         {
-            UIScreen selectedScreen = null;
+            var selectedScreen = Instance._screens.Find(screen => screen.GetType() == type);
 
-            foreach (var screen in Instance._screens)
-                if (screen.GetType() == type)
-                {
-                    var screenObject = Instantiate(screen.gameObject);
-                    selectedScreen = screenObject.GetComponent(type) as UIScreen;
-                    break;
-                }
-
-            if (selectedScreen == null)
-                throw new ArgumentOutOfRangeException("Could not find a screen of type " + type.ToString() + " in the screens listed!");
+            if (selectedScreen != null)
+            {
+                selectedScreen = Instantiate(selectedScreen.gameObject).GetComponent(type) as UIScreen;
+            }
+            else throw new ArgumentOutOfRangeException("Could not find a screen of type " + type.ToString() + " in the screens listed!");
 
             return selectedScreen;
         }
 
         private static UIOverlay CreateOverlay(Type type)
         {
-            UIOverlay selectedOverlay = null;
+            var selectedOverlay = Instance._overlays.Find(overlay => overlay.GetType() == type);
+            if (selectedOverlay != null)
+            {
+                selectedOverlay = Instantiate(selectedOverlay.gameObject).GetComponent(type) as UIOverlay;
+            }
+            else throw new ArgumentOutOfRangeException("Could not find an overlay of type " + type.ToString() + " in the overlays listed!");
 
-            foreach (var overlay in Instance._overlays)
-                if (overlay.GetType() == type)
-                {
-                    selectedOverlay = Instantiate(overlay.gameObject).GetComponent(type) as UIOverlay;
-                    selectedOverlay.transform.SetParent(Instance._overlayLayer, false);
-                    break;
-                }
-
-            if (selectedOverlay == null)
-                throw new ArgumentOutOfRangeException("Could not find an overlay of type " + type.ToString() + " in the overlays listed!");
+            SetActiveOverlay(type, selectedOverlay);
 
             return selectedOverlay;
         }
