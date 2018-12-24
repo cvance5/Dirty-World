@@ -10,5 +10,7 @@ namespace Items.ItemActors.WealthActors
         };
 
         public override ItemActorTypes Type { get; } = ItemActorTypes.GoldPiece;
+
+        public override string ObjectName { get; } = "Gold Piece";
     }
 }

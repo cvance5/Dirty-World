@@ -10,5 +10,7 @@ namespace Items.ItemActors.WealthActors
         };
 
         public override ItemActorTypes Type { get; } = ItemActorTypes.CopperPiece;
+
+        public override string ObjectName { get; } = "Copper Piece";
     }
 }
