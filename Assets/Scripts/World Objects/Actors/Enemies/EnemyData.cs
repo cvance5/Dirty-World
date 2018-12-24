@@ -9,6 +9,8 @@ namespace WorldObjects.Actors.Enemies
             PositionTracker.BeginTracking(this);
         }
 
+        protected abstract void OnEnemyAwake();
+
         protected override void OnWorldObjectDestroy()
         {
             PositionTracker.StopTracking(this);    
