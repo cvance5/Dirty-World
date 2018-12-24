@@ -1,4 +1,6 @@
 ﻿using Data;
+using Items;
+using Items.ItemActors;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,6 +23,7 @@ namespace WorldObjects
         public List<Space> Spaces { get; private set; } = new List<Space>();
         public List<Hazard> Hazards { get; private set; } = new List<Hazard>();
         public List<EnemyData> Enemies { get; private set; } = new List<EnemyData>();
+        public List<ItemActor> Items { get; private set; } = new List<ItemActor>();
 
         public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
 
@@ -47,6 +50,8 @@ namespace WorldObjects
             block.OnBlockDestroyed += OnBlockDestroyed;
             block.OnBlockCrumbled += OnBlockCrumbled;
             block.OnBlockStabilized += OnBlockStabilized;
+
+            OnChunkChanged.Raise(this);
         }
 
         public void Register(Space space)
@@ -83,6 +88,8 @@ namespace WorldObjects
                     blueprint.Register(space);
                 }
             }
+
+            OnChunkChanged.Raise(this);
         }
 
         public void Register(Hazard hazard)
@@ -92,6 +99,8 @@ namespace WorldObjects
 
             hazard.OnHazardChanged += OnHazardChanged;
             hazard.OnHazardDestroyed += OnHazardDestroyed;
+
+            OnChunkChanged.Raise(this);
         }
 
         public void Register(EnemyData enemy)
@@ -101,6 +110,14 @@ namespace WorldObjects
             PositionTracker.Subscribe(enemy, OnEnemyPositionUpdate);
 
             enemy.OnActorDeath += Unregister;
+
+            OnChunkChanged.Raise(this);
+        }
+
+        public void Register(ItemActor item)
+        {
+            Items.Add(item);
+            OnChunkChanged.Raise(this);
         }
 
         public Block GetBlockForPosition(IntVector2 position)

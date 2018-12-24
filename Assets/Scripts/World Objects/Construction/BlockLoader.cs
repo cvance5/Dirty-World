@@ -11,17 +11,7 @@ namespace WorldObjects.Construction
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [Header("Blocks")]
         [SerializeField]
-        private GameObject _dirtBlock = null;
-        [SerializeField]
-        private GameObject _stoneBlock = null;
-        [SerializeField]
-        private GameObject _copperBlock = null;
-        [SerializeField]
-        private GameObject _silverBlock = null;
-        [SerializeField]
-        private GameObject _goldBlock = null;
-        [SerializeField]
-        private GameObject _platinumBlock = null;
+        private BlockTypesGameObjectDictionary _blocks = new BlockTypesGameObjectDictionary();
 
         [Header("Block Textures")]
         [SerializeField]
@@ -41,17 +31,9 @@ namespace WorldObjects.Construction
 
         public static Block CreateBlock(BlockTypes type, IntVector2 worldPosition)
         {
-            GameObject blockObject;
-
-            switch (type)
+            if (!Instance._blocks.TryGetValue(type, out var blockObject))
             {
-                case BlockTypes.Dirt: blockObject = Instance._dirtBlock; break;
-                case BlockTypes.Stone: blockObject = Instance._stoneBlock; break;
-                case BlockTypes.Copper: blockObject = Instance._copperBlock; break;
-                case BlockTypes.Silver: blockObject = Instance._silverBlock; break;
-                case BlockTypes.Gold: blockObject = Instance._goldBlock; break;
-                case BlockTypes.Platinum: blockObject = Instance._platinumBlock; break;
-                default: throw new ArgumentException($"Unknown block type of {type}.");
+                _log.Error($"Could not find an object for blockType `{type}.");
             }
 
             blockObject = Instantiate(blockObject);

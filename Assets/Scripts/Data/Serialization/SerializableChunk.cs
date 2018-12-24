@@ -36,6 +36,9 @@ namespace Data.Serialization
         [JsonProperty("enemies")]
         private readonly List<SerializableEnemy> _enemies = new List<SerializableEnemy>();
 
+        [JsonProperty("items")]
+        private readonly List<SerializableItem> _items = new List<SerializableItem>();
+
         [JsonConstructor]
         public SerializableChunk() { }
 
@@ -45,28 +48,29 @@ namespace Data.Serialization
             _topRight = chunk.TopRightCorner;
             _bottomLeft = chunk.BottomLeftCorner;
 
-            _blocks = new List<SerializableBlock>();
             foreach (var kvp in chunk.BlockMap)
             {
                 _blocks.Add(new SerializableBlock(kvp.Value));
             }
 
-            _spaces = new List<SerializableSpace>();
             foreach (var space in chunk.Spaces)
             {
                 _spaces.Add(ToSerializableSpace(space));
             }
 
-            _hazards = new List<SerializableHazard>();
             foreach (var hazard in chunk.Hazards)
             {
                 _hazards.Add(ToSerializableHazard(hazard));
             }
 
-            _enemies = new List<SerializableEnemy>();
             foreach (var enemy in chunk.Enemies)
             {
                 _enemies.Add(new SerializableEnemy(enemy));
+            }
+
+            foreach (var item in chunk.Items)
+            {
+                _items.Add(new SerializableItem(item));
             }
         }
 
@@ -87,7 +91,7 @@ namespace Data.Serialization
                 var block = serializableBlock.ToObject();
                 chunk.Register(block);
 
-                if(yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
+                if (yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
                 {
                     yield return null;
                     yieldTimer.AdvanceIncrement(Time.realtimeSinceStartup);
@@ -122,6 +126,18 @@ namespace Data.Serialization
             {
                 var enemy = serializedEnemy.ToObject();
                 chunk.Register(enemy);
+
+                if (yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
+                {
+                    yield return null;
+                    yieldTimer.AdvanceIncrement(Time.realtimeSinceStartup);
+                }
+            }
+
+            foreach (var serializedItem in _items)
+            {
+                var item = serializedItem.ToObject();
+                chunk.Register(item);
 
                 if (yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
                 {

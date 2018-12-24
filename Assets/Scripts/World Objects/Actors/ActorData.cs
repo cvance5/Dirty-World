@@ -11,20 +11,24 @@ namespace WorldObjects.Actors
 
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [SerializeField]
-        private int Health = 100;
+        protected int MaxHealth = 100;
 
         [SerializeField]
-        private float _damageInvulnerabilityDuration = 1f;
+        protected float _damageInvulnerabilityDuration = 1f;
         public float DamageInvulnerabilityDuration => _damageInvulnerabilityDuration;
         [SerializeField]
-        private int _damageResistance = 5;
+        protected int _damageResistance = 5;
 #pragma warning restore IDE0044 // Add readonly modifier
+
+        protected int _health;
 
         private SpriteRenderer _sprite;
         private readonly bool _isTakingDamage = false;
 
         protected override void OnWorldObjectAwake()
         {
+            _health = MaxHealth;
+
             _sprite = GetComponent<SpriteRenderer>();
 
             OnActorAwake();
@@ -35,16 +39,16 @@ namespace WorldObjects.Actors
         public void ApplyDamage(int amount)
         {
             // We don't desecrate corpses, here.
-            if (Health <= 0) return;
+            if (_health <= 0) return;
 
             if (amount < _damageResistance) return;
             else amount -= _damageResistance;
 
             if (!_isTakingDamage)
             {
-                Health -= amount;
+                _health -= amount;
 
-                if (Health <= 0) Die();
+                if (_health <= 0) Die();
                 else
                 {
                     OnDamage();

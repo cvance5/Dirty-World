@@ -5,6 +5,8 @@
         CopperPiece,
         SilverPiece,
         GoldPiece,
-        PlatinumPiece
+        PlatinumPiece,
+
+        HealthPack
     }
 }

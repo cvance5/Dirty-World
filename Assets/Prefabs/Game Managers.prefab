@@ -78,10 +78,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9e0527aced5f8c42a0c14e4ed1ca633, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _copperPiece: {fileID: 1925429388468338, guid: 4292eb8a0d1d9b54192a6ad6f56119fc, type: 3}
-  _silverPiece: {fileID: 1925429388468338, guid: e489dbf4449901746a407e00b0fe1cde, type: 3}
-  _goldPiece: {fileID: 1925429388468338, guid: 3cc95f6373cce3a4e9511f4a56a3c8a6, type: 3}
-  _platinumPiece: {fileID: 1925429388468338, guid: d5cbb4216e687f04aba9ec67344bbc8c, type: 3}
+  _items:
+    keys: 0000000001000000020000000300000004000000
+    values:
+    - {fileID: 1925429388468338, guid: 4292eb8a0d1d9b54192a6ad6f56119fc, type: 3}
+    - {fileID: 1925429388468338, guid: e489dbf4449901746a407e00b0fe1cde, type: 3}
+    - {fileID: 1925429388468338, guid: 3cc95f6373cce3a4e9511f4a56a3c8a6, type: 3}
+    - {fileID: 1925429388468338, guid: d5cbb4216e687f04aba9ec67344bbc8c, type: 3}
+    - {fileID: 3983400539303335104, guid: 63f5cad198091be448dda232523fe339, type: 3}
 --- !u!114 &114506124768647496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,12 +98,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77002bc94d3c9074c8586e444382515c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dirtBlock: {fileID: 4040690142055907274, guid: 49712c4edad83f841accc4914029466c, type: 3}
-  _stoneBlock: {fileID: 124560293421415011, guid: 0866abfbf7c151b40ad7467c9d00cd13, type: 3}
-  _copperBlock: {fileID: 4941398850137344514, guid: 91964094899c60c47af6ccba763aea6a, type: 3}
-  _silverBlock: {fileID: 7410329923676514162, guid: e90b09a51ff97674eb32521ec8c1a202, type: 3}
-  _goldBlock: {fileID: 2028876217510456154, guid: e0dc53840138e944c9e37bb9e23711e6, type: 3}
-  _platinumBlock: {fileID: 9013483178209601111, guid: 5c9eda4bf97405e4b97484ab3d30ec07, type: 3}
+  _blocks:
+    keys: 010000000200000003000000040000000500000006000000
+    values:
+    - {fileID: 4040690142055907274, guid: 49712c4edad83f841accc4914029466c, type: 3}
+    - {fileID: 124560293421415011, guid: 0866abfbf7c151b40ad7467c9d00cd13, type: 3}
+    - {fileID: 4941398850137344514, guid: 91964094899c60c47af6ccba763aea6a, type: 3}
+    - {fileID: 7410329923676514162, guid: e90b09a51ff97674eb32521ec8c1a202, type: 3}
+    - {fileID: 2028876217510456154, guid: e0dc53840138e944c9e37bb9e23711e6, type: 3}
+    - {fileID: 9013483178209601111, guid: 5c9eda4bf97405e4b97484ab3d30ec07, type: 3}
   _blockTextures:
     keys: 0100000002000000
     values:

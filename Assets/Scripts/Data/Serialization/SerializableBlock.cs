@@ -17,7 +17,7 @@ namespace Data.Serialization
         private readonly int _stability;
 
         [JsonConstructor]
-        public SerializableBlock() { }
+        private SerializableBlock() { }
 
         public SerializableBlock(Block block)
         {

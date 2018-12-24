@@ -6,11 +6,8 @@ namespace Items.ItemActors
     {
         public abstract List<Item> CollectedItems { get; }
 
-        public void OnCollect()
-        {
-            Destroy(gameObject);
-        }
+        public override InteractionTypes[] Interactions { get; } = new InteractionTypes[] { InteractionTypes.Collect };
 
-        protected override void InitializeInteractions() => Interactions = new InteractionTypes[] { InteractionTypes.Collect };
+        public override void OnItemHandled() => Destroy(gameObject);
     }
 }

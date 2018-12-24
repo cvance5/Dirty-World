@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 
-namespace Items
+namespace Items.ItemActors
 {
     [RequireComponent(typeof(Collider2D))]
-    public abstract class ItemActor : MonoBehaviour
+    public abstract class ItemActor : MonoBehaviour, ITrackable
     {
-        public InteractionTypes[] Interactions { get; protected set; }
+        public abstract InteractionTypes[] Interactions { get; }
 
-        private void Awake() => InitializeInteractions();
+        public IntVector2 Position => new IntVector2(transform.position);
+        public abstract ItemActorTypes Type { get; }
 
-        protected abstract void InitializeInteractions();
+        public abstract void OnItemHandled();
     }
 }

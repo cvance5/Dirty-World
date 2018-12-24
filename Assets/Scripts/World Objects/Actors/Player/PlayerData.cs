@@ -8,13 +8,8 @@ namespace WorldObjects.Actors.Player
 {
     public class PlayerData : ActorData
     {
-#pragma warning disable IDE0044 // Add readonly modifier
-        [Header("Actor Components")]
-        [SerializeField]
-        private PlayerCollider _collider = null;
-#pragma warning restore IDE0044 // Add readonly modifier
-
         private Character _character = null;
+        private PlayerCollider _collider = null;
 
         public override string ObjectName => "Player";
 
@@ -25,6 +20,7 @@ namespace WorldObjects.Actors.Player
             _collider = GetComponent<PlayerCollider>();
 
             _collider.OnDamageTaken += ApplyDamage;
+            _collider.OnHealingApplied += ApplyHealing;
             _collider.OnItemsCollected += AddCollectedItems;
         }
 
@@ -38,6 +34,14 @@ namespace WorldObjects.Actors.Player
             }
         }
 
+        public void ApplyHealing(int amount)
+        {
+            if (_health > 0)
+            {
+                _health = Mathf.Min(MaxHealth, _health + amount);
+            }
+        }
+
         public override void Hit(int damage, int force) => ApplyDamage(damage);
 
         protected override void OnDamage() { }
@@ -48,6 +52,11 @@ namespace WorldObjects.Actors.Player
 
             _collider.OnDamageTaken -= ApplyDamage;
             _collider.OnItemsCollected -= AddCollectedItems;
+
+            var spawnedItem = ItemLoader.CreateItem(Items.ItemActors.ItemActorTypes.HealthPack, Position);
+            var chunk = GameManager.World.GetContainingChunk(Position);
+
+            chunk.Register(spawnedItem);
 
             Destroy(_collider);
         }

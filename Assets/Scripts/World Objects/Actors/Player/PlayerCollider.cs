@@ -1,4 +1,5 @@
 ﻿using Items;
+using Items.ItemActors;
 using Metadata;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,8 @@ namespace WorldObjects.Actors.Player
     public class PlayerCollider : ActorCollider
     {
         public SmartEvent<List<Item>> OnItemsCollected = new SmartEvent<List<Item>>();
+
+        public SmartEvent<int> OnHealingApplied = new SmartEvent<int>();
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
@@ -45,13 +48,25 @@ namespace WorldObjects.Actors.Player
                         var collectibleItem = itemActor as ICollectible;
                         _log.ErrorIfNull(collectibleItem, $"{itemActor} has interaction {interaction} but does not implement {typeof(ICollectible).Name}.");
                         OnItemsCollected.Raise(collectibleItem.CollectedItems);
-                        collectibleItem.OnCollect();
                         break;
+
                     case InteractionTypes.Damage:
+                        var damagingItem = itemActor as IDamaging;
+                        _log.ErrorIfNull(damagingItem, $"{itemActor} has interaction {interaction} but does not implement {typeof(IDamaging).Name}.");
+                        OnDamageTaken.Raise(damagingItem.Damage);
                         break;
+
+                    case InteractionTypes.Healing:
+                        var healingItem = itemActor as IHealing;
+                        _log.ErrorIfNull(healingItem, $"{itemActor} has interaction {interaction} but does not implement {typeof(IHealing).Name}.");
+                        OnHealingApplied.Raise(healingItem.Healing);
+                        break;
+
                     default: _log.Error($"Unknown interaction '{interaction}'."); break;
                 }
             }
+
+            itemActor.OnItemHandled();
         }
 
         private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("PlayerCollider");

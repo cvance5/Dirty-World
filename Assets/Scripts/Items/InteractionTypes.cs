@@ -3,6 +3,7 @@
     public enum InteractionTypes
     {
         Collect,
-        Damage
+        Damage,
+        Healing
     }
 }

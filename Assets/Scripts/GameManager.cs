@@ -142,8 +142,6 @@ public class GameManager : Singleton<GameManager>
         activateScrimSequence.Play(wfcc.Callback);
         yield return wfcc;
 
-        // Still loading things now. Eventually handle this more cleanly than just waiting...
-        yield return new WaitForSecondsRealtime(6f);
 
         UIScreen activeScreen = UIManager.Get<GameOverScreen>();
         while (activeScreen != null)

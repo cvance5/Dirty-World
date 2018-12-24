@@ -8,5 +8,7 @@ namespace Items.ItemActors.WealthActors
         {
             new Item(ItemCategories.Wealth, 10)
         };
+
+        public override ItemActorTypes Type { get; } = ItemActorTypes.SilverPiece;
     }
 }
