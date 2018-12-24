@@ -8,6 +8,6 @@ namespace Items.ItemActors
 
         public override InteractionTypes[] Interactions { get; } = new InteractionTypes[] { InteractionTypes.Collect };
 
-        public override void OnItemHandled() => Destroy(gameObject);
+        public override void HandledItem() => Destroy(gameObject);
     }
 }

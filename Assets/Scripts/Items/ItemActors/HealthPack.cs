@@ -13,6 +13,6 @@ namespace Items.ItemActors
         public override InteractionTypes[] Interactions { get; } = new InteractionTypes[] { InteractionTypes.Healing };
         public override ItemActorTypes Type { get; } = ItemActorTypes.HealthPack;
 
-        public override void OnItemHandled() => Destroy(gameObject);
+        public override void HandledItem() => Destroy(gameObject);
     }
 }

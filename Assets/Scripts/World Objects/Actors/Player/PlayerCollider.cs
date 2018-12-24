@@ -66,7 +66,7 @@ namespace WorldObjects.Actors.Player
                 }
             }
 
-            itemActor.OnItemHandled();
+            itemActor.HandledItem();
         }
 
         private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("PlayerCollider");

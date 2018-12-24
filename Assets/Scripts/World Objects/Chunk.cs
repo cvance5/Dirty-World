@@ -1,5 +1,4 @@
 ﻿using Data;
-using Items;
 using Items.ItemActors;
 using System;
 using System.Collections.Generic;
@@ -117,6 +116,7 @@ namespace WorldObjects
         public void Register(ItemActor item)
         {
             Items.Add(item);
+            item.OnItemDestroyed += OnItemDestroyed;
             OnChunkChanged.Raise(this);
         }
 
@@ -201,6 +201,20 @@ namespace WorldObjects
 
             hazard.OnHazardChanged -= OnHazardChanged;
             hazard.OnHazardDestroyed -= OnHazardDestroyed;
+
+            OnChunkChanged.Raise(this);
+        }
+
+        private void OnItemDestroyed(ItemActor itemActor)
+        {
+            if (Items.Contains(itemActor))
+            {
+                Items.Remove(itemActor);
+                _log.Info($"Item {itemActor} has been removed.");
+            }
+            else throw new InvalidOperationException($"Attempted to remove item {itemActor} but it could not be found!");
+
+            itemActor.OnItemDestroyed -= OnItemDestroyed;
 
             OnChunkChanged.Raise(this);
         }
