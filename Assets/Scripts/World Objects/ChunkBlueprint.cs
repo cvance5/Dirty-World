@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using WorldObjects.Actors.Enemies;
 using Space = WorldObjects.Spaces.Space;
@@ -46,6 +47,8 @@ namespace WorldObjects
                 {
                     edgesReached.AddRange(GetEdgesReached(extentPoint));
                 }
+
+                edgesReached = edgesReached.Distinct().ToList();
 
                 // We are already overlapping all edges with 
                 // the previous extents, so don't check the rest.

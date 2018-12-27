@@ -4,31 +4,52 @@ using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace WorldObjects.WorldGeneration
 {
-    public static class SpacePicker
+    public class SpacePicker
     {
+        public List<SpaceBuilder> SelectedSpaces = new List<SpaceBuilder>();
+
+        private bool _canPickSpaces = true;
+
+        private readonly ChunkBuilder _chunk;
+
+        public SpacePicker(ChunkBuilder cBuilder)
+        {
+            _chunk = cBuilder;
+
+            if (_chunk.Depth <= GameManager.World.SurfaceDepth)
+            {
+                CheckForSpecialCasing();
+
+                //if (_canPickSpaces) RandomlySelect();
+            }
+        }
+
+        private void CheckForSpecialCasing()
+        {
+            if (_chunk.Position == IntVector2.Zero)
+            {
+                var spaceBuilder = Activator.CreateInstance(typeof(LaboratoryBuilder), _chunk) as SpaceBuilder;
+                SelectedSpaces.Add(spaceBuilder);
+                _canPickSpaces = false;
+            }
+        }
+
+        private void RandomlySelect()
+        {
+            var spaceBuilder = Activator.CreateInstance(_spaces.RandomItem(), _chunk) as SpaceBuilder;
+            if (Chance.OneIn(4))
+            {
+                spaceBuilder.AddModifier(Spaces.ModifierTypes.Cavernous);
+            }
+
+            SelectedSpaces.Add(spaceBuilder);
+        }
+
         private static readonly List<Type> _spaces = new List<Type>()
         {
             typeof(CorridorBuilder),
             typeof(ShaftBuilder),
             typeof(MonsterDenBuilder)
         };
-
-        public static List<SpaceBuilder> Pick(ChunkBuilder cBuilder)
-        {
-            var spaceBuilders = new List<SpaceBuilder>();
-
-            if (cBuilder.Depth <= GameManager.World.SurfaceDepth)
-            {
-                var spaceBuilder = Activator.CreateInstance(_spaces.RandomItem(), cBuilder) as SpaceBuilder;
-                if(Chance.OneIn(4))
-                {
-                    spaceBuilder.AddModifier(Spaces.ModifierTypes.Cavernous);
-                }
-
-                spaceBuilders.Add(spaceBuilder);
-            }
-
-            return spaceBuilders;
-        }
     }
 }

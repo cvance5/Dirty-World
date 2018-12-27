@@ -169,7 +169,7 @@ namespace Utilities.Editor
             DrawRectangle(blueprint.TopRightCorner, blueprint.BottomLeftCorner);
         }
 
-        private void DrawSpace(Space space)
+        private void DrawSpace(Space space, string prefixName = "")
         {
             if (space is Corridor)
             {
@@ -183,9 +183,22 @@ namespace Utilities.Editor
             {
                 Gizmos.color = Color.white;
             }
+            else if (space is Laboratory)
+            {
+                Gizmos.color = Color.yellow;
+            }
 
             DrawByExtents(space.Extents);
-            Handles.Label(space.Extents[0], space.Name);
+            Handles.Label(space.Extents[0],  $"{prefixName}{space.Name}");
+
+            if (space is ComplexSpace)
+            {
+                var complexSpace = space as ComplexSpace;
+                foreach (var containedSpace in complexSpace.ContainedSpaces)
+                {
+                    DrawSpace(containedSpace, $"{complexSpace.Name}'s ");
+                }
+            }
         }
 
         private void DrawRectangle(Vector2 topRight, Vector2 bottomLeft)

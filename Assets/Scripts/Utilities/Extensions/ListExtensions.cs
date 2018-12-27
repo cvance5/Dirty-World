@@ -3,6 +3,13 @@ using System.Linq;
 
 public static class List
 {
+    public static T RandomItemOrNull<T>(this IEnumerable<T> list) where T : class
+    {
+        var randomValue = UnityEngine.Random.Range(0, list.Count() + 1);
+        if (randomValue >= list.Count()) return null;
+        else return list.ElementAt(randomValue);
+    }
+
     public static T RandomItem<T>(this IEnumerable<T> list)
     {
         var randomValue = UnityEngine.Random.Range(0, list.Count());

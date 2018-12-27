@@ -1,13 +1,13 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.SpaceGeneration;
-using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects.WorldGeneration
 {
     public class ShaftBuilder : SpaceBuilder
     {
+        public override bool IsValid => _height > 0 && _width > 0;
+
         private IntVector2 _top;
         private IntVector2 _middle;
         private IntVector2 _bottom;
@@ -21,15 +21,33 @@ namespace WorldObjects.WorldGeneration
         public ShaftBuilder(ChunkBuilder containingChunk)
             : base(containingChunk)
         {
-            var rand = new System.Random();
+            _width = Random.Range(1, 10);
+            _height = Random.Range(_width + 1, 100);
 
-            _width = rand.Next(1, 10);
-            _height = rand.Next(_width + 1, 100);
-
-            var startingPoint = new IntVector2(rand.Next(containingChunk.BottomLeftCorner.X, containingChunk.TopRightCorner.X),
-                                               rand.Next(containingChunk.BottomLeftCorner.Y, containingChunk.TopRightCorner.Y));
+            var startingPoint = new IntVector2(Random.Range(containingChunk.BottomLeftCorner.X, containingChunk.TopRightCorner.X),
+                                               Random.Range(containingChunk.BottomLeftCorner.Y, containingChunk.TopRightCorner.Y));
 
             SetStartingPoint(startingPoint, Enum<ShaftAlignment>.Random);
+        }
+
+        public override void Shift(IntVector2 shift)
+        {
+            _top += shift;
+            _middle += shift;
+            _bottom += shift;
+        }
+
+        public ShaftBuilder SetStartingPoint(IntVector2 startingPoint, IntVector2 direction)
+        {
+            if (direction == Directions.Up)
+            {
+                return SetStartingPoint(startingPoint, ShaftAlignment.StartFromBottom);
+            }
+            else if (direction == Directions.Down)
+            {
+                return SetStartingPoint(startingPoint, ShaftAlignment.StartFromTop);
+            }
+            else return SetStartingPoint(startingPoint, ShaftAlignment.StartFromMiddle);
         }
 
         public ShaftBuilder SetStartingPoint(IntVector2 startingPoint, ShaftAlignment alignment)
@@ -38,11 +56,12 @@ namespace WorldObjects.WorldGeneration
             {
                 case ShaftAlignment.StartFromTop: _top = startingPoint; break;
                 case ShaftAlignment.StartFromMiddle: _middle = startingPoint; break;
-                case ShaftAlignment.StartFromBelow: _bottom = startingPoint; break;
+                case ShaftAlignment.StartFromBottom: _bottom = startingPoint; break;
             }
 
             _alignment = alignment;
-            FindAllPoints();
+
+            Rebuild();
             return this;
         }
 
@@ -50,6 +69,7 @@ namespace WorldObjects.WorldGeneration
         {
             _width = blocksWide;
             _width = Mathf.Max(0, _width);
+            Rebuild();
             return this;
         }
 
@@ -57,81 +77,113 @@ namespace WorldObjects.WorldGeneration
         {
             _height = blockHigh;
             _height = Mathf.Max(0, _height);
-            FindAllPoints();
+            Rebuild();
             return this;
         }
 
-        protected override void Clamp(IntVector2 direction, int amount)
+        public override int PassesBy(IntVector2 direction, int amount)
         {
+            var difference = 0;
+
             if (direction == Directions.Up)
             {
-                _top.Y = Math.Min(_top.Y, amount);
-                _alignment = ShaftAlignment.StartFromTop; // We have to enforce this boundary
-                _wasClampedTop = true; // We shouldn't spawn blocks here, as it may be clamped by another space or chunk
+                difference = _top.Y - amount;
             }
             else if (direction == Directions.Right)
             {
-                if (_bottom.X + _width > amount)
+                difference = (_top.X + _width) - amount;
+            }
+            else if (direction == Directions.Down)
+            {
+                difference = amount - _bottom.Y;
+            }
+            else if (direction == Directions.Left)
+            {
+                difference = amount - _bottom.X;
+            }
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+
+            return Mathf.Max(0, difference);
+        }
+
+        public override bool Contains(IntVector2 position) =>
+            position.X >= _bottom.X &&
+            position.X <= _bottom.X + _width &&
+            position.Y >= _bottom.Y &&
+            position.Y <= _top.Y;
+
+        public override IntVector2 GetRandomPoint() => new IntVector2(Random.Range(_bottom.X, _bottom.X + 1), Random.Range(_bottom.Y, _top.Y + 1));
+
+        public override void Clamp(IntVector2 direction, int amount)
+        {
+            var difference = PassesBy(direction, amount);
+
+            if (difference > 0)
+            {
+                if (direction == Directions.Up)
                 {
-                    var difference = (_bottom.X + _width) - amount;
+                    _top.Y -= difference;
+                    _alignment = ShaftAlignment.StartFromTop; // We have to enforce this boundary
+                    _wasClampedTop = true; // We shouldn't spawn blocks here, as it may be clamped by another space or chunk
+                }
+                else if (direction == Directions.Right)
+                {
                     _bottom.X -= difference;
                     _middle.X -= difference;
                     _top.X -= difference;
                 }
-            }
-            else if (direction == Directions.Down)
-            {
-                _bottom.Y = Math.Max(_bottom.Y, amount);
-                _alignment = ShaftAlignment.StartFromBelow; // We have to enforce this boundar
-            }
-            else if (direction == Directions.Left)
-            {
-                if (_bottom.X < amount)
+                else if (direction == Directions.Down)
+                {
+                    _bottom.Y += difference;
+                    _alignment = ShaftAlignment.StartFromBottom; // We have to enforce this boundar
+                }
+                else if (direction == Directions.Left)
                 {
                     _bottom.X = amount;
                     _middle.X = amount;
                     _top.X = amount;
                 }
-            }
-            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+                else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
 
-            FindAllPoints();
+                Rebuild();
+            }
         }
 
-        protected override void Cut(IntVector2 direction, int amount)
+        public override void Cut(IntVector2 direction, int amount)
         {
-            if (direction == Directions.Up)
+            var difference = PassesBy(direction, amount);
+
+            if (difference > 0)
             {
-                var difference = _top.Y - amount;
-                if (difference > 0) SetHeight(_height - difference);
+                if (direction == Directions.Up)
+                {
+                    SetHeight(_height - difference);
+                }
+                else if (direction == Directions.Right)
+                {
+                    SetWidth(_width - difference);
+                }
+                else if (direction == Directions.Down)
+                {
+                    SetHeight(_height + difference);
+                }
+                else if (direction == Directions.Left)
+                {
+                    SetWidth(_width + difference);
+                    Clamp(Directions.Left, amount); // We have to shift the amount to the right, since we originate left
+                }
+                else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
             }
-            else if (direction == Directions.Right)
-            {
-                var difference = (_middle.X + _width) - amount;
-                if (difference > 0) SetWidth(_width - difference);
-            }
-            else if (direction == Directions.Down)
-            {
-                var difference = _bottom.Y - amount;
-                if (difference < 0) SetHeight(_height + difference);
-            }
-            else if (direction == Directions.Left)
-            {
-                var difference = _middle.X - amount;
-                if (difference < 0) SetWidth(_width + difference);
-                Clamp(Directions.Left, amount); // We have to shift the amount to the right, since we originate left
-            }
-            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
         }
 
-        protected override Space BuildRaw() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _wasClampedTop);
+        protected override Spaces.Space BuildRaw() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _wasClampedTop);
 
-        private void FindAllPoints()
+        protected void Rebuild()
         {
             switch (_alignment)
             {
                 case ShaftAlignment.StartFromTop:
-                    if (_top == null) throw new InvalidOperationException("Corridor builder has not been assigned a left position.");
+                    if (_top == null) throw new System.InvalidOperationException("Corridor builder has not been assigned a left position.");
                     else
                     {
                         _middle = new IntVector2(_top.X, _top.Y - (_height / 2));
@@ -139,15 +191,15 @@ namespace WorldObjects.WorldGeneration
                     }
                     break;
                 case ShaftAlignment.StartFromMiddle:
-                    if (_middle == null) throw new InvalidOperationException("Corridor builder has not been assigned a central position.");
+                    if (_middle == null) throw new System.InvalidOperationException("Corridor builder has not been assigned a central position.");
                     else
                     {
                         _top = new IntVector2(_middle.X, _middle.Y + (_height / 2));
                         _bottom = new IntVector2(_middle.X, _middle.Y - (_height / 2));
                     }
                     break;
-                case ShaftAlignment.StartFromBelow:
-                    if (_bottom == null) throw new InvalidOperationException("Corridor builder has not been assigned a right position.");
+                case ShaftAlignment.StartFromBottom:
+                    if (_bottom == null) throw new System.InvalidOperationException("Corridor builder has not been assigned a right position.");
                     else
                     {
                         _middle = new IntVector2(_bottom.X, _bottom.Y + (_height / 2));
@@ -161,7 +213,7 @@ namespace WorldObjects.WorldGeneration
         {
             StartFromTop,
             StartFromMiddle,
-            StartFromBelow
+            StartFromBottom
         }
     }
 }

@@ -35,36 +35,6 @@ namespace WorldObjects.WorldGeneration
             SerializableChunk.OnChunkLoaded += OnChunkReadyToActivate;
         }
 
-        public void BuildInitialChunk()
-        {
-            var cBuilder = new ChunkBuilder(Vector2.zero, _chunkSize);
-
-            var sBuilder = new CorridorBuilder(cBuilder)
-                .SetStartingPoint(Vector2.zero, CorridorBuilder.CorridorAlignment.StartFromLeft)
-                .SetHeight(1)
-                .SetLength(100)
-                .SetAllowEnemies(false)
-                .AddModifier(ModifierTypes.Cavernous);
-
-            var sBuilder2 = new CorridorBuilder(cBuilder)
-                .SetStartingPoint(Vector2.zero + (Vector2.up), CorridorBuilder.CorridorAlignment.StartFromLeft)
-                .SetHeight(3)
-                .SetLength(5)
-                .SetAllowEnemies(false)
-                .AddModifier(ModifierTypes.Cavernous);
-
-            cBuilder.AddSpace(sBuilder)
-                    .AddSpace(sBuilder2);
-
-            _chunkBeingActivated = new IntVector2(0, 0);
-            CoroutineHandler.StartCoroutine(cBuilder.Build);
-
-            foreach (var dir in Directions.Compass)
-            {
-                ActivateChunk(new IntVector2(dir.X * _chunkSize, dir.Y * _chunkSize));
-            }
-        }
-
         public void ActivateChunk(IntVector2 worldPosition)
         {
             if (_world.GetChunkAtPosition(worldPosition) != null) return;
@@ -102,7 +72,9 @@ namespace WorldObjects.WorldGeneration
             _chunkBeingActivated = worldPosition;
 
             var cBuilder = new ChunkBuilder(worldPosition, _chunkSize, _world.GetBlueprintForPosition(worldPosition));
-            var sBuilders = SpacePicker.Pick(cBuilder);
+
+            var sPicker = new SpacePicker(cBuilder);
+            var sBuilders = sPicker.SelectedSpaces;
 
             var blocks = BlockPicker.Pick(cBuilder);
 

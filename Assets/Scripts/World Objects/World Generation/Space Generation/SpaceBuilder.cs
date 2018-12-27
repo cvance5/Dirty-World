@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using Utilities.Debug;
 using WorldObjects.Spaces;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public abstract class SpaceBuilder
     {
+        public abstract bool IsValid { get; }
+
         protected ChunkBuilder _chunkBuilder { get; private set; }
         protected Dictionary<IntVector2, int> _boundedDirections { get; private set; } =
               new Dictionary<IntVector2, int>();
@@ -42,8 +45,14 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        protected abstract void Clamp(IntVector2 direction, int amount);
-        protected abstract void Cut(IntVector2 direction, int amount);
+        public abstract void Shift(IntVector2 shift);
+
+        public abstract int PassesBy(IntVector2 direction, int amount);
+        public abstract bool Contains(IntVector2 point);
+        public abstract IntVector2 GetRandomPoint();
+
+        public abstract void Clamp(IntVector2 direction, int amount);
+        public abstract void Cut(IntVector2 direction, int amount);
 
         public Space Build()
         {
@@ -58,5 +67,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         }
 
         protected abstract Space BuildRaw();
+
+        private static readonly Log _log = new Log("SpaceBuilder");
     }
 }

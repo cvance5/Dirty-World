@@ -7,8 +7,8 @@ namespace WorldObjects.Spaces
     public abstract class Space : IBoundary
     {
         public abstract string Name { get; }
-        public List<IntVector2> Extents { get; protected set; }
-            = new List<IntVector2>();
+        public List<IntVector2> Extents { get; protected set; } = new List<IntVector2>();
+            
         public abstract int Area { get; }
 
         protected readonly List<EnemySpawn> _enemySpawns = new List<EnemySpawn>();

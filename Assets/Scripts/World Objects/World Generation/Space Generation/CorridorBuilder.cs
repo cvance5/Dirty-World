@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.EnemyGeneration;
-using Random = UnityEngine.Random;
-using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class CorridorBuilder : SpaceBuilder
     {
+        public override bool IsValid => _height > 0 && _length > 0;
+
         private IntVector2 _leftEnd;
         private IntVector2 _center;
         private IntVector2 _rightEnd;
@@ -33,6 +32,26 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             SetStartingPoint(startingPoint, Enum<CorridorAlignment>.Random);
         }
 
+        public override void Shift(IntVector2 shift)
+        {
+            _leftEnd += shift;
+            _center += shift;
+            _rightEnd += shift;
+        }
+
+        public CorridorBuilder SetStartingPoint(IntVector2 startingPoint, IntVector2 direction)
+        {
+            if (direction == Directions.Left)
+            {
+                return SetStartingPoint(startingPoint, CorridorAlignment.StartFromRight);
+            }
+            else if (direction == Directions.Right)
+            {
+                return SetStartingPoint(startingPoint, CorridorAlignment.StartFromLeft);
+            }
+            else return SetStartingPoint(startingPoint, CorridorAlignment.StartFromCenter);
+        }
+
         public CorridorBuilder SetStartingPoint(IntVector2 startingPoint, CorridorAlignment alignment)
         {
             switch (alignment)
@@ -43,7 +62,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
 
             _alignment = alignment;
-            FindAllPoints();
+            Rebuild();
 
             return this;
         }
@@ -52,7 +71,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _length = blocksLong;
             _length = Mathf.Max(0, _length);
-            FindAllPoints();
+            Rebuild();
             return this;
         }
 
@@ -75,69 +94,99 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        protected override void Clamp(IntVector2 direction, int amount)
+        public override int PassesBy(IntVector2 direction, int amount)
         {
             if (direction == Directions.Up)
             {
-                if (_leftEnd.Y + _height > amount)
+                return (_leftEnd.Y + _height) - amount;
+            }
+            else if (direction == Directions.Right)
+            {
+                return _rightEnd.X - amount;
+            }
+            else if (direction == Directions.Down)
+            {
+                return amount - _rightEnd.Y;
+            }
+            else if (direction == Directions.Left)
+            {
+                return amount - _leftEnd.X;
+            }
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+        }
+
+        public override bool Contains(IntVector2 position) =>
+            position.X >= _leftEnd.X &&
+            position.Y >= _leftEnd.Y &&
+            position.X <= _rightEnd.X &&
+            position.Y <= _leftEnd.Y + _height;
+
+        public override IntVector2 GetRandomPoint() => new IntVector2(Random.Range(_leftEnd.X, _rightEnd.X + 1), Random.Range(_leftEnd.Y, _leftEnd.Y + _height + 1));
+
+        public override void Clamp(IntVector2 direction, int amount)
+        {
+            var difference = PassesBy(direction, amount);
+
+            if (difference > 0)
+            {
+                if (direction == Directions.Up)
                 {
-                    var difference = (_leftEnd.Y + _height) - amount;
                     _leftEnd.Y -= difference;
                     _center.Y -= difference;
                     _rightEnd.Y -= difference;
                 }
-            }
-            else if (direction == Directions.Right)
-            {
-                _rightEnd.X = Math.Min(_rightEnd.X, amount);
-                _alignment = CorridorAlignment.StartFromRight; // We have to enforce this boundary
-            }
-            else if (direction == Directions.Down)
-            {
-                if (_leftEnd.Y < amount)
+                else if (direction == Directions.Right)
+                {
+                    _rightEnd.X = Mathf.Min(_rightEnd.X, amount);
+                    _alignment = CorridorAlignment.StartFromRight; // We have to enforce this boundary
+                }
+                else if (direction == Directions.Down)
                 {
                     _leftEnd.Y = amount;
                     _center.Y = amount;
                     _rightEnd.Y = amount;
                 }
+                else if (direction == Directions.Left)
+                {
+                    _leftEnd.X = Mathf.Max(_leftEnd.X, amount);
+                    _alignment = CorridorAlignment.StartFromLeft; // We have to enforce this boundary
+                }
+                else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
             }
-            else if (direction == Directions.Left)
-            {
-                _leftEnd.X = Math.Max(_leftEnd.X, amount);
-                _alignment = CorridorAlignment.StartFromLeft; // We have to enforce this boundary
-            }
-            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
 
-            FindAllPoints();
+            Rebuild();
         }
 
-        protected override void Cut(IntVector2 direction, int amount)
+        public override void Cut(IntVector2 direction, int amount)
         {
-            if (direction == Directions.Up)
+            var difference = PassesBy(direction, amount);
+
+            if (difference > 0)
             {
-                var difference = (_center.Y + _height) - amount;
-                if (difference > 0) SetHeight(_height - difference);
+                if (direction == Directions.Up)
+                {
+                    SetHeight(_height - difference);
+                }
+                else if (direction == Directions.Right)
+                {
+                    SetLength(_length - difference);
+                }
+                else if (direction == Directions.Down)
+                {
+                    SetHeight(_height + difference);
+                    Clamp(Directions.Down, amount); // We have to shift the amount up, since we originate down
+                }
+                else if (direction == Directions.Left)
+                {
+                    SetLength(_length + difference);
+                }
+                else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+
+                Rebuild();
             }
-            else if (direction == Directions.Right)
-            {
-                var difference = _rightEnd.X - amount;
-                if (difference > 0) SetLength(_length - difference);
-            }
-            else if (direction == Directions.Down)
-            {
-                var difference = _center.Y - amount;
-                if (difference < 0) SetHeight(_height + difference);
-                Clamp(Directions.Down, amount); // We have to shift the amount up, since we originate down
-            }
-            else if (direction == Directions.Left)
-            {
-                var difference = _leftEnd.X - amount;
-                if (difference < 0) SetLength(_length + difference);
-            }
-            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
         }
 
-        protected override Space BuildRaw()
+        protected override Spaces.Space BuildRaw()
         {
             var corridor = new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height));
             corridor.AddEnemySpawns(GenerateContainedEnemies());
@@ -171,12 +220,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return containedEnemies;
         }
 
-        private void FindAllPoints()
+        private void Rebuild()
         {
             switch (_alignment)
             {
                 case CorridorAlignment.StartFromLeft:
-                    if (_leftEnd == null) throw new InvalidOperationException("Corridor builder has not been assigned a left position.");
+                    if (_leftEnd == null) throw new System.InvalidOperationException("Corridor builder has not been assigned a left position.");
                     else
                     {
                         _center = new IntVector2(_leftEnd.X + (_length / 2), _leftEnd.Y);
@@ -184,7 +233,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     }
                     break;
                 case CorridorAlignment.StartFromCenter:
-                    if (_center == null) throw new InvalidOperationException("Corridor builder has not been assigned a central position.");
+                    if (_center == null) throw new System.InvalidOperationException("Corridor builder has not been assigned a central position.");
                     else
                     {
                         _leftEnd = new IntVector2(_center.X - (_length / 2), _center.Y);
@@ -192,7 +241,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     }
                     break;
                 case CorridorAlignment.StartFromRight:
-                    if (_rightEnd == null) throw new InvalidOperationException("Corridor builder has not been assigned a right position.");
+                    if (_rightEnd == null) throw new System.InvalidOperationException("Corridor builder has not been assigned a right position.");
                     else
                     {
                         _leftEnd = new IntVector2(_rightEnd.X - _length, _rightEnd.Y);

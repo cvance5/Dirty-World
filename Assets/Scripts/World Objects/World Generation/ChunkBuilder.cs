@@ -14,13 +14,14 @@ namespace WorldObjects.WorldGeneration
     {
         public static SmartEvent<Chunk> OnChunkBuilt = new SmartEvent<Chunk>();
 
-        public IntVector2 BottomLeftCorner { get; private set; }
-        public IntVector2 TopRightCorner { get; private set; }
+        public IntVector2 Position { get; }
 
-        public int Depth { get; private set; }
-        public int Remoteness { get; private set; }
+        public IntVector2 BottomLeftCorner { get; }
+        public IntVector2 TopRightCorner { get; }
 
-        private IntVector2 _chunkWorldCenterpoint;
+        public int Depth { get; }
+        public int Remoteness { get; }
+
         private List<BlockBuilder> _blockBuilders = new List<BlockBuilder>();
         private List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
         private List<IntVector2> _boundedDirections = new List<IntVector2>();
@@ -38,15 +39,15 @@ namespace WorldObjects.WorldGeneration
         public ChunkBuilder(IntVector2 chunkWorldCenterpoint, int chunkSize, ChunkBlueprint blueprint = null)
         {
             _chunkSize = chunkSize;
-            _chunkWorldCenterpoint = new IntVector2(chunkWorldCenterpoint);
+            Position = new IntVector2(chunkWorldCenterpoint);
 
             var startingPoint = new IntVector2(-_halfChunkSize, -_halfChunkSize);
 
             BottomLeftCorner = new IntVector2(chunkWorldCenterpoint.X - _halfChunkSize, chunkWorldCenterpoint.Y - _halfChunkSize);
             TopRightCorner = new IntVector2(chunkWorldCenterpoint.X + _halfChunkSize - 1, chunkWorldCenterpoint.Y + _halfChunkSize - 1);
 
-            Depth = _chunkWorldCenterpoint.Y / _chunkSize;
-            Remoteness = Mathf.Abs(_chunkWorldCenterpoint.X / _chunkSize) + Mathf.Abs(_chunkWorldCenterpoint.Y / _chunkSize);
+            Depth = Position.Y / _chunkSize;
+            Remoteness = Mathf.Abs(Position.X / _chunkSize) + Mathf.Abs(Position.Y / _chunkSize);
 
             // Initialize all blocks in chunk to the default value
             for (var row = 0; row < _chunkSize; row++)
@@ -55,7 +56,7 @@ namespace WorldObjects.WorldGeneration
                 {
                     var offset = new IntVector2(row, column);
                     var positionInChunk = startingPoint + offset;
-                    var blockBuilder = new BlockBuilder(_chunkWorldCenterpoint + positionInChunk);
+                    var blockBuilder = new BlockBuilder(Position + positionInChunk);
                     _blockBuilders.Add(blockBuilder);
                     _blockMap.Add(blockBuilder.Position, blockBuilder);
                 }
@@ -67,11 +68,11 @@ namespace WorldObjects.WorldGeneration
                 {
                     _boundedDirections.Add(dir);
                 }
+            }
 
-                if (Depth == GameManager.World?.SurfaceDepth)
-                {
-                    _boundedDirections.Add(Directions.Up);
-                }
+            if (Depth == GameManager.World?.SurfaceDepth)
+            {
+                _boundedDirections.Add(Directions.Up);
             }
 
             _blueprint = blueprint;
@@ -94,19 +95,19 @@ namespace WorldObjects.WorldGeneration
 
                 if (boundedDir == Directions.Up)
                 {
-                    spaceBuilder.AddBoundary(boundedDir, _chunkWorldCenterpoint.Y + _halfChunkSize - 1);
+                    spaceBuilder.AddBoundary(boundedDir, Position.Y + _halfChunkSize - 1);
                 }
                 else if (boundedDir == Directions.Right)
                 {
-                    spaceBuilder.AddBoundary(boundedDir, _chunkWorldCenterpoint.X + _halfChunkSize - 1);
+                    spaceBuilder.AddBoundary(boundedDir, Position.X + _halfChunkSize - 1);
                 }
                 else if (boundedDir == Directions.Down)
                 {
-                    spaceBuilder.AddBoundary(boundedDir, _chunkWorldCenterpoint.Y - _halfChunkSize - 1);
+                    spaceBuilder.AddBoundary(boundedDir, Position.Y - _halfChunkSize - 1);
                 }
                 else if (boundedDir == Directions.Left)
                 {
-                    spaceBuilder.AddBoundary(boundedDir, _chunkWorldCenterpoint.X - _halfChunkSize - 1);
+                    spaceBuilder.AddBoundary(boundedDir, Position.X - _halfChunkSize - 1);
                 }
                 else throw new System.ArgumentException($"Expected a cardinal direction. Cannot bound space by direction {boundedDir}.");
             }
@@ -177,12 +178,12 @@ namespace WorldObjects.WorldGeneration
 
         public IEnumerator Build()
         {
-            var chunk = new GameObject($"Chunk [{_chunkWorldCenterpoint.X}, {_chunkWorldCenterpoint.Y}]").AddComponent<Chunk>();
-            chunk.transform.position = _chunkWorldCenterpoint;
+            var chunk = new GameObject($"Chunk [{Position.X}, {Position.Y}]").AddComponent<Chunk>();
+            chunk.transform.position = Position;
             chunk.AssignExtents
             (
-                new IntVector2(_chunkWorldCenterpoint.X - (_chunkSize / 2), _chunkWorldCenterpoint.Y - (_chunkSize / 2)),
-                new IntVector2(_chunkWorldCenterpoint.X + (_chunkSize / 2), _chunkWorldCenterpoint.Y + (_chunkSize / 2))
+                new IntVector2(Position.X - (_chunkSize / 2), Position.Y - (_chunkSize / 2)),
+                new IntVector2(Position.X + (_chunkSize / 2), Position.Y + (_chunkSize / 2))
             );
 
             var spaces = new List<Space>();

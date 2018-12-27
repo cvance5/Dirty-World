@@ -81,13 +81,12 @@ public class GameManager : Singleton<GameManager>
         if (GameSaves.HasSavedData)
         {
             _log.Info("Loading saved data...");
-            var initialChunkPosition = new IntVector2(0, 0);
-            WorldBuilder.ActivateChunk(initialChunkPosition);
+            WorldBuilder.ActivateChunk(IntVector2.Zero);
         }
         else
         {
             _log.Info("Creating new save...");
-            WorldBuilder.BuildInitialChunk();
+            WorldBuilder.ActivateChunk(IntVector2.Zero);
             GameSaves.SaveDirty();
 
             User.RegisterGame("Default");
@@ -165,18 +164,19 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator HandlePrologueScreen()
     {
-        var scrim = Scrimmer.ScrimOver(UIManager.BaseLayer);
-        scrim.Show().Play();
+        //var scrim = Scrimmer.ScrimOver(UIManager.BaseLayer);
+        //scrim.Show().Play();
 
-        UIScreen activeScreen = UIManager.Get<PrologueScreen>();
-        while (activeScreen != null)
-        {
-            yield return new WaitForObjectDestroyed(activeScreen);
-            activeScreen = UIManager.ActiveScreen;
-        }
+        //UIScreen activeScreen = UIManager.Get<PrologueScreen>();
+        //while (activeScreen != null)
+        //{
+        //    yield return new WaitForObjectDestroyed(activeScreen);
+        //    activeScreen = UIManager.ActiveScreen;
+        //}
 
-        scrim.FadeTo(0, .5f).Play(() => Destroy(scrim));
+        //scrim.FadeTo(0, .5f).Play(() => Destroy(scrim));
 
+        yield return null;
         InitializeScene();
     }
 

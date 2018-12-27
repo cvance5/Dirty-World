@@ -1,4 +1,5 @@
-﻿using WorldObjects.Blocks;
+﻿using UnityEngine;
+using WorldObjects.Blocks;
 
 namespace WorldObjects.Spaces
 {
@@ -22,21 +23,24 @@ namespace WorldObjects.Spaces
             BottomLeftCorner = bottomLeftCorner;
             TopRightCorner = topRightCorner;
 
-            Extents.Add(BottomLeftCorner);
-            Extents.Add(new IntVector2(BottomLeftCorner.X, TopRightCorner.Y));
-            Extents.Add(TopRightCorner);
-            Extents.Add(new IntVector2(TopRightCorner.X, BottomLeftCorner.Y));
+            Extents = new System.Collections.Generic.List<IntVector2>()
+            {
+                BottomLeftCorner,
+                new IntVector2(BottomLeftCorner.X, TopRightCorner.Y),
+                TopRightCorner,
+                new IntVector2(TopRightCorner.X, BottomLeftCorner.Y)
+            };
         }
 
         public override bool Contains(IntVector2 position) =>
-            !(position.X < BottomLeftCorner.X ||
-            position.Y < BottomLeftCorner.Y ||
-            position.X > TopRightCorner.X ||
-            position.Y > TopRightCorner.Y);
+            position.X >= BottomLeftCorner.X &&
+            position.Y >= BottomLeftCorner.Y &&
+            position.X <= TopRightCorner.X &&
+            position.Y <= TopRightCorner.Y;
 
-        public override IntVector2 GetRandomPosition() => 
-            new IntVector2(UnityEngine.Random.Range(BottomLeftCorner.X, TopRightCorner.X),
-                           UnityEngine.Random.Range(BottomLeftCorner.Y, TopRightCorner.Y));
+        public override IntVector2 GetRandomPosition() =>
+            new IntVector2(Random.Range(BottomLeftCorner.X, TopRightCorner.X),
+                           Random.Range(BottomLeftCorner.Y, TopRightCorner.Y));
 
         public override BlockTypes GetBlockType(IntVector2 position)
         {

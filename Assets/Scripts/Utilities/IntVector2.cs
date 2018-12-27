@@ -4,6 +4,7 @@ using UnityEngine;
 [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
 public class IntVector2
 {
+
     [JsonProperty("X")]
     public int X { get; set; }
     [JsonProperty("Y")]
@@ -32,9 +33,21 @@ public class IntVector2
         }
     }
 
+    public static IntVector2 Zero => new IntVector2(0, 0);
+
     public static float Distance(IntVector2 pos1, IntVector2 pos2) => ((pos1.X - pos2.X) * (pos1.X - pos2.X) + (pos1.Y - pos2.Y) * (pos1.Y - pos2.Y));
     public static float Distance(IntVector2 pos1, Vector2 pos2) => ((pos1.X - pos2.x) * (pos1.X - pos2.x) + (pos1.Y - pos2.y) * (pos1.Y - pos2.y));
     public static IntVector2 Lerp(IntVector2 start, IntVector2 target, float time) => new IntVector2((int)Mathf.Lerp(start.X, target.X, time), (int)Mathf.Lerp(start.Y, target.Y, time));
+
+    public static bool IsOnLine(IntVector2 lineStart, IntVector2 lineEnd, IntVector2 point)
+    {
+        // if AC is horizontal
+        if (lineStart.X == point.X) return lineEnd.X == point.X;
+        // if AC is vertical.
+        if (lineStart.Y == point.Y) return lineEnd.Y == point.Y;
+        // match the gradients
+        return (lineStart.X - point.X) * (lineStart.Y - point.Y) == (point.X - lineEnd.X) * (point.Y - lineEnd.Y);
+    }
 
     public static IntVector2 operator +(IntVector2 lhs, IntVector2 rhs) => new IntVector2(lhs.X + rhs.X, lhs.Y + rhs.Y);
     public static IntVector2 operator +(IntVector2 lhs, Vector2 rhs) => lhs + new IntVector2(rhs);
