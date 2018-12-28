@@ -30,6 +30,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onForceSounds.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onDamageSounds.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5265625727937323701, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onWorldObjectDestroyedSounds.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4839526608996278, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -101,6 +113,30 @@ PrefabInstance:
     - target: {fileID: 61819584787066844, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
       propertyPath: m_SpriteTilingProperty.newSize.y
       value: 0.9846154
+      objectReference: {fileID: 0}
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onDamageSounds.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 2969ae7b37bc0de46b980807c3bb48ee, type: 3}
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onDamageSounds.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: 734d40d3e8348dd4e8776641ddfc505c, type: 3}
+    - target: {fileID: 5265625727937323701, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onWorldObjectDestroyedSounds.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 8929bd1e25720784a8d6080c5498dfc2, type: 3}
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onForceSounds.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: a4840a87052fe8741b933589e80238f1, type: 3}
+    - target: {fileID: 7769509403571646998, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: _onForceSounds.Array.data[1]
+      value: 
+      objectReference: {fileID: 8300000, guid: b91f7461bd11fa54ba43b6df50ba97b0, type: 3}
+    - target: {fileID: 61819584787066844, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}
+      propertyPath: m_AutoTiling
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c2db3e55736c2941ae335e9f2cdde26, type: 3}

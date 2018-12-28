@@ -43,6 +43,11 @@ namespace WorldObjects.Spaces
                 }
             }
 
+            maxX += MetalThickness;
+            maxY += MetalThickness;
+            minX -= MetalThickness;
+            minY -= MetalThickness;
+
             Extents.Add(new IntVector2(minX.Value, maxY.Value));
             Extents.Add(new IntVector2(maxX.Value, maxY.Value));
             Extents.Add(new IntVector2(maxX.Value, minY.Value));

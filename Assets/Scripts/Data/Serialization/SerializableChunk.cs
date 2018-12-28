@@ -163,6 +163,10 @@ namespace Data.Serialization
             {
                 return new SerializableMonsterDen(space as MonsterDen);
             }
+            else if(space is TreasureRoom)
+            {
+                return new SerializableTreasureRoom(space as TreasureRoom);
+            }
             else if (space is Laboratory)
             {
                 return new SerializableLaboratory(space as Laboratory);

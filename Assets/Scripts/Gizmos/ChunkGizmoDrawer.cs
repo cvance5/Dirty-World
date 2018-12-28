@@ -183,20 +183,24 @@ namespace Utilities.Editor
             {
                 Gizmos.color = Color.white;
             }
-            else if (space is Laboratory)
+            else if (space is TreasureRoom)
             {
                 Gizmos.color = Color.yellow;
             }
+            else if (space is Laboratory)
+            {
+                Gizmos.color = Color.gray;
+            }
 
             DrawByExtents(space.Extents);
-            Handles.Label(space.Extents[0],  $"{prefixName}{space.Name}");
+            Handles.Label(space.Extents[0], $"{prefixName}{space.Name}");
 
             if (space is ComplexSpace)
             {
                 var complexSpace = space as ComplexSpace;
-                foreach (var containedSpace in complexSpace.ContainedSpaces)
+                for(int spaceNumber = 0; spaceNumber < complexSpace.ContainedSpaces.Count; spaceNumber++)
                 {
-                    DrawSpace(containedSpace, $"{complexSpace.Name}'s ");
+                    DrawSpace(complexSpace.ContainedSpaces[spaceNumber], $"{complexSpace.Name}'s #{spaceNumber}: ");
                 }
             }
         }

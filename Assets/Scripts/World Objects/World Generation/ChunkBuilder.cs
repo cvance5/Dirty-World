@@ -205,9 +205,12 @@ namespace WorldObjects.WorldGeneration
             // and need to change before any other work happens
             foreach (var sBuilder in _spaceBuilders)
             {
-                var space = sBuilder.Build();
-                spaces.Add(space);
-                chunk.Register(space);
+                if (sBuilder.IsValid)
+                {
+                    var space = sBuilder.Build();
+                    spaces.Add(space);
+                    chunk.Register(space);
+                }
 
                 if (timer.CheckIncrement(Time.realtimeSinceStartup))
                 {

@@ -6,7 +6,7 @@ namespace WorldObjects.WorldGeneration
 {
     public class ShaftBuilder : SpaceBuilder
     {
-        public override bool IsValid => _height > 0 && _width > 0;
+        public override bool IsValid => _height >= _minHeight && _width >= _minWidth;
 
         private IntVector2 _top;
         private IntVector2 _middle;
@@ -14,7 +14,9 @@ namespace WorldObjects.WorldGeneration
         private ShaftAlignment _alignment;
 
         private int _height;
+        private int _minHeight = 1;
         private int _width;
+        private int _minWidth = 1;
 
         private bool _wasClampedTop;
 
@@ -73,11 +75,23 @@ namespace WorldObjects.WorldGeneration
             return this;
         }
 
+        public ShaftBuilder SetMinimumWidth(int minWidth)
+        {
+            _minWidth = minWidth;
+            return this;
+        }
+
         public ShaftBuilder SetHeight(int blockHigh)
         {
             _height = blockHigh;
             _height = Mathf.Max(0, _height);
             Rebuild();
+            return this;
+        }
+
+        public ShaftBuilder SetMinimumHeight(int minHeight)
+        {
+            _minHeight = minHeight;
             return this;
         }
 
@@ -112,7 +126,9 @@ namespace WorldObjects.WorldGeneration
             position.Y >= _bottom.Y &&
             position.Y <= _top.Y;
 
-        public override IntVector2 GetRandomPoint() => new IntVector2(Random.Range(_bottom.X, _bottom.X + 1), Random.Range(_bottom.Y, _top.Y + 1));
+        public override IntVector2 GetRandomPoint() => 
+            new IntVector2(Random.Range(_bottom.X, _bottom.X + _width + 1), 
+                           Random.Range(_bottom.Y, _top.Y + 1));
 
         public override int GetMaximalValue(IntVector2 direction)
         {

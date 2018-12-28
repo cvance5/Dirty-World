@@ -7,7 +7,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class CorridorBuilder : SpaceBuilder
     {
-        public override bool IsValid => _height > 0 && _length > 0;
+        public override bool IsValid => _height >= _minHeight && _length >= _minLength;
 
         private IntVector2 _leftEnd;
         private IntVector2 _center;
@@ -15,7 +15,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private CorridorAlignment _alignment;
 
         private int _height;
+        private int _minHeight = 1;
         private int _length;
+        private int _minLength = 1;
 
         private int _extraRiskPoints;
         private bool _allowEnemies = true;
@@ -75,10 +77,22 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
+        public CorridorBuilder SetMinimumLength(int minLength)
+        {
+            _minLength = minLength;
+            return this;
+        }
+
         public CorridorBuilder SetHeight(int blocksHigh)
         {
             _height = blocksHigh;
             _height = Mathf.Max(0, _height);
+            return this;
+        }
+
+        public CorridorBuilder SetMinimumHeight(int minHeight)
+        {
+            _minHeight = minHeight;
             return this;
         }
 
@@ -121,7 +135,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             position.X <= _rightEnd.X &&
             position.Y <= _leftEnd.Y + _height;
 
-        public override IntVector2 GetRandomPoint() => new IntVector2(Random.Range(_leftEnd.X, _rightEnd.X + 1), Random.Range(_leftEnd.Y, _leftEnd.Y + _height + 1));
+        public override IntVector2 GetRandomPoint() => 
+            new IntVector2(Random.Range(_leftEnd.X, _rightEnd.X + 1), 
+                           Random.Range(_leftEnd.Y, _leftEnd.Y + _height + 1));
 
         public override int GetMaximalValue(IntVector2 direction)
         {
@@ -197,8 +213,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     SetLength(_length - difference);
                 }
                 else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-
-                Rebuild();
             }
         }
 

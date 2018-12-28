@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Items.Unlocking;
+using System.Collections.Generic;
 using System.Linq;
 using Utilities.Debug;
 using WorldObjects.Spaces;
@@ -7,7 +8,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class LaboratoryBuilder : SpaceBuilder
     {
-        public override bool IsValid => _entryRoom != null && _treasureRoom != null;
+        public override bool IsValid => _entryRoom != null && _entryRoom.IsValid && _treasureRoom != null && _treasureRoom.IsValid;
 
         private SpaceBuilder _entryRoom;
         private List<SpaceBuilder> _rooms = new List<SpaceBuilder>();
@@ -16,63 +17,104 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private SpaceBuilder _treasureRoom;
 
         public LaboratoryBuilder(ChunkBuilder chunkBuilder)
-            : base(chunkBuilder) => Rebuild();
-
-        private void Rebuild()
+            : base(chunkBuilder)
         {
             _roomMap.Clear();
             _treasureRoom = null;
 
-            _entryRoom = new ShaftBuilder(_chunkBuilder);
+            var startingPoint = new IntVector2(UnityEngine.Random.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X + 1),
+                                               UnityEngine.Random.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y + 1));
+
+            var buildDirection = Directions.RandomLeftOrRight;
+            _entryRoom = AddCorridor(startingPoint, buildDirection);
             _roomMap.Add(_entryRoom, new List<SpaceBuilder>());
+            _rooms.Add(_entryRoom);
 
             var previousRoom = _entryRoom;
-            var direction = Directions.Up;
 
             while (_treasureRoom == null)
             {
                 // Pick something perpendicular to the previous room
-                direction = Directions.Cardinals.RandomItem(direction, -direction);
+                buildDirection = Directions.Cardinals.RandomItem(buildDirection, -buildDirection);
                 var randomPoint = previousRoom.GetRandomPoint();
 
                 var newRoomStartingPoint = randomPoint;
-                var newRoom = BuildRoom(newRoomStartingPoint, direction, previousRoom);
+                var newRoom = BuildRoom(newRoomStartingPoint, buildDirection);
+
+                foreach (var direction in Directions.Cardinals)
+                {
+                    if (direction == buildDirection)
+                    {
+                        newRoom.Align(-direction, previousRoom.GetMaximalValue(direction));
+                    }
+                    else newRoom.AddBoundary(direction, previousRoom.GetMaximalValue(direction));
+                }
+
                 _roomMap[previousRoom].Add(newRoom);
                 _roomMap.Add(newRoom, new List<SpaceBuilder>());
                 _rooms.Add(newRoom);
                 previousRoom = newRoom;
             }
+
+            foreach (var room in _rooms)
+            {
+                var intersectingRooms = _rooms.FindAll(otherRoom => otherRoom.IntersectsWith(room));
+                while (intersectingRooms.Count > 0 && room.IsValid)
+                {
+                    foreach (var intersectingRoom in intersectingRooms)
+                    {
+                        foreach (var boundedDirection in Directions.Cardinals)
+                        {
+                            room.AddBoundary(boundedDirection, intersectingRoom.GetMaximalValue(-boundedDirection));
+                        }
+                    }
+
+                    intersectingRooms = _rooms.FindAll(otherRoom => room.IntersectsWith(room));
+                }
+            }
         }
 
-        private SpaceBuilder BuildRoom(IntVector2 newRoomStartingPoint, IntVector2 randomDirection, SpaceBuilder previousRoom)
+        private SpaceBuilder BuildRoom(IntVector2 newRoomStartingPoint, IntVector2 direction)
         {
-            if (Chance.OneIn(15))
+            if (Chance.OneIn(7))
             {
-                var room = new CorridorBuilder(_chunkBuilder)
-                              .SetStartingPoint(newRoomStartingPoint, randomDirection)
-                              .SetLength(6)
-                              .SetHeight(6)
-                              .SetAllowEnemies(false);
+                var room = AddTreasureRoom(newRoomStartingPoint, direction);
 
                 _treasureRoom = room;
 
                 return room;
             }
-            else if (randomDirection == Directions.Up || randomDirection == Directions.Down)
+            if (direction == Directions.Left || direction == Directions.Right)
             {
-                return new ShaftBuilder(_chunkBuilder)
-                          .SetStartingPoint(newRoomStartingPoint, randomDirection)
-                          .SetWidth(LABORATORY_SHAFT_WIDTH)
-                          .Align(-randomDirection, previousRoom.GetMaximalValue(randomDirection));
+                return AddCorridor(newRoomStartingPoint, direction);
             }
-            else
+            else if (direction == Directions.Up || direction == Directions.Down)
             {
-                return new CorridorBuilder(_chunkBuilder)
-                          .SetStartingPoint(newRoomStartingPoint, randomDirection)
-                          .SetHeight(LABORATORY_CORRIDOR_HEIGHT)
-                          .Align(-randomDirection, previousRoom.GetMaximalValue(randomDirection));
+                return AddShaft(newRoomStartingPoint, direction);
             }
+            else throw new System.ArgumentOutOfRangeException($"Cannot build room in direction {direction}.  Expected cardinal direction.");
         }
+
+        private SpaceBuilder AddTreasureRoom(IntVector2 newRoomStartingPoint, IntVector2 direction)
+            => new TreasureRoomBuilder(_chunkBuilder)
+                  .SetSize(LABORATORY_MINIMUM_SIZE)
+                  .SetCenter(newRoomStartingPoint + (direction * LABORATORY_MINIMUM_SIZE))
+                  .SetMinimumSize(LABORATORY_MINIMUM_SIZE)
+                  .SetTreasure(new UnlockItem("Seismic Bomb", UnlockTypes.Weapon));
+
+        private SpaceBuilder AddCorridor(IntVector2 newRoomStartingPoint, IntVector2 direction)
+            => new CorridorBuilder(_chunkBuilder)
+                  .SetStartingPoint(newRoomStartingPoint, direction)
+                  .SetHeight(LABORATORY_MINIMUM_SIZE)
+                  .SetMinimumHeight(LABORATORY_MINIMUM_SIZE)
+                  .SetMinimumLength(LABORATORY_MINIMUM_SIZE);
+
+        private SpaceBuilder AddShaft(IntVector2 newRoomStartingPoint, IntVector2 direction)
+            => new ShaftBuilder(_chunkBuilder)
+                  .SetStartingPoint(newRoomStartingPoint, direction)
+                  .SetWidth(LABORATORY_MINIMUM_SIZE)
+                  .SetMinimumWidth(LABORATORY_MINIMUM_SIZE)
+                  .SetMinimumHeight(LABORATORY_MINIMUM_SIZE);
 
         public override bool Contains(IntVector2 point) => _rooms.Any(room => room.Contains(point));
         public override int PassesBy(IntVector2 edge, int target) => _rooms.Max(room => room.PassesBy(edge, target));
@@ -153,14 +195,16 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             foreach (var roomToBuild in _rooms)
             {
-                rooms.Add(roomToBuild.Build());
+                if (roomToBuild.IsValid)
+                {
+                    rooms.Add(roomToBuild.Build());
+                }
             }
 
             return new Laboratory(rooms, 2);
         }
 
-        private const int LABORATORY_SHAFT_WIDTH = 4;
-        private const int LABORATORY_CORRIDOR_HEIGHT = 4;
+        private const int LABORATORY_MINIMUM_SIZE = 4;
 
         private static readonly Log _log = new Log("LaboratoryBuilder");
     }
