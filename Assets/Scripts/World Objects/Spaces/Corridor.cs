@@ -12,7 +12,6 @@ namespace WorldObjects.Spaces
 
         public int Height => TopRightCorner.Y - BottomLeftCorner.Y;
         public int Length => TopRightCorner.X - BottomLeftCorner.X;
-        public override int Area => Height * Length;
 
         public Corridor(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {

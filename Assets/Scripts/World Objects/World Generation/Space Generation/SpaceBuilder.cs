@@ -49,8 +49,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public abstract int PassesBy(IntVector2 direction, int amount);
         public abstract bool Contains(IntVector2 point);
-        public abstract IntVector2 GetRandomPoint();
 
+        public abstract IntVector2 GetRandomPoint();
+        public abstract int GetMaximalValue(IntVector2 direction);
+
+        public abstract SpaceBuilder Align(IntVector2 direction, int amount);
         public abstract void Clamp(IntVector2 direction, int amount);
         public abstract void Cut(IntVector2 direction, int amount);
 

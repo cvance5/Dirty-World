@@ -123,38 +123,54 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public override IntVector2 GetRandomPoint() => new IntVector2(Random.Range(_leftEnd.X, _rightEnd.X + 1), Random.Range(_leftEnd.Y, _leftEnd.Y + _height + 1));
 
+        public override int GetMaximalValue(IntVector2 direction)
+        {
+            if (direction == Directions.Up) return _leftEnd.Y + _height;
+            else if (direction == Directions.Right) return _rightEnd.X;
+            else if (direction == Directions.Down) return _leftEnd.Y;
+            else if (direction == Directions.Left) return _leftEnd.X;
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+        }
+
+        public override SpaceBuilder Align(IntVector2 direction, int amount)
+        {
+            if (direction == Directions.Up)
+            {
+                _leftEnd.Y = amount - _height;
+                _center.Y = amount - _height;
+                _rightEnd.Y = amount - _height;
+            }
+            else if (direction == Directions.Right)
+            {
+                _rightEnd.X = amount;
+                _alignment = CorridorAlignment.StartFromRight; // We have to enforce this boundary
+            }
+            else if (direction == Directions.Down)
+            {
+                _leftEnd.Y = amount;
+                _center.Y = amount;
+                _rightEnd.Y = amount;
+            }
+            else if (direction == Directions.Left)
+            {
+                _leftEnd.X = Mathf.Max(_leftEnd.X, amount);
+                _alignment = CorridorAlignment.StartFromLeft; // We have to enforce this boundary
+            }
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+
+            Rebuild();
+
+            return this;
+        }
+
         public override void Clamp(IntVector2 direction, int amount)
         {
             var difference = PassesBy(direction, amount);
 
             if (difference > 0)
             {
-                if (direction == Directions.Up)
-                {
-                    _leftEnd.Y -= difference;
-                    _center.Y -= difference;
-                    _rightEnd.Y -= difference;
-                }
-                else if (direction == Directions.Right)
-                {
-                    _rightEnd.X = Mathf.Min(_rightEnd.X, amount);
-                    _alignment = CorridorAlignment.StartFromRight; // We have to enforce this boundary
-                }
-                else if (direction == Directions.Down)
-                {
-                    _leftEnd.Y = amount;
-                    _center.Y = amount;
-                    _rightEnd.Y = amount;
-                }
-                else if (direction == Directions.Left)
-                {
-                    _leftEnd.X = Mathf.Max(_leftEnd.X, amount);
-                    _alignment = CorridorAlignment.StartFromLeft; // We have to enforce this boundary
-                }
-                else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+                Align(direction, amount);
             }
-
-            Rebuild();
         }
 
         public override void Cut(IntVector2 direction, int amount)
@@ -173,12 +189,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 }
                 else if (direction == Directions.Down)
                 {
-                    SetHeight(_height + difference);
+                    SetHeight(_height - difference);
                     Clamp(Directions.Down, amount); // We have to shift the amount up, since we originate down
                 }
                 else if (direction == Directions.Left)
                 {
-                    SetLength(_length + difference);
+                    SetLength(_length - difference);
                 }
                 else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
 

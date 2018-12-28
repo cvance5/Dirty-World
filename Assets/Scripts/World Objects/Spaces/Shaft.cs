@@ -14,7 +14,6 @@ namespace WorldObjects.Spaces
 
         public int Height => TopRightCorner.Y - BottomLeftCorner.Y;
         public int Width => TopRightCorner.X - BottomLeftCorner.X;
-        public override int Area => Height * Width;
 
         public Shaft(IntVector2 bottomLeftCorner, IntVector2 topRightCorner, bool isUncapped)
         {

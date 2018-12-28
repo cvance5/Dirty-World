@@ -9,11 +9,18 @@ namespace Data.Serialization.SerializableSpaces
         [JsonProperty("spaces")]
         private readonly List<Space> _spaces;
 
+        [JsonProperty("metalThickness")]
+        private readonly int _metalThickness;
+
         [JsonConstructor]
         private SerializableLaboratory() { }
 
-        public SerializableLaboratory(Laboratory laboratory) => _spaces = laboratory.ContainedSpaces;
+        public SerializableLaboratory(Laboratory laboratory)
+        {
+            _spaces = laboratory.ContainedSpaces;
+            _metalThickness = laboratory.MetalThickness;
+        }
 
-        public override Space ToObject() => new Laboratory(_spaces);
+        public override Space ToObject() => new Laboratory(_spaces, _metalThickness);
     }
 }

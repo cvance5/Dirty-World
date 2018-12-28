@@ -107,29 +107,45 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return new IntVector2(randomX, randomY);
         }
 
+        public override int GetMaximalValue(IntVector2 direction)
+        {
+            if (direction == Directions.Up) return _centerpoint.Y + _radius;
+            else if (direction == Directions.Right) return _centerpoint.X + _radius;
+            else if (direction == Directions.Down) return _centerpoint.Y;
+            else if (direction == Directions.Left) return _centerpoint.X - _radius;
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+        }
+
+        public override SpaceBuilder Align(IntVector2 direction, int amount)
+        {
+            if (direction == Directions.Up)
+            {
+                _centerpoint.Y = amount - _radius;
+            }
+            else if (direction == Directions.Right)
+            {
+                _centerpoint.X = amount - _radius;
+            }
+            else if (direction == Directions.Down)
+            {
+                _centerpoint.Y = amount;
+            }
+            else if (direction == Directions.Left)
+            {
+                _centerpoint.X = amount + _radius;
+            }
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+
+            return this;
+        }
+
         public override void Clamp(IntVector2 direction, int amount)
         {
             var difference = PassesBy(direction, amount);
 
             if (difference > 0)
             {
-                if (direction == Directions.Up)
-                {
-                    _centerpoint.Y -= difference;
-                }
-                else if (direction == Directions.Right)
-                {
-                    _centerpoint.X -= difference;
-                }
-                else if (direction == Directions.Down)
-                {
-                    _centerpoint.Y += difference;
-                }
-                else if (direction == Directions.Left)
-                {
-                    _centerpoint.X += difference;
-                }
-                else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+                Align(direction, amount);
             }
         }
 

@@ -10,8 +10,6 @@ namespace WorldObjects.Spaces
         public IntVector2 Centerpoint { get; }
         public int Radius { get; }
 
-        public override int Area => Mathf.RoundToInt(Mathf.PI * (Radius * Radius) / 2);
-
         public MonsterDen(IntVector2 centerpoint, int radius)
         {
             Centerpoint = centerpoint;

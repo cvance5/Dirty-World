@@ -9,8 +9,6 @@ namespace WorldObjects.Spaces
         public abstract string Name { get; }
         public List<IntVector2> Extents { get; protected set; } = new List<IntVector2>();
             
-        public abstract int Area { get; }
-
         protected readonly List<EnemySpawn> _enemySpawns = new List<EnemySpawn>();
         public virtual List<EnemySpawn> EnemySpawns => new List<EnemySpawn>(_enemySpawns);
 

@@ -8,22 +8,12 @@ namespace WorldObjects.Spaces
     {
         public override string Name => $"Laboratory";
 
-        public override int Area
-        {
-            get
-            {
-                var area = 0;
-                foreach (var space in ContainedSpaces)
-                {
-                    area += space.Area;
-                }
-                return area;
-            }
-        }
+        public readonly int MetalThickness;
 
-        public Laboratory(List<Space> containedSpaces)
+        public Laboratory(List<Space> containedSpaces, int metalThickeness)
         {
             ContainedSpaces = containedSpaces;
+            MetalThickness = metalThickeness;
 
             int? maxX = null;
             int? minX = null;
@@ -59,12 +49,38 @@ namespace WorldObjects.Spaces
             Extents.Add(new IntVector2(minX.Value, minY.Value));
         }
 
-        public override bool Contains(IntVector2 position) => ContainedSpaces.Any(space => space.Contains(position));
+        public override bool Contains(IntVector2 position)
+        {
+            var doesContain = false;
+
+            if (ContainedSpaces.Any(space => space.Contains(position)))
+            {
+                doesContain = true;
+            }
+            else
+            {
+                foreach (var direction in Directions.Compass)
+                {
+                    if (ContainedSpaces.Any(space => space.Contains(position + (direction * MetalThickness))))
+                    {
+                        doesContain = true;
+                        break;
+                    }
+                }
+            }
+
+            return doesContain;
+        }
 
         public override BlockTypes GetBlockType(IntVector2 position)
         {
             var containingSpace = ContainedSpaces.Find(space => space.Contains(position));
-            return containingSpace == null ? BlockTypes.Dirt : BlockTypes.Silver;
+
+            if (containingSpace != null)
+            {
+                return containingSpace.GetBlockType(position);
+            }
+            else return BlockTypes.SteelPlate;
         }
 
         public override IntVector2 GetRandomPosition() => ContainedSpaces.RandomItem().GetRandomPosition();

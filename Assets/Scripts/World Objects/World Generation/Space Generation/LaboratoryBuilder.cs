@@ -36,11 +36,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 var randomPoint = previousRoom.GetRandomPoint();
 
                 var newRoomStartingPoint = randomPoint;
-                while (previousRoom.Contains(newRoomStartingPoint + direction))
-                {
-                    newRoomStartingPoint += direction;
-                }
-
                 var newRoom = BuildRoom(newRoomStartingPoint, direction, previousRoom);
                 _roomMap[previousRoom].Add(newRoom);
                 _roomMap.Add(newRoom, new List<SpaceBuilder>());
@@ -51,13 +46,13 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         private SpaceBuilder BuildRoom(IntVector2 newRoomStartingPoint, IntVector2 randomDirection, SpaceBuilder previousRoom)
         {
-            if (Chance.OneIn(5))
+            if (Chance.OneIn(15))
             {
                 var room = new CorridorBuilder(_chunkBuilder)
-                                    .SetStartingPoint(newRoomStartingPoint, randomDirection)
-                                    .SetLength(6)
-                                    .SetHeight(6)
-                                    .SetAllowEnemies(false);
+                              .SetStartingPoint(newRoomStartingPoint, randomDirection)
+                              .SetLength(6)
+                              .SetHeight(6)
+                              .SetAllowEnemies(false);
 
                 _treasureRoom = room;
 
@@ -66,25 +61,42 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             else if (randomDirection == Directions.Up || randomDirection == Directions.Down)
             {
                 return new ShaftBuilder(_chunkBuilder)
-                                 .SetStartingPoint(newRoomStartingPoint, randomDirection)
-                                 .SetWidth(LABORATORY_SHAFT_WIDTH);
+                          .SetStartingPoint(newRoomStartingPoint, randomDirection)
+                          .SetWidth(LABORATORY_SHAFT_WIDTH)
+                          .Align(-randomDirection, previousRoom.GetMaximalValue(randomDirection));
             }
             else
             {
                 return new CorridorBuilder(_chunkBuilder)
-                                 .SetStartingPoint(newRoomStartingPoint, randomDirection)
-                                 .SetHeight(LABORATORY_CORRIDOR_HEIGHT);
+                          .SetStartingPoint(newRoomStartingPoint, randomDirection)
+                          .SetHeight(LABORATORY_CORRIDOR_HEIGHT)
+                          .Align(-randomDirection, previousRoom.GetMaximalValue(randomDirection));
             }
         }
 
-        public override bool Contains(IntVector2 point) => _roomMap.Keys.Any(room => room.Contains(point));
-        public override int PassesBy(IntVector2 direction, int amount) => _roomMap.Keys.Max(room => room.PassesBy(direction, amount));
+        public override bool Contains(IntVector2 point) => _rooms.Any(room => room.Contains(point));
+        public override int PassesBy(IntVector2 edge, int target) => _rooms.Max(room => room.PassesBy(edge, target));
+
         public override IntVector2 GetRandomPoint() => _roomMap.RandomItem().Key.GetRandomPoint();
 
-        public override void Clamp(IntVector2 direction, int amount)
+        public override int GetMaximalValue(IntVector2 direction) => _rooms.Max(room => room.GetMaximalValue(direction));
+
+        public override SpaceBuilder Align(IntVector2 direction, int amount)
         {
-            var difference = PassesBy(direction, amount);
+            var difference = GetMaximalValue(direction) - amount;
             ShiftRooms(_entryRoom, -direction * difference);
+
+            return this;
+        }
+
+        public override void Clamp(IntVector2 edge, int maxAmount)
+        {
+            var difference = PassesBy(edge, maxAmount);
+
+            if (difference > 0)
+            {
+                ShiftRooms(_entryRoom, -edge * difference);
+            }
         }
 
         public override void Cut(IntVector2 direction, int amount)
@@ -144,7 +156,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 rooms.Add(roomToBuild.Build());
             }
 
-            return new Laboratory(rooms);
+            return new Laboratory(rooms, 2);
         }
 
         private const int LABORATORY_SHAFT_WIDTH = 4;

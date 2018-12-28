@@ -114,38 +114,53 @@ namespace WorldObjects.WorldGeneration
 
         public override IntVector2 GetRandomPoint() => new IntVector2(Random.Range(_bottom.X, _bottom.X + 1), Random.Range(_bottom.Y, _top.Y + 1));
 
+        public override int GetMaximalValue(IntVector2 direction)
+        {
+            if (direction == Directions.Up) return _top.Y;
+            else if (direction == Directions.Right) return _top.X + _width;
+            else if (direction == Directions.Down) return _bottom.Y;
+            else if (direction == Directions.Left) return _top.X;
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+        }
+
+        public override SpaceBuilder Align(IntVector2 direction, int amount)
+        {
+            if (direction == Directions.Up)
+            {
+                _top.Y = amount;
+                _alignment = ShaftAlignment.StartFromTop; // We have to enforce this boundary
+                _wasClampedTop = true; // We shouldn't spawn blocks here, as it may be clamped by another space or chunk
+            }
+            else if (direction == Directions.Right)
+            {
+                _bottom.X = amount - _width;
+                _middle.X = amount - _width;
+                _top.X = amount - _width;
+            }
+            else if (direction == Directions.Down)
+            {
+                _bottom.Y = amount;
+                _alignment = ShaftAlignment.StartFromBottom; // We have to enforce this boundary
+            }
+            else if (direction == Directions.Left)
+            {
+                _bottom.X = amount;
+                _middle.X = amount;
+                _top.X = amount;
+            }
+
+            Rebuild();
+
+            return this;
+        }
+
         public override void Clamp(IntVector2 direction, int amount)
         {
             var difference = PassesBy(direction, amount);
 
             if (difference > 0)
             {
-                if (direction == Directions.Up)
-                {
-                    _top.Y -= difference;
-                    _alignment = ShaftAlignment.StartFromTop; // We have to enforce this boundary
-                    _wasClampedTop = true; // We shouldn't spawn blocks here, as it may be clamped by another space or chunk
-                }
-                else if (direction == Directions.Right)
-                {
-                    _bottom.X -= difference;
-                    _middle.X -= difference;
-                    _top.X -= difference;
-                }
-                else if (direction == Directions.Down)
-                {
-                    _bottom.Y += difference;
-                    _alignment = ShaftAlignment.StartFromBottom; // We have to enforce this boundar
-                }
-                else if (direction == Directions.Left)
-                {
-                    _bottom.X = amount;
-                    _middle.X = amount;
-                    _top.X = amount;
-                }
-                else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-
-                Rebuild();
+                Align(direction, amount);
             }
         }
 
@@ -165,11 +180,11 @@ namespace WorldObjects.WorldGeneration
                 }
                 else if (direction == Directions.Down)
                 {
-                    SetHeight(_height + difference);
+                    SetHeight(_height - difference);
                 }
                 else if (direction == Directions.Left)
                 {
-                    SetWidth(_width + difference);
+                    SetWidth(_width - difference);
                     Clamp(Directions.Left, amount); // We have to shift the amount to the right, since we originate left
                 }
                 else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
