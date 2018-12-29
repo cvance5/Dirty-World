@@ -18,7 +18,7 @@ namespace WorldObjects.WorldGeneration
         private int _width;
         private int _minWidth = 1;
 
-        private bool _wasClampedTop;
+        private bool _isUncapped;
 
         public ShaftBuilder(ChunkBuilder containingChunk)
             : base(containingChunk)
@@ -69,29 +69,35 @@ namespace WorldObjects.WorldGeneration
 
         public ShaftBuilder SetWidth(int blocksWide)
         {
-            _width = blocksWide;
+            _width = blocksWide - 1;
             _width = Mathf.Max(0, _width);
             Rebuild();
             return this;
         }
 
-        public ShaftBuilder SetMinimumWidth(int minWidth)
+        public ShaftBuilder SetMinimumWidth(int minBlocksWide)
         {
-            _minWidth = minWidth;
+            _minWidth = minBlocksWide - 1;
             return this;
         }
 
         public ShaftBuilder SetHeight(int blockHigh)
         {
-            _height = blockHigh;
+            _height = blockHigh - 1;
             _height = Mathf.Max(0, _height);
             Rebuild();
             return this;
         }
 
-        public ShaftBuilder SetMinimumHeight(int minHeight)
+        public ShaftBuilder SetMinimumHeight(int minBlocksHigh)
         {
-            _minHeight = minHeight;
+            _minHeight = minBlocksHigh - 1;
+            return this;
+        }
+
+        public ShaftBuilder SetUncapped(bool isUncapped)
+        {
+            _isUncapped = isUncapped;
             return this;
         }
 
@@ -145,7 +151,7 @@ namespace WorldObjects.WorldGeneration
             {
                 _top.Y = amount;
                 _alignment = ShaftAlignment.StartFromTop; // We have to enforce this boundary
-                _wasClampedTop = true; // We shouldn't spawn blocks here, as it may be clamped by another space or chunk
+                _isUncapped = true; // We shouldn't spawn blocks here, as it may be clamped by another space or chunk
             }
             else if (direction == Directions.Right)
             {
@@ -207,7 +213,7 @@ namespace WorldObjects.WorldGeneration
             }
         }
 
-        protected override Spaces.Space BuildRaw() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _wasClampedTop);
+        protected override Spaces.Space BuildRaw() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _isUncapped);
 
         protected void Rebuild()
         {

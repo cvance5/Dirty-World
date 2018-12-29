@@ -71,28 +71,28 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public CorridorBuilder SetLength(int blocksLong)
         {
-            _length = blocksLong;
+            _length = blocksLong - 1;
             _length = Mathf.Max(0, _length);
             Rebuild();
             return this;
         }
 
-        public CorridorBuilder SetMinimumLength(int minLength)
+        public CorridorBuilder SetMinimumLength(int minimumBlocksLong)
         {
-            _minLength = minLength;
+            _minLength = minimumBlocksLong - 1;
             return this;
         }
 
         public CorridorBuilder SetHeight(int blocksHigh)
         {
-            _height = blocksHigh;
+            _height = blocksHigh - 1;
             _height = Mathf.Max(0, _height);
             return this;
         }
 
-        public CorridorBuilder SetMinimumHeight(int minHeight)
+        public CorridorBuilder SetMinimumHeight(int minimumBlocksHigh)
         {
-            _minHeight = minHeight;
+            _minHeight = minimumBlocksHigh - 1;
             return this;
         }
 
