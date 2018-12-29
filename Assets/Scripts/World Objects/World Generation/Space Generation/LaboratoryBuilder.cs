@@ -10,101 +10,293 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class LaboratoryBuilder : SpaceBuilder
     {
-        public override bool IsValid => true;
+        public override bool IsValid => _mainShafts.Count > 0 && _treasureRoom != null && _treasureRoom.IsValid;
 
-        private readonly IntVector2 _mainShaftBottom;
-        private readonly int _highestStory;
         private readonly int _maximumCorridorSegments;
 
-        private readonly ShaftBuilder _mainShaft;
+        private readonly List<ShaftBuilder> _mainShafts;
+
+        private readonly Dictionary<ShaftBuilder, List<CorridorBuilder>> _corridorsByShaft;
+        private readonly Dictionary<ShaftBuilder, List<ShaftBuilder>> _secondaryShaftsByShaft;
+
+        private readonly Dictionary<CorridorBuilder, RoomBuilder> _connectionsByCorridor;
+
         private readonly TreasureRoomBuilder _treasureRoom;
 
-        private readonly List<CorridorBuilder> _corridors;
-        private readonly List<ShaftBuilder> _secondaryShafts;
+        private bool _allowAdditionalMainShafts = true;
 
         public LaboratoryBuilder(ChunkBuilder chunkBuilder)
             : base(chunkBuilder)
         {
-            _corridors = new List<CorridorBuilder>();
-            _secondaryShafts = new List<ShaftBuilder>();
+            _mainShafts = new List<ShaftBuilder>();
+            _corridorsByShaft = new Dictionary<ShaftBuilder, List<CorridorBuilder>>();
+            _secondaryShaftsByShaft = new Dictionary<ShaftBuilder, List<ShaftBuilder>>();
 
-            _highestStory = Random.Range(6, 10);
+            _connectionsByCorridor = new Dictionary<CorridorBuilder, RoomBuilder>();
+
             _maximumCorridorSegments = Random.Range(4, 8);
 
-            _mainShaftBottom = new IntVector2(Random.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X + 1),
-                                              Random.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y + 1));
+            var highestStory = Random.Range(6, 10);
+            var shaftPosition = new IntVector2(Random.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X + 1),
+                                               Random.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y + 1));
 
-            _mainShaft = AddShaft(0, _highestStory);
+            RegisterNewMainShaft(AddShaft(0, highestStory, shaftPosition), highestStory);
 
-            GenerateCorridors();
-            GenerateSecondaryShafts();
+            var randomConnectionWithRoom = _connectionsByCorridor.RandomItem(kvp => !(kvp.Value is null));
+            _treasureRoom = PromoteTreasureRoom(randomConnectionWithRoom.Value);
+            _connectionsByCorridor[randomConnectionWithRoom.Key] = _treasureRoom;
         }
 
-        private void GenerateCorridors()
+        private void RegisterNewMainShaft(ShaftBuilder mainShaft, int height)
         {
-            _corridors.Clear();
-
-            var shaftLeftSide = _mainShaft.GetMaximalValue(Directions.Left);
-            var shaftRightSide = _mainShaft.GetMaximalValue(Directions.Right);
-
-            for (var story = 0; story < _highestStory; story++)
+            if (_allowAdditionalMainShafts)
             {
-                var yPosition = _mainShaftBottom.Y + (STORY_SIZE * story) + METAL_THICKNESS;
+                _mainShafts.Add(mainShaft);
 
-                if (Chance.CoinFlip)
+                GenerateCorridors(mainShaft, height);
+                GenerateSecondaryShafts(mainShaft, height);
+
+                // The more shafts there are, the less likely we are to allow any more
+                if (Chance.ChanceOf(_mainShafts.Count / (float)MAX_MAIN_SHAFTS))
                 {
-                    _corridors.Add(AddCorridor(new IntVector2(shaftLeftSide, yPosition), Directions.Left));
-                }
-                if (Chance.CoinFlip)
-                {
-                    _corridors.Add(AddCorridor(new IntVector2(shaftRightSide, yPosition), Directions.Right));
+                    _allowAdditionalMainShafts = false;
                 }
             }
         }
 
-        private void GenerateSecondaryShafts()
+        private List<ShaftBuilder> FindMainShaftsThatReachPosition(IntVector2 position)
         {
-            _secondaryShafts.Clear();
+            var shaftsReachingPosition = new List<ShaftBuilder>();
+
+            foreach (var shaft in _mainShafts)
+            {
+                var shaftX = shaft.GetMaximalValue(Directions.Left);
+                var maxX = shaftX + (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH) + METAL_THICKNESS;
+                var minX = shaftX - (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH);
+
+                var maxY = shaft.GetMaximalValue(Directions.Up);
+                var minY = shaft.GetMaximalValue(Directions.Down);
+
+                if (position.X >= minX &&
+                   position.X <= maxX &&
+                   position.Y >= minY &&
+                   position.Y <= maxY)
+                {
+                    shaftsReachingPosition.Add(shaft);
+                }
+            }
+
+            return shaftsReachingPosition;
+        }
+
+        private List<ShaftBuilder> FindMainShaftsThatPassEdge(IntVector2 direction, int target)
+        {
+            var shaftsPassingEdge = new List<ShaftBuilder>();
+
+            foreach (var shaft in _mainShafts)
+            {
+                if (direction == Directions.Up)
+                {
+                    var maxY = shaft.GetMaximalValue(Directions.Up);
+                    if (maxY > target) shaftsPassingEdge.Add(shaft);
+                }
+                else if (direction == Directions.Right)
+                {
+                    var maxX = shaft.GetMaximalValue(Directions.Left) + (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH) + METAL_THICKNESS;
+                    if (maxX > target) shaftsPassingEdge.Add(shaft);
+                }
+                else if (direction == Directions.Down)
+                {
+                    var minY = shaft.GetMaximalValue(Directions.Down);
+                    if (minY < target) shaftsPassingEdge.Add(shaft);
+                }
+                else if (direction == Directions.Left)
+                {
+                    var minX = shaft.GetMaximalValue(Directions.Left) - (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH);
+                    if (minX < target) shaftsPassingEdge.Add(shaft);
+                }
+                else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+            }
+
+            return shaftsPassingEdge;
+        }
+
+        private List<SpaceBuilder> GetSpacesForShaft(ShaftBuilder mainShaft)
+        {
+            var spaces = new List<SpaceBuilder>
+            {
+                mainShaft
+            };
+
+            foreach (var corridorToBuild in _corridorsByShaft[mainShaft])
+            {
+                spaces.Add(corridorToBuild);
+
+                if (_connectionsByCorridor[corridorToBuild] != null)
+                {
+                    spaces.Add(_connectionsByCorridor[corridorToBuild]);
+                }
+            }
+
+            foreach (var shaftToBuild in _secondaryShaftsByShaft[mainShaft])
+            {
+                spaces.Add(shaftToBuild);
+            }
+
+            return spaces;
+        }
+
+        private List<SpaceBuilder> GetSpacesForShafts(List<ShaftBuilder> mainShafts)
+        {
+            var spaces = new List<SpaceBuilder>();
+
+            foreach (var mainShaft in mainShafts)
+            {
+                spaces.AddRange(GetSpacesForShaft(mainShaft));
+            }
+
+            return spaces;
+        }
+
+        private void GenerateCorridors(ShaftBuilder mainShaft, int numberStories)
+        {
+            if (_corridorsByShaft.TryGetValue(mainShaft, out var corridors))
+            {
+                corridors.Clear();
+            }
+            else corridors = new List<CorridorBuilder>();
+
+            var shaftLeftSide = mainShaft.GetMaximalValue(Directions.Left);
+            var shaftRightSide = mainShaft.GetMaximalValue(Directions.Right);
+
+            var shaftY = mainShaft.GetMaximalValue(Directions.Down);
+
+            for (var story = 0; story < Mathf.Abs(numberStories); story++)
+            {
+                var yPosition = GetYPositionForStory(shaftY, story);
+
+                if (Chance.CoinFlip)
+                {
+                    var corridor = AddCorridor(new IntVector2(shaftLeftSide, yPosition), Directions.Left);
+                    var room = AddRoom(new IntVector2(corridor.GetMaximalValue(Directions.Left), yPosition), Directions.Left);
+                    corridors.Add(corridor);
+                    _connectionsByCorridor.Add(corridor, room);
+                }
+                if (Chance.CoinFlip)
+                {
+                    var corridor = AddCorridor(new IntVector2(shaftRightSide, yPosition), Directions.Right);
+                    var room = AddRoom(new IntVector2(corridor.GetMaximalValue(Directions.Right), yPosition), Directions.Right);
+                    corridors.Add(corridor);
+                    _connectionsByCorridor.Add(corridor, room);
+                }
+            }
+
+            _corridorsByShaft[mainShaft] = corridors;
+        }
+
+        private void GenerateSecondaryShafts(ShaftBuilder mainShaft, int height)
+        {
+            if (_secondaryShaftsByShaft.TryGetValue(mainShaft, out var shafts))
+            {
+                shafts.Clear();
+            }
+            else shafts = new List<ShaftBuilder>();
+
+            var shaftY = mainShaft.GetMaximalValue(Directions.Down);
+            var shaftX = mainShaft.GetMaximalValue(Directions.Left);
 
             for (var corridorSegment = -_maximumCorridorSegments; corridorSegment < _maximumCorridorSegments; corridorSegment++)
             {
                 if (corridorSegment == 0) continue; // Main shaft...
 
-                if (Chance.OneIn(5))
+                var xPosition = (CORRIDOR_SEGMENT_LENGTH * corridorSegment) + shaftX;
+
+                var validStories = new List<int>();
+
+                for (var story = 0; story < Mathf.Abs(height); story++)
                 {
-                    var xOffset = (CORRIDOR_SEGMENT_LENGTH * corridorSegment);
+                    var yPosition = GetYPositionForStory(shaftY, story);
 
-                    var validStories = new List<int>();
+                    var corridorPosition = new IntVector2(xPosition, yPosition);
 
-                    for (var story = 0; story < _highestStory; story++)
+                    if (_corridorsByShaft[mainShaft].Any(corridor => corridor.Contains(corridorPosition)))
                     {
-                        var yPosition = _mainShaftBottom.Y + (STORY_SIZE * story) + METAL_THICKNESS;
+                        validStories.Add(story);
+                    }
+                }
 
-                        var corridorPosition = new IntVector2(_mainShaftBottom.X + xOffset, yPosition);
+                if (validStories.Count > 0)
+                {
+                    if (corridorSegment == -_maximumCorridorSegments ||
+                       corridorSegment == _maximumCorridorSegments)
+                    {
+                        var storyStartForShaft = validStories.RandomItem();
+                        var yPosition = GetYPositionForStory(shaftY, storyStartForShaft);
+                        var newShaftHeight = Random.Range(-10, 10);
 
-                        if (_corridors.Any(corridor => corridor.Contains(corridorPosition)))
-                        {
-                            validStories.Add(story);
-                        }
+                        var shaft = AddShaft(storyStartForShaft, storyStartForShaft + newShaftHeight, new IntVector2(xPosition, yPosition));
+                        RegisterNewMainShaft(shaft, newShaftHeight);
+
+                        validStories.Remove(storyStartForShaft);
+                    }
+                    else if (validStories.Contains(0))
+                    {
+                        var newShaftHeight = Random.Range(-10, -4);
+
+                        var shaft = AddShaft(0, newShaftHeight, new IntVector2(xPosition, shaftY));
+                        RegisterNewMainShaft(shaft, newShaftHeight);
+                        validStories.Remove(0);
+                    }
+                    else if (validStories.Contains(height))
+                    {
+                        var yPosition = GetYPositionForStory(shaftY, height);
+                        var newShaftHeight = Random.Range(4, 10);
+
+                        var shaft = AddShaft(height, height + newShaftHeight, new IntVector2(xPosition, yPosition));
+                        RegisterNewMainShaft(shaft, newShaftHeight);
+                        validStories.Remove(height);
                     }
 
                     // At least two stories we can reach...
-                    if (validStories.Count > 1)
+                    while (validStories.Count > 1)
                     {
                         var firstStory = validStories.RandomItem();
                         var secondStory = validStories.RandomItem(firstStory);
 
-                        _secondaryShafts.Add(AddShaft(Mathf.Min(firstStory, secondStory), Mathf.Max(firstStory, secondStory), xOffset));
+                        var shaftPosition = new IntVector2(xPosition, GetYPositionForStory(shaftY, firstStory));
+
+                        var shaft = AddShaft(Mathf.Min(firstStory, secondStory), Mathf.Max(firstStory, secondStory), shaftPosition);
+
+                        if (!shafts.Any(otherShaft => otherShaft.IntersectsWith(shaft)))
+                        {
+                            shafts.Add(shaft);
+                        }
+
+                        foreach (var corridor in _corridorsByShaft[mainShaft])
+                        {
+                            if (shaft.IntersectsWith(_connectionsByCorridor[corridor]))
+                            {
+                                _connectionsByCorridor[corridor] = null;
+                            }
+                        }
+
+                        validStories.Remove(firstStory);
+                        validStories.Remove(secondStory);
                     }
                 }
             }
+
+            _secondaryShaftsByShaft[mainShaft] = shafts;
         }
 
-        private SpaceBuilder AddTreasureRoom(IntVector2 newRoomStartingPoint, IntVector2 direction)
-            => new TreasureRoomBuilder(_chunkBuilder)
+        private RoomBuilder AddRoom(IntVector2 corridorEndpoint, IntVector2 direction)
+            => new RoomBuilder(_chunkBuilder)
+                  .SetCenter(corridorEndpoint + (direction * ROOM_SIZE))
                   .SetSize(ROOM_SIZE)
-                  .SetCenter(newRoomStartingPoint + (direction * ROOM_SIZE))
-                  .SetMinimumSize(ROOM_SIZE)
+                  .SetMinimumSize(ROOM_SIZE);
+
+        private TreasureRoomBuilder PromoteTreasureRoom(RoomBuilder roomBuilder)
+            => new TreasureRoomBuilder(roomBuilder)
                   .SetTreasure(new UnlockItem("Seismic Bomb", UnlockTypes.Weapon));
 
         private CorridorBuilder AddCorridor(IntVector2 attachPoint, IntVector2 direction)
@@ -112,67 +304,159 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                   .SetStartingPoint(attachPoint, direction)
                   .SetHeight(CORRIDOR_HEIGHT)
                   .SetLength(CORRIDOR_SEGMENT_LENGTH * Random.Range(1, _maximumCorridorSegments))
-                  .SetMinimumHeight(ROOM_SIZE)
-                  .SetMinimumLength(ROOM_SIZE);
+                  .SetMinimumHeight(CORRIDOR_HEIGHT)
+                  .SetMinimumLength(CORRIDOR_SEGMENT_LENGTH);
 
-        private ShaftBuilder AddShaft(int bottomStory, int topStory, int xOffset = 0)
+        private ShaftBuilder AddShaft(int startingStory, int endingStory, IntVector2 position)
             => new ShaftBuilder(_chunkBuilder)
-                  .SetStartingPoint(new IntVector2(_mainShaftBottom.X + xOffset, _mainShaftBottom.Y + (STORY_SIZE * bottomStory)), ShaftBuilder.ShaftAlignment.StartFromBottom)
+                  .SetStartingPoint(position, startingStory < endingStory ? Directions.Up : Directions.Down)
                   .SetWidth(ROOM_SIZE)
-                  .SetHeight(STORY_SIZE * (1 + (topStory - bottomStory)))
+                  .SetHeight(STORY_SIZE * (1 + Mathf.Abs((endingStory - startingStory))))
                   .SetMinimumWidth(ROOM_SIZE)
-                  .SetMinimumHeight(ROOM_SIZE)
+                  .SetMinimumHeight(STORY_SIZE)
                   .SetUncapped(true);
 
-        public override bool Contains(IntVector2 point) => _mainShaft.Contains(point) || _corridors.Any(room => room.Contains(point)) || _secondaryShafts.Any(shaft => shaft.Contains(point));
-        public override int PassesBy(IntVector2 edge, int target) => _corridors.Max(room => room.PassesBy(edge, target));
+        public override bool Contains(IntVector2 point)
+        {
+            var possibleContainingShafts = FindMainShaftsThatReachPosition(point);
 
-        public override IntVector2 GetRandomPoint() => _corridors.RandomItem().GetRandomPoint();
+            var possibleContainingSpaces = GetSpacesForShafts(possibleContainingShafts);
 
-        public override int GetMaximalValue(IntVector2 direction) => _corridors.Max(room => room.GetMaximalValue(direction));
+            return possibleContainingSpaces.Any(space => space.Contains(point));
+        }
 
-        public override SpaceBuilder Align(IntVector2 direction, int amount) => this;
+        public override int PassesBy(IntVector2 edge, int target)
+        {
+            var shaftsPassingEdge = FindMainShaftsThatPassEdge(edge, target);
+
+            var possiblePassingSpaces = GetSpacesForShafts(shaftsPassingEdge);
+
+            return possiblePassingSpaces.Max(space => space.PassesBy(edge, target));
+        }
+
+        public override IntVector2 GetRandomPoint() => GetSpacesForShaft(_mainShafts.RandomItem()).RandomItem().GetRandomPoint();
+
+        public override int GetMaximalValue(IntVector2 direction)
+        {
+            if (direction == Directions.Up)
+            {
+                var maxUpShaft = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
+                return GetSpacesForShaft(maxUpShaft).Max(space => space.GetMaximalValue(direction));
+            }
+            else if (direction == Directions.Right)
+            {
+                var maxRightShaft = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
+                return GetSpacesForShaft(maxRightShaft).Max(space => space.GetMaximalValue(direction)) + (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH) + METAL_THICKNESS;
+            }
+            else if (direction == Directions.Down)
+            {
+                var maxDownShaft = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
+                return GetSpacesForShaft(maxDownShaft).Min(space => space.GetMaximalValue(direction));
+            }
+            else if (direction == Directions.Left)
+            {
+                var maxLeftShaft = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
+                return GetSpacesForShaft(maxLeftShaft).Min(space => space.GetMaximalValue(direction)) - (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH);
+            }
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+        }
+
+        public override SpaceBuilder Align(IntVector2 direction, int amount)
+        {
+            var maximalValue = GetMaximalValue(direction);
+            var difference = maximalValue - amount;
+            Shift(direction * difference);
+
+            return this;
+        }
 
         public override void Clamp(IntVector2 edge, int maxAmount)
         {
+            var difference = PassesBy(edge, maxAmount);
+            if (difference > 0)
+            {
+                Align(edge, maxAmount);
+            }
         }
 
         public override void Cut(IntVector2 direction, int amount)
         {
+            var shaftsThatPassEdge = FindMainShaftsThatPassEdge(direction, amount);
+            foreach (var mainShaft in shaftsThatPassEdge)
+            {
+                if (mainShaft.PassesBy(direction, amount) > 0)
+                {
+                    RemoveMainShaft(mainShaft);
+                }
+                else
+                {
+                    foreach (var corridor in _corridorsByShaft[mainShaft].ToList())
+                    {
+                        if (corridor.PassesBy(direction, amount) > 0)
+                        {
+                            _connectionsByCorridor.Remove(corridor);
+                            _corridorsByShaft[mainShaft].Remove(corridor);
+                        }
+                    }
+
+                    foreach (var secondaryShaft in _secondaryShaftsByShaft[mainShaft].ToList())
+                    {
+                        if (secondaryShaft.PassesBy(direction, amount) > 0)
+                        {
+                            _secondaryShaftsByShaft[mainShaft].Remove(secondaryShaft);
+                        }
+                    }
+                }
+            }
         }
 
         public override void Shift(IntVector2 shift)
         {
+            var spacesToShift = GetSpacesForShafts(_mainShafts);
+            foreach (var spaceToShift in spacesToShift)
+            {
+                spaceToShift.Shift(shift);
+            }
+        }
+
+        private void RemoveMainShaft(ShaftBuilder mainShaft)
+        {
+            foreach (var corridor in _corridorsByShaft[mainShaft])
+            {
+                _connectionsByCorridor.Remove(corridor);
+            }
+            _corridorsByShaft.Remove(mainShaft);
+            _secondaryShaftsByShaft.Remove(mainShaft);
+            _mainShafts.Remove(mainShaft);
         }
 
         protected override Space BuildRaw()
         {
-            var rooms = new List<Space>
-            {
-                _mainShaft.Build()
-            };
+            var spaceBuilders = GetSpacesForShafts(_mainShafts);
 
-            foreach (var roomToBuild in _corridors)
+            var rooms = new List<Space>();
+            foreach (var space in spaceBuilders)
             {
-                rooms.Add(roomToBuild.Build());
-            }
-
-            foreach (var roomToBuild in _secondaryShafts)
-            {
-                rooms.Add(roomToBuild.Build());
+                if (space.IsValid)
+                {
+                    rooms.Add(space.Build());
+                }
             }
 
             return new Laboratory(rooms, METAL_THICKNESS);
         }
 
+        private int GetYPositionForStory(int baseY, int story) => baseY + (STORY_SIZE * story) + METAL_THICKNESS;
 
-        private const int ROOM_SIZE = 4;
-        private const int METAL_THICKNESS = 2;
+        private const int ROOM_SIZE = 6;
+        private const int METAL_THICKNESS = 3;
         // A story is the size of a room, and the floor under it
-        private const int STORY_SIZE = METAL_THICKNESS + ROOM_SIZE;
+        private const int STORY_SIZE = METAL_THICKNESS + (ROOM_SIZE * 2);
 
         private const int CORRIDOR_HEIGHT = ROOM_SIZE - METAL_THICKNESS;
-        private const int CORRIDOR_SEGMENT_LENGTH = ROOM_SIZE + METAL_THICKNESS;
+        private const int CORRIDOR_SEGMENT_LENGTH = (ROOM_SIZE + METAL_THICKNESS) * 2;
+
+        private const int MAX_MAIN_SHAFTS = 6;
 
         private static readonly Log _log = new Log("LaboratoryBuilder");
     }

@@ -15,6 +15,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private readonly List<SpaceModifier> _modifiersApplied = new List<SpaceModifier>();
 
         public SpaceBuilder(ChunkBuilder chunkBuilder) => _chunkBuilder = chunkBuilder;
+        public SpaceBuilder(SpaceBuilder spaceToCopy) => _chunkBuilder = spaceToCopy._chunkBuilder;
 
         public SpaceBuilder AddBoundary(IntVector2 direction, int amount)
         {
@@ -58,8 +59,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public abstract int PassesBy(IntVector2 direction, int amount);
         public abstract bool Contains(IntVector2 point);
         public bool IntersectsWith(SpaceBuilder other) =>
-             // Can't intersect with yourself!
-               other != this &&
+               !(other is null)  &&
+            // Can't intersect with yourself!
+               this != other &&
              // If any of my edges is beyond your opposite edge, we do not intersect
              // Otherwise, we do.
              // This method only works if we don't have spaces with gaps in the middle

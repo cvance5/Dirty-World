@@ -10,6 +10,7 @@ namespace WorldObjects
         public static readonly IntVector2 Left = new IntVector2(Vector2.left);
 
         public static IntVector2 RandomLeftOrRight => Chance.CoinFlip ? Left : Right;
+        public static IntVector2 RandomUpOrDown => Chance.CoinFlip ? Up : Down;
 
         public static readonly IntVector2[] Cardinals = new IntVector2[]
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 public static class List
@@ -23,6 +24,21 @@ public static class List
         foreach (var item in list)
         {
             if (!excludedItems.Contains(item))
+            {
+                newList.Add(item);
+            }
+        }
+
+        return newList.RandomItem();
+    }
+
+    public static T RandomItem<T>(this IEnumerable<T> list, Func<T, bool> condition)
+    {
+        var newList = new List<T>();
+
+        foreach(var item in list)
+        {
+            if(condition(item))
             {
                 newList.Add(item);
             }

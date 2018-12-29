@@ -38,6 +38,10 @@ namespace Utilities.Editor
         [SerializeField]
         private List<bool> _showBlueprint = new List<bool>();
 
+        [Header("Spaces")]
+        [SerializeField]
+        private bool _showSpaceNames = true;
+
 #pragma warning restore IDE0044 // Add readonly modifier
 
         private void Awake() => DontDestroyOnLoad(gameObject);
@@ -183,6 +187,10 @@ namespace Utilities.Editor
             {
                 Gizmos.color = Color.white;
             }
+            else if (space is Room)
+            {
+                Gizmos.color = Color.black;
+            }
             else if (space is TreasureRoom)
             {
                 Gizmos.color = Color.yellow;
@@ -193,12 +201,15 @@ namespace Utilities.Editor
             }
 
             DrawByExtents(space.Extents);
-            Handles.Label(space.Extents[0], $"{prefixName}{space.Name}");
+            if (_showSpaceNames)
+            {
+                Handles.Label(space.Extents[0], $"{prefixName}{space.Name}");
+            }
 
             if (space is ComplexSpace)
             {
                 var complexSpace = space as ComplexSpace;
-                for(int spaceNumber = 0; spaceNumber < complexSpace.ContainedSpaces.Count; spaceNumber++)
+                for (var spaceNumber = 0; spaceNumber < complexSpace.ContainedSpaces.Count; spaceNumber++)
                 {
                     DrawSpace(complexSpace.ContainedSpaces[spaceNumber], $"{complexSpace.Name}'s #{spaceNumber}: ");
                 }
