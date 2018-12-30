@@ -19,8 +19,8 @@ namespace WorldObjects.Construction
 
         public Sprite Fetch(IntVector2 worldPosition)
         {
-            var pixelPositionX = (worldPosition.X * TEXTURE_SCALE) % _source.width;
-            var pixelPositionY = (worldPosition.Y * TEXTURE_SCALE) % _source.height;
+            var pixelPositionX = Mathf.Abs((worldPosition.X * TEXTURE_SCALE) % _source.width);
+            var pixelPositionY = Mathf.Abs((worldPosition.Y * TEXTURE_SCALE) % _source.height);
 
             var pixelPosition = new Vector2(pixelPositionX, pixelPositionY);
 
