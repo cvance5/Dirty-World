@@ -445,12 +445,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             foreach (var mainShaft in _mainShafts)
             {
-                var bottomLeftCorner = new IntVector2(GetMaximalValueForSpacesInShaft(mainShaft, Directions.Left),
-                                                      GetMaximalValueForSpacesInShaft(mainShaft, Directions.Down));
+                var bottomLeftCorner = new IntVector2(GetMaximalValueForSpacesInShaft(mainShaft, Directions.Left) - METAL_THICKNESS,
+                                                      GetMaximalValueForSpacesInShaft(mainShaft, Directions.Down) - METAL_THICKNESS);
 
 
-                var topRightCorner = new IntVector2(GetMaximalValueForSpacesInShaft(mainShaft, Directions.Right),
-                                                    GetMaximalValueForSpacesInShaft(mainShaft, Directions.Up));
+                var topRightCorner = new IntVector2(GetMaximalValueForSpacesInShaft(mainShaft, Directions.Right) + METAL_THICKNESS,
+                                                    GetMaximalValueForSpacesInShaft(mainShaft, Directions.Up) + METAL_THICKNESS);
 
                 var builders = GetSpacesForShaft(mainShaft);
                 var spaces = new List<Space>();
