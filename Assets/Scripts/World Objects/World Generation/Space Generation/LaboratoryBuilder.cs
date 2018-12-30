@@ -70,12 +70,10 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             foreach (var shaft in _mainShafts)
             {
-                var shaftX = shaft.GetMaximalValue(Directions.Left);
-                var maxX = shaftX + (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH) + METAL_THICKNESS;
-                var minX = shaftX - (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH);
-
-                var maxY = shaft.GetMaximalValue(Directions.Up);
-                var minY = shaft.GetMaximalValue(Directions.Down);
+                var maxY = GetMaximalValueForSpacesInShaft(shaft, Directions.Up);
+                var maxX = GetMaximalValueForSpacesInShaft(shaft, Directions.Right);
+                var minY = GetMaximalValueForSpacesInShaft(shaft, Directions.Down);
+                var minX = GetMaximalValueForSpacesInShaft(shaft, Directions.Left);
 
                 if (position.X >= minX &&
                    position.X <= maxX &&
@@ -95,25 +93,15 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             foreach (var shaft in _mainShafts)
             {
-                if (direction == Directions.Up)
+                if (direction == Directions.Up ||
+                    direction == Directions.Right)
                 {
-                    var maxY = shaft.GetMaximalValue(Directions.Up);
-                    if (maxY > target) shaftsPassingEdge.Add(shaft);
+                    if (GetMaximalValueForSpacesInShaft(shaft, direction) > target) shaftsPassingEdge.Add(shaft);
                 }
-                else if (direction == Directions.Right)
+                else if (direction == Directions.Down ||
+                         direction == Directions.Left)
                 {
-                    var maxX = shaft.GetMaximalValue(Directions.Left) + (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH) + METAL_THICKNESS;
-                    if (maxX > target) shaftsPassingEdge.Add(shaft);
-                }
-                else if (direction == Directions.Down)
-                {
-                    var minY = shaft.GetMaximalValue(Directions.Down);
-                    if (minY < target) shaftsPassingEdge.Add(shaft);
-                }
-                else if (direction == Directions.Left)
-                {
-                    var minX = shaft.GetMaximalValue(Directions.Left) - (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH);
-                    if (minX < target) shaftsPassingEdge.Add(shaft);
+                    if (GetMaximalValueForSpacesInShaft(shaft, direction) < target) shaftsPassingEdge.Add(shaft);
                 }
                 else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
             }
@@ -336,29 +324,50 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public override IntVector2 GetRandomPoint() => GetSpacesForShaft(_mainShafts.RandomItem()).RandomItem().GetRandomPoint();
 
-        public override int GetMaximalValue(IntVector2 direction)
+        private int GetMaximalValueForSpacesInShaft(ShaftBuilder shaft, IntVector2 direction)
         {
             if (direction == Directions.Up)
             {
-                var maxUpShaft = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
-                return GetSpacesForShaft(maxUpShaft).Max(space => space.GetMaximalValue(direction));
+                return GetSpacesForShaft(shaft).Max(space => space.GetMaximalValue(direction));
             }
             else if (direction == Directions.Right)
             {
-                var maxRightShaft = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
-                return GetSpacesForShaft(maxRightShaft).Max(space => space.GetMaximalValue(direction)) + (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH) + METAL_THICKNESS;
+                return GetSpacesForShaft(shaft).Max(space => space.GetMaximalValue(direction)) + (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH) + METAL_THICKNESS;
             }
             else if (direction == Directions.Down)
             {
-                var maxDownShaft = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
-                return GetSpacesForShaft(maxDownShaft).Min(space => space.GetMaximalValue(direction));
+                return GetSpacesForShaft(shaft).Min(space => space.GetMaximalValue(direction));
             }
             else if (direction == Directions.Left)
             {
-                var maxLeftShaft = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
-                return GetSpacesForShaft(maxLeftShaft).Min(space => space.GetMaximalValue(direction)) - (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH);
+                return GetSpacesForShaft(shaft).Min(space => space.GetMaximalValue(direction)) - (_maximumCorridorSegments * CORRIDOR_SEGMENT_LENGTH);
             }
             else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+        }
+
+        public override int GetMaximalValue(IntVector2 direction)
+        {
+            ShaftBuilder shaftWithMaximalReach;
+
+            if (direction == Directions.Up)
+            {
+                shaftWithMaximalReach = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
+            }
+            else if (direction == Directions.Right)
+            {
+                shaftWithMaximalReach = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
+            }
+            else if (direction == Directions.Down)
+            {
+                shaftWithMaximalReach = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
+            }
+            else if (direction == Directions.Left)
+            {
+                shaftWithMaximalReach = _mainShafts.OrderByDescending(shaft => shaft.GetMaximalValue(direction)).FirstOrDefault();
+            }
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+
+            return GetMaximalValueForSpacesInShaft(shaftWithMaximalReach, direction);
         }
 
         public override SpaceBuilder Align(IntVector2 direction, int amount)
@@ -432,18 +441,34 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override Space BuildRaw()
         {
-            var spaceBuilders = GetSpacesForShafts(_mainShafts);
+            var regions = new List<Region>();
 
-            var rooms = new List<Space>();
-            foreach (var space in spaceBuilders)
+            foreach (var mainShaft in _mainShafts)
             {
-                if (space.IsValid)
+                var bottomLeftCorner = new IntVector2(GetMaximalValueForSpacesInShaft(mainShaft, Directions.Left),
+                                                      GetMaximalValueForSpacesInShaft(mainShaft, Directions.Down));
+
+
+                var topRightCorner = new IntVector2(GetMaximalValueForSpacesInShaft(mainShaft, Directions.Right),
+                                                    GetMaximalValueForSpacesInShaft(mainShaft, Directions.Up));
+
+                var builders = GetSpacesForShaft(mainShaft);
+                var spaces = new List<Space>();
+
+                foreach (var builder in builders)
                 {
-                    rooms.Add(space.Build());
+                    if (builder.IsValid)
+                    {
+                        spaces.Add(builder.Build());
+                    }
                 }
+
+                var region = new Region(bottomLeftCorner, topRightCorner, spaces);
+
+                regions.Add(region);
             }
 
-            return new Laboratory(rooms, METAL_THICKNESS);
+            return new Laboratory(regions, METAL_THICKNESS);
         }
 
         private int GetYPositionForStory(int baseY, int story) => baseY + (STORY_SIZE * story) + METAL_THICKNESS;

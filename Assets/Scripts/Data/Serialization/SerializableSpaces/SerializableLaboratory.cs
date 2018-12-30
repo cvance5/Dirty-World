@@ -7,7 +7,7 @@ namespace Data.Serialization.SerializableSpaces
     public class SerializableLaboratory : SerializableSpace
     {
         [JsonProperty("spaces")]
-        private readonly List<Space> _spaces;
+        private readonly List<Region> _regions;
 
         [JsonProperty("metalThickness")]
         private readonly int _metalThickness;
@@ -17,10 +17,10 @@ namespace Data.Serialization.SerializableSpaces
 
         public SerializableLaboratory(Laboratory laboratory)
         {
-            _spaces = laboratory.ContainedSpaces;
+            _regions = laboratory.Regions;
             _metalThickness = laboratory.MetalThickness;
         }
 
-        public override Space ToObject() => new Laboratory(_spaces, _metalThickness);
+        public override Space ToObject() => new Laboratory(_regions, _metalThickness);
     }
 }

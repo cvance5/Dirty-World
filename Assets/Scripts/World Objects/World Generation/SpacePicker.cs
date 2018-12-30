@@ -20,7 +20,7 @@ namespace WorldObjects.WorldGeneration
             {
                 CheckForSpecialCasing();
 
-                //if (_canPickSpaces) RandomlySelect();
+                if (_canPickSpaces) RandomlySelect();
             }
         }
 
@@ -30,6 +30,11 @@ namespace WorldObjects.WorldGeneration
             {
                 var spaceBuilder = Activator.CreateInstance(typeof(LaboratoryBuilder), _chunk) as SpaceBuilder;
                 SelectedSpaces.Add(spaceBuilder);
+            }
+
+            if (_chunk.Remoteness <= 4 || _chunk.Depth <= 4)
+            {
+                // Nothing but the initial laboratory here...
                 _canPickSpaces = false;
             }
         }

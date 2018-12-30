@@ -4,6 +4,6 @@ namespace WorldObjects.Spaces
 {
     public abstract class ComplexSpace : Space
     {
-        public List<Space> ContainedSpaces = new List<Space>();
+        public List<Region> Regions = new List<Region>();
     }
 }

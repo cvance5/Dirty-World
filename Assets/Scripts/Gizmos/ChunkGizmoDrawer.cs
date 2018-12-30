@@ -209,9 +209,13 @@ namespace Utilities.Editor
             if (space is ComplexSpace)
             {
                 var complexSpace = space as ComplexSpace;
-                for (var spaceNumber = 0; spaceNumber < complexSpace.ContainedSpaces.Count; spaceNumber++)
+                for(int regionNumber = 0; regionNumber < complexSpace.Regions.Count; regionNumber++)
                 {
-                    DrawSpace(complexSpace.ContainedSpaces[spaceNumber], $"{complexSpace.Name}'s #{spaceNumber}: ");
+                    var region = complexSpace.Regions[regionNumber];
+                    for (var spaceNumber = 0; spaceNumber < region.Spaces.Count; spaceNumber++)
+                    {
+                        DrawSpace(region.Spaces[spaceNumber], $"{complexSpace.Name}'s #{spaceNumber + regionNumber}: ");
+                    }
                 }
             }
         }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using WorldObjects.Blocks;
 
 namespace WorldObjects.Spaces
@@ -10,9 +9,9 @@ namespace WorldObjects.Spaces
 
         public readonly int MetalThickness;
 
-        public Laboratory(List<Space> containedSpaces, int metalThickeness)
+        public Laboratory(List<Region> regions, int metalThickeness)
         {
-            ContainedSpaces = containedSpaces;
+            Regions = regions;
             MetalThickness = metalThickeness;
 
             int? maxX = null;
@@ -20,33 +19,25 @@ namespace WorldObjects.Spaces
             int? maxY = null;
             int? minY = null;
 
-            foreach (var space in containedSpaces)
+            foreach (var region in regions)
             {
-                foreach (var extent in space.Extents)
+                if (minX == null || region.BottomLeftCorner.X < minX)
                 {
-                    if (maxX == null || extent.X > maxX.Value)
-                    {
-                        maxX = extent.X;
-                    }
-                    if (minX == null || extent.X < minX.Value)
-                    {
-                        minX = extent.X;
-                    }
-                    if (maxY == null || extent.Y > maxY.Value)
-                    {
-                        maxY = extent.Y;
-                    }
-                    if (minY == null || extent.Y < minY.Value)
-                    {
-                        minY = extent.Y;
-                    }
+                    minX = region.BottomLeftCorner.X;
+                }
+                if (minY == null || region.BottomLeftCorner.Y < minY)
+                {
+                    minY = region.BottomLeftCorner.Y;
+                }
+                if (maxX == null || region.TopRightCorner.X > maxX)
+                {
+                    maxX = region.TopRightCorner.X;
+                }
+                if (maxY == null || region.TopRightCorner.Y > maxY)
+                {
+                    maxY = region.TopRightCorner.Y;
                 }
             }
-
-            maxX += MetalThickness;
-            maxY += MetalThickness;
-            minX -= MetalThickness;
-            minY -= MetalThickness;
 
             Extents.Add(new IntVector2(minX.Value, maxY.Value));
             Extents.Add(new IntVector2(maxX.Value, maxY.Value));
@@ -56,38 +47,47 @@ namespace WorldObjects.Spaces
 
         public override bool Contains(IntVector2 position)
         {
-            var doesContain = false;
+            var containingRegions = Regions.FindAll(region => region.Contains(position));
 
-            if (ContainedSpaces.Any(space => space.Contains(position)))
+            foreach (var containingRegion in containingRegions)
             {
-                doesContain = true;
-            }
-            else
-            {
-                foreach (var direction in Directions.Compass)
+                foreach (var space in containingRegion.Spaces)
                 {
-                    if (ContainedSpaces.Any(space => space.Contains(position + (direction * MetalThickness))))
+                    if (space.Contains(position))
                     {
-                        doesContain = true;
-                        break;
+                        return true;
+                    }
+                    else
+                    {
+                        foreach (var direction in Directions.Compass)
+                        {
+                            if (space.Contains(position + (direction * MetalThickness)))
+                            {
+                                return true;
+                            }
+                        }
                     }
                 }
             }
 
-            return doesContain;
+            return false;
         }
 
         public override BlockTypes GetBlockType(IntVector2 position)
         {
-            var containingSpace = ContainedSpaces.Find(space => space.Contains(position));
-
-            if (containingSpace != null)
+            var containingRegions = Regions.FindAll(region => region.Contains(position));
+            foreach (var containingRegion in containingRegions)
             {
-                return containingSpace.GetBlockType(position);
+                var containingSpace = containingRegion.Spaces.Find(space => space.Contains(position));
+                if (containingSpace != null)
+                {
+                    return containingSpace.GetBlockType(position);
+                }
             }
-            else return BlockTypes.SteelPlate;
+
+            return BlockTypes.SteelPlate;
         }
 
-        public override IntVector2 GetRandomPosition() => ContainedSpaces.RandomItem().GetRandomPosition();
+        public override IntVector2 GetRandomPosition() => Regions.RandomItem().Spaces.RandomItem().GetRandomPosition();
     }
 }
