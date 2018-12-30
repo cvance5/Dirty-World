@@ -187,13 +187,13 @@ namespace Utilities.Editor
             {
                 Gizmos.color = Color.white;
             }
-            else if (space is Room)
-            {
-                Gizmos.color = Color.black;
-            }
             else if (space is TreasureRoom)
             {
                 Gizmos.color = Color.yellow;
+            }
+            else if (space is Room)
+            {
+                Gizmos.color = Color.black;
             }
             else if (space is Laboratory)
             {
