@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using WorldObjects.Spaces;
-using WorldObjects.WorldGeneration;
 
 namespace Data.Serialization.SerializableSpaces
 {
@@ -24,7 +23,7 @@ namespace Data.Serialization.SerializableSpaces
             _enemySpawns = corridor.EnemySpawns;
         }
 
-        public override Space ToObject()
+        protected override Space ToRawObject()
         {
             Space corridor = new Corridor(_bottomLeftCorner, _topRightCorner);
             corridor.AddEnemySpawns(_enemySpawns);

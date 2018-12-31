@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using WorldObjects.Spaces;
-using WorldObjects.WorldGeneration;
 
 namespace Data.Serialization.SerializableSpaces
 {
@@ -24,7 +23,7 @@ namespace Data.Serialization.SerializableSpaces
             _enemySpawns = monsterDen.EnemySpawns;
         }
 
-        public override Space ToObject()
+        protected override Space ToRawObject()
         {
             Space monsterDen = new MonsterDen(_centerpoint, _radius);
             monsterDen.AddEnemySpawns(_enemySpawns);

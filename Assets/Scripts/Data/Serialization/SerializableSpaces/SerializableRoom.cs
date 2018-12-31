@@ -20,6 +20,6 @@ namespace Data.Serialization.SerializableSpaces
             _topRightCorner = room.TopRightCorner;
         }
 
-        public override Space ToObject() => new Room(_bottomLeftCorner, _topRightCorner);
+        protected override Space ToRawObject() => new Room(_bottomLeftCorner, _topRightCorner);
     }
 }

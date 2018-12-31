@@ -8,7 +8,7 @@ namespace WorldObjects.Spaces
     {
         public abstract string Name { get; }
         public List<IntVector2> Extents { get; protected set; } = new List<IntVector2>();
-            
+
         protected readonly List<EnemySpawn> _enemySpawns = new List<EnemySpawn>();
         public virtual List<EnemySpawn> EnemySpawns => new List<EnemySpawn>(_enemySpawns);
 
@@ -23,8 +23,9 @@ namespace WorldObjects.Spaces
 
         public abstract BlockTypes GetBlockType(IntVector2 position);
 
-        public virtual void AddEnemySpawns(List<EnemySpawn> enemySpawns) => _enemySpawns.AddRange(enemySpawns);
-        public virtual void AddHazardBuilders(List<HazardBuilder> hazardBuilders) => _hazardBuilders.AddRange(hazardBuilders);
+        public void AddEnemySpawns(List<EnemySpawn> enemySpawns) => _enemySpawns.AddRange(enemySpawns);
+        public void AddHazardBuilders(List<HazardBuilder> hazardBuilders) => _hazardBuilders.AddRange(hazardBuilders);
+        public void AddModifiers(List<ModifierTypes> modifiers) => _modifiers.AddRange(modifiers);
 
         public virtual List<EnemySpawn> GetEnemySpawnsInChunk(Chunk chunk)
         {

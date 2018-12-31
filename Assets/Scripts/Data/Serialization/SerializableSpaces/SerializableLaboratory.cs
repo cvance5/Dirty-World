@@ -21,6 +21,6 @@ namespace Data.Serialization.SerializableSpaces
             _metalThickness = laboratory.MetalThickness;
         }
 
-        public override Space ToObject() => new Laboratory(_regions, _metalThickness);
+        protected override Space ToRawObject() => new Laboratory(_regions, _metalThickness);
     }
 }

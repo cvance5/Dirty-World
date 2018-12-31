@@ -27,7 +27,7 @@ namespace Data.Serialization.SerializableSpaces
             _enemySpawns = shaft.EnemySpawns;
         }
 
-        public override Space ToObject()
+        protected override Space ToRawObject()
         {
             Space shaft = new Shaft(_bottomLeftCorner, _topRightCorner, _isUncapped);
             shaft.AddEnemySpawns(_enemySpawns);

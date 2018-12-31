@@ -12,6 +12,16 @@ namespace Data.Serialization.SerializableSpaces
         [JsonProperty("modifiers")]
         protected List<ModifierTypes> _modifiers = new List<ModifierTypes>();
 
-        public abstract Space ToObject();
+        public Space ToObject()
+        {
+            var rawSpace = ToRawObject();
+
+            rawSpace.AddEnemySpawns(_enemySpawns);
+            rawSpace.AddModifiers(_modifiers);
+
+            return rawSpace;
+        }
+
+        protected abstract Space ToRawObject();
     }
 }

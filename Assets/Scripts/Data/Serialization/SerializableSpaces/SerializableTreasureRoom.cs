@@ -25,6 +25,6 @@ namespace Data.Serialization.SerializableSpaces
             _treasure = treasureRoom.Treasure;
         }
 
-        public override WorldObjects.Spaces.Space ToObject() => new TreasureRoom(_bottomLeftCorner, _topRightCorner, _treasure);
+        protected override Space ToRawObject() => new TreasureRoom(_bottomLeftCorner, _topRightCorner, _treasure);
     }
 }
