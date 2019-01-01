@@ -6,25 +6,30 @@ using UnityEngine;
 using Utilities;
 using Utilities.Debug;
 using WorldObjects.Blocks;
-using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.BlockGeneration;
-using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace WorldObjects.WorldGeneration
 {
     public class WorldBuilder
     {
-        private static readonly int _chunkSize = GameManager.Instance.Settings.ChunkSize;
+        private int _chunkSize => _world.ChunkSize;
+
         private readonly World _world;
+        private readonly SpacePicker _sPicker;
+        private readonly BlockPicker _bPicker;
 
         private IntVector2 _chunkBeingActivated;
         private readonly Queue<IntVector2> _chunksToActivate = new Queue<IntVector2>();
 
+        private Coroutine _chunkActivationCoroutine;
+
         private readonly Dictionary<BlockTypes, Range> _fillRanges;
 
-        public WorldBuilder(World world)
+        public WorldBuilder(World world, SpacePicker sPicker, BlockPicker bPicker)
         {
             _world = world;
+            _sPicker = sPicker;
+            _bPicker = bPicker;
             _fillRanges = new Dictionary<BlockTypes, Range>()
             {
                 {BlockTypes.None, new Range(_world.SurfaceDepth + 1, int.MaxValue) },
@@ -64,7 +69,7 @@ namespace WorldObjects.WorldGeneration
             var serializableChunk = SerializableChunk.Deserialize(serializedChunk);
 
             // Calls OnChunkReadyToActivate when finished
-            CoroutineHandler.StartCoroutine(serializableChunk.ToObject);
+            _chunkActivationCoroutine = CoroutineHandler.StartCoroutine(serializableChunk.ToObject);
         }
 
         private void BuildChunk(IntVector2 worldPosition)
@@ -73,10 +78,8 @@ namespace WorldObjects.WorldGeneration
 
             var cBuilder = new ChunkBuilder(worldPosition, _chunkSize, _world.GetBlueprintForPosition(worldPosition));
 
-            var sPicker = new SpacePicker(cBuilder);
-            var sBuilders = sPicker.SelectedSpaces;
-
-            var blocks = BlockPicker.Pick(cBuilder);
+            var sBuilders = _sPicker.Select(cBuilder);
+            var blocks = _bPicker.Pick(cBuilder);
 
             foreach (var sBuilder in sBuilders)
             {
@@ -87,13 +90,14 @@ namespace WorldObjects.WorldGeneration
                     .SetFill(GetFill(cBuilder.Depth));
 
             // Calls OnChunkReadyToActivate when finished
-            CoroutineHandler.StartCoroutine(cBuilder.Build);
+            _chunkActivationCoroutine = CoroutineHandler.StartCoroutine(cBuilder.Build);
         }
 
         private void OnChunkReadyToActivate(Chunk chunk)
         {
             _world.Register(chunk);
             _chunkBeingActivated = null;
+            _chunkActivationCoroutine = null;
 
             if (_chunksToActivate.Count > 0)
             {
@@ -114,6 +118,11 @@ namespace WorldObjects.WorldGeneration
         public void Destroy()
         {
             _chunksToActivate.Clear();
+            _chunkBeingActivated = null;
+            if (_chunkActivationCoroutine != null)
+            {
+                CoroutineHandler.AbortCoroutine(_chunkActivationCoroutine);
+            }
 
             ChunkBuilder.OnChunkBuilt -= OnChunkReadyToActivate;
             SerializableChunk.OnChunkLoaded -= OnChunkReadyToActivate;

@@ -9,7 +9,7 @@ using Space = WorldObjects.Spaces.Space;
 
 namespace Utilities.Editor
 {
-    public class ChunkGizmoDrawer : MonoBehaviour
+    public class ChunkGizmoDrawer : Singleton<ChunkGizmoDrawer>
     {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [Header("Chunks")]
@@ -41,16 +41,22 @@ namespace Utilities.Editor
         [Header("Spaces")]
         [SerializeField]
         private bool _showSpaceNames = true;
-
 #pragma warning restore IDE0044 // Add readonly modifier
+
+        private World _worldToDraw;
 
         private void Awake() => DontDestroyOnLoad(gameObject);
 
+        public void SetWorldToDraw(World world)
+        {
+            _worldToDraw = world;
+        }
+
         private void OnDrawGizmosSelected()
         {
-            if (GameManager.World == null) return;
+            if (_worldToDraw == null) return;
 
-            var chunksInLoadOrder = GameManager.World.LoadedChunks;
+            var chunksInLoadOrder = _worldToDraw.LoadedChunks;
 
             UpdateShowChunkList(chunksInLoadOrder.Count);
 
@@ -79,7 +85,7 @@ namespace Utilities.Editor
                 }
             }
 
-            var blueprintsInCreationOrder = GameManager.World.PendingBlueprints;
+            var blueprintsInCreationOrder = _worldToDraw.PendingBlueprints;
 
             UpdateShowBlueprintList(blueprintsInCreationOrder.Count);
 

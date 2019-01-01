@@ -1,60 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
+using Utilities.Debug;
+using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace WorldObjects.WorldGeneration
 {
     public class SpacePicker
     {
-        public List<SpaceBuilder> SelectedSpaces = new List<SpaceBuilder>();
+        private readonly int _surfaceDepth;
 
         private bool _canPickSpaces = true;
+        private List<Type> _allowedSpaces = new List<Type>();
 
-        private readonly ChunkBuilder _chunk;
+        public SpacePicker(int surfaceDepth) => _surfaceDepth = surfaceDepth;
 
-        public SpacePicker(ChunkBuilder cBuilder)
+        public List<SpaceBuilder> Select(ChunkBuilder chunk)
         {
-            _chunk = cBuilder;
+            var spaces = new List<SpaceBuilder>();
 
-            if (_chunk.Depth <= GameManager.World.SurfaceDepth)
+            _canPickSpaces = _allowedSpaces.Count > 0;
+
+            if (chunk.Depth <= _surfaceDepth)
             {
-                CheckForSpecialCasing();
+                //spaces.AddRange(CheckForSpecialCasing(chunk));
 
-                if (_canPickSpaces) RandomlySelect();
+                if (_canPickSpaces) spaces.AddRange(RandomlySelect(chunk));
+            }
+
+            return spaces;
+        }
+
+        public void AllowSpaces(List<Type> allowedSpaceTypes)
+        {
+            foreach (var type in allowedSpaceTypes)
+            {
+                if (type.IsAssignableFrom(typeof(Space)))
+                {
+                    _allowedSpaces.Add(type);
+                }
+                else _log.Warning($"{type.Name} is not a space and cannot be allowed.");
             }
         }
 
-        private void CheckForSpecialCasing()
+        private List<SpaceBuilder> CheckForSpecialCasing(ChunkBuilder chunk)
         {
-            if (_chunk.Position == IntVector2.Zero)
+            var specialCaseSpaces = new List<SpaceBuilder>();
+
+            if (chunk.Position == IntVector2.Zero)
             {
-                var spaceBuilder = Activator.CreateInstance(typeof(LaboratoryBuilder), _chunk) as SpaceBuilder;
-                SelectedSpaces.Add(spaceBuilder);
+                var spaceBuilder = Activator.CreateInstance(typeof(LaboratoryBuilder), chunk) as SpaceBuilder;
+                specialCaseSpaces.Add(spaceBuilder);
             }
 
-            if (_chunk.Remoteness <= 4 || _chunk.Depth <= 4)
+            if (chunk.Remoteness <= 4 || chunk.Depth <= 4)
             {
                 // Nothing but the initial laboratory here...
                 _canPickSpaces = false;
             }
+
+            return specialCaseSpaces;
         }
 
-        private void RandomlySelect()
+        private List<SpaceBuilder> RandomlySelect(ChunkBuilder chunk)
         {
-            var spaceBuilder = Activator.CreateInstance(_spaces.RandomItem(), _chunk) as SpaceBuilder;
+            var randomSpaces = new List<SpaceBuilder>();
+
+            var spaceBuilder = Activator.CreateInstance(_allowedSpaces.RandomItem(), chunk) as SpaceBuilder;
             if (Chance.OneIn(4))
             {
-                spaceBuilder.AddModifier(Spaces.ModifierTypes.Cavernous);
+                spaceBuilder.AddModifier(ModifierTypes.Cavernous);
             }
 
-            SelectedSpaces.Add(spaceBuilder);
+            randomSpaces.Add(spaceBuilder);
+
+            return randomSpaces;
         }
 
-        private static readonly List<Type> _spaces = new List<Type>()
-        {
-            typeof(CorridorBuilder),
-            typeof(ShaftBuilder),
-            typeof(MonsterDenBuilder)
-        };
+        private static readonly Log _log = new Log("SpacePicker");
     }
 }

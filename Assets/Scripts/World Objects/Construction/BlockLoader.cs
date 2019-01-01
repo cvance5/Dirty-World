@@ -17,7 +17,10 @@ namespace WorldObjects.Construction
         [SerializeField]
         private BlockTypesTexture2DDictionary _blockTextures = new BlockTypesTexture2DDictionary();
 #pragma warning restore IDE0044 // Add readonly modifier
+
         private static readonly Dictionary<BlockTypes, SpriteMapper> _spriteMappers = new Dictionary<BlockTypes, SpriteMapper>();
+
+        private void Awake() => DontDestroyOnLoad(gameObject);
 
         private void OnValidate()
         {

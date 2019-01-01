@@ -8,8 +8,8 @@ namespace WorldObjects
 {
     public class World : MonoBehaviour
     {
-        public int SurfaceDepth => GameManager.Instance.Settings.SurfaceDepth;
-        public int ChunkSize => GameManager.Instance.Settings.ChunkSize;
+        public int SurfaceDepth { get; private set; }
+        public int ChunkSize { get; private set; }
 
         private readonly List<Chunk> _loadedChunks = new List<Chunk>();
         public List<Chunk> LoadedChunks => new List<Chunk>(_loadedChunks);
@@ -21,6 +21,12 @@ namespace WorldObjects
         private Dictionary<IntVector2, ChunkBlueprint> _blueprintsByWorldPosition = new Dictionary<IntVector2, ChunkBlueprint>();
 
         private WorldBuilder _builder;
+
+        public void Initialize(int surfaceDepth, int chunkSize)
+        {
+            SurfaceDepth = surfaceDepth;
+            ChunkSize = chunkSize;
+        }
 
         public void Register(WorldBuilder worldBuilder)
         {
@@ -141,11 +147,14 @@ namespace WorldObjects
 
             if (_chunksByWorldPosition.ContainsKey(worldPosition))
             {
-                throw new System.ArgumentException($"A chunk already exists at {worldPosition}.");
+                throw new ArgumentException($"A chunk already exists at {worldPosition}.");
             }
             else if (!_blueprintsByWorldPosition.TryGetValue(worldPosition, out blueprint))
             {
-                blueprint = new ChunkBlueprint(worldPosition);
+                var bottomLeft = new IntVector2(worldPosition.X - (ChunkSize / 2), worldPosition.Y - (ChunkSize / 2));
+                var topRight = new IntVector2(worldPosition.X + (ChunkSize / 2), worldPosition.Y + (ChunkSize / 2));
+
+                blueprint = new ChunkBlueprint(worldPosition, bottomLeft, topRight);
                 _pendingBlueprints.Add(blueprint);
                 _blueprintsByWorldPosition[worldPosition] = blueprint;
             }

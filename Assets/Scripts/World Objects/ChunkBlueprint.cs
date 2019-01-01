@@ -17,14 +17,12 @@ namespace WorldObjects
         public List<Space> Spaces { get; private set; } = new List<Space>();
         public List<EnemyData> Enemies { get; private set; } = new List<EnemyData>();
 
-        private static int _chunkSize = GameManager.Instance.Settings.ChunkSize;
-
-        public ChunkBlueprint(IntVector2 position)
+        public ChunkBlueprint(IntVector2 position, IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {
             Position = position;
 
-            BottomLeftCorner = new IntVector2(Position.X - (_chunkSize / 2), Position.Y - (_chunkSize / 2));
-            TopRightCorner = new IntVector2(Position.X + (_chunkSize / 2), Position.Y + (_chunkSize / 2));
+            BottomLeftCorner = bottomLeftCorner;
+            TopRightCorner = topRightCorner;
         }
 
         public bool Contains(IntVector2 position) =>

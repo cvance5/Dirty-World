@@ -287,3 +287,9 @@ F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.Strea
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.TextCoreModule.xml
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.UnityTestProtocolModule.xml
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.VFXModule.xml
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEditor.UI.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\SourceAssembly.pdb
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEditor.UI.xml
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Boo.Lang.Parser.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Boo.Lang.Compiler.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Boo.Lang.dll

@@ -1,0 +1,109 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2092582036781624061
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2091649567619481363}
+  - component: {fileID: 2061612249142287181}
+  - component: {fileID: 2061635366248429219}
+  - component: {fileID: 2062502710340925055}
+  - component: {fileID: 2092403610585268828}
+  m_Layer: 0
+  m_Name: Loaders
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2091649567619481363
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092582036781624061}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2061612249142287181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092582036781624061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6416edd38b49054dbe184981f6b89f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stalag: {fileID: 3996498084922597456, guid: bb2b05b637b611441b0a0c4b5c18ccb4, type: 3}
+--- !u!114 &2061635366248429219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092582036781624061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9e0527aced5f8c42a0c14e4ed1ca633, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _items:
+    keys: 0000000001000000020000000300000004000000
+    values:
+    - {fileID: 1925429388468338, guid: 4292eb8a0d1d9b54192a6ad6f56119fc, type: 3}
+    - {fileID: 1925429388468338, guid: e489dbf4449901746a407e00b0fe1cde, type: 3}
+    - {fileID: 1925429388468338, guid: 3cc95f6373cce3a4e9511f4a56a3c8a6, type: 3}
+    - {fileID: 1925429388468338, guid: d5cbb4216e687f04aba9ec67344bbc8c, type: 3}
+    - {fileID: 3983400539303335104, guid: 63f5cad198091be448dda232523fe339, type: 3}
+--- !u!114 &2062502710340925055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092582036781624061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77002bc94d3c9074c8586e444382515c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _blocks:
+    keys: 01000000020000000300000004000000050000000600000007000000
+    values:
+    - {fileID: 4040690142055907274, guid: 49712c4edad83f841accc4914029466c, type: 3}
+    - {fileID: 124560293421415011, guid: 0866abfbf7c151b40ad7467c9d00cd13, type: 3}
+    - {fileID: 4941398850137344514, guid: 91964094899c60c47af6ccba763aea6a, type: 3}
+    - {fileID: 7410329923676514162, guid: e90b09a51ff97674eb32521ec8c1a202, type: 3}
+    - {fileID: 2028876217510456154, guid: e0dc53840138e944c9e37bb9e23711e6, type: 3}
+    - {fileID: 9013483178209601111, guid: 5c9eda4bf97405e4b97484ab3d30ec07, type: 3}
+    - {fileID: 8716741340040111701, guid: e443c073393d6cb43b903d3ff26d4053, type: 3}
+  _blockTextures:
+    keys: 0100000002000000
+    values:
+    - {fileID: 2800000, guid: 5468c8cb0a894e74c867407666f64ba0, type: 3}
+    - {fileID: 2800000, guid: d6010dcbbc2ad484caabeabba0ea1fdb, type: 3}
+--- !u!114 &2092403610585268828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092582036781624061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8dc5403d61bebc94a92ab5658baabc96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _maggot: {fileID: 2477167566729132373, guid: 0085afe654ce2284ab207b5970cda6f3, type: 3}

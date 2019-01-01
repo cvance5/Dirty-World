@@ -12,6 +12,7 @@ using WorldObjects;
 using WorldObjects.Actors;
 using WorldObjects.Actors.Player;
 using WorldObjects.WorldGeneration;
+using WorldObjects.WorldGeneration.BlockGeneration;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -63,7 +64,7 @@ public class GameManager : Singleton<GameManager>
 
     private void InitializeScene()
     {
-        SceneHelper.LoadScene(SceneHelper.Scenes.Gameplay);
+        SceneHelper.LoadScene(SceneHelper.Scenes.World);
         SceneHelper.OnSceneIsReady += InitializeWorld;
     }
 
@@ -73,7 +74,12 @@ public class GameManager : Singleton<GameManager>
 
         var worldGameObject = new GameObject("World");
         World = worldGameObject.AddComponent<World>();
-        WorldBuilder = new WorldBuilder(World);
+
+        var sPicker = new SpacePicker(Settings.SurfaceDepth);
+        var bPicker = new BlockPicker(Settings.SurfaceDepth);
+
+        WorldBuilder = new WorldBuilder(World, sPicker, bPicker);
+        World.Initialize(Settings.SurfaceDepth, Settings.ChunkSize);
         World.Register(WorldBuilder);
 
         GameState.Initialize();
@@ -93,7 +99,7 @@ public class GameManager : Singleton<GameManager>
             UserSaves.SaveUser();
         }
 
-        ChunkActivationController = new ChunkActivationController(World);
+        ChunkActivationController = new ChunkActivationController(World, 2);
 
         Character = GameState.CurrentCharacter;
 
@@ -140,8 +146,7 @@ public class GameManager : Singleton<GameManager>
         var wfcc = new WaitForCustomCallback();
         activateScrimSequence.Play(wfcc.Callback);
         yield return wfcc;
-
-
+        
         UIScreen activeScreen = UIManager.Get<GameOverScreen>();
         while (activeScreen != null)
         {

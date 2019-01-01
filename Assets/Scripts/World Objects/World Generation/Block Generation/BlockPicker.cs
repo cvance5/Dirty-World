@@ -3,25 +3,26 @@ using WorldObjects.Blocks;
 
 namespace WorldObjects.WorldGeneration.BlockGeneration
 {
-    public static class BlockPicker
+    public class BlockPicker
     {
-        private static readonly Dictionary<BlockTypes, Range> _blockRanges = new Dictionary<BlockTypes, Range>()
-        {
-            { BlockTypes.Stone, new Range(int.MinValue, GameManager.World.SurfaceDepth) },
-            { BlockTypes.Copper, new Range(GameManager.World.SurfaceDepth - 15, GameManager.World.SurfaceDepth) },
-            { BlockTypes.Silver,  new Range(GameManager.World.SurfaceDepth - 30, GameManager.World.SurfaceDepth - 10) },
-            { BlockTypes.Gold,  new Range(GameManager.World.SurfaceDepth - 45, GameManager.World.SurfaceDepth - 25) },
-            { BlockTypes.Platinum, new Range(int.MinValue, GameManager.World.SurfaceDepth - 40) }
-        };
-
-        private static readonly Dictionary<BlockTypes, float> _blockScarcities = new Dictionary<BlockTypes, float>()
+        private readonly Dictionary<BlockTypes, Range> _blockRanges;
+        private readonly Dictionary<BlockTypes, float> _blockScarcities = new Dictionary<BlockTypes, float>()
         {
             { BlockTypes.Silver, .75f },
             { BlockTypes.Gold, .6f },
             { BlockTypes.Platinum, .45f }
         };
 
-        public static Dictionary<BlockTypes, int> Pick(ChunkBuilder cBuilder)
+        public BlockPicker(int surfaceDepth) => _blockRanges = new Dictionary<BlockTypes, Range>()
+        {
+            { BlockTypes.Stone, new Range(int.MinValue, surfaceDepth) },
+            { BlockTypes.Copper, new Range(surfaceDepth - 15, surfaceDepth) },
+            { BlockTypes.Silver,  new Range(surfaceDepth - 30, surfaceDepth - 10) },
+            { BlockTypes.Gold,  new Range(surfaceDepth - 45, surfaceDepth - 25) },
+            { BlockTypes.Platinum, new Range(int.MinValue, surfaceDepth - 40) }
+        };
+
+        public Dictionary<BlockTypes, int> Pick(ChunkBuilder cBuilder)
         {
             var blocksAvailableAtDepth = GetBlocksAtDepth(cBuilder.Depth);
             var blockCounts = GetBlockCountsByDepth(blocksAvailableAtDepth, cBuilder.Depth);
@@ -30,9 +31,9 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
             return modifiedBlockCounts;
         }
 
-        private static List<BlockTypes> GetBlocksAtDepth(int depth)
+        private List<BlockTypes> GetBlocksAtDepth(int depth)
         {
-            List<BlockTypes> availableBlocks = new List<BlockTypes>();
+            var availableBlocks = new List<BlockTypes>();
 
             foreach (var blockRange in _blockRanges)
             {
@@ -47,7 +48,7 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
             return availableBlocks;
         }
 
-        private static Dictionary<BlockTypes, int> GetBlockCountsByDepth(List<BlockTypes> blockTypes, int depth)
+        private Dictionary<BlockTypes, int> GetBlockCountsByDepth(List<BlockTypes> blockTypes, int depth)
         {
             var results = new Dictionary<BlockTypes, int>();
 
@@ -84,14 +85,13 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
             return results;
         }
 
-        private static Dictionary<BlockTypes, int> ApplyBlockScarcity(Dictionary<BlockTypes, int> blockCounts)
+        private Dictionary<BlockTypes, int> ApplyBlockScarcity(Dictionary<BlockTypes, int> blockCounts)
         {
             var modifiedBlockCounts = new Dictionary<BlockTypes, int>(blockCounts);
 
             foreach (var blockType in blockCounts.Keys)
             {
-                float scarcity;
-                if (!_blockScarcities.TryGetValue(blockType, out scarcity)) scarcity = 1;
+                if (!_blockScarcities.TryGetValue(blockType, out var scarcity)) scarcity = 1;
                 modifiedBlockCounts[blockType] = (int)(blockCounts[blockType] * scarcity);
             }
 

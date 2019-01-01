@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Utilities.Editor;
 using WorldObjects.Actors.Player;
 
 namespace Utilities.Debug
@@ -6,6 +7,11 @@ namespace Utilities.Debug
     public class DebugController : Singleton<DebugController>
     {
 #if UNITY_EDITOR
+
+        private void Start()
+        {
+            ChunkGizmoDrawer.Instance.SetWorldToDraw(GameManager.World);
+        }
 
         private void Update()
         {

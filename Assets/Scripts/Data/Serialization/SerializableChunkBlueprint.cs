@@ -11,11 +11,11 @@ namespace Data.Serialization
         [JsonProperty("position")]
         private readonly IntVector2 _position;
 
-        [JsonProperty("topRight")]
-        private readonly IntVector2 _topRight;
-
         [JsonProperty("botLeft")]
         private readonly IntVector2 _bottomLeft;
+
+        [JsonProperty("topRight")]
+        private readonly IntVector2 _topRight;
 
         [JsonProperty("spaces")]
         private readonly List<SerializableSpace> _spaces = new List<SerializableSpace>();
@@ -47,7 +47,7 @@ namespace Data.Serialization
 
         public ChunkBlueprint ToObject()
         {
-            var chunkBlueprint = new ChunkBlueprint(_position);
+            var chunkBlueprint = new ChunkBlueprint(_position, _bottomLeft, _topRight);
 
             foreach (var serializedSpace in _spaces)
             {

@@ -8,23 +8,24 @@ public static class SceneHelper
 
     public static void ReloadScene()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
         SceneManager.sceneLoaded += OnActiveSceneChangedCallback;
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
 
         OnSceneIsEnding.Raise();
     }
 
     public static void LoadScene(Scenes scene)
     {
+        SceneManager.sceneLoaded += OnActiveSceneChangedCallback;
+
         switch (scene)
         {
-            case Scenes.Gameplay:
-                SceneManager.LoadScene("Gameplay");
+            case Scenes.World:
+                SceneManager.LoadScene("World");
                 break;
             default: throw new System.ArgumentException($"Unknown scene of type {scene}.");
         }
-
-        SceneManager.sceneLoaded += OnActiveSceneChangedCallback;
 
         OnSceneIsEnding.Raise();
     }
@@ -38,6 +39,6 @@ public static class SceneHelper
 
     public enum Scenes
     {
-        Gameplay
+        World
     }
 }
