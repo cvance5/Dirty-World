@@ -22,6 +22,12 @@ namespace WorldObjects.Spaces
             BottomLeftCorner = bottomLeftCorner;
             TopRightCorner = topRightCorner;
 
+            if (BottomLeftCorner.X > TopRightCorner.X ||
+               BottomLeftCorner.Y > TopRightCorner.Y)
+            {
+                throw new System.ArgumentException($"{Name} has impossible extents.  The bottom left corner is {BottomLeftCorner} and the top right corner is {TopRightCorner}.");
+            }
+
             Extents = new System.Collections.Generic.List<IntVector2>()
             {
                 BottomLeftCorner,

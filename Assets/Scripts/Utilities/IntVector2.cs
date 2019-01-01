@@ -1,14 +1,15 @@
 ﻿using Newtonsoft.Json;
+using System;
 using UnityEngine;
 
+[Serializable]
 [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
 public class IntVector2
 {
-
     [JsonProperty("X")]
-    public int X { get; set; }
+    public int X;
     [JsonProperty("Y")]
-    public int Y { get; set; }
+    public int Y;
 
     [JsonConstructor]
     public IntVector2(int x, int y)
