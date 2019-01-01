@@ -26,7 +26,9 @@ namespace WorldObjects
 
         public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
 
-        private static int _chunkSize => GameManager.Instance.Settings.ChunkSize;
+        private static World _world;
+
+        public static void AssignWorld(World world) => _world = world;
 
         public void AssignExtents(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {
@@ -75,15 +77,15 @@ namespace WorldObjects
 
             foreach (var dir in edgesReached)
             {
-                var neighbor = GameManager.World.GetChunkNeighbor(Position, dir);
+                var neighbor = _world.GetChunkNeighbor(Position, dir);
 
                 if (neighbor != null)
                 {
-                    neighbor.Register(space);
+                    throw new InvalidOperationException($"A space overlaps with an existing chunk! Chunk {neighbor} and space {space}.");
                 }
                 else
                 {
-                    var blueprint = GameManager.World.GetBlueprintNeighbor(Position, dir);
+                    var blueprint = _world.GetBlueprintNeighbor(Position, dir);
                     blueprint.Register(space);
                 }
             }
@@ -251,7 +253,7 @@ namespace WorldObjects
                         chunkDir += edgePassed;
                     }
 
-                    var blueprintForChunk = GameManager.World.GetBlueprintForPosition(Position + (chunkDir * _chunkSize));
+                    var blueprintForChunk = _world.GetBlueprintForPosition(Position + (chunkDir * _world.ChunkSize));
                     blueprintForChunk.Register(enemy);
                 }
             }

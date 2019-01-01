@@ -53,13 +53,17 @@ namespace Tools.SpaceCrafting
             _worldBuilder = new WorldBuilder(_world, sPicker, bPicker);
             _world.Register(_worldBuilder);
 
-            foreach (var kvp in _spaceCrafters)
+            foreach (var crafter in _spaceCrafters)
             {
-                foreach (var affectedChunk in kvp.ChunksAffected)
+                if (crafter.IsValid)
                 {
-                    var blueprint = _world.GetBlueprintForPosition(affectedChunk);
-                    blueprint.Register(kvp.Result);
+                    foreach (var affectedChunk in crafter.GetAffectedChunks())
+                    {
+                        var blueprint = _world.GetBlueprintForPosition(affectedChunk);
+                        blueprint.Register(crafter.Build());
+                    }
                 }
+                else _log.Warning($"{crafter} is not valid and won't be built.");
             }
 
             ChunkGizmoDrawer.Instance.SetWorldToDraw(_world);

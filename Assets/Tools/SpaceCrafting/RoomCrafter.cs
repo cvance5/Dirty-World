@@ -8,6 +8,14 @@ namespace Tools.SpaceCrafting
         public IntVector2 BottomLeftCorner;
         public IntVector2 TopRightCorner;
 
+        public override bool IsValid => MinX <= MaxX && MinY <= MaxY;
+
+        public override int MinX => BottomLeftCorner.X;
+        public override int MaxX => TopRightCorner.X;
+
+        public override int MinY => BottomLeftCorner.Y;
+        public override int MaxY => TopRightCorner.Y;
+
         public Item[] Treasure = new Item[0];
 
         protected override void OnCrafterAwake()
@@ -18,36 +26,8 @@ namespace Tools.SpaceCrafting
             TopRightCorner = new IntVector2(2, 2);
         }
 
-        protected override void BuildSpace()
-        {
-            if (Treasure.Length == 0)
-            {
-                Result = new Room(BottomLeftCorner, TopRightCorner);
-            }
-            else
-            {
-                Result = new TreasureRoom(BottomLeftCorner, TopRightCorner, Treasure);
-            }
-            UpdateAffectedChunks();
-        }
-
-        protected override void UpdateAffectedChunks()
-        {
-            ChunksAffected.Clear();
-
-            var minX = BottomLeftCorner.X / SpaceCraftingManager.ChunkSize;
-            var maxX = TopRightCorner.X / SpaceCraftingManager.ChunkSize;
-
-            var minY = BottomLeftCorner.Y / SpaceCraftingManager.ChunkSize;
-            var maxY = TopRightCorner.Y / SpaceCraftingManager.ChunkSize;
-
-            for (var x = minX; x <= maxX; x++)
-            {
-                for (var y = minY; y <= maxY; y++)
-                {
-                    ChunksAffected.Add(new IntVector2(x, y));
-                }
-            }
-        }
+        public override Space Build() => Treasure.Length == 0
+                ? new Room(BottomLeftCorner, TopRightCorner)
+                : new TreasureRoom(BottomLeftCorner, TopRightCorner, Treasure);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using WorldObjects.Actors.Enemies;
@@ -16,6 +17,10 @@ namespace WorldObjects
 
         public List<Space> Spaces { get; private set; } = new List<Space>();
         public List<EnemyData> Enemies { get; private set; } = new List<EnemyData>();
+
+        private static World _world;
+
+        public static void AssignWorld(World world) => _world = world;
 
         public ChunkBlueprint(IntVector2 position, IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {
@@ -55,15 +60,15 @@ namespace WorldObjects
 
             foreach (var dir in edgesReached)
             {
-                var neighbor = GameManager.World.GetChunkNeighbor(Position, dir);
+                var neighbor = _world.GetChunkNeighbor(Position, dir);
 
                 if (neighbor != null)
                 {
-                    neighbor.Register(space);
+                    throw new InvalidOperationException($"A space overlaps with an existing chunk! Chunk {neighbor} and space {space}.");
                 }
                 else
                 {
-                    var blueprint = GameManager.World.GetBlueprintNeighbor(Position, dir);
+                    var blueprint = _world.GetBlueprintNeighbor(Position, dir);
                     blueprint.Register(space);
                 }
             }

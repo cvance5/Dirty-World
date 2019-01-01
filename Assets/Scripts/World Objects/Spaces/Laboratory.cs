@@ -14,35 +14,35 @@ namespace WorldObjects.Spaces
             Regions = regions;
             MetalThickness = metalThickeness;
 
-            int? maxX = null;
-            int? minX = null;
-            int? maxY = null;
-            int? minY = null;
+            int minX = int.MaxValue;
+            int maxX = int.MinValue;
+            int minY = int.MaxValue;
+            int maxY = int.MinValue;
 
             foreach (var region in regions)
             {
-                if (minX == null || region.BottomLeftCorner.X < minX)
+                if (region.BottomLeftCorner.X < minX)
                 {
                     minX = region.BottomLeftCorner.X;
                 }
-                if (minY == null || region.BottomLeftCorner.Y < minY)
-                {
-                    minY = region.BottomLeftCorner.Y;
-                }
-                if (maxX == null || region.TopRightCorner.X > maxX)
+                if (region.TopRightCorner.X > maxX)
                 {
                     maxX = region.TopRightCorner.X;
                 }
-                if (maxY == null || region.TopRightCorner.Y > maxY)
+                if (region.TopRightCorner.Y > maxY)
                 {
                     maxY = region.TopRightCorner.Y;
                 }
+                if (region.BottomLeftCorner.Y < minY)
+                {
+                    minY = region.BottomLeftCorner.Y;
+                }
             }
 
-            Extents.Add(new IntVector2(minX.Value, maxY.Value));
-            Extents.Add(new IntVector2(maxX.Value, maxY.Value));
-            Extents.Add(new IntVector2(maxX.Value, minY.Value));
-            Extents.Add(new IntVector2(minX.Value, minY.Value));
+            Extents.Add(new IntVector2(minX, maxY));
+            Extents.Add(new IntVector2(maxX, maxY));
+            Extents.Add(new IntVector2(maxX, minY));
+            Extents.Add(new IntVector2(minX, minY));
         }
 
         public override bool Contains(IntVector2 position)

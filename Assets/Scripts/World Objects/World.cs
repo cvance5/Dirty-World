@@ -26,6 +26,9 @@ namespace WorldObjects
         {
             SurfaceDepth = surfaceDepth;
             ChunkSize = chunkSize;
+
+            Chunk.AssignWorld(this);
+            ChunkBlueprint.AssignWorld(this);
         }
 
         public void Register(WorldBuilder worldBuilder)

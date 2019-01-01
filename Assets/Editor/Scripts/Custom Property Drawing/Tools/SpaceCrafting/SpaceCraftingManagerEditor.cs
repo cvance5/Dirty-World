@@ -30,14 +30,19 @@ namespace CustomPropertyDrawing.Tools.SpaceCrafting
                 _target.AddNewCrafter<CorridorCrafter>();
             }
 
-            if(GUILayout.Button("New Room"))
+            if (GUILayout.Button("New Room"))
             {
                 _target.AddNewCrafter<RoomCrafter>();
             }
 
-            if(GUILayout.Button("New Monster Den"))
+            if (GUILayout.Button("New Monster Den"))
             {
                 _target.AddNewCrafter<MonsterDenCrafter>();
+            }
+
+            if (GUILayout.Button("New Laboratory"))
+            {
+                _target.AddNewCrafter<LaboratoryCrafter>();
             }
         }
     }

@@ -9,6 +9,14 @@ namespace Tools.SpaceCrafting
 
         public bool IsUncapped;
 
+        public override bool IsValid => MinX <= MaxX && MinY <= MaxY;
+
+        public override int MinX => BottomLeftCorner.X;
+        public override int MaxX => TopRightCorner.X;
+
+        public override int MinY => BottomLeftCorner.Y;
+        public override int MaxY => TopRightCorner.Y;
+
         protected override void OnCrafterAwake()
         {
             gameObject.name = "Shaft";
@@ -18,29 +26,6 @@ namespace Tools.SpaceCrafting
             IsUncapped = false;
         }
 
-        protected override void BuildSpace()
-        {
-            Result = new Shaft(BottomLeftCorner, TopRightCorner, IsUncapped);
-            UpdateAffectedChunks();
-        }
-
-        protected override void UpdateAffectedChunks()
-        {
-            ChunksAffected.Clear();
-
-            var minX = BottomLeftCorner.X / SpaceCraftingManager.ChunkSize;
-            var maxX = TopRightCorner.X / SpaceCraftingManager.ChunkSize;
-
-            var minY = BottomLeftCorner.Y / SpaceCraftingManager.ChunkSize;
-            var maxY = TopRightCorner.Y / SpaceCraftingManager.ChunkSize;
-
-            for (var x = minX; x <= maxX; x++)
-            {
-                for (var y = minY; y <= maxY; y++)
-                {
-                    ChunksAffected.Add(new IntVector2(x, y));
-                }
-            }
-        }
+        public override Space Build() => new Shaft(BottomLeftCorner, TopRightCorner, IsUncapped);
     }
 }
