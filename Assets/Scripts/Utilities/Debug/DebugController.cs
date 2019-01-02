@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using Utilities.Editor;
+﻿using GizmoDrawers;
+using UnityEngine;
 using WorldObjects.Actors.Player;
 
 namespace Utilities.Debug

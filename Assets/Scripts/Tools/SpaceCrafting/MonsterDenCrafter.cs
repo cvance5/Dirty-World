@@ -23,6 +23,6 @@ namespace Tools.SpaceCrafting
             Radius = 3;
         }
 
-        public override Space Build() => new MonsterDen(Centerpoint, Radius);
+        protected override Space RawBuild() => new MonsterDen(Centerpoint, Radius);
     }
 }

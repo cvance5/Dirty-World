@@ -18,12 +18,36 @@ namespace CustomPropertyDrawing.Tools.SpaceCrafting
 
             _target = target as SpaceCrafter;
 
-            if (GUILayout.Button("Serialize"))
+            GUILayout.BeginVertical();
             {
-                _json = JsonConvert.SerializeObject(SerializableSpaceHelper.ToSerializableSpace(_target.Build()));
-            }
+                GUILayout.Space(20);
+                GUILayout.Label("Add Crafters");
 
-            GUILayout.TextArea(_json, GUILayout.Height(250));
+                if (GUILayout.Button("Add Enemy Spawn Crafter"))
+                {
+                    AddEnemySpawnCrafter();
+                }
+            }
+            GUILayout.EndVertical();
+
+            GUILayout.BeginVertical();
+            {
+                GUILayout.Space(20);
+                if (GUILayout.Button("Serialize"))
+                {
+                    _json = JsonConvert.SerializeObject(SerializableSpaceHelper.ToSerializableSpace(_target.Build()));
+                }
+
+                GUILayout.TextArea(_json, GUILayout.Height(100));
+            }
+            GUILayout.EndVertical();
+        }
+
+        private void AddEnemySpawnCrafter()
+        {
+            var crafterObject = new GameObject("Enemy Spawn");
+            var enemySpawnCrafter = crafterObject.AddComponent<EnemySpawnCrafter>();
+            enemySpawnCrafter.transform.SetParent(_target.transform);
         }
     }
 }

@@ -15,35 +15,46 @@ namespace CustomPropertyDrawing.Tools.SpaceCrafting
 
             _target = target as SpaceCraftingManager;
 
-            if (GUILayout.Button("Rebuild World"))
+            GUILayout.BeginVertical();
             {
-                _target.RebuildWorld();
-            }
+                if (GUILayout.Button("Rebuild World"))
+                {
+                    _target.RebuildWorld();
+                }
 
-            if (GUILayout.Button("New Shaft"))
-            {
-                _target.AddNewCrafter<ShaftCrafter>();
+                GUILayout.Space(20);
             }
+            GUILayout.EndVertical();
 
-            if (GUILayout.Button("New Corridor"))
+            GUILayout.BeginVertical();
             {
-                _target.AddNewCrafter<CorridorCrafter>();
-            }
+                GUILayout.Label("Build Spaces");
+                if (GUILayout.Button("New Shaft"))
+                {
+                    _target.AddNewCrafter<ShaftCrafter>();
+                }
 
-            if (GUILayout.Button("New Room"))
-            {
-                _target.AddNewCrafter<RoomCrafter>();
-            }
+                if (GUILayout.Button("New Corridor"))
+                {
+                    _target.AddNewCrafter<CorridorCrafter>();
+                }
 
-            if (GUILayout.Button("New Monster Den"))
-            {
-                _target.AddNewCrafter<MonsterDenCrafter>();
-            }
+                if (GUILayout.Button("New Room"))
+                {
+                    _target.AddNewCrafter<RoomCrafter>();
+                }
 
-            if (GUILayout.Button("New Laboratory"))
-            {
-                _target.AddNewCrafter<LaboratoryCrafter>();
+                if (GUILayout.Button("New Monster Den"))
+                {
+                    _target.AddNewCrafter<MonsterDenCrafter>();
+                }
+
+                if (GUILayout.Button("New Laboratory"))
+                {
+                    _target.AddNewCrafter<LaboratoryCrafter>();
+                }
             }
+            GUILayout.EndVertical();
         }
     }
 }

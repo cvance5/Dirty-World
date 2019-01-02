@@ -1,8 +1,7 @@
 ﻿using Data;
-using System.Collections.Generic;
+using GizmoDrawers;
 using UnityEngine;
 using Utilities.Debug;
-using Utilities.Editor;
 using WorldObjects;
 using WorldObjects.WorldGeneration;
 using WorldObjects.WorldGeneration.BlockGeneration;
@@ -20,8 +19,6 @@ namespace Tools.SpaceCrafting
         private Settings _settings = null;
 #pragma warning restore IDE0044 // Add readonly modifier
 
-        private readonly List<SpaceCrafter> _spaceCrafters = new List<SpaceCrafter>();
-
         private World _world;
         private WorldBuilder _worldBuilder;
         private ChunkActivationController _activationController;
@@ -30,7 +27,6 @@ namespace Tools.SpaceCrafting
         {
             DontDestroyOnLoad(gameObject);
             SceneHelper.OnSceneIsReady += BuildWorld;
-            SpaceCrafter.OnCrafterDestroyed += OnCrafterDestroyed;
         }
 
         private void Start() => SceneHelper.LoadScene(SceneHelper.Scenes.World);
@@ -53,7 +49,7 @@ namespace Tools.SpaceCrafting
             _worldBuilder = new WorldBuilder(_world, sPicker, bPicker);
             _world.Register(_worldBuilder);
 
-            foreach (var crafter in _spaceCrafters)
+            foreach (var crafter in transform.GetComponentsInChildren<SpaceCrafter>())
             {
                 if (crafter.IsValid)
                 {
@@ -66,25 +62,15 @@ namespace Tools.SpaceCrafting
                 else _log.Warning($"{crafter} is not valid and won't be built.");
             }
 
-            ChunkGizmoDrawer.Instance.SetWorldToDraw(_world);
-
             _activationController = new ChunkActivationController(_world, _gridSize);
         }
 
         public void AddNewCrafter<T>() where T : SpaceCrafter
         {
             var crafter = new GameObject().AddComponent<T>();
-            _spaceCrafters.Add(crafter);
+            crafter.transform.SetParent(transform);
         }
-
-        private void OnCrafterDestroyed(SpaceCrafter crafter)
-        {
-            if (!_spaceCrafters.Remove(crafter))
-            {
-                _log.Error($"Tried to remove a crafter that the manager didn't know about.");
-            }
-        }
-
+        
         private static readonly Log _log = new Log("SpaceCraftingManager");
     }
 }

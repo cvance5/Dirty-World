@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using UnityEngine;
-
+using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration.EnemyGeneration;
 using Space = WorldObjects.Spaces.Space;
 
 namespace Tools.SpaceCrafting
 {
     public abstract class SpaceCrafter : MonoBehaviour
     {
-        public static SmartEvent<SpaceCrafter> OnCrafterDestroyed = new SmartEvent<SpaceCrafter>();
-
         public abstract bool IsValid { get; }
 
         public abstract int MinX { get; }
@@ -24,7 +24,14 @@ namespace Tools.SpaceCrafting
 
         protected abstract void OnCrafterAwake();
 
-        public abstract Space Build();
+        public Space Build()
+        {
+            var space = RawBuild();
+            space.AddEnemySpawns(BuildEnemySpawns());
+            return space;
+        }
+
+        protected abstract Space RawBuild();
 
         public List<IntVector2> GetAffectedChunks()
         {
@@ -47,6 +54,17 @@ namespace Tools.SpaceCrafting
             return chunksAffected;
         }
 
-        private void OnDestroy() => OnCrafterDestroyed.Raise(this);
+        private List<EnemySpawn> BuildEnemySpawns()
+        {
+            var enemySpawns = new List<EnemySpawn>();
+            foreach (var enemySpawn in transform.GetComponentsInChildren<EnemySpawnCrafter>())
+            {
+                if (enemySpawn.Type != EnemyTypes.None)
+                {
+                    enemySpawns.Add(enemySpawn.Build());
+                }
+            }
+            return enemySpawns;
+        }
     }
 }

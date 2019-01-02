@@ -9,16 +9,7 @@ namespace Tools.SpaceCrafting
     {
         public int MetalThickeness;
 
-        private readonly List<Region> _regions = new List<Region>();
-
-        public override bool IsValid
-        {
-            get
-            {
-                AssessChildSpaces();
-                return MetalThickeness >= 0 && _regions.Count > 0;
-            }
-        }
+        public override bool IsValid => MetalThickeness >= 0 && BuildRegions().Count > 0;
 
         private int _minX;
         public override int MinX => _minX;
@@ -39,15 +30,11 @@ namespace Tools.SpaceCrafting
             MetalThickeness = 2;
         }
 
-        public override Space Build()
-        {
-            AssessChildSpaces();
-            return new Laboratory(_regions, MetalThickeness);
-        }
+        protected override Space RawBuild() => new Laboratory(BuildRegions(), MetalThickeness);
 
-        private void AssessChildSpaces()
+        private List<Region> BuildRegions()
         {
-            _regions.Clear();
+            var regions = new List<Region>();
 
             foreach (var child in transform.GetAllChildren())
             {
@@ -59,7 +46,11 @@ namespace Tools.SpaceCrafting
                 var regionMinY = mainShaft.MinY;
                 var regionMaxY = mainShaft.MaxY;
 
-                var regionalSpaces = new List<Space>();
+                var regionalSpaces = new List<Space>()
+                {
+                    mainShaft.Build()
+                };
+
                 foreach (var subcrafter in mainShaft.GetComponentsInChildren<SpaceCrafter>())
                 {
                     regionalSpaces.Add(subcrafter.Build());
@@ -75,8 +66,10 @@ namespace Tools.SpaceCrafting
                 _minY = Mathf.Min(MinY, regionMinY);
                 _maxY = Mathf.Max(MaxY, regionMaxY);
 
-                _regions.Add(new Region(new IntVector2(MinX, MinY), new IntVector2(regionMaxX, MaxY), regionalSpaces));
+                regions.Add(new Region(new IntVector2(MinX, MinY), new IntVector2(regionMaxX, MaxY), regionalSpaces));
             }
+
+            return regions;
         }
     }
 }

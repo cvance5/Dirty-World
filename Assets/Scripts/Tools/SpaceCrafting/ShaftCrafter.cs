@@ -26,6 +26,6 @@ namespace Tools.SpaceCrafting
             IsUncapped = false;
         }
 
-        public override Space Build() => new Shaft(BottomLeftCorner, TopRightCorner, IsUncapped);
+        protected override Space RawBuild() => new Shaft(BottomLeftCorner, TopRightCorner, IsUncapped);
     }
 }

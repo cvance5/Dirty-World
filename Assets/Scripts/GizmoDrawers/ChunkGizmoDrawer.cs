@@ -3,11 +3,12 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Utilities;
 using WorldObjects;
 using WorldObjects.Spaces;
 using Space = WorldObjects.Spaces.Space;
 
-namespace Utilities.Editor
+namespace GizmoDrawers
 {
     public class ChunkGizmoDrawer : Singleton<ChunkGizmoDrawer>
     {
@@ -251,8 +252,6 @@ namespace Utilities.Editor
 
             Gizmos.DrawLine(extents[extents.Count - 1], extents[0]);
         }
-
-        private void DrawCircle(Vector2 center, float radius) => Gizmos.DrawSphere(center, radius);
     }
 }
 #endif

@@ -168,7 +168,7 @@ GameObject:
   - component: {fileID: 754274095}
   - component: {fileID: 754274094}
   m_Layer: 0
-  m_Name: Debug
+  m_Name: Drawer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -183,18 +183,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 754274093}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1988c5798dbaaf54f9d58b362251f19d, type: 3}
+  m_Script: {fileID: 11500000, guid: 70ee67468ccfa784f961d4eca33741ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _showChunkLoadOrder: 1
-  _showChunkBounderies: 1
-  _showChunkSpaces: 1
-  _showChunk: 
-  _showBlueprintCreationOrder: 1
-  _showBlueprintBoundaries: 1
-  _showBlueprintSpaces: 1
-  _showBlueprint: 
-  _showSpaceNames: 1
 --- !u!4 &754274095
 Transform:
   m_ObjectHideFlags: 0

@@ -1,9 +1,8 @@
-﻿using Items;
-using WorldObjects.Spaces;
+﻿using WorldObjects.Spaces;
 
 namespace Tools.SpaceCrafting
 {
-    public class RoomCrafter : SpaceCrafter
+    public class CorridorCrafter : SpaceCrafter
     {
         public IntVector2 BottomLeftCorner;
         public IntVector2 TopRightCorner;
@@ -16,18 +15,14 @@ namespace Tools.SpaceCrafting
         public override int MinY => BottomLeftCorner.Y;
         public override int MaxY => TopRightCorner.Y;
 
-        public Item[] Treasure = new Item[0];
-
         protected override void OnCrafterAwake()
         {
-            gameObject.name = "Room";
+            gameObject.name = "Corridor";
 
             BottomLeftCorner = new IntVector2(-2, -2);
             TopRightCorner = new IntVector2(2, 2);
         }
 
-        public override Space Build() => Treasure.Length == 0
-                ? new Room(BottomLeftCorner, TopRightCorner)
-                : new TreasureRoom(BottomLeftCorner, TopRightCorner, Treasure);
+        protected override Space RawBuild() => new Corridor(BottomLeftCorner, TopRightCorner);
     }
 }

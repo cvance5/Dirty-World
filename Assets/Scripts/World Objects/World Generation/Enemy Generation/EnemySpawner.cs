@@ -1,8 +1,8 @@
-﻿using WorldObjects.Actors.Enemies;
-using WorldObjects.Actors.Enemies.Maggot;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using WorldObjects.Actors.Enemies;
+using WorldObjects.Actors.Enemies.Maggot;
 
 namespace WorldObjects.WorldGeneration.EnemyGeneration
 {
@@ -21,7 +21,7 @@ namespace WorldObjects.WorldGeneration.EnemyGeneration
             switch (type)
             {
                 case EnemyTypes.Maggot: enemyObject = Instance._maggot; break;
-                default: throw new System.ArgumentException($"Unknown enemy type of {type}.");
+                default: throw new ArgumentException($"Unknown enemy type of {type}.");
             }
 
             enemyObject = Instantiate(enemyObject);
