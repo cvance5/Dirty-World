@@ -14,11 +14,14 @@ namespace GizmoDrawers
 
         private void OnDrawGizmos()
         {
-            if (SpaceCraftingManager.Instance != null)
+            if (Application.isPlaying)
             {
-                foreach (var crafter in SpaceCraftingManager.Instance.GetComponentsInChildren<SpaceCrafter>())
+                if (SpaceCraftingManager.Instance != null)
                 {
-                    DrawCrafter(crafter);
+                    foreach (var crafter in SpaceCraftingManager.Instance.GetComponentsInChildren<SpaceCrafter>())
+                    {
+                        DrawCrafter(crafter);
+                    }
                 }
             }
         }
