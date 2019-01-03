@@ -1,10 +1,8 @@
 ﻿using Data;
-using GizmoDrawers;
 using UnityEngine;
 using Utilities.Debug;
 using WorldObjects;
 using WorldObjects.WorldGeneration;
-using WorldObjects.WorldGeneration.BlockGeneration;
 
 namespace Tools.SpaceCrafting
 {
@@ -43,10 +41,7 @@ namespace Tools.SpaceCrafting
             _world = new GameObject("World").AddComponent<World>();
             _world.Initialize(0, _settings.ChunkSize);
 
-            var sPicker = new SpacePicker(0);
-            var bPicker = new BlockPicker(0);
-
-            _worldBuilder = new WorldBuilder(_world, sPicker, bPicker);
+            _worldBuilder = new WorldBuilder(_world);
             _world.Register(_worldBuilder);
 
             foreach (var crafter in transform.GetComponentsInChildren<SpaceCrafter>())
@@ -70,7 +65,7 @@ namespace Tools.SpaceCrafting
             var crafter = new GameObject().AddComponent<T>();
             crafter.transform.SetParent(transform);
         }
-        
+
         private static readonly Log _log = new Log("SpaceCraftingManager");
     }
 }

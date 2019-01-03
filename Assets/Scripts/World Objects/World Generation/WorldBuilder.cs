@@ -25,7 +25,7 @@ namespace WorldObjects.WorldGeneration
 
         private readonly Dictionary<BlockTypes, Range> _fillRanges;
 
-        public WorldBuilder(World world, SpacePicker sPicker, BlockPicker bPicker)
+        public WorldBuilder(World world, SpacePicker sPicker = null, BlockPicker bPicker = null)
         {
             _world = world;
             _sPicker = sPicker;
@@ -78,16 +78,23 @@ namespace WorldObjects.WorldGeneration
 
             var cBuilder = new ChunkBuilder(worldPosition, _chunkSize, _world.GetBlueprintForPosition(worldPosition));
 
-            var sBuilders = _sPicker.Select(cBuilder);
-            var blocks = _bPicker.Pick(cBuilder);
-
-            foreach (var sBuilder in sBuilders)
+            if (_sPicker != null)
             {
-                cBuilder.AddSpace(sBuilder);
+                var sBuilders = _sPicker.Select(cBuilder);
+                foreach (var sBuilder in sBuilders)
+                {
+                    cBuilder.AddSpace(sBuilder);
+                }
             }
 
-            cBuilder.AddBlocks(blocks)
-                    .SetFill(GetFill(cBuilder.Depth));
+            if (_bPicker != null)
+            {
+                var blocks = _bPicker.Pick(cBuilder);
+
+                cBuilder.AddBlocks(blocks);
+            }
+
+            cBuilder.SetFill(GetFill(cBuilder.Depth));
 
             // Calls OnChunkReadyToActivate when finished
             _chunkActivationCoroutine = CoroutineHandler.StartCoroutine(cBuilder.Build);

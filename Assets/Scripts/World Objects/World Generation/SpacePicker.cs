@@ -13,7 +13,14 @@ namespace WorldObjects.WorldGeneration
         private bool _canPickSpaces = true;
         private List<Type> _allowedSpaces = new List<Type>();
 
-        public SpacePicker(int surfaceDepth) => _surfaceDepth = surfaceDepth;
+        public SpacePicker(int surfaceDepth, List<Type> initialAllowedSpaces = null)
+        {
+            _surfaceDepth = surfaceDepth;
+            if (initialAllowedSpaces != null)
+            {
+                AllowSpaces(initialAllowedSpaces);
+            }
+        }
 
         public List<SpaceBuilder> Select(ChunkBuilder chunk)
         {
@@ -23,7 +30,7 @@ namespace WorldObjects.WorldGeneration
 
             if (chunk.Depth <= _surfaceDepth)
             {
-                //spaces.AddRange(CheckForSpecialCasing(chunk));
+                spaces.AddRange(CheckForSpecialCasing(chunk));
 
                 if (_canPickSpaces) spaces.AddRange(RandomlySelect(chunk));
             }
@@ -35,11 +42,11 @@ namespace WorldObjects.WorldGeneration
         {
             foreach (var type in allowedSpaceTypes)
             {
-                if (type.IsAssignableFrom(typeof(Space)))
+                if (type.IsAssignableFrom(typeof(SpaceBuilder)))
                 {
                     _allowedSpaces.Add(type);
                 }
-                else _log.Warning($"{type.Name} is not a space and cannot be allowed.");
+                else _log.Warning($"{type.Name} is not a spacebuilder and cannot be allowed.");
             }
         }
 

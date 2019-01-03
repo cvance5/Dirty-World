@@ -13,6 +13,7 @@ using WorldObjects.Actors;
 using WorldObjects.Actors.Player;
 using WorldObjects.WorldGeneration;
 using WorldObjects.WorldGeneration.BlockGeneration;
+using WorldObjects.WorldGeneration.SpaceGeneration;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -75,8 +76,8 @@ public class GameManager : Singleton<GameManager>
         var worldGameObject = new GameObject("World");
         World = worldGameObject.AddComponent<World>();
 
-        var sPicker = new SpacePicker(Settings.SurfaceDepth);
         var bPicker = new BlockPicker(Settings.SurfaceDepth);
+        var sPicker = new SpacePicker(Settings.SurfaceDepth);
 
         WorldBuilder = new WorldBuilder(World, sPicker, bPicker);
         World.Initialize(Settings.SurfaceDepth, Settings.ChunkSize);
