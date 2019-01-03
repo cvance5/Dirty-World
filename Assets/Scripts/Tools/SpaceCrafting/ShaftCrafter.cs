@@ -1,15 +1,20 @@
-﻿using WorldObjects.Spaces;
+﻿using Data.Serialization.SerializableSpaces;
+using Newtonsoft.Json;
+using WorldObjects.Spaces;
 
 namespace Tools.SpaceCrafting
 {
     public class ShaftCrafter : SpaceCrafter
     {
-        public IntVector2 BottomLeftCorner;
-        public IntVector2 TopRightCorner;
+        public int Width;
+        public int Height;
 
         public bool IsUncapped;
 
         public override bool IsValid => MinX <= MaxX && MinY <= MaxY;
+
+        private IntVector2 BottomLeftCorner => new IntVector2(transform.position.x, transform.position.y);
+        private IntVector2 TopRightCorner => new IntVector2(transform.position.x + Width, transform.position.y + Height);
 
         public override int MinX => BottomLeftCorner.X;
         public override int MaxX => TopRightCorner.X;
@@ -21,9 +26,26 @@ namespace Tools.SpaceCrafting
         {
             gameObject.name = "Shaft";
 
-            BottomLeftCorner = new IntVector2(-2, -2);
-            TopRightCorner = new IntVector2(2, 2);
+            Width = 4;
+            Height = 6;
             IsUncapped = false;
+        }
+
+        public override void InitializeFromJSON(string json)
+        {
+            var shaft = JsonConvert.DeserializeObject<SerializableShaft>(json).ToObject() as Shaft;
+            InitializeFromSpace(shaft);
+        }
+
+        public override void InitializeFromSpace(Space space)
+        {
+            var shaft = space as Shaft;
+            transform.position = shaft.BottomLeftCorner;
+            Width = shaft.TopRightCorner.X - shaft.BottomLeftCorner.X;
+            Height = shaft.TopRightCorner.Y - shaft.BottomLeftCorner.Y;
+            IsUncapped = shaft.IsUncapped;
+
+            InitializeEnemySpawns(shaft.EnemySpawns);
         }
 
         protected override Space RawBuild() => new Shaft(BottomLeftCorner, TopRightCorner, IsUncapped);

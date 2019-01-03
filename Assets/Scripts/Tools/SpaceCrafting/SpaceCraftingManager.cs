@@ -60,10 +60,11 @@ namespace Tools.SpaceCrafting
             _activationController = new ChunkActivationController(_world, _gridSize);
         }
 
-        public void AddNewCrafter<T>() where T : SpaceCrafter
+        public SpaceCrafter AddNewCrafter<T>() where T : SpaceCrafter
         {
             var crafter = new GameObject().AddComponent<T>();
             crafter.transform.SetParent(transform);
+            return crafter;
         }
 
         private static readonly Log _log = new Log("SpaceCraftingManager");

@@ -25,7 +25,7 @@ namespace CustomPropertyDrawing.Tools.SpaceCrafting
 
                 if (GUILayout.Button("Add Enemy Spawn Crafter"))
                 {
-                    AddEnemySpawnCrafter();
+                    _target.AddEnemySpawnCrafter();
                 }
             }
             GUILayout.EndVertical();
@@ -35,19 +35,17 @@ namespace CustomPropertyDrawing.Tools.SpaceCrafting
                 GUILayout.Space(20);
                 if (GUILayout.Button("Serialize"))
                 {
-                    _json = JsonConvert.SerializeObject(SerializableSpaceHelper.ToSerializableSpace(_target.Build()));
+                    _json = JsonConvert.SerializeObject(SerializableSpaceHelper.ToSerializableSpace(_target.Build()), new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
                 }
 
-                GUILayout.TextArea(_json, GUILayout.Height(100));
+                _json = GUILayout.TextArea(_json, GUILayout.Height(100));
+
+                if (GUILayout.Button("Deserialize"))
+                {
+                    _target.InitializeFromJSON(_json);
+                }
             }
             GUILayout.EndVertical();
-        }
-
-        private void AddEnemySpawnCrafter()
-        {
-            var crafterObject = new GameObject("Enemy Spawn");
-            var enemySpawnCrafter = crafterObject.AddComponent<EnemySpawnCrafter>();
-            enemySpawnCrafter.transform.SetParent(_target.transform);
         }
     }
 }

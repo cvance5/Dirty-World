@@ -1,11 +1,13 @@
-﻿using WorldObjects.Spaces;
+﻿using Data.Serialization.SerializableSpaces;
+using Newtonsoft.Json;
+using WorldObjects.Spaces;
 
 namespace Tools.SpaceCrafting
 {
     public class MonsterDenCrafter : SpaceCrafter
     {
-        public IntVector2 Centerpoint;
         public int Radius;
+        public IntVector2 Centerpoint => new IntVector2(transform.position);
 
         public override bool IsValid => Radius >= 0;
 
@@ -19,8 +21,22 @@ namespace Tools.SpaceCrafting
         {
             gameObject.name = "Monster Den";
 
-            Centerpoint = new IntVector2(0, 0);
             Radius = 3;
+        }
+
+        public override void InitializeFromJSON(string json)
+        {
+            var room = JsonConvert.DeserializeObject<SerializableMonsterDen>(json).ToObject() as MonsterDen;
+            InitializeFromSpace(room);
+        }
+
+        public override void InitializeFromSpace(Space space)
+        {
+            var monsterDen = space as MonsterDen;
+            transform.position = monsterDen.Centerpoint;
+            Radius = monsterDen.Radius;
+
+            InitializeEnemySpawns(monsterDen.EnemySpawns);
         }
 
         protected override Space RawBuild() => new MonsterDen(Centerpoint, Radius);

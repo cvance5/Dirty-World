@@ -18,6 +18,9 @@ public class IntVector2
         Y = y;
     }
 
+    public IntVector2(float x, float y)
+        : this((int)x, (int)y) { }
+
     public IntVector2(Vector2 vec)
     {
         X = Mathf.RoundToInt(vec.x);

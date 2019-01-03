@@ -1,14 +1,19 @@
-﻿using Items;
+﻿using Data.Serialization.SerializableSpaces;
+using Items;
+using Newtonsoft.Json;
 using WorldObjects.Spaces;
 
 namespace Tools.SpaceCrafting
 {
     public class RoomCrafter : SpaceCrafter
     {
-        public IntVector2 BottomLeftCorner;
-        public IntVector2 TopRightCorner;
+        public int Width;
+        public int Height;
 
         public override bool IsValid => MinX <= MaxX && MinY <= MaxY;
+
+        private IntVector2 BottomLeftCorner => new IntVector2(transform.position.x, transform.position.y);
+        private IntVector2 TopRightCorner => new IntVector2(transform.position.x + Width, transform.position.y + Height);
 
         public override int MinX => BottomLeftCorner.X;
         public override int MaxX => TopRightCorner.X;
@@ -22,8 +27,30 @@ namespace Tools.SpaceCrafting
         {
             gameObject.name = "Room";
 
-            BottomLeftCorner = new IntVector2(-2, -2);
-            TopRightCorner = new IntVector2(2, 2);
+            Width = 4;
+            Height = 4;
+        }
+
+        public override void InitializeFromJSON(string json)
+        {
+            var room = JsonConvert.DeserializeObject<SerializableTreasureRoom>(json).ToObject() as TreasureRoom;
+            InitializeFromSpace(room);
+        }
+
+        public override void InitializeFromSpace(Space space)
+        {
+            var room = space as Room;
+            transform.position = room.BottomLeftCorner;
+            Width = room.TopRightCorner.X - room.BottomLeftCorner.X;
+            Height = room.TopRightCorner.Y - room.BottomLeftCorner.Y;
+
+            if (space is TreasureRoom treasureRoom)
+            {
+                Treasure = treasureRoom.Treasure ?? new Item[0];
+            }
+            else Treasure = new Item[0];
+
+            InitializeEnemySpawns(room.EnemySpawns);
         }
 
         protected override Space RawBuild() => Treasure.Length == 0

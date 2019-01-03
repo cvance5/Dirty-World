@@ -23,6 +23,18 @@ namespace Tools.SpaceCrafting
         }
 
         protected abstract void OnCrafterAwake();
+        public abstract void InitializeFromJSON(string json);
+        public abstract void InitializeFromSpace(Space space);
+
+        public void InitializeEnemySpawns(List<EnemySpawn> spawns)
+        {
+            foreach(var spawn in spawns)
+            {
+                var crafter = AddEnemySpawnCrafter();
+                crafter.Type = spawn.Type;
+                crafter.transform.position = spawn.Position;
+            }
+        }
 
         public Space Build()
         {
@@ -52,6 +64,15 @@ namespace Tools.SpaceCrafting
             }
 
             return chunksAffected;
+        }
+
+        public EnemySpawnCrafter AddEnemySpawnCrafter()
+        {
+            var crafterObject = new GameObject("Enemy Spawn");
+            var enemySpawnCrafter = crafterObject.AddComponent<EnemySpawnCrafter>();
+            enemySpawnCrafter.transform.SetParent(transform);
+
+            return enemySpawnCrafter;
         }
 
         private List<EnemySpawn> BuildEnemySpawns()

@@ -12,7 +12,7 @@ namespace GizmoDrawers
     {
         private void Awake() => DontDestroyOnLoad(gameObject);
 
-        private void OnDrawGizmosSelected()
+        private void OnDrawGizmos()
         {
             if (SpaceCraftingManager.Instance != null)
             {
@@ -63,7 +63,7 @@ namespace GizmoDrawers
             }
 
             DrawByExtents(space.Extents);
-            Handles.Label(space.Extents[0], $"{prefixName}{space.Name}");
+            Handles.Label(space.Extents[0], $"{prefixName} {space.Name}");
 
             if (space is ComplexSpace)
             {
@@ -73,7 +73,7 @@ namespace GizmoDrawers
                     var region = complexSpace.Regions[regionNumber];
                     for (var spaceNumber = 0; spaceNumber < region.Spaces.Count; spaceNumber++)
                     {
-                        DrawSpace(region.Spaces[spaceNumber], $"{complexSpace.Name}'s #{spaceNumber + regionNumber}: ");
+                        DrawSpace(region.Spaces[spaceNumber]);
                     }
                 }
             }

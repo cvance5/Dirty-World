@@ -4,7 +4,7 @@ namespace Data.Serialization.SerializableSpaces
 {
     public static class SerializableSpaceHelper
     {
-        public static SerializableSpace ToSerializableSpace(WorldObjects.Spaces.Space space)
+        public static SerializableSpace ToSerializableSpace(Space space)
         {
             if (space is Shaft)
             {

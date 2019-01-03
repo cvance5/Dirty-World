@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Data.Serialization.SerializableSpaces;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Spaces;
 using Space = WorldObjects.Spaces.Space;
@@ -30,6 +32,52 @@ namespace Tools.SpaceCrafting
             MetalThickeness = 2;
         }
 
+        public override void InitializeFromJSON(string json)
+        {
+            var laboratory = JsonConvert.DeserializeObject<SerializableLaboratory>(json, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto }).ToObject() as Laboratory;
+            InitializeFromSpace(laboratory);
+        }
+
+        public override void InitializeFromSpace(Space space)
+        {
+            var laboratory = space as Laboratory;
+            foreach (var region in laboratory.Regions)
+            {
+                var mainShaft = region.Spaces[0];
+                var mainShaftCrafter = SpaceCraftingManager.Instance.AddNewCrafter<ShaftCrafter>();
+
+                mainShaftCrafter.transform.SetParent(transform);
+                mainShaftCrafter.InitializeFromSpace(mainShaft);
+                mainShaftCrafter.InitializeEnemySpawns(mainShaft.EnemySpawns);
+
+                for (var spaceNumber = 1; spaceNumber < region.Spaces.Count; spaceNumber++)
+                {
+                    var regionSpace = region.Spaces[spaceNumber];
+                    SpaceCrafter crafter;
+
+                    if (regionSpace is Shaft)
+                    {
+                        crafter = SpaceCraftingManager.Instance.AddNewCrafter<ShaftCrafter>();
+                    }
+                    else if (regionSpace is Corridor)
+                    {
+                        crafter = SpaceCraftingManager.Instance.AddNewCrafter<CorridorCrafter>();
+                    }
+                    else if (regionSpace is Room)
+                    {
+                        crafter = SpaceCraftingManager.Instance.AddNewCrafter<RoomCrafter>();
+                    }
+                    else throw new System.ArgumentOutOfRangeException($"Unhandled space of type {region.GetType()}.");
+
+                    crafter.transform.SetParent(mainShaftCrafter.transform);
+                    crafter.InitializeFromSpace(regionSpace);
+                    crafter.InitializeEnemySpawns(regionSpace.EnemySpawns);
+                }
+            }
+
+            InitializeEnemySpawns(laboratory.EnemySpawns);
+        }
+
         protected override Space RawBuild() => new Laboratory(BuildRegions(), MetalThickeness);
 
         private List<Region> BuildRegions()
@@ -40,33 +88,41 @@ namespace Tools.SpaceCrafting
             {
                 var mainShaft = child.GetComponent<ShaftCrafter>();
 
-                var regionMinX = mainShaft.MinX;
-                var regionMaxX = mainShaft.MaxX;
-
-                var regionMinY = mainShaft.MinY;
-                var regionMaxY = mainShaft.MaxY;
-
-                var regionalSpaces = new List<Space>()
+                if (mainShaft != null)
                 {
-                    mainShaft.Build()
-                };
+                    var regionMinX = mainShaft.MinX;
+                    var regionMaxX = mainShaft.MaxX;
 
-                foreach (var subcrafter in mainShaft.GetComponentsInChildren<SpaceCrafter>())
-                {
-                    regionalSpaces.Add(subcrafter.Build());
+                    var regionMinY = mainShaft.MinY;
+                    var regionMaxY = mainShaft.MaxY;
 
-                    regionMinX = Mathf.Min(regionMinX, subcrafter.MinX);
-                    regionMaxX = Mathf.Max(regionMaxX, subcrafter.MaxX);
-                    regionMinY = Mathf.Min(regionMinY, subcrafter.MinY);
-                    regionMaxY = Mathf.Max(regionMaxY, subcrafter.MaxY);
+                    var regionalSpaces = new List<Space>()
+                    {
+                        mainShaft.Build()
+                    };
+
+                    foreach (var subcrafter in mainShaft.GetComponentsInChildren<SpaceCrafter>())
+                    {
+                        regionalSpaces.Add(subcrafter.Build());
+
+                        regionMinX = Mathf.Min(regionMinX, subcrafter.MinX);
+                        regionMaxX = Mathf.Max(regionMaxX, subcrafter.MaxX);
+                        regionMinY = Mathf.Min(regionMinY, subcrafter.MinY);
+                        regionMaxY = Mathf.Max(regionMaxY, subcrafter.MaxY);
+                    }
+
+                    regionMinX -= MetalThickeness;
+                    regionMaxX += MetalThickeness;
+                    regionMinY -= MetalThickeness;
+                    regionMaxY += MetalThickeness;
+
+                    _minX = Mathf.Min(MinX, regionMinX);
+                    _maxX = Mathf.Max(MaxX, regionMaxX);
+                    _minY = Mathf.Min(MinY, regionMinY);
+                    _maxY = Mathf.Max(MaxY, regionMaxY);
+
+                    regions.Add(new Region(new IntVector2(MinX, MinY), new IntVector2(regionMaxX, MaxY), regionalSpaces));
                 }
-
-                _minX = Mathf.Min(MinX, regionMinX);
-                _maxX = Mathf.Max(MaxX, regionMaxX);
-                _minY = Mathf.Min(MinY, regionMinY);
-                _maxY = Mathf.Max(MaxY, regionMaxY);
-
-                regions.Add(new Region(new IntVector2(MinX, MinY), new IntVector2(regionMaxX, MaxY), regionalSpaces));
             }
 
             return regions;
