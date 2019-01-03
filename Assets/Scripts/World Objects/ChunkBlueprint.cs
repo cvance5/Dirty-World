@@ -62,14 +62,14 @@ namespace WorldObjects
             {
                 var neighbor = _world.GetChunkNeighbor(Position, dir);
 
-                if (neighbor != null)
-                {
-                    throw new InvalidOperationException($"A space overlaps with an existing chunk! Chunk {neighbor} and space {space}.");
-                }
-                else
+                if (neighbor == null)
                 {
                     var blueprint = _world.GetBlueprintNeighbor(Position, dir);
                     blueprint.Register(space);
+                }
+                else if (!neighbor.Spaces.Contains(space))
+                {
+                    throw new InvalidOperationException($"A space overlaps with an existing chunk! Chunk {neighbor} and space {space}.");
                 }
             }
 
