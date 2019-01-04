@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Utilities.Debug;
 using WorldObjects.Blocks;
 using WorldObjects.Construction;
 using WorldObjects.WorldGeneration.EnemyGeneration;
@@ -75,8 +76,11 @@ namespace WorldObjects.WorldGeneration
             {
                 _boundedDirections.Add(Directions.Up);
             }
-
-            _blueprint = blueprint;
+            if (blueprint != null)
+            {
+                _log.Info($"Using bluebrint at {chunkWorldCenterpoint}.");
+                _blueprint = blueprint;
+            }
         }
 
         public bool Contains(IntVector2 position) =>
@@ -263,7 +267,7 @@ namespace WorldObjects.WorldGeneration
                     chunk.Register(BlockLoader.CreateBlock(block, position));
                 }
 
-                if(feature != FeatureTypes.None)
+                if (feature != FeatureTypes.None)
                 {
                     chunk.Register(FeatureLoader.CreateFeature(feature, position));
                 }
@@ -308,5 +312,7 @@ namespace WorldObjects.WorldGeneration
                 }
             }
         }
+
+        private static readonly Log _log = new Log("ChunkBuilder");
     }
 }

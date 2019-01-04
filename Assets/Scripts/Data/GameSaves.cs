@@ -16,9 +16,16 @@ namespace Data
         private static List<string> _currentGameData = new List<string>();
         public static bool HasGameData(string dataName) => _currentGameData.Contains(dataName);
 
-        public static void Refresh()
+        public static void RefreshSavedGames()
         {
             _savedGames = DataReader.FindAllDirectories(DataTypes.SavedGames);
+        }
+
+        public static void RefreshCurrentGameData()
+        {
+            _currentGameData.Clear();
+
+            _currentGameData = DataReader.FindAllFiles(DataTypes.CurrentGame);
         }
 
         public static void LoadGame(string gameToLoad)
@@ -27,9 +34,7 @@ namespace Data
 
             if (_savedGames.Contains(CurrentGame))
             {
-                _currentGameData.Clear();
-
-                _currentGameData = DataReader.FindAllFiles(DataTypes.CurrentGame);
+                RefreshCurrentGameData();
             }
 
             GameState.Initialize();
@@ -73,7 +78,8 @@ namespace Data
 
             GameState.Clear();
 
-            Refresh();
+            RefreshSavedGames();
+            RefreshCurrentGameData();
         }
 
         public static void DeleteSave(string gameName)

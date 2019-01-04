@@ -32,7 +32,7 @@ namespace Data.Serialization
             _spaces = new List<SerializableSpace>();
             foreach (var space in chunkBlueprint.Spaces)
             {
-                _spaces.Add(ToSerializableSpace(space));
+                _spaces.Add(SerializableSpaceHelper.ToSerializableSpace(space));
             }
 
             _enemies = new List<SerializableEnemy>();
@@ -62,23 +62,6 @@ namespace Data.Serialization
             }
 
             return chunkBlueprint;
-        }
-
-        private SerializableSpace ToSerializableSpace(Space space)
-        {
-            if (space is Shaft)
-            {
-                return new SerializableShaft(space as Shaft);
-            }
-            else if (space is Corridor)
-            {
-                return new SerializableCorridor(space as Corridor);
-            }
-            else if(space is MonsterDen)
-            {
-                return new SerializableMonsterDen(space as MonsterDen);
-            }
-            else throw new System.Exception($"Unknown space type: {space.GetType().Name}. Cannot serialize.");
         }
     }
 }

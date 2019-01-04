@@ -7,7 +7,7 @@ public class CustomToolbarMenu
     [MenuItem("Data/Clear User Data")]
     public static void ClearUserData()
     {
-        GameSaves.Refresh();
+        GameSaves.RefreshSavedGames();
 
         if (GameSaves.SaveExists("Default"))
         {

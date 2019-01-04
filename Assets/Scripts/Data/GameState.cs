@@ -1,7 +1,6 @@
 ﻿using Characters;
 using Data.IO;
 using Data.Serialization;
-using System;
 using System.Collections.Generic;
 using WorldObjects;
 
@@ -45,30 +44,22 @@ namespace Data
         {
             var filesToWrite = new Dictionary<string, string>();
 
-            try
+            foreach (var kvp in _dirtyChunks)
             {
-                foreach (var kvp in _dirtyChunks)
-                {
-                    var fileName = kvp.Key.ToString();
-                    var data = new SerializableChunk(kvp.Value).Serialize();
-                    filesToWrite.Add(fileName, data);
-                }
-
-                foreach (var kvp in _dirtyBlueprints)
-                {
-                    var fileName = kvp.Key.ToString();
-                    var data = new SerializableChunkBlueprint(kvp.Value).Serialize();
-                    filesToWrite.Add(fileName, data);
-                }
-
-                var characterFile = new SerializableCharacter(CurrentCharacter);
-                filesToWrite.Add(Paths.CHARACTERFILE, characterFile.Serialize());
+                var fileName = kvp.Key.ToString();
+                var data = new SerializableChunk(kvp.Value).Serialize();
+                filesToWrite.Add(fileName, data);
             }
-            catch (Exception e)
+
+            foreach (var kvp in _dirtyBlueprints)
             {
-                _log.Error($"Failed to serialize data during a save with exception {e.Message}.  Aborting.");
-                return new Dictionary<string, string>();
+                var fileName = kvp.Key.ToString();
+                var data = new SerializableChunkBlueprint(kvp.Value).Serialize();
+                filesToWrite.Add(fileName, data);
             }
+
+            var characterFile = new SerializableCharacter(CurrentCharacter);
+            filesToWrite.Add(Paths.CHARACTERFILE, characterFile.Serialize());
 
             return filesToWrite;
         }

@@ -64,20 +64,26 @@ namespace WorldObjects.Construction
             { BlockTypes.None, null },
             { BlockTypes.Dirt, typeof(DirtBlock) },
             { BlockTypes.Stone, typeof(StoneBlock) },
+
             { BlockTypes.Copper, typeof(CopperBlock) },
             { BlockTypes.Silver, typeof(SilverBlock) },
             { BlockTypes.Gold, typeof(GoldBlock) },
-            { BlockTypes.Platinum, typeof(PlatinumBlock) }
+            { BlockTypes.Platinum, typeof(PlatinumBlock) },
+
+            { BlockTypes.SteelPlate, typeof(SteelPlateBlock) }
         };
 
         private static readonly Dictionary<Type, BlockTypes> _typeToEnum = new Dictionary<Type, BlockTypes>()
         {
             { typeof(DirtBlock), BlockTypes.Dirt },
             { typeof(StoneBlock), BlockTypes.Stone },
+
             { typeof(CopperBlock), BlockTypes.Copper },
             { typeof(SilverBlock), BlockTypes.Silver },
             { typeof(GoldBlock), BlockTypes.Gold },
-            { typeof(PlatinumBlock), BlockTypes.Platinum }
+            { typeof(PlatinumBlock), BlockTypes.Platinum },
+
+            { typeof(SteelPlateBlock), BlockTypes.SteelPlate }
         };
 
         private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("BlockLoader");
