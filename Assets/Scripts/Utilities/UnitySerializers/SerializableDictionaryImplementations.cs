@@ -17,6 +17,12 @@ namespace Utilities.UnitySerialization
     public class BlockTypesGameObjectDictionary : SerializableDictionary<WorldObjects.Blocks.BlockTypes, GameObject> { }
 
     // ---------------
+    //  Feature Types -> GameObjects
+    // ---------------
+    [Serializable]
+    public class FeatureTypesGameObjectDictionary : SerializableDictionary<WorldObjects.WorldGeneration.FeatureGeneration.FeatureTypes, GameObject> { }
+
+    // ---------------
     //  Item Actor Types -> GameObjects
     // ---------------
     [Serializable]

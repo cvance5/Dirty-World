@@ -5,6 +5,7 @@ using UnityEngine;
 using WorldObjects.Blocks;
 using WorldObjects.Construction;
 using WorldObjects.WorldGeneration.EnemyGeneration;
+using WorldObjects.WorldGeneration.FeatureGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 using Space = WorldObjects.Spaces.Space;
 
@@ -242,12 +243,14 @@ namespace WorldObjects.WorldGeneration
                 var position = builder.Position;
 
                 var block = BlockTypes.None;
+                var feature = FeatureTypes.None;
 
                 var containingSpace = spaces.Find(space => space.Contains(position));
 
                 if (containingSpace != null)
                 {
                     block = containingSpace.GetBlockType(position);
+                    feature = containingSpace.GetFeatureType(position);
                 }
                 else
                 {
@@ -258,6 +261,11 @@ namespace WorldObjects.WorldGeneration
                 if (block != BlockTypes.None)
                 {
                     chunk.Register(BlockLoader.CreateBlock(block, position));
+                }
+
+                if(feature != FeatureTypes.None)
+                {
+                    chunk.Register(FeatureLoader.CreateFeature(feature, position));
                 }
 
                 if (timer.CheckIncrement(Time.realtimeSinceStartup))

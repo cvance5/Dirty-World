@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using WorldObjects.Blocks;
+using WorldObjects.WorldGeneration.FeatureGeneration;
 using WorldObjects.WorldGeneration.HazardGeneration;
 
 namespace WorldObjects.Spaces
@@ -20,6 +21,10 @@ namespace WorldObjects.Spaces
 
         public abstract bool Contains(IntVector2 position);
         public abstract IntVector2 GetRandomPosition();
+
+        protected readonly Dictionary<IntVector2, FeatureTypes> _features = new Dictionary<IntVector2, FeatureTypes>();
+        public virtual FeatureTypes GetFeatureType(IntVector2 position) => _features.TryGetValue(position, out var type) ? type : FeatureTypes.None;
+        public void AddFeature(IntVector2 position, FeatureTypes type) => _features[position] = type;
 
         public abstract BlockTypes GetBlockType(IntVector2 position);
 

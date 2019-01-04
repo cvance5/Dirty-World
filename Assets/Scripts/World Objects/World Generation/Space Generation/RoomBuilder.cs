@@ -33,6 +33,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _minimumSize = roomBuilder._minimumSize;
             _centerpoint = roomBuilder._centerpoint;
 
+            _modifiersApplied.AddRange(roomBuilder._modifiersApplied);
+
             Rebuild();
         }
 

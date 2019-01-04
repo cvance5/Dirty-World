@@ -1,5 +1,6 @@
 ﻿using Characters;
 using Data;
+using GizmoDrawers;
 using Metadata;
 using Narrative;
 using System.Collections;
@@ -60,7 +61,8 @@ public class GameManager : Singleton<GameManager>
         {
             StartCoroutine(HandlePrologueScreen());
         }
-        else InitializeScene();
+
+        InitializeScene();
     }
 
     private void InitializeScene()
@@ -75,6 +77,8 @@ public class GameManager : Singleton<GameManager>
 
         var worldGameObject = new GameObject("World");
         World = worldGameObject.AddComponent<World>();
+
+        ChunkGizmoDrawer.Instance.SetWorldToDraw(World);
 
         var bPicker = new BlockPicker(Settings.SurfaceDepth);
         var sPicker = new SpacePicker(Settings.SurfaceDepth);
@@ -183,7 +187,6 @@ public class GameManager : Singleton<GameManager>
         scrim.FadeTo(0, .5f).Play(() => Destroy(scrim));
 
         yield return null;
-        InitializeScene();
     }
 
     private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("GameManager");

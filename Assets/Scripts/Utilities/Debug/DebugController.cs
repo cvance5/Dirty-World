@@ -7,12 +7,6 @@ namespace Utilities.Debug
     public class DebugController : Singleton<DebugController>
     {
 #if UNITY_EDITOR
-
-        private void Start()
-        {
-            ChunkGizmoDrawer.Instance.SetWorldToDraw(GameManager.World);
-        }
-
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.LeftBracket))

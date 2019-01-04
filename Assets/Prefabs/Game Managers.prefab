@@ -10,12 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4149333777272868}
   - component: {fileID: 114645458087772496}
-  - component: {fileID: 114248697456358522}
-  - component: {fileID: 114229974030424468}
-  - component: {fileID: 114506124768647496}
   - component: {fileID: 1123659114}
   - component: {fileID: 1123659121}
-  - component: {fileID: 1123659115}
   - component: {fileID: 952720330}
   - component: {fileID: 7640304091959632606}
   m_Layer: 0
@@ -53,66 +49,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Settings: {fileID: 11400000, guid: 14128f25eabb68b4eb2331c6d9a452df, type: 2}
   Script: {fileID: 11400000, guid: ed222fd8a944c404db2290e7f7e92d25, type: 2}
---- !u!114 &114248697456358522
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1105806588954058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6416edd38b49054dbe184981f6b89f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _stalag: {fileID: 3996498084922597456, guid: bb2b05b637b611441b0a0c4b5c18ccb4, type: 3}
---- !u!114 &114229974030424468
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1105806588954058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c9e0527aced5f8c42a0c14e4ed1ca633, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _items:
-    keys: 0000000001000000020000000300000004000000
-    values:
-    - {fileID: 1925429388468338, guid: 4292eb8a0d1d9b54192a6ad6f56119fc, type: 3}
-    - {fileID: 1925429388468338, guid: e489dbf4449901746a407e00b0fe1cde, type: 3}
-    - {fileID: 1925429388468338, guid: 3cc95f6373cce3a4e9511f4a56a3c8a6, type: 3}
-    - {fileID: 1925429388468338, guid: d5cbb4216e687f04aba9ec67344bbc8c, type: 3}
-    - {fileID: 3983400539303335104, guid: 63f5cad198091be448dda232523fe339, type: 3}
---- !u!114 &114506124768647496
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1105806588954058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77002bc94d3c9074c8586e444382515c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _blocks:
-    keys: 01000000020000000300000004000000050000000600000007000000
-    values:
-    - {fileID: 4040690142055907274, guid: 49712c4edad83f841accc4914029466c, type: 3}
-    - {fileID: 124560293421415011, guid: 0866abfbf7c151b40ad7467c9d00cd13, type: 3}
-    - {fileID: 4941398850137344514, guid: 91964094899c60c47af6ccba763aea6a, type: 3}
-    - {fileID: 7410329923676514162, guid: e90b09a51ff97674eb32521ec8c1a202, type: 3}
-    - {fileID: 2028876217510456154, guid: e0dc53840138e944c9e37bb9e23711e6, type: 3}
-    - {fileID: 9013483178209601111, guid: 5c9eda4bf97405e4b97484ab3d30ec07, type: 3}
-    - {fileID: 8716741340040111701, guid: e443c073393d6cb43b903d3ff26d4053, type: 3}
-  _blockTextures:
-    keys: 0100000002000000
-    values:
-    - {fileID: 2800000, guid: 5468c8cb0a894e74c867407666f64ba0, type: 3}
-    - {fileID: 2800000, guid: d6010dcbbc2ad484caabeabba0ea1fdb, type: 3}
 --- !u!114 &1123659114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141,19 +77,6 @@ MonoBehaviour:
   _seismicBombLauncherActor: {fileID: 1484786030199914, guid: 7d52824424f7b0246a9241d749a5d3d2, type: 3}
   _drillDroneLauncherActor: {fileID: 1213305838862398, guid: 636ef69743fa68d429bc0164503c7958, type: 3}
   _deReconstructorActor: {fileID: 1834633732887634, guid: 8770f2dc5790a0f4d95f00e98b314c6e, type: 3}
---- !u!114 &1123659115
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1105806588954058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8dc5403d61bebc94a92ab5658baabc96, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _maggot: {fileID: 2477167566729132373, guid: 0085afe654ce2284ab207b5970cda6f3, type: 3}
 --- !u!114 &952720330
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,7 +12,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         protected Dictionary<IntVector2, int> _boundedDirections { get; private set; } =
               new Dictionary<IntVector2, int>();
 
-        private readonly List<SpaceModifier> _modifiersApplied = new List<SpaceModifier>();
+        protected readonly List<SpaceModifier> _modifiersApplied = new List<SpaceModifier>();
 
         public SpaceBuilder(ChunkBuilder chunkBuilder) => _chunkBuilder = chunkBuilder;
         public SpaceBuilder(SpaceBuilder spaceToCopy) => _chunkBuilder = spaceToCopy._chunkBuilder;
@@ -48,6 +48,10 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     _modifiersApplied.Add(new CavernousModifier(_chunkBuilder, this));
                     break;
 
+                case ModifierTypes.Laboratory:
+                    _modifiersApplied.Add(new LaboratoryModifier(_chunkBuilder, this));
+                    break;
+
                 default: throw new System.ArgumentException($"Unknown modifier of type `{modifier}`.  Cannot construct.");
             }
 
@@ -59,8 +63,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public abstract int PassesBy(IntVector2 direction, int amount);
         public abstract bool Contains(IntVector2 point);
         public bool IntersectsWith(SpaceBuilder other) =>
-               !(other is null)  &&
-            // Can't intersect with yourself!
+               !(other is null) &&
+               // Can't intersect with yourself!
                this != other &&
              // If any of my edges is beyond your opposite edge, we do not intersect
              // Otherwise, we do.

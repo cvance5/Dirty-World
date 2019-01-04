@@ -6,6 +6,7 @@ using UnityEngine;
 using WorldObjects.Actors;
 using WorldObjects.Actors.Enemies;
 using WorldObjects.Blocks;
+using WorldObjects.Features;
 using WorldObjects.Hazards;
 using Space = WorldObjects.Spaces.Space;
 
@@ -25,6 +26,7 @@ namespace WorldObjects
         public List<ItemActor> Items { get; private set; } = new List<ItemActor>();
 
         public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
+        public Dictionary<IntVector2, Feature> FeatureMap { get; private set; } = new Dictionary<IntVector2, Feature>();
 
         private static World _world;
 
@@ -51,6 +53,21 @@ namespace WorldObjects
             block.OnBlockDestroyed += OnBlockDestroyed;
             block.OnBlockCrumbled += OnBlockCrumbled;
             block.OnBlockStabilized += OnBlockStabilized;
+
+            OnChunkChanged.Raise(this);
+        }
+
+        public void Register(Feature feature)
+        {
+            FeatureMap[feature.Position] = feature;
+            feature.transform.SetParent(transform, true);
+
+            feature.OnFeaturedDestroyed += OnFeatureDestroyed;
+
+            if(BlockMap.TryGetValue(feature.Position, out var block))
+            {
+                feature.Assign(block);
+            }
 
             OnChunkChanged.Raise(this);
         }
@@ -179,6 +196,17 @@ namespace WorldObjects
             }
 
             _log.Info($"Block stabilized at {block.Position}.");
+
+            OnChunkChanged.Raise(this);
+        }
+
+        private void OnFeatureDestroyed(Feature feature)
+        {
+
+            feature.OnFeaturedDestroyed -= OnFeatureDestroyed;
+
+            if (!FeatureMap.Remove(feature.Position)) _log.Info($"Attempted to destroy feature, but could not find it at {feature.Position}.");
+            else _log.Info($"Feature destroyed at {feature.Position}.");
 
             OnChunkChanged.Raise(this);
         }

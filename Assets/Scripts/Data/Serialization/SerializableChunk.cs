@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects;
 using WorldObjects.Hazards;
-using WorldObjects.Spaces;
 
 namespace Data.Serialization
 {
@@ -26,6 +25,9 @@ namespace Data.Serialization
 
         [JsonProperty("blocks")]
         private readonly List<SerializableBlock> _blocks = new List<SerializableBlock>();
+
+        [JsonProperty("features")]
+        private readonly List<SerializableFeature> _features = new List<SerializableFeature>();
 
         [JsonProperty("spaces")]
         private readonly List<SerializableSpace> _spaces = new List<SerializableSpace>();
@@ -51,6 +53,11 @@ namespace Data.Serialization
             foreach (var kvp in chunk.BlockMap)
             {
                 _blocks.Add(new SerializableBlock(kvp.Value));
+            }
+
+            foreach(var kvp in chunk.FeatureMap)
+            {
+                _features.Add(new SerializableFeature(kvp.Value));
             }
 
             foreach (var space in chunk.Spaces)
@@ -90,6 +97,18 @@ namespace Data.Serialization
             {
                 var block = serializableBlock.ToObject();
                 chunk.Register(block);
+
+                if (yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
+                {
+                    yield return null;
+                    yieldTimer.AdvanceIncrement(Time.realtimeSinceStartup);
+                }
+            }
+
+            foreach (var serializableFeature in _features)
+            {
+                var feature = serializableFeature.ToObject();
+                chunk.Register(feature);
 
                 if (yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
                 {

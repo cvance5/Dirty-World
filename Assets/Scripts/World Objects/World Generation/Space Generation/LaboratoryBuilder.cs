@@ -52,6 +52,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             if (_allowAdditionalMainShafts)
             {
                 _mainShafts.Add(mainShaft);
+                mainShaft.AddModifier(ModifierTypes.Laboratory);
 
                 GenerateCorridors(mainShaft, height);
                 GenerateSecondaryShafts(mainShaft, height);
@@ -166,14 +167,18 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 if (Chance.CoinFlip)
                 {
                     var corridor = AddCorridor(new IntVector2(shaftLeftSide, yPosition), Directions.Left);
+                    corridor.AddModifier(ModifierTypes.Laboratory);
                     var room = AddRoom(new IntVector2(corridor.GetMaximalValue(Directions.Left), yPosition), Directions.Left);
+                    room.AddModifier(ModifierTypes.Laboratory);
                     corridors.Add(corridor);
                     _connectionsByCorridor.Add(corridor, room);
                 }
                 if (Chance.CoinFlip)
                 {
                     var corridor = AddCorridor(new IntVector2(shaftRightSide, yPosition), Directions.Right);
+                    corridor.AddModifier(ModifierTypes.Laboratory);
                     var room = AddRoom(new IntVector2(corridor.GetMaximalValue(Directions.Right), yPosition), Directions.Right);
+                    room.AddModifier(ModifierTypes.Laboratory);
                     corridors.Add(corridor);
                     _connectionsByCorridor.Add(corridor, room);
                 }
@@ -257,6 +262,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
                         if (!shafts.Any(otherShaft => otherShaft.IntersectsWith(shaft)))
                         {
+                            shaft.AddModifier(ModifierTypes.Laboratory);
                             shafts.Add(shaft);
                         }
 

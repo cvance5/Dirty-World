@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2061612249142287181}
   - component: {fileID: 2061635366248429219}
   - component: {fileID: 2062502710340925055}
+  - component: {fileID: 4875629601404707070}
   - component: {fileID: 2092403610585268828}
   m_Layer: 0
   m_Name: Loaders
@@ -94,6 +95,22 @@ MonoBehaviour:
     values:
     - {fileID: 2800000, guid: 5468c8cb0a894e74c867407666f64ba0, type: 3}
     - {fileID: 2800000, guid: d6010dcbbc2ad484caabeabba0ea1fdb, type: 3}
+--- !u!114 &4875629601404707070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092582036781624061}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d05fd0b06710f74449eb9a11cd106b8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _features:
+    keys: 01000000
+    values:
+    - {fileID: 5870864609785946320, guid: 45549ed626795d940bdac66dce12e313, type: 3}
 --- !u!114 &2092403610585268828
 MonoBehaviour:
   m_ObjectHideFlags: 0

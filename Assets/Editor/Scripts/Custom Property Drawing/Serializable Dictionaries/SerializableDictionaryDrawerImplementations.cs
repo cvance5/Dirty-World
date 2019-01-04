@@ -24,6 +24,15 @@ namespace CustomPropertyDrawing.SerializedDictionaries
     }
     internal class BlockTypesGameObjectDictionaryTemplate : SerializableKeyValueTemplate<WorldObjects.Blocks.BlockTypes, GameObject> { }
 
+    // ---------------
+    //  Feature Types => GameObjects
+    // ---------------
+    [CustomPropertyDrawer(typeof(FeatureTypesGameObjectDictionary))]
+    public class FeatureTypesGameObjectsPropertyDrawer : SerializableDictionaryDrawer<WorldObjects.WorldGeneration.FeatureGeneration.FeatureTypes, GameObject>
+    {
+        protected override SerializableKeyValueTemplate<WorldObjects.WorldGeneration.FeatureGeneration.FeatureTypes, GameObject> GetTemplate() => GetGenericTemplate<FeatureTypesGameObjectDictionaryTemplate>();
+    }
+    internal class FeatureTypesGameObjectDictionaryTemplate : SerializableKeyValueTemplate<WorldObjects.WorldGeneration.FeatureGeneration.FeatureTypes, GameObject> { }
 
     // ---------------
     //  Item Actor Types => GameObjects

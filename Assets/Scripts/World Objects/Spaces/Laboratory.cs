@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using WorldObjects.Blocks;
+using WorldObjects.WorldGeneration.FeatureGeneration;
 
 namespace WorldObjects.Spaces
 {
@@ -71,6 +72,21 @@ namespace WorldObjects.Spaces
             }
 
             return false;
+        }
+
+        public override FeatureTypes GetFeatureType(IntVector2 position)
+        {
+            var containingRegions = Regions.FindAll(region => region.Contains(position));
+            foreach (var containingRegion in containingRegions)
+            {
+                var containingSpace = containingRegion.Spaces.Find(space => space.Contains(position));
+                if (containingSpace != null)
+                {
+                    return containingSpace.GetFeatureType(position);
+                }
+            }
+
+            return FeatureTypes.None;
         }
 
         public override BlockTypes GetBlockType(IntVector2 position)
