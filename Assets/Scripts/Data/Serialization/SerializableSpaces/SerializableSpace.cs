@@ -22,6 +22,8 @@ namespace Data.Serialization.SerializableSpaces
             return rawSpace;
         }
 
+        public string Serialize() => JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
+
         protected abstract Space ToRawObject();
     }
 }

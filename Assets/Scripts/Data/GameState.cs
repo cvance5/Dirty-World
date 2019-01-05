@@ -1,8 +1,11 @@
 ﻿using Characters;
 using Data.IO;
 using Data.Serialization;
+using Data.Serialization.SerializableSpaces;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using WorldObjects;
+using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration;
 
 namespace Data
@@ -20,8 +23,11 @@ namespace Data
         public static void Initialize()
         {
             _dirtyChunks.Clear();
+            _dirtyBuilders.Clear();
+
             Chunk.OnChunkChanged += LogDirty;
             ChunkBuilder.OnChunkBuilderChanged += LogDirty;
+
             LoadCharacter();
         }
 
@@ -60,6 +66,14 @@ namespace Data
                 var data = new SerializableChunkBuilder(kvp.Value).Serialize();
                 filesToWrite.Add(fileName, data);
             }
+
+            var spaces = new List<SerializableSpace>();
+            foreach(var space in GameManager.World.Spaces)
+            {
+                spaces.Add(SerializableSpaceHelper.ToSerializableSpace(space));
+            }
+            var spaceFile = JsonConvert.SerializeObject(spaces, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
+            filesToWrite.Add(Paths.SPACESFILE, spaceFile);
 
             var characterFile = new SerializableCharacter(CurrentCharacter);
             filesToWrite.Add(Paths.CHARACTERFILE, characterFile.Serialize());

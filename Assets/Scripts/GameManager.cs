@@ -75,16 +75,18 @@ public class GameManager : Singleton<GameManager>
     {
         SceneHelper.OnSceneIsReady -= InitializeWorld;
 
+        WorldSizer.SetChunkSize(Settings.ChunkSize);
+
         var worldGameObject = new GameObject("World");
         World = worldGameObject.AddComponent<World>();
 
         var bPicker = new BlockPicker(Settings.SurfaceDepth);
         var sPicker = new SpacePicker(Settings.SurfaceDepth);
 
-        WorldBuilder = new WorldBuilder(World, sPicker, bPicker);
-        
         World.Initialize(Settings.SurfaceDepth, Settings.ChunkSize);
+        WorldBuilder = new WorldBuilder(World, sPicker, bPicker);
         World.Register(WorldBuilder);
+        
 
         ChunkGizmoDrawer.SetWorldToDraw(World, WorldBuilder);
         PositionTracker.SetWorldToTrack(World, WorldBuilder);

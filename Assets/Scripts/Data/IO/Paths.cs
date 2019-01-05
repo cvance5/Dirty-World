@@ -11,6 +11,7 @@ public static class Paths
     private const string USERPATH = "Users";
 
     public const string CHARACTERFILE = "Char";
+    public const string SPACESFILE = "Spaces";
 
     public static string ToPath(DataTypes dataType)
     {

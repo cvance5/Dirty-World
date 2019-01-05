@@ -18,8 +18,6 @@ namespace WorldObjects
 
         private readonly List<Chunk> _loadedChunks = new List<Chunk>();
         public List<Chunk> LoadedChunks => new List<Chunk>(_loadedChunks);
-
-
         private Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
 
         private WorldBuilder _builder;
@@ -28,6 +26,8 @@ namespace WorldObjects
         {
             SurfaceDepth = surfaceDepth;
             ChunkSize = chunkSize;
+
+            WorldSizer.SetChunkSize(chunkSize);
         }
 
         public void Register(WorldBuilder worldBuilder)
@@ -107,14 +107,12 @@ namespace WorldObjects
 
         public Chunk GetContainingChunk(IntVector2 position)
         {
-            foreach (var chunk in _loadedChunks)
+            var chunkPosition = WorldSizer.GetNearestChunkPosition(position);
+            if(!_chunksByWorldPosition.TryGetValue(chunkPosition, out var chunk))
             {
-                if (chunk.Contains(position))
-                {
-                    return chunk;
-                }
+                // It may exist, unloaded, but we can't give you that data right now, so...uh???
             }
-            return null;
+            return chunk;
         }
 
         public Space GetContainingSpace(IntVector2 position)

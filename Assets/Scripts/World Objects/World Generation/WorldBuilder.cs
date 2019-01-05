@@ -1,6 +1,7 @@
 ﻿using Data;
 using Data.IO;
 using Data.Serialization;
+using Data.Serialization.SerializableSpaces;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,7 +9,7 @@ using Utilities;
 using Utilities.Debug;
 using WorldObjects.Blocks;
 using WorldObjects.WorldGeneration.BlockGeneration;
-
+using WorldObjects.WorldGeneration.SpaceGeneration;
 using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects.WorldGeneration
@@ -45,15 +46,18 @@ namespace WorldObjects.WorldGeneration
             ChunkBuilder.OnChunkBuilt += OnChunkReadyToActivate;
             SerializableChunk.OnChunkLoaded += OnChunkReadyToActivate;
 
-            if (GameSaves.HasGameData("spaces"))
+            if (GameSaves.HasGameData(Paths.SPACESFILE))
             {
-                var serializedSpaces = DataReader.Read("spaces", DataTypes.CurrentGame);
-                var spaces = JsonConvert.DeserializeObject<List<Space>>(serializedSpaces, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
+                var serializedSpaces = DataReader.Read(Paths.SPACESFILE, DataTypes.CurrentGame);
+                var spaces = JsonConvert.DeserializeObject<List<SerializableSpace>>(serializedSpaces, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
                 foreach (var space in spaces)
                 {
-                    _world.Register(space);
+                    _world.Register(space.ToObject());
                 }
             }
+
+            var initialBuilder = AddBuilder(IntVector2.Zero);
+            AddSpace(initialBuilder);
         }
 
         public void ActivateChunk(IntVector2 worldPosition)
@@ -87,15 +91,13 @@ namespace WorldObjects.WorldGeneration
         {
             if (!_chunkBuildersByWorldPosition.TryGetValue(worldPosition, out var builder))
             {
-                if (GameSaves.HasGameData(worldPosition.ToString()))
+                if (GameSaves.HasGameData(worldPosition.ToString() + BUILDER_IDENTIFIER))
                 {
                     LoadBuilder(worldPosition);
                 }
-                else
+                else if (!GameSaves.HasGameData(worldPosition.ToString()))
                 {
-                    builder = new ChunkBuilder(worldPosition, _chunkSize);
-                    _chunkBuilders.Add(builder);
-                    _chunkBuildersByWorldPosition[worldPosition] = builder;
+                    AddBuilder(worldPosition);
                 }
             }
 
@@ -104,14 +106,54 @@ namespace WorldObjects.WorldGeneration
 
         public ChunkBuilder GetContainingBuilder(IntVector2 position)
         {
-            foreach (var builder in _chunkBuilders)
+            var chunkPosition = WorldSizer.GetNearestChunkPosition(position);
+            return GetBuilderAtPosition(chunkPosition);
+        }
+
+        private void LoadBuilder(IntVector2 worldPosition)
+        {
+            var serializedBuilder = DataReader.Read(worldPosition.ToString() + BUILDER_IDENTIFIER, DataTypes.CurrentGame);
+            var serializableBuilder = SerializableChunkBuilder.Deserialize(serializedBuilder);
+
+            var deserializedChunkBuilder = serializableBuilder.ToObject();
+            _chunkBuilders.Add(deserializedChunkBuilder);
+            _chunkBuildersByWorldPosition[worldPosition] = deserializedChunkBuilder;
+        }
+
+        private ChunkBuilder AddBuilder(IntVector2 worldPosition)
+        {
+            var cBuilder = new ChunkBuilder(worldPosition, _chunkSize);
+            _chunkBuilders.Add(cBuilder);
+            _chunkBuildersByWorldPosition[worldPosition] = cBuilder;
+
+            return cBuilder;
+        }
+
+        private void AddSpace(ChunkBuilder sourceChunkBuilder)
+        {
+            if (_sPicker != null)
             {
-                if (builder.Contains(position))
+                var spaceBuilders = _sPicker.Select(sourceChunkBuilder);
+
+                foreach (var spaceBuilder in spaceBuilders)
                 {
-                    return builder;
+                    var space = spaceBuilder.Build();
+
+                    foreach (var affectedChunkPosition in WorldSizer.GetAffectedChunkPositions(spaceBuilder))
+                    {
+                        var otherBuilder = GetBuilderAtPosition(affectedChunkPosition);
+
+                        if (otherBuilder != null)
+                        {
+                            otherBuilder.AddSpace(space);
+                        }
+                        else _log.Warning($"Tried to build a space on an existing chunk.  Stop doing that.");
+                    }
+                    sourceChunkBuilder.AddSpace(space);
+                    _world.Register(space);
                 }
             }
-            return null;
+
         }
 
         private void LoadChunk(IntVector2 worldPosition)
@@ -125,21 +167,13 @@ namespace WorldObjects.WorldGeneration
             _chunkActivationCoroutine = CoroutineHandler.StartCoroutine(serializableChunk.ToObject);
         }
 
-        private void LoadBuilder(IntVector2 worldPosition)
-        {
-            var serializedBuilder = DataReader.Read(worldPosition.ToString(), DataTypes.CurrentGame);
-            var serializableBuilder = SerializableChunkBuilder.Deserialize(serializedBuilder);
-
-            var deserializedChunkBuilder = serializableBuilder.ToObject();
-            _chunkBuilders.Add(deserializedChunkBuilder);
-            _chunkBuildersByWorldPosition[worldPosition] = deserializedChunkBuilder;
-        }
-
         private void BuildChunk(IntVector2 worldPosition)
         {
             _chunkBeingActivated = worldPosition;
 
             var cBuilder = GetBuilderAtPosition(worldPosition);
+
+            if (cBuilder == null) cBuilder = AddBuilder(worldPosition);
 
             if (_bPicker != null)
             {
@@ -193,6 +227,8 @@ namespace WorldObjects.WorldGeneration
             ChunkBuilder.OnChunkBuilt -= OnChunkReadyToActivate;
             SerializableChunk.OnChunkLoaded -= OnChunkReadyToActivate;
         }
+
+        private const string BUILDER_IDENTIFIER = "[BUILDER]";
 
         private static readonly Log _log = new Log("WorldBuilder");
     }
