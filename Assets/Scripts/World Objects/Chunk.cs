@@ -20,17 +20,12 @@ namespace WorldObjects
         public IntVector2 BottomLeftCorner { get; protected set; }
         public IntVector2 TopRightCorner { get; protected set; }
 
-        public List<Space> Spaces { get; private set; } = new List<Space>();
         public List<Hazard> Hazards { get; private set; } = new List<Hazard>();
         public List<EnemyData> Enemies { get; private set; } = new List<EnemyData>();
         public List<ItemActor> Items { get; private set; } = new List<ItemActor>();
 
         public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
         public Dictionary<IntVector2, Feature> FeatureMap { get; private set; } = new Dictionary<IntVector2, Feature>();
-
-        private static World _world;
-
-        public static void AssignWorld(World world) => _world = world;
 
         public void AssignExtents(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {
@@ -72,44 +67,6 @@ namespace WorldObjects
             OnChunkChanged.Raise(this);
         }
 
-        public void Register(Space space)
-        {
-            if (Spaces.Contains(space)) return;
-
-            Spaces.Add(space);
-
-            var edgesReached = new List<IntVector2>();
-
-            foreach (var extentPoint in space.Extents)
-            {
-                if (!Contains(extentPoint))
-                {
-                    edgesReached.AddRange(GetEdgesReached(extentPoint));
-                }
-
-                // We are already overlapping all edges with 
-                // the previous extents, so don't check the rest.
-                if (edgesReached.Count == 4) break;
-            }
-
-            foreach (var dir in edgesReached)
-            {
-                var neighbor = _world.GetChunkNeighbor(Position, dir);
-
-                if (neighbor == null)
-                {
-                    var blueprint = _world.GetBlueprintNeighbor(Position, dir);
-                    blueprint.Register(space);
-                }
-                else if (!neighbor.Spaces.Contains(space))
-                {
-                    throw new InvalidOperationException($"A space overlaps with an existing chunk! Chunk {neighbor} and space {space}.");
-                }
-            }
-
-            OnChunkChanged.Raise(this);
-        }
-
         public void Register(Hazard hazard)
         {
             Hazards.Add(hazard);
@@ -143,17 +100,6 @@ namespace WorldObjects
         {
             BlockMap.TryGetValue(position, out var block);
             return block;
-        }
-
-        public Space GetSpaceForPosition(IntVector2 position)
-        {
-            if (!Contains(position)) throw new ArgumentOutOfRangeException($"Chunk does not contains {position}.");
-
-            foreach (var space in Spaces)
-            {
-                if (space.Contains(position)) return space;
-            }
-            return null;
         }
 
         protected List<IntVector2> GetEdgesReached(IntVector2 extentPoint)
@@ -272,17 +218,7 @@ namespace WorldObjects
                 }
                 else
                 {
-                    var edgesPassed = GetEdgesReached(newPosition.Position);
-                    IntVector2 chunkDir = Vector2.zero;
-
-                    // Merge edges passed to determine a ordinal or cardinal direction
-                    foreach (var edgePassed in edgesPassed)
-                    {
-                        chunkDir += edgePassed;
-                    }
-
-                    var blueprintForChunk = _world.GetBlueprintForPosition(Position + (chunkDir * _world.ChunkSize));
-                    blueprintForChunk.Register(enemy);
+                    newPosition.Builder.AddEnemy(enemy);
                 }
             }
         }
@@ -292,7 +228,6 @@ namespace WorldObjects
             var chunk = obj as Chunk;
             return chunk != null &&
                    base.Equals(obj) &&
-                   EqualityComparer<List<Space>>.Default.Equals(Spaces, chunk.Spaces) &&
                    EqualityComparer<Dictionary<IntVector2, Block>>.Default.Equals(BlockMap, chunk.BlockMap) &&
                    EqualityComparer<IntVector2>.Default.Equals(BottomLeftCorner, chunk.BottomLeftCorner) &&
                    EqualityComparer<IntVector2>.Default.Equals(TopRightCorner, chunk.TopRightCorner);
@@ -302,7 +237,6 @@ namespace WorldObjects
         {
             var hashCode = 471642533;
             hashCode = hashCode * -1521134295 + base.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<List<Space>>.Default.GetHashCode(Spaces);
             hashCode = hashCode * -1521134295 + EqualityComparer<Dictionary<IntVector2, Block>>.Default.GetHashCode(BlockMap);
             hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(BottomLeftCorner);
             hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(TopRightCorner);

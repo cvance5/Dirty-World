@@ -29,9 +29,6 @@ namespace Data.Serialization
         [JsonProperty("features")]
         private readonly List<SerializableFeature> _features = new List<SerializableFeature>();
 
-        [JsonProperty("spaces")]
-        private readonly List<SerializableSpace> _spaces = new List<SerializableSpace>();
-
         [JsonProperty("hazards")]
         private readonly List<SerializableHazard> _hazards = new List<SerializableHazard>();
 
@@ -58,11 +55,6 @@ namespace Data.Serialization
             foreach(var kvp in chunk.FeatureMap)
             {
                 _features.Add(new SerializableFeature(kvp.Value));
-            }
-
-            foreach (var space in chunk.Spaces)
-            {
-                _spaces.Add(SerializableSpaceHelper.ToSerializableSpace(space));
             }
 
             foreach (var hazard in chunk.Hazards)
@@ -109,18 +101,6 @@ namespace Data.Serialization
             {
                 var feature = serializableFeature.ToObject();
                 chunk.Register(feature);
-
-                if (yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
-                {
-                    yield return null;
-                    yieldTimer.AdvanceIncrement(Time.realtimeSinceStartup);
-                }
-            }
-
-            foreach (var serializedSpace in _spaces)
-            {
-                var space = serializedSpace.ToObject();
-                chunk.Register(space);
 
                 if (yieldTimer.CheckIncrement(Time.realtimeSinceStartup))
                 {

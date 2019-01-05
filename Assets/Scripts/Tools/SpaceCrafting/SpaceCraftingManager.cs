@@ -50,8 +50,8 @@ namespace Tools.SpaceCrafting
                 {
                     foreach (var affectedChunk in crafter.GetAffectedChunks())
                     {
-                        var blueprint = _world.GetBlueprintForPosition(affectedChunk);
-                        blueprint.Register(crafter.Build());
+                        var builder = _worldBuilder.GetBuilderAtPosition(affectedChunk);
+                        builder.AddSpace(crafter.Build());
                     }
                 }
                 else _log.Warning($"{crafter} is not valid and won't be built.");

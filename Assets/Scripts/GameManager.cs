@@ -78,14 +78,16 @@ public class GameManager : Singleton<GameManager>
         var worldGameObject = new GameObject("World");
         World = worldGameObject.AddComponent<World>();
 
-        ChunkGizmoDrawer.Instance.SetWorldToDraw(World);
-
         var bPicker = new BlockPicker(Settings.SurfaceDepth);
         var sPicker = new SpacePicker(Settings.SurfaceDepth);
 
         WorldBuilder = new WorldBuilder(World, sPicker, bPicker);
+        
         World.Initialize(Settings.SurfaceDepth, Settings.ChunkSize);
         World.Register(WorldBuilder);
+
+        ChunkGizmoDrawer.SetWorldToDraw(World, WorldBuilder);
+        PositionTracker.SetWorldToTrack(World, WorldBuilder);
 
         GameState.Initialize();
 

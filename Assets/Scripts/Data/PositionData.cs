@@ -1,20 +1,21 @@
 ﻿using System.Collections.Generic;
 using WorldObjects;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration;
 
 namespace Data
 {
     public class PositionData
     {
         public Chunk Chunk;
-        public Space Space;
-        public IntVector2 Position;
+        public ChunkBuilder Builder;
+        public Space Space { get; }
+        public IntVector2 Position { get; }
 
         public PositionData() { }
 
-        public PositionData(Chunk chunk, Space space, IntVector2 position)
+        public PositionData(Space space, IntVector2 position)
         {
-            Chunk = chunk;
             Space = space;
             Position = position;
         }

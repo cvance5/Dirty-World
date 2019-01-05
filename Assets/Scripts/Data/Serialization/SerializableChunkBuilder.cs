@@ -1,0 +1,45 @@
+﻿using Newtonsoft.Json;
+using System.Collections.Generic;
+using WorldObjects.WorldGeneration;
+
+namespace Data.Serialization
+{
+    public class SerializableChunkBuilder : ISerializable<ChunkBuilder>
+    {
+        [JsonProperty("position")]
+        private readonly IntVector2 _position;
+
+        [JsonProperty("chunkSize")]
+        private readonly int _chunkSize;
+
+        [JsonProperty("enemies")]
+        private readonly List<SerializableEnemy> _enemies = new List<SerializableEnemy>();
+
+        public SerializableChunkBuilder(ChunkBuilder chunkBuilder)
+        {
+            _position = chunkBuilder.Position;
+            _chunkSize = chunkBuilder.ChunkSize;
+
+            _enemies = new List<SerializableEnemy>();
+            foreach (var enemy in chunkBuilder.Enemies)
+            {
+                _enemies.Add(new SerializableEnemy(enemy));
+            }
+        }
+
+        public string Serialize() => JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
+        public static SerializableChunkBuilder Deserialize(string chunkJson) => JsonConvert.DeserializeObject<SerializableChunkBuilder>(chunkJson, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
+
+        public ChunkBuilder ToObject()
+        {
+            var chunkBuilder = new ChunkBuilder(_position, _chunkSize);
+            foreach (var serializedEnemy in _enemies)
+            {
+                var enemy = serializedEnemy.ToObject();
+                chunkBuilder.AddEnemy(enemy);
+            }
+
+            return chunkBuilder;
+        }
+    }
+}

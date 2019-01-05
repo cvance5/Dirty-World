@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using WorldObjects;
+using WorldObjects.WorldGeneration;
 
 namespace Data
 {
@@ -16,16 +18,34 @@ namespace Data
         private static Coroutine _updateMethod;
         private static readonly WaitForSecondsRealtime _positionUpdateTick = new WaitForSecondsRealtime(.1f);
 
+        private static World _worldToTrack;
+        private static WorldBuilder _builderToTrack;
+
+        public static void SetWorldToTrack(World worldToTrack, WorldBuilder builderToTrack)
+        {
+            _worldToTrack = worldToTrack;
+            _builderToTrack = builderToTrack;
+        }
+
         public static void BeginTracking(ITrackable target)
         {
             if (!_trackedTargets.ContainsKey(target))
             {
                 var position = target.Position;
+                var space = _worldToTrack.GetContainingSpace(position);
 
-                var chunk = GameManager.World.GetContainingChunk(position);
-                var space = chunk?.GetSpaceForPosition(position) ?? null;
+                var initialPositionData = new PositionData(space, position);
 
-                var initialPositionData = new PositionData(chunk, space, position);
+                var chunk = _worldToTrack.GetContainingChunk(position);
+                if (chunk != null)
+                {
+                    initialPositionData.Chunk = chunk;
+                }
+                else
+                {
+                    var builder = _builderToTrack.GetContainingBuilder(position);
+                    initialPositionData.Builder = builder;
+                }
 
                 _trackedTargets.Add(target, initialPositionData);
 
@@ -82,7 +102,7 @@ namespace Data
 
         public static PositionData GetCurrentPosition(ITrackable target)
         {
-            if(!_trackedTargets.TryGetValue(target, out var data))
+            if (!_trackedTargets.TryGetValue(target, out var data))
             {
                 throw new InvalidOperationException($"Cannot get data of untracked target.");
             }
@@ -97,26 +117,24 @@ namespace Data
                 foreach (var trackedTarget in _trackedTargets.ToList())
                 {
                     var target = trackedTarget.Key;
-                    var position = target.Position;
-                    var newPositionData = new PositionData()
-                    {
-                        Position = position
-                    };
                     var oldPositionData = trackedTarget.Value;
+
+                    var position = target.Position;
+                    var space = oldPositionData.Space;
+
+                    if (space == null || !space.Contains(position))
+                    {
+                        space = _worldToTrack.GetContainingSpace(position) ?? null;
+                    }
+
+                    var newPositionData = new PositionData(space, position);
 
                     if (oldPositionData.Chunk == null ||
                         !oldPositionData.Chunk.Contains(position))
                     {
-                        newPositionData.Chunk = GameManager.World.GetContainingChunk(position);
+                        newPositionData.Chunk = _worldToTrack.GetContainingChunk(position);
                     }
                     else newPositionData.Chunk = oldPositionData.Chunk;
-
-                    if (oldPositionData.Space == null ||
-                        !oldPositionData.Space.Contains(position))
-                    {
-                        newPositionData.Space = newPositionData.Chunk?.GetSpaceForPosition(position) ?? null;
-                    }
-                    else newPositionData.Space = oldPositionData.Space;
 
                     if (oldPositionData != newPositionData)
                     {

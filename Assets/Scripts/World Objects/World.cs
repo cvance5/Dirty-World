@@ -4,6 +4,8 @@ using UnityEngine;
 using WorldObjects.Blocks;
 using WorldObjects.WorldGeneration;
 
+using Space = WorldObjects.Spaces.Space;
+
 namespace WorldObjects
 {
     public class World : MonoBehaviour
@@ -11,14 +13,14 @@ namespace WorldObjects
         public int SurfaceDepth { get; private set; }
         public int ChunkSize { get; private set; }
 
+        private readonly List<Space> _spaces = new List<Space>();
+        public List<Space> Spaces => new List<Space>(_spaces);
+
         private readonly List<Chunk> _loadedChunks = new List<Chunk>();
         public List<Chunk> LoadedChunks => new List<Chunk>(_loadedChunks);
 
-        private readonly List<ChunkBlueprint> _pendingBlueprints = new List<ChunkBlueprint>();
-        public List<ChunkBlueprint> PendingBlueprints => new List<ChunkBlueprint>(_pendingBlueprints);
 
         private Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
-        private Dictionary<IntVector2, ChunkBlueprint> _blueprintsByWorldPosition = new Dictionary<IntVector2, ChunkBlueprint>();
 
         private WorldBuilder _builder;
 
@@ -26,9 +28,6 @@ namespace WorldObjects
         {
             SurfaceDepth = surfaceDepth;
             ChunkSize = chunkSize;
-
-            Chunk.AssignWorld(this);
-            ChunkBlueprint.AssignWorld(this);
         }
 
         public void Register(WorldBuilder worldBuilder)
@@ -39,15 +38,23 @@ namespace WorldObjects
 
         public void Register(Chunk chunk)
         {
+            if (_loadedChunks.Contains(chunk) || _chunksByWorldPosition.ContainsKey(chunk.Position))
+            {
+                throw new InvalidOperationException($"This world already has a chunk registered at {chunk.Position}.");
+            }
+
             _loadedChunks.Add(chunk);
             _chunksByWorldPosition.Add(chunk.Position, chunk);
             chunk.transform.SetParent(transform);
+        }
 
-            if (_blueprintsByWorldPosition.TryGetValue(chunk.Position, out var blueprint))
+        public void Register(Space space)
+        {
+            if (_spaces.Contains(space))
             {
-                _pendingBlueprints.Remove(blueprint);
-                _blueprintsByWorldPosition.Remove(chunk.Position);
+                throw new InvalidOperationException($"This world already has space `{space.Name}` registered to it.");
             }
+            _spaces.Add(space);
         }
 
         public void SetActiveChunks(List<IntVector2> activeChunkList)
@@ -80,7 +87,7 @@ namespace WorldObjects
                 }
             }
 
-            throw new System.NotImplementedException($"Check inactive chunks too!");
+            throw new NotImplementedException($"Check inactive chunks too!");
         }
 
         public List<Block> GetNeighbors(Block block)
@@ -98,19 +105,6 @@ namespace WorldObjects
             return neighbors;
         }
 
-        public List<Chunk> GetNeighbors(Chunk chunk)
-        {
-            var neighbors = new List<Chunk>();
-
-            foreach (var dir in Directions.Cardinals)
-            {
-                var neighbor = GetChunkNeighbor(chunk.Position, dir);
-                if (neighbor != null) neighbors.Add(neighbor);
-            }
-
-            return neighbors;
-        }
-
         public Chunk GetContainingChunk(IntVector2 position)
         {
             foreach (var chunk in _loadedChunks)
@@ -118,6 +112,18 @@ namespace WorldObjects
                 if (chunk.Contains(position))
                 {
                     return chunk;
+                }
+            }
+            return null;
+        }
+
+        public Space GetContainingSpace(IntVector2 position)
+        {
+            foreach (var space in _spaces)
+            {
+                if (space.Contains(position))
+                {
+                    return space;
                 }
             }
             return null;
@@ -137,32 +143,5 @@ namespace WorldObjects
 
         public IntVector2 GetChunkPosition(IntVector2 chunkPosition, IntVector2 direction) =>
             chunkPosition + new IntVector2(direction.X * ChunkSize, direction.Y * ChunkSize);
-
-        public ChunkBlueprint GetBlueprintNeighbor(IntVector2 chunkPosition, IntVector2 directionToCheck)
-        {
-            var neighborPosition = GetChunkPosition(chunkPosition, directionToCheck);
-            return GetBlueprintForPosition(neighborPosition);
-        }
-
-        public ChunkBlueprint GetBlueprintForPosition(IntVector2 worldPosition)
-        {
-            ChunkBlueprint blueprint;
-
-            if (_chunksByWorldPosition.ContainsKey(worldPosition))
-            {
-                throw new ArgumentException($"A chunk already exists at {worldPosition}.");
-            }
-            else if (!_blueprintsByWorldPosition.TryGetValue(worldPosition, out blueprint))
-            {
-                var bottomLeft = new IntVector2(worldPosition.X - (ChunkSize / 2), worldPosition.Y - (ChunkSize / 2));
-                var topRight = new IntVector2(worldPosition.X + (ChunkSize / 2), worldPosition.Y + (ChunkSize / 2));
-
-                blueprint = new ChunkBlueprint(worldPosition, bottomLeft, topRight);
-                _pendingBlueprints.Add(blueprint);
-                _blueprintsByWorldPosition[worldPosition] = blueprint;
-            }
-
-            return blueprint;
-        }
     }
 }

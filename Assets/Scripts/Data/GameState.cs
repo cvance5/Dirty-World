@@ -3,6 +3,7 @@ using Data.IO;
 using Data.Serialization;
 using System.Collections.Generic;
 using WorldObjects;
+using WorldObjects.WorldGeneration;
 
 namespace Data
 {
@@ -13,14 +14,14 @@ namespace Data
         private static readonly Dictionary<IntVector2, Chunk>
              _dirtyChunks = new Dictionary<IntVector2, Chunk>();
 
-        private static readonly Dictionary<IntVector2, ChunkBlueprint>
-            _dirtyBlueprints = new Dictionary<IntVector2, ChunkBlueprint>();
+        private static readonly Dictionary<IntVector2, ChunkBuilder>
+            _dirtyBuilders = new Dictionary<IntVector2, ChunkBuilder>();
 
         public static void Initialize()
         {
             _dirtyChunks.Clear();
             Chunk.OnChunkChanged += LogDirty;
-            ChunkBlueprint.OnBlueprintChanged += LogDirty;
+            ChunkBuilder.OnChunkBuilderChanged += LogDirty;
             LoadCharacter();
         }
 
@@ -30,13 +31,15 @@ namespace Data
             {
                 _dirtyChunks.Add(dirtyChunk.Position, dirtyChunk);
             }
+
+            _dirtyBuilders.Remove(dirtyChunk.Position);
         }
 
-        public static void LogDirty(ChunkBlueprint dirtyBlueprint)
+        public static void LogDirty(ChunkBuilder dirtyBuilder)
         {
-            if (_dirtyBlueprints.ContainsKey(dirtyBlueprint.Position))
+            if (!_dirtyBuilders.ContainsKey(dirtyBuilder.Position))
             {
-                _dirtyBlueprints.Add(dirtyBlueprint.Position, dirtyBlueprint);
+                _dirtyBuilders.Add(dirtyBuilder.Position, dirtyBuilder);
             }
         }
 
@@ -51,10 +54,10 @@ namespace Data
                 filesToWrite.Add(fileName, data);
             }
 
-            foreach (var kvp in _dirtyBlueprints)
+            foreach (var kvp in _dirtyBuilders)
             {
                 var fileName = kvp.Key.ToString();
-                var data = new SerializableChunkBlueprint(kvp.Value).Serialize();
+                var data = new SerializableChunkBuilder(kvp.Value).Serialize();
                 filesToWrite.Add(fileName, data);
             }
 

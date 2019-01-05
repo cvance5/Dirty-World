@@ -6,6 +6,7 @@ using UnityEngine;
 using Utilities;
 using WorldObjects;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration;
 using Space = WorldObjects.Spaces.Space;
 
 namespace GizmoDrawers
@@ -26,18 +27,18 @@ namespace GizmoDrawers
         [SerializeField]
         private List<bool> _showChunk = new List<bool>();
 
-        [Header("Blueprints")]
+        [Header("Builders")]
         [SerializeField]
-        private bool _showBlueprintCreationOrder = true;
+        private bool _showBuilderCreationOrder = true;
 
         [SerializeField]
-        private bool _showBlueprintBoundaries = true;
+        private bool _showBuilderBoundaries = true;
 
         [SerializeField]
-        private bool _showBlueprintSpaces = true;
+        private bool _showBuilderSpaces = true;
 
         [SerializeField]
-        private List<bool> _showBlueprint = new List<bool>();
+        private List<bool> _showBuilder = new List<bool>();
 
         [Header("Spaces")]
         [SerializeField]
@@ -45,12 +46,14 @@ namespace GizmoDrawers
 #pragma warning restore IDE0044 // Add readonly modifier
 
         private World _worldToDraw;
+        private WorldBuilder _builderToDraw;
 
         private void Awake() => DontDestroyOnLoad(gameObject);
 
-        public void SetWorldToDraw(World world)
+        public static void SetWorldToDraw(World world, WorldBuilder builder)
         {
-            _worldToDraw = world;
+            Instance._worldToDraw = world;
+            Instance._builderToDraw = builder;
         }
 
         private void OnDrawGizmosSelected()
@@ -79,36 +82,36 @@ namespace GizmoDrawers
 
                 if (_showChunkSpaces)
                 {
-                    foreach (var space in chunk.Spaces)
+                    foreach (var space in _worldToDraw.Spaces)
                     {
                         DrawSpace(space);
                     }
                 }
             }
 
-            var blueprintsInCreationOrder = _worldToDraw.PendingBlueprints;
+            var buildersInCreationOrder = _builderToDraw.ChunkBuilders;
 
-            UpdateShowBlueprintList(blueprintsInCreationOrder.Count);
+            UpdateShowBuilderList(buildersInCreationOrder.Count);
 
-            for (var creationOrder = 0; creationOrder < blueprintsInCreationOrder.Count; creationOrder++)
+            for (var creationOrder = 0; creationOrder < buildersInCreationOrder.Count; creationOrder++)
             {
-                if (!_showBlueprint[creationOrder]) continue;
+                if (!_showBuilder[creationOrder]) continue;
 
-                var blueprint = blueprintsInCreationOrder[creationOrder];
+                var builder = buildersInCreationOrder[creationOrder];
 
-                if (_showBlueprintCreationOrder)
+                if (_showBuilderCreationOrder)
                 {
-                    LabelBlueprintCreationOrder(blueprint, creationOrder);
+                    LabelBuilderCreationOrder(builder, creationOrder);
                 }
 
-                if (_showBlueprintBoundaries)
+                if (_showBuilderBoundaries)
                 {
-                    DrawBlueprintBoundaries(blueprint);
+                    DrawBuilderBoundaries(builder);
                 }
 
-                if (_showBlueprintSpaces)
+                if (_showBuilderSpaces)
                 {
-                    foreach (var space in blueprint.Spaces)
+                    foreach (var space in builder.Spaces)
                     {
                         DrawSpace(space);
                     }
@@ -116,16 +119,16 @@ namespace GizmoDrawers
             }
         }
 
-        private void UpdateShowBlueprintList(int count)
+        private void UpdateShowBuilderList(int count)
         {
-            while (_showBlueprint.Count < count)
+            while (_showBuilder.Count < count)
             {
-                _showBlueprint.Add(true);
+                _showBuilder.Add(true);
             }
 
-            while (_showBlueprint.Count > count)
+            while (_showBuilder.Count > count)
             {
-                _showBlueprint.RemoveAt(_showBlueprint.Count - 1);
+                _showBuilder.RemoveAt(_showBuilder.Count - 1);
             }
         }
 
@@ -155,7 +158,7 @@ namespace GizmoDrawers
             Handles.Label(centerpoint, loadOrder.ToString(), _loadOrderStyle);
         }
 
-        private void LabelBlueprintCreationOrder(ChunkBlueprint blueprint, int creationOrder)
+        private void LabelBuilderCreationOrder(ChunkBuilder builder, int creationOrder)
         {
             var _loadOrderStyle = new GUIStyle()
             {
@@ -163,7 +166,7 @@ namespace GizmoDrawers
                 fontSize = 25
             };
 
-            var centerpoint = GeometryTools.CenterOfRectangle(blueprint.TopRightCorner, blueprint.BottomLeftCorner);
+            var centerpoint = GeometryTools.CenterOfRectangle(builder.TopRightCorner, builder.BottomLeftCorner);
 
             Handles.Label(centerpoint, creationOrder.ToString(), _loadOrderStyle);
         }
@@ -174,10 +177,10 @@ namespace GizmoDrawers
             DrawRectangle(chunk.TopRightCorner, chunk.BottomLeftCorner);
         }
 
-        private void DrawBlueprintBoundaries(ChunkBlueprint blueprint)
+        private void DrawBuilderBoundaries(ChunkBuilder builder)
         {
             Gizmos.color = Color.blue;
-            DrawRectangle(blueprint.TopRightCorner, blueprint.BottomLeftCorner);
+            DrawRectangle(builder.TopRightCorner, builder.BottomLeftCorner);
         }
 
         private void DrawSpace(Space space, string prefixName = "")
