@@ -175,6 +175,11 @@ namespace WorldObjects.WorldGeneration
             yield return BuildBlocks(chunk, yieldTimer);
             yield return BuildHazardsAndEnemies(chunk, yieldTimer);
 
+            foreach(var space in _spaces)
+            {
+                chunk.Register(space.Name);
+            }
+
             OnChunkBuilt.Raise(chunk);
             Chunk.OnChunkChanged.Raise(chunk);
         }

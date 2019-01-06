@@ -27,18 +27,22 @@ namespace Data
             var data = obj as PositionData;
             return data != null &&
                    EqualityComparer<Chunk>.Default.Equals(Chunk, data.Chunk) &&
-                   EqualityComparer<Space>.Default.Equals(Space, data.Space);
+                   EqualityComparer<ChunkBuilder>.Default.Equals(Builder, data.Builder) &&
+                   EqualityComparer<Space>.Default.Equals(Space, data.Space) &&
+                   EqualityComparer<IntVector2>.Default.Equals(Position, data.Position);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -659631415;
+            hashCode = hashCode * -1521134295 + EqualityComparer<Chunk>.Default.GetHashCode(Chunk);
+            hashCode = hashCode * -1521134295 + EqualityComparer<ChunkBuilder>.Default.GetHashCode(Builder);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Space>.Default.GetHashCode(Space);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IntVector2>.Default.GetHashCode(Position);
+            return hashCode;
         }
 
         public static bool operator ==(PositionData lhs, object rhs) => rhs == null ? false : lhs.Equals(rhs);
         public static bool operator !=(PositionData lhs, object rhs) => !(lhs == rhs);
-
-        public override int GetHashCode()
-        {
-            var hashCode = -190340137;
-            hashCode = hashCode * -1521134295 + EqualityComparer<Chunk>.Default.GetHashCode(Chunk);
-            hashCode = hashCode * -1521134295 + EqualityComparer<Space>.Default.GetHashCode(Space);
-            return hashCode;
-        }
     }
 }

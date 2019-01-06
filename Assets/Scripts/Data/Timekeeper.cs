@@ -10,6 +10,8 @@ namespace Data
         public static SmartEvent OnPause = new SmartEvent();
         public static SmartEvent OnUnpause = new SmartEvent();
 
+        public static bool IsPaused = false;
+
         private static Dictionary<string, UnityStopwatch> _stopwatches = new Dictionary<string, UnityStopwatch>();
 
         public static void TogglePause(bool isPaused)
@@ -19,12 +21,13 @@ namespace Data
                 Time.timeScale = 0;
                 _log.Info($"Pausing game...");
             }
-            else
+            else if(IsPaused)
             {
                 Time.timeScale = 1;
                 _log.Info($"Unpausing game.");
             }
 
+            IsPaused = isPaused;
             Instance.OnApplicationPause(isPaused);
         }
 

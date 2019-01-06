@@ -22,8 +22,6 @@ public class GameManager : Singleton<GameManager>
     public Script Script;
 
     public static World World { get; private set; }
-    public static WorldBuilder WorldBuilder { get; private set; }
-    public static ChunkActivationController ChunkActivationController { get; private set; }
 
     public static User User { get; private set; }
     public static Character Character { get; private set; }
@@ -75,40 +73,37 @@ public class GameManager : Singleton<GameManager>
     {
         SceneHelper.OnSceneIsReady -= InitializeWorld;
 
-        WorldSizer.SetChunkSize(Settings.ChunkSize);
-
         var worldGameObject = new GameObject("World");
         World = worldGameObject.AddComponent<World>();
 
-        var bPicker = new BlockPicker(Settings.SurfaceDepth);
-        var sPicker = new SpacePicker(Settings.SurfaceDepth);
+        var bPicker = new BlockPicker();
+        var chunkArchitect = worldGameObject.AddComponent<ChunkArchitect>();
+        chunkArchitect.Initialize(bPicker);
 
-        World.Initialize(Settings.SurfaceDepth, Settings.ChunkSize);
-        WorldBuilder = new WorldBuilder(World, sPicker, bPicker);
-        World.Register(WorldBuilder);
-        
+        var sPicker = new SpacePicker();
+        var spaceArchitect = new SpaceArchitect(sPicker);
 
-        ChunkGizmoDrawer.SetWorldToDraw(World, WorldBuilder);
-        PositionTracker.SetWorldToTrack(World, WorldBuilder);
+        World.Initialize(chunkArchitect, spaceArchitect);
+
+        ChunkGizmoDrawer.SetWorldToDraw(World);
+        PositionTracker.SetWorldToTrack(World);
 
         GameState.Initialize();
 
         if (GameSaves.HasSavedData)
         {
             _log.Info("Loading saved data...");
-            WorldBuilder.ActivateChunk(IntVector2.Zero);
+            chunkArchitect.ActivateChunk(IntVector2.Zero);
         }
         else
         {
             _log.Info("Creating new save...");
-            WorldBuilder.ActivateChunk(IntVector2.Zero);
+            chunkArchitect.ActivateChunk(IntVector2.Zero);
             GameSaves.SaveDirty();
 
             User.RegisterGame("Default");
             UserSaves.SaveUser();
         }
-
-        ChunkActivationController = new ChunkActivationController(World, 2);
 
         Character = GameState.CurrentCharacter;
 
@@ -127,10 +122,23 @@ public class GameManager : Singleton<GameManager>
         _player = playerObj.GetComponent<PlayerData>();
         _player.AssignCharacter(Character);
 
-        ChunkActivationController.ListenTo(_player);
+        PositionTracker.Subscribe(_player, OnPlayerPositionUpdate);
+        World.ListenTo(_player);
         Timekeeper.StartStopwatch("PlaySession");
 
         _player.OnActorDeath += OnPlayerDeath;
+    }
+
+    private void OnPlayerPositionUpdate(ITrackable player, PositionData oldData, PositionData newData)
+    {
+        if(newData.Chunk == null)
+        {
+            Timekeeper.TogglePause(true);
+        }
+        else if(Timekeeper.IsPaused)
+        {
+            Timekeeper.TogglePause(false);
+        }
     }
 
     private void OnPlayerDeath(ActorData playerData)
@@ -138,7 +146,9 @@ public class GameManager : Singleton<GameManager>
         var elapsedPlayTime = Timekeeper.EndStopwatch("PlaySession");
         Character.Metadata.AddTimePlayed(elapsedPlayTime);
 
-        WorldBuilder.Destroy();
+        PositionTracker.Unsubscribe(_player, OnPlayerPositionUpdate);
+
+        World.Destroy();
 
         StartCoroutine(HandleGameOverScreen());
     }
@@ -155,7 +165,7 @@ public class GameManager : Singleton<GameManager>
         var wfcc = new WaitForCustomCallback();
         activateScrimSequence.Play(wfcc.Callback);
         yield return wfcc;
-        
+
         UIScreen activeScreen = UIManager.Get<GameOverScreen>();
         while (activeScreen != null)
         {

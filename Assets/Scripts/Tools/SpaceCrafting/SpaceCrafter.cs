@@ -49,11 +49,11 @@ namespace Tools.SpaceCrafting
         {
             var chunksAffected = new List<IntVector2>();
 
-            var minXChunk = MinX / SpaceCraftingManager.ChunkSize;
-            var maxXChunk = MaxX / SpaceCraftingManager.ChunkSize;
+            var minXChunk = MinX / SpaceCraftingManager.CHUNK_SIZE;
+            var maxXChunk = MaxX / SpaceCraftingManager.CHUNK_SIZE;
 
-            var minYChunk = MinY / SpaceCraftingManager.ChunkSize;
-            var maxYChunk = MaxY / SpaceCraftingManager.ChunkSize;
+            var minYChunk = MinY / SpaceCraftingManager.CHUNK_SIZE;
+            var maxYChunk = MaxY / SpaceCraftingManager.CHUNK_SIZE;
 
             for (var x = minXChunk; x <= maxXChunk; x++)
             {

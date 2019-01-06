@@ -1,5 +1,4 @@
 ﻿using Data.Serialization.SerializableHazards;
-using Data.Serialization.SerializableSpaces;
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,6 +37,9 @@ namespace Data.Serialization
         [JsonProperty("items")]
         private readonly List<SerializableItem> _items = new List<SerializableItem>();
 
+        [JsonProperty("spacesUsed")]
+        private readonly List<string> _spacesUsed = new List<string>();
+
         [JsonConstructor]
         public SerializableChunk() { }
 
@@ -52,7 +54,7 @@ namespace Data.Serialization
                 _blocks.Add(new SerializableBlock(kvp.Value));
             }
 
-            foreach(var kvp in chunk.FeatureMap)
+            foreach (var kvp in chunk.FeatureMap)
             {
                 _features.Add(new SerializableFeature(kvp.Value));
             }
@@ -71,6 +73,8 @@ namespace Data.Serialization
             {
                 _items.Add(new SerializableItem(item));
             }
+
+            _spacesUsed = chunk.SpacesUsed;
         }
 
         public string Serialize() => JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
@@ -143,6 +147,11 @@ namespace Data.Serialization
                     yield return null;
                     yieldTimer.AdvanceIncrement(Time.realtimeSinceStartup);
                 }
+            }
+
+            foreach (var spaceUsed in _spacesUsed)
+            {
+                chunk.Register(spaceUsed);
             }
 
             OnChunkLoaded.Raise(chunk);

@@ -55,7 +55,7 @@ namespace WorldObjects.Actors.Player
             _collider.OnItemsCollected -= AddCollectedItems;
 
             var spawnedItem = ItemLoader.CreateItem(Items.ItemActors.ItemActorTypes.HealthPack, Position);
-            var chunk = GameManager.World.GetContainingChunk(Position);
+            var chunk = GameManager.World.ChunkArchitect.GetContainingChunk(Position);
 
             chunk.Register(spawnedItem);
 

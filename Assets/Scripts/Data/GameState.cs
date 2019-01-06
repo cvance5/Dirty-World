@@ -2,7 +2,6 @@
 using Data.IO;
 using Data.Serialization;
 using Data.Serialization.SerializableSpaces;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using WorldObjects;
 using WorldObjects.Spaces;
@@ -20,13 +19,18 @@ namespace Data
         private static readonly Dictionary<IntVector2, ChunkBuilder>
             _dirtyBuilders = new Dictionary<IntVector2, ChunkBuilder>();
 
+        private static readonly Dictionary<string, Space>
+            _dirtySpaces = new Dictionary<string, Space>();
+
         public static void Initialize()
         {
             _dirtyChunks.Clear();
             _dirtyBuilders.Clear();
+            _dirtySpaces.Clear();
 
             Chunk.OnChunkChanged += LogDirty;
             ChunkBuilder.OnChunkBuilderChanged += LogDirty;
+            SpaceArchitect.OnNewSpaceRegistered += LogDirty;
 
             LoadCharacter();
         }
@@ -49,6 +53,14 @@ namespace Data
             }
         }
 
+        public static void LogDirty(Space dirtySpace)
+        {
+            if (!_dirtySpaces.ContainsKey(dirtySpace.Name))
+            {
+                _dirtySpaces.Add(dirtySpace.Name, dirtySpace);
+            }
+        }
+
         public static Dictionary<string, string> SerializeAll()
         {
             var filesToWrite = new Dictionary<string, string>();
@@ -62,18 +74,17 @@ namespace Data
 
             foreach (var kvp in _dirtyBuilders)
             {
-                var fileName = kvp.Key.ToString();
+                var fileName = kvp.Key.ToString() +"B";
                 var data = new SerializableChunkBuilder(kvp.Value).Serialize();
                 filesToWrite.Add(fileName, data);
             }
 
-            var spaces = new List<SerializableSpace>();
-            foreach(var space in GameManager.World.Spaces)
+            foreach(var kvp in _dirtySpaces)
             {
-                spaces.Add(SerializableSpaceHelper.ToSerializableSpace(space));
+                var fileName = kvp.Key;
+                var data = SerializableSpaceHelper.ToSerializableSpace(kvp.Value).Serialize();
+                filesToWrite.Add(fileName, data);
             }
-            var spaceFile = JsonConvert.SerializeObject(spaces, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
-            filesToWrite.Add(Paths.SPACESFILE, spaceFile);
 
             var characterFile = new SerializableCharacter(CurrentCharacter);
             filesToWrite.Add(Paths.CHARACTERFILE, characterFile.Serialize());

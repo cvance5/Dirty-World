@@ -23,6 +23,7 @@ namespace Data.Serialization.SerializableSpaces
         }
 
         public string Serialize() => JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
+        public static SerializableSpace Deserialize(string spaceJson) => JsonConvert.DeserializeObject<SerializableSpace>(spaceJson, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.All });
 
         protected abstract Space ToRawObject();
     }

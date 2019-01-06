@@ -1,93 +1,78 @@
-﻿using System;
+﻿using Data;
 using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Blocks;
 using WorldObjects.WorldGeneration;
 
-using Space = WorldObjects.Spaces.Space;
-
 namespace WorldObjects
 {
     public class World : MonoBehaviour
     {
-        public int SurfaceDepth { get; private set; }
-        public int ChunkSize { get; private set; }
+        public const int SURFACE_DEPTH = 0;
+        public const int CHUNK_SIZE = 16;
 
-        private readonly List<Space> _spaces = new List<Space>();
-        public List<Space> Spaces => new List<Space>(_spaces);
+        public int ChunkActivationDepth { get; set; } = 2;
 
-        private readonly List<Chunk> _loadedChunks = new List<Chunk>();
-        public List<Chunk> LoadedChunks => new List<Chunk>(_loadedChunks);
-        private Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
+        public ChunkArchitect ChunkArchitect { get; private set; }
+        public SpaceArchitect SpaceArchitect { get; private set; }
 
-        private WorldBuilder _builder;
+        private ITrackable _activationCatalyst;
 
-        public void Initialize(int surfaceDepth, int chunkSize)
+        public void Initialize(ChunkArchitect chunkArchitect, SpaceArchitect spaceArchitect)
         {
-            SurfaceDepth = surfaceDepth;
-            ChunkSize = chunkSize;
-
-            WorldSizer.SetChunkSize(chunkSize);
+            ChunkArchitect = chunkArchitect;
+            SpaceArchitect = spaceArchitect;
         }
 
-        public void Register(WorldBuilder worldBuilder)
+        public void ListenTo(ITrackable activationCatalyst)
         {
-            if (_builder != null) throw new InvalidOperationException($"This world already has a registed builder.");
-            else _builder = worldBuilder;
-        }
-
-        public void Register(Chunk chunk)
-        {
-            if (_loadedChunks.Contains(chunk) || _chunksByWorldPosition.ContainsKey(chunk.Position))
+            if (_activationCatalyst != null)
             {
-                throw new InvalidOperationException($"This world already has a chunk registered at {chunk.Position}.");
+                throw new System.InvalidOperationException($"World cannot listen to multiple catalysts at a time.");
             }
+            _activationCatalyst = activationCatalyst;
 
-            _loadedChunks.Add(chunk);
-            _chunksByWorldPosition.Add(chunk.Position, chunk);
-            chunk.transform.SetParent(transform);
+            PositionTracker.Subscribe(activationCatalyst, OnPositionUpdate);
+            var position = PositionTracker.GetCurrentPosition(activationCatalyst);
+
+            OnPositionUpdate(activationCatalyst, null, position);
         }
 
-        public void Register(Space space)
+        private void OnPositionUpdate(ITrackable trackable, PositionData oldPosition, PositionData newPosition)
         {
-            if (_spaces.Contains(space))
+            if (newPosition.Chunk != null)
             {
-                throw new InvalidOperationException($"This world already has space `{space.Name}` registered to it.");
+                var activeChunkList = DetermineChunkActivationDepth(newPosition.Chunk.Position);
+                ChunkArchitect.SetActiveChunks(activeChunkList);
+                SpaceArchitect.SetActiveSpaces(ChunkArchitect.ActiveChunks);
             }
-            _spaces.Add(space);
         }
 
-        public void SetActiveChunks(List<IntVector2> activeChunkList)
+        private List<IntVector2> DetermineChunkActivationDepth(IntVector2 currentChunkPosition)
         {
-            foreach (var chunk in _loadedChunks)
+            var activeChunks = new List<IntVector2>();
+
+            var minChunkX = (currentChunkPosition.X / CHUNK_SIZE) - ChunkActivationDepth;
+            var maxChunkX = minChunkX + (ChunkActivationDepth * 2);
+
+            var minChunkY = (currentChunkPosition.Y / CHUNK_SIZE) - ChunkActivationDepth;
+            var maxChunkY = minChunkY + (ChunkActivationDepth * 2);
+
+            for (var chunkX = minChunkX; chunkX <= maxChunkX; chunkX++)
             {
-                if (!activeChunkList.Contains(chunk.Position))
+                for (var chunkY = minChunkY; chunkY <= maxChunkY; chunkY++)
                 {
-                    chunk.SetActive(false);
+                    activeChunks.Add(new IntVector2(chunkX * CHUNK_SIZE, chunkY * CHUNK_SIZE));
                 }
             }
 
-            foreach (var activeChunkPosition in activeChunkList)
-            {
-                if (_chunksByWorldPosition.TryGetValue(activeChunkPosition, out var chunk))
-                {
-                    chunk.SetActive(true);
-                }
-                else _builder.ActivateChunk(activeChunkPosition);
-            }
+            return activeChunks;
         }
 
         public Block GetBlock(IntVector2 position)
         {
-            foreach (var chunk in _loadedChunks)
-            {
-                if (chunk.Contains(position))
-                {
-                    return chunk.GetBlockForPosition(position);
-                }
-            }
-
-            throw new NotImplementedException($"Check inactive chunks too!");
+            var containingCHunk = ChunkArchitect.GetContainingChunk(position);
+            return containingCHunk.GetBlockForPosition(position);
         }
 
         public List<Block> GetNeighbors(Block block)
@@ -105,41 +90,15 @@ namespace WorldObjects
             return neighbors;
         }
 
-        public Chunk GetContainingChunk(IntVector2 position)
+        public void Destroy()
         {
-            var chunkPosition = WorldSizer.GetNearestChunkPosition(position);
-            if(!_chunksByWorldPosition.TryGetValue(chunkPosition, out var chunk))
+            if (_activationCatalyst != null)
             {
-                // It may exist, unloaded, but we can't give you that data right now, so...uh???
+                PositionTracker.Unsubscribe(_activationCatalyst, OnPositionUpdate);
+                _activationCatalyst = null;
             }
-            return chunk;
-        }
 
-        public Space GetContainingSpace(IntVector2 position)
-        {
-            foreach (var space in _spaces)
-            {
-                if (space.Contains(position))
-                {
-                    return space;
-                }
-            }
-            return null;
+            ChunkArchitect.Destroy();
         }
-
-        public Chunk GetChunkNeighbor(IntVector2 chunkPosition, IntVector2 directionToCheck)
-        {
-            var neighborPosition = GetChunkPosition(chunkPosition, directionToCheck);
-            return GetChunkAtPosition(neighborPosition);
-        }
-
-        public Chunk GetChunkAtPosition(IntVector2 chunkPosition)
-        {
-            _chunksByWorldPosition.TryGetValue(chunkPosition, out var chunk);
-            return chunk;
-        }
-
-        public IntVector2 GetChunkPosition(IntVector2 chunkPosition, IntVector2 direction) =>
-            chunkPosition + new IntVector2(direction.X * ChunkSize, direction.Y * ChunkSize);
     }
 }

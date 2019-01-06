@@ -2,20 +2,16 @@
 using System.Collections.Generic;
 using Utilities.Debug;
 using WorldObjects.Spaces;
-using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class SpacePicker
     {
-        private readonly int _surfaceDepth;
-
         private bool _canPickSpaces = true;
         private List<Type> _allowedSpaces = new List<Type>();
 
-        public SpacePicker(int surfaceDepth, List<Type> initialAllowedSpaces = null)
+        public SpacePicker(List<Type> initialAllowedSpaces = null)
         {
-            _surfaceDepth = surfaceDepth;
             if (initialAllowedSpaces != null)
             {
                 AllowSpaces(initialAllowedSpaces);
@@ -28,7 +24,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             _canPickSpaces = _allowedSpaces.Count > 0;
 
-            if (chunk.Depth <= _surfaceDepth)
+            if (chunk.Depth <= World.SURFACE_DEPTH)
             {
                 spaces.AddRange(CheckForSpecialCasing(chunk));
 

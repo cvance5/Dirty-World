@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using WorldObjects;
-using WorldObjects.WorldGeneration;
 
 namespace Data
 {
@@ -19,31 +18,26 @@ namespace Data
         private static readonly WaitForSecondsRealtime _positionUpdateTick = new WaitForSecondsRealtime(.1f);
 
         private static World _worldToTrack;
-        private static WorldBuilder _builderToTrack;
 
-        public static void SetWorldToTrack(World worldToTrack, WorldBuilder builderToTrack)
-        {
-            _worldToTrack = worldToTrack;
-            _builderToTrack = builderToTrack;
-        }
+        public static void SetWorldToTrack(World worldToTrack) => _worldToTrack = worldToTrack;
 
         public static void BeginTracking(ITrackable target)
         {
             if (!_trackedTargets.ContainsKey(target))
             {
                 var position = target.Position;
-                var space = _worldToTrack.GetContainingSpace(position);
+                var space = _worldToTrack.SpaceArchitect.GetContainingSpace(position);
 
                 var initialPositionData = new PositionData(space, position);
 
-                var chunk = _worldToTrack.GetContainingChunk(position);
+                var chunk = _worldToTrack.ChunkArchitect.GetContainingChunk(position);
                 if (chunk != null)
                 {
                     initialPositionData.Chunk = chunk;
                 }
                 else
                 {
-                    var builder = _builderToTrack.GetContainingBuilder(position);
+                    var builder = _worldToTrack.ChunkArchitect.GetContainingBuilder(position);
                     initialPositionData.Builder = builder;
                 }
 
@@ -124,7 +118,7 @@ namespace Data
 
                     if (space == null || !space.Contains(position))
                     {
-                        space = _worldToTrack.GetContainingSpace(position) ?? null;
+                        space = _worldToTrack.SpaceArchitect.GetContainingSpace(position) ?? null;
                     }
 
                     var newPositionData = new PositionData(space, position);
@@ -132,7 +126,7 @@ namespace Data
                     if (oldPositionData.Chunk == null ||
                         !oldPositionData.Chunk.Contains(position))
                     {
-                        newPositionData.Chunk = _worldToTrack.GetContainingChunk(position);
+                        newPositionData.Chunk = _worldToTrack.ChunkArchitect.GetContainingChunk(position);
                     }
                     else newPositionData.Chunk = oldPositionData.Chunk;
 

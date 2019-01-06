@@ -13,13 +13,13 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
             { BlockTypes.Platinum, .45f }
         };
 
-        public BlockPicker(int surfaceDepth) => _blockRanges = new Dictionary<BlockTypes, Range>()
+        public BlockPicker() => _blockRanges = new Dictionary<BlockTypes, Range>()
         {
-            { BlockTypes.Stone, new Range(int.MinValue, surfaceDepth) },
-            { BlockTypes.Copper, new Range(surfaceDepth - 15, surfaceDepth) },
-            { BlockTypes.Silver,  new Range(surfaceDepth - 30, surfaceDepth - 10) },
-            { BlockTypes.Gold,  new Range(surfaceDepth - 45, surfaceDepth - 25) },
-            { BlockTypes.Platinum, new Range(int.MinValue, surfaceDepth - 40) }
+            { BlockTypes.Stone, new Range(int.MinValue, World.SURFACE_DEPTH) },
+            { BlockTypes.Copper, new Range(World.SURFACE_DEPTH - 15, World.SURFACE_DEPTH) },
+            { BlockTypes.Silver,  new Range(World.SURFACE_DEPTH - 30, World.SURFACE_DEPTH - 10) },
+            { BlockTypes.Gold,  new Range(World.SURFACE_DEPTH - 45, World.SURFACE_DEPTH - 25) },
+            { BlockTypes.Platinum, new Range(int.MinValue, World.SURFACE_DEPTH - 40) }
         };
 
         public Dictionary<BlockTypes, int> Pick(ChunkBuilder cBuilder)

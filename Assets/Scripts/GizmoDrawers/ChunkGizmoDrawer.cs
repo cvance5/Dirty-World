@@ -22,9 +22,6 @@ namespace GizmoDrawers
         private bool _showChunkBounderies = true;
 
         [SerializeField]
-        private bool _showChunkSpaces = true;
-
-        [SerializeField]
         private List<bool> _showChunk = new List<bool>();
 
         [Header("Builders")]
@@ -35,32 +32,26 @@ namespace GizmoDrawers
         private bool _showBuilderBoundaries = true;
 
         [SerializeField]
-        private bool _showBuilderSpaces = true;
-
-        [SerializeField]
         private List<bool> _showBuilder = new List<bool>();
 
         [Header("Spaces")]
+        [SerializeField]
+        private bool _showSpaces = true;
         [SerializeField]
         private bool _showSpaceNames = true;
 #pragma warning restore IDE0044 // Add readonly modifier
 
         private World _worldToDraw;
-        private WorldBuilder _builderToDraw;
 
         private void Awake() => DontDestroyOnLoad(gameObject);
 
-        public static void SetWorldToDraw(World world, WorldBuilder builder)
-        {
-            Instance._worldToDraw = world;
-            Instance._builderToDraw = builder;
-        }
+        public static void SetWorldToDraw(World world) => Instance._worldToDraw = world;
 
         private void OnDrawGizmosSelected()
         {
             if (_worldToDraw == null) return;
 
-            var chunksInLoadOrder = _worldToDraw.LoadedChunks;
+            var chunksInLoadOrder = _worldToDraw.ChunkArchitect.ActiveChunks;
 
             UpdateShowChunkList(chunksInLoadOrder.Count);
 
@@ -79,17 +70,9 @@ namespace GizmoDrawers
                 {
                     DrawChunkBoundaries(chunk);
                 }
-
-                if (_showChunkSpaces)
-                {
-                    foreach (var space in _worldToDraw.Spaces)
-                    {
-                        DrawSpace(space);
-                    }
-                }
             }
 
-            var buildersInCreationOrder = _builderToDraw.ChunkBuilders;
+            var buildersInCreationOrder = _worldToDraw.ChunkArchitect.ActiveBuilders;
 
             UpdateShowBuilderList(buildersInCreationOrder.Count);
 
@@ -108,13 +91,13 @@ namespace GizmoDrawers
                 {
                     DrawBuilderBoundaries(builder);
                 }
+            }
 
-                if (_showBuilderSpaces)
+            if (_showSpaces)
+            {
+                foreach (var space in _worldToDraw.SpaceArchitect.ActiveSpaces)
                 {
-                    foreach (var space in builder.Spaces)
-                    {
-                        DrawSpace(space);
-                    }
+                    DrawSpace(space);
                 }
             }
         }
@@ -219,7 +202,7 @@ namespace GizmoDrawers
             if (space is ComplexSpace)
             {
                 var complexSpace = space as ComplexSpace;
-                for(int regionNumber = 0; regionNumber < complexSpace.Regions.Count; regionNumber++)
+                for (var regionNumber = 0; regionNumber < complexSpace.Regions.Count; regionNumber++)
                 {
                     var region = complexSpace.Regions[regionNumber];
                     for (var spaceNumber = 0; spaceNumber < region.Spaces.Count; spaceNumber++)

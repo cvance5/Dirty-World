@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using WorldObjects.Blocks;
 using WorldObjects.WorldGeneration.FeatureGeneration;
 using WorldObjects.WorldGeneration.HazardGeneration;
@@ -70,6 +71,15 @@ namespace WorldObjects.Spaces
             }
 
             return hazardBuildersInChunk;
+        }
+
+        public int GetMaximalValue(IntVector2 direction)
+        {
+            if (direction == Directions.Up) return Extents.Max(extent => extent.Y);
+            else if (direction == Directions.Right) return Extents.Max(extent => extent.X);
+            else if (direction == Directions.Down) return Extents.Min(extent => extent.Y);
+            else if (direction == Directions.Left) return Extents.Min(Extents => Extents.X);
+            else throw new System.ArgumentException($"Expected a cardinal direction.  Cannot operate on {direction}.");
         }
 
         public override string ToString() => Name;

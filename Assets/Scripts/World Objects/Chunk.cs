@@ -8,7 +8,6 @@ using WorldObjects.Actors.Enemies;
 using WorldObjects.Blocks;
 using WorldObjects.Features;
 using WorldObjects.Hazards;
-using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects
 {
@@ -26,6 +25,8 @@ namespace WorldObjects
 
         public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
         public Dictionary<IntVector2, Feature> FeatureMap { get; private set; } = new Dictionary<IntVector2, Feature>();
+
+        public List<string> SpacesUsed { get; private set; } = new List<string>();
 
         public void AssignExtents(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {
@@ -59,7 +60,7 @@ namespace WorldObjects
 
             feature.OnFeaturedDestroyed += OnFeatureDestroyed;
 
-            if(BlockMap.TryGetValue(feature.Position, out var block))
+            if (BlockMap.TryGetValue(feature.Position, out var block))
             {
                 feature.Assign(block);
             }
@@ -76,6 +77,14 @@ namespace WorldObjects
             hazard.OnHazardDestroyed += OnHazardDestroyed;
 
             OnChunkChanged.Raise(this);
+        }
+
+        public void Register(string spaceName)
+        {
+            if (!SpacesUsed.Contains(spaceName))
+            {
+                SpacesUsed.Add(spaceName);
+            }
         }
 
         public void Register(EnemyData enemy)

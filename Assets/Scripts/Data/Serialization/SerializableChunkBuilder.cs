@@ -13,7 +13,13 @@ namespace Data.Serialization
         private readonly int _chunkSize;
 
         [JsonProperty("enemies")]
-        private readonly List<SerializableEnemy> _enemies = new List<SerializableEnemy>();
+        private List<SerializableEnemy> _enemies = new List<SerializableEnemy>();
+
+        [JsonProperty("spaceNames")]
+        private List<string> _spaceNames = new List<string>();
+
+        [JsonConstructor]
+        private SerializableChunkBuilder() { }
 
         public SerializableChunkBuilder(ChunkBuilder chunkBuilder)
         {
@@ -24,6 +30,11 @@ namespace Data.Serialization
             foreach (var enemy in chunkBuilder.Enemies)
             {
                 _enemies.Add(new SerializableEnemy(enemy));
+            }
+
+            foreach (var space in chunkBuilder.Spaces)
+            {
+                _spaceNames.Add(space.Name);
             }
         }
 
@@ -37,6 +48,11 @@ namespace Data.Serialization
             {
                 var enemy = serializedEnemy.ToObject();
                 chunkBuilder.AddEnemy(enemy);
+            }
+
+            foreach (var spaceName in _spaceNames)
+            {
+                chunkBuilder.AddSpace(GameManager.World.SpaceArchitect.GetSpaceByName(spaceName));
             }
 
             return chunkBuilder;
