@@ -20,7 +20,7 @@ namespace Data.Serialization.SerializableCharacterProperties
         public Equipment ToObject()
         {
             var newEquipment = new Equipment();
-            if (_equippedSecondaryWeapon.HasValue) newEquipment.EquipWeapon(_equippedSecondaryWeapon.Value);
+            if (_equippedSecondaryWeapon.HasValue) newEquipment.EquipSecondaryWeapon(_equippedSecondaryWeapon.Value);
             return newEquipment;
         }
     }

@@ -285,7 +285,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         private RoomBuilder AddRoom(IntVector2 corridorEndpoint, IntVector2 direction)
             => new RoomBuilder(_chunkBuilder)
-                  .SetCenter(corridorEndpoint + (direction * ROOM_SIZE))
+                  .SetCenter(corridorEndpoint + (direction * ROOM_SIZE) + (Directions.Up * ROOM_SIZE))
                   .SetSize(ROOM_SIZE)
                   .SetMinimumSize(ROOM_SIZE);
 

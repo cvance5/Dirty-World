@@ -1,5 +1,8 @@
 Audio:
 
 "Crumbling Sound" by Mike Koenig at http://soundbible.com/1886-Crumbling.html : Edited
-
 "Pickaxe mining stone" by Ryan Conway at https://freesound.org/people/ryanconway/sounds/240801/ : Edited
+
+Sprites:
+
+"sparks.png" by Clint Bellanger at https://opengameart.org/content/sparks-fire-ice-blood : Edited

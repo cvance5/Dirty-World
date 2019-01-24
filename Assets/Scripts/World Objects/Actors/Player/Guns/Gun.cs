@@ -17,10 +17,10 @@ namespace WorldObjects.Actors.Player.Guns
                       | LayerMask.GetMask("Enemy")
             });
 
-            OnAwake();
+            OnGunAwake();
         }
 
-        protected virtual void OnAwake() { }
+        protected virtual void OnGunAwake() { }
 
         public abstract void Fire();
         public abstract void AlternateFire();

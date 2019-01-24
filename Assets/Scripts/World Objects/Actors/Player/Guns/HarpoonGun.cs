@@ -41,7 +41,7 @@ namespace WorldObjects.Actors.Player.Guns
         private Vector3 _attachementOffset;
         private WorldObject _attachedObject;
 
-        protected override void OnAwake()
+        protected override void OnGunAwake()
         {
             _renderer = GetComponent<LineRenderer>();
             _renderer.enabled = false;

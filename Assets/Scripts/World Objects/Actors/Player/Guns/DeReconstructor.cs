@@ -24,7 +24,7 @@ namespace WorldObjects.Actors.Player.Guns
         private DeReconstructorMode _mode = DeReconstructorMode.Deconstructing;
         private Coroutine _fireCouroutine = null;
 
-        protected override void OnAwake()
+        protected override void OnGunAwake()
         {
             _targetedObjectsList = GetComponent<TriggerList2D>();
             _targetingCollider = GetComponent<PolygonCollider2D>();

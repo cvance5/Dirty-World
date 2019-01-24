@@ -264,6 +264,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Game Managers
       objectReference: {fileID: 0}
+    - target: {fileID: 1123659121, guid: 98587a08cf2c7184caacf93efea35aef, type: 3}
+      propertyPath: _harpoonGunActor
+      value: 
+      objectReference: {fileID: 5337135781570314101, guid: 5fd8cf36f903c274ebb1bcc36f919dd1, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 98587a08cf2c7184caacf93efea35aef, type: 3}
 --- !u!1001 &1511390522

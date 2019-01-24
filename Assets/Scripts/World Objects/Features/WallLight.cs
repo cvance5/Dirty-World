@@ -8,5 +8,7 @@ namespace WorldObjects.Features
         public override string ObjectName => $"Wall Light at {Position}";
 
         public override FeatureTypes Type { get; } = FeatureTypes.WallLight;
+
+        public void AddPower() => IsPowered = true;
     }
 }

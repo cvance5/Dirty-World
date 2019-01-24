@@ -87,8 +87,8 @@ namespace UI.Screens
         {
             var userEquipment = GameManager.Character.Equipment;
 
-            if (isEquipped) userEquipment.EquipWeapon(weapon);
-            else if (userEquipment.EquippedSecondaryWeapon == weapon) userEquipment.UnequipWeapon();
+            if (isEquipped) userEquipment.EquipSecondaryWeapon(weapon);
+            else if (userEquipment.EquippedSecondaryWeapon == weapon) userEquipment.UnequipSecondaryWeapon();
 
             FillWeaponList();
         }

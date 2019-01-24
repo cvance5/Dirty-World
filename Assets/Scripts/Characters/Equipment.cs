@@ -4,16 +4,13 @@ namespace Characters
 {
     public class Equipment
     {
+        public WeaponTypes EquippedPrimaryWeapon { get; private set; } = WeaponTypes.ElectricalHands;
+
         public WeaponTypes? EquippedSecondaryWeapon { get; private set; }
 
-        public void EquipWeapon(WeaponTypes newWeapon)
-        {
-            EquippedSecondaryWeapon = newWeapon;
-        }
+        public void EquipPrimaryWeapon(WeaponTypes newWeapon) => EquippedPrimaryWeapon = newWeapon;
 
-        public void UnequipWeapon()
-        {
-            EquippedSecondaryWeapon = null;
-        }
+        public void EquipSecondaryWeapon(WeaponTypes newWeapon) => EquippedSecondaryWeapon = newWeapon;
+        public void UnequipSecondaryWeapon() => EquippedSecondaryWeapon = null;
     }
 }

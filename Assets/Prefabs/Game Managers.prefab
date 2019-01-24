@@ -74,6 +74,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerBase: {fileID: 1354266971631064, guid: 43954d760bad97f4a83e77b414d07365, type: 3}
+  _electricalHandsActor: {fileID: 2114714524482497687, guid: 6153fff594e5ac24888ccfd5a4a64afb, type: 3}
+  _harpoonGunActor: {fileID: 5337135781570314101, guid: 5fd8cf36f903c274ebb1bcc36f919dd1, type: 3}
   _seismicBombLauncherActor: {fileID: 1484786030199914, guid: 7d52824424f7b0246a9241d749a5d3d2, type: 3}
   _drillDroneLauncherActor: {fileID: 1213305838862398, guid: 636ef69743fa68d429bc0164503c7958, type: 3}
   _deReconstructorActor: {fileID: 1834633732887634, guid: 8770f2dc5790a0f4d95f00e98b314c6e, type: 3}

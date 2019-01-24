@@ -1,5 +1,5 @@
-﻿using WorldObjects.Actors.Player.Guns;
-using UnityEngine;
+﻿using UnityEngine;
+using WorldObjects.Actors.Player.Guns;
 
 namespace WorldObjects.Actors.Player
 {
@@ -54,6 +54,17 @@ namespace WorldObjects.Actors.Player
                     _weaponMode = WeaponMode.Primary;
                 }
             }
+        }
+
+        public void EquipPrimary(Gun newPrimary)
+        {
+            if (_primary != null)
+            {
+                Destroy(_primary.gameObject);
+            }
+
+            _primary = newPrimary;
+            _primary.transform.SetParent(transform);
         }
 
         public void EquipSecondary(Gun newSecondary)
