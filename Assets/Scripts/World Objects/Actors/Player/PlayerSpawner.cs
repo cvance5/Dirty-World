@@ -35,13 +35,9 @@ namespace WorldObjects.Actors.Player
 
             switch (equipment.EquippedPrimaryWeapon)
             {
-                case Items.Weapons.WeaponTypes.ElectricalHands:
-                    var electricalHands = Instantiate(Instance._electricalHandsActor);
-                    primaryWeapon = electricalHands.GetComponent<ElectricalHands>();
-                    break;
-
                 case Items.Weapons.WeaponTypes.HarpoonGun:
                     var harpoonGun = Instantiate(Instance._harpoonGunActor);
+                    harpoonGun.GetComponent<HarpoonGun>().Initialize(player.GetComponent<PlayerMovement>());
                     primaryWeapon = harpoonGun.GetComponent<HarpoonGun>();
                     break;
 
@@ -74,13 +70,19 @@ namespace WorldObjects.Actors.Player
                 default: throw new System.ArgumentException($"Invalid Secondary Weapon of type {equipment.EquippedSecondaryWeapon}.");
             }
 
+            var electricalHands = Instantiate(Instance._electricalHandsActor);
+            var hands = electricalHands.GetComponent<ElectricalHands>();
+
             var playerWeapons = player.GetComponent<PlayerWeapons>();
             playerWeapons.EquipPrimary(primaryWeapon);
             playerWeapons.EquipSecondary(secondaryWeapon);
+            playerWeapons.EquipHands(hands);
 
-            var playerData = player.GetComponent<PlayerHealth>();
+            var playerHealth = player.GetComponent<PlayerHealth>();
+            playerHealth.SetHands(hands);
+
             var healthOverlay = UIManager.Get<HealthOverlay>();
-            healthOverlay.AssignHealth(playerData.Health);
+            healthOverlay.AssignHealth(playerHealth.Health);
 
             return player;
         }

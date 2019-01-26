@@ -91,9 +91,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5026b787fc53f734499fe4c33b6e4e86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxHealth: 100
+  _maxHealthSegments: 4
+  _maxHealthPerSegment: 25
   _damageInvulnerabilityDuration: 1
   _damageResistance: 10
+  _hands: {fileID: 0}
 --- !u!114 &114955982425071790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,7 +122,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _primary: {fileID: 0}
   _secondary: {fileID: 0}
-  _data: {fileID: 114237843733034080}
+  _hands: {fileID: 0}
+  _health: {fileID: 114237843733034080}
 --- !u!114 &2087703057148338352
 MonoBehaviour:
   m_ObjectHideFlags: 0

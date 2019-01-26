@@ -7,10 +7,8 @@ namespace WorldObjects.Actors.Player.Guns
 {
     public class ElectricalHands : Gun
     {
-        public static SmartEvent OnConnectionFormed { get; set; } = new SmartEvent();
-        public static SmartEvent OnConnectionBroken { get; set; } = new SmartEvent();
-        public static SmartEvent OnPowerGranted { get; set; } = new SmartEvent();
-        public static SmartEvent OnPowerTaken { get; set; } = new SmartEvent();
+        public SmartEvent OnPowerLost { get; set; } = new SmartEvent();
+        public SmartEvent OnPowerGained { get; set; } = new SmartEvent();
 
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [SerializeField]
@@ -162,6 +160,7 @@ namespace WorldObjects.Actors.Player.Guns
             if (time > _chargeTime)
             {
                 powerable.AddPower();
+                OnPowerLost.Raise();
             }
 
             StartCooldown();
@@ -192,6 +191,7 @@ namespace WorldObjects.Actors.Player.Guns
             if (time > _drainTime)
             {
                 powerable.RemovePower();
+                OnPowerGained.Raise();
             }
 
             StartCooldown();

@@ -7,16 +7,15 @@ namespace WorldObjects.Actors.Player
     {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly for Unity Serialization
         [SerializeField]
-        private Gun _primary = null;
-        [SerializeField]
-        private Gun _secondary = null;
-        [SerializeField]
-        private PlayerHealth _data = null;
+        private PlayerHealth _health = null;
 #pragma warning restore IDE0044 // Add readonly modifier
+        private Gun _primary = null;
+        private Gun _secondary = null;
+        private ElectricalHands _hands = null;
 
         private WeaponMode _weaponMode = WeaponMode.Primary;
 
-        private void Awake() => _data.OnActorDeath += OnPlayerDeath;
+        private void Awake() => _health.OnActorDeath += OnPlayerDeath;
 
         private void Update()
         {
@@ -42,6 +41,17 @@ namespace WorldObjects.Actors.Player
                     _secondary.Fire();
                 }
             }
+            else if (_weaponMode == WeaponMode.Hands)
+            {
+                if (Input.GetButtonDown("Alternate Fire"))
+                {
+                    _hands.AlternateFire();
+                }
+                else if (Input.GetButtonDown("Fire"))
+                {
+                    _hands.Fire();
+                }
+            }
 
             if (Input.GetButtonDown("Switch Weapon"))
             {
@@ -49,9 +59,13 @@ namespace WorldObjects.Actors.Player
                 {
                     _weaponMode = WeaponMode.Secondary;
                 }
-                else if (_weaponMode == WeaponMode.Secondary)
+                else if (_weaponMode == WeaponMode.Hands)
                 {
                     _weaponMode = WeaponMode.Primary;
+                }
+                else
+                {
+                    _weaponMode = WeaponMode.Hands;
                 }
             }
         }
@@ -83,6 +97,17 @@ namespace WorldObjects.Actors.Player
             }
         }
 
+        public void EquipHands(ElectricalHands hands)
+        {
+            if(_hands != null)
+            {
+                Destroy(_hands.gameObject);
+            }
+
+            _hands = hands;
+            _hands.transform.SetParent(transform);
+        }
+
         private void OnPlayerDeath(ActorHealth playerData)
         {
             playerData.OnActorDeath -= OnPlayerDeath;
@@ -92,7 +117,8 @@ namespace WorldObjects.Actors.Player
         private enum WeaponMode
         {
             Primary,
-            Secondary
+            Secondary,
+            Hands
         }
     }
 }

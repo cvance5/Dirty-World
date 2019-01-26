@@ -8,8 +8,10 @@ namespace WorldObjects.Actors
         public SmartEvent OnHealthChanged { get; set; } = new SmartEvent();
 
         public bool IsAlive => _healthSegments.Count != 0;
+        public bool IsMaxSegments => _healthSegments.Count == _maxHealthSegments;
 
         private Stack<HealthSegment> _healthSegments = new Stack<HealthSegment>();
+        private HealthSegment _nextSegment => IsAlive ? _healthSegments.Peek() : null;
 
         private readonly int _maxHealthPerSegment;
         private readonly int _maxHealthSegments;
@@ -32,9 +34,9 @@ namespace WorldObjects.Actors
         {
             if (_healthSegments.Count == 0) return;
 
-            _healthSegments.Peek().ChangeHealth(-amount);
+            _nextSegment.ChangeHealth(-amount);
 
-            if(_healthSegments.Peek().Health == 0)
+            if (_nextSegment.Health == 0)
             {
                 _healthSegments.Pop();
             }
@@ -46,14 +48,39 @@ namespace WorldObjects.Actors
         {
             if (_healthSegments.Count == 0) return;
 
-            amount = _healthSegments.Peek().ChangeHealth(amount);
+            amount = _nextSegment.ChangeHealth(amount);
 
-            while (amount > 0 && _healthSegments.Count < _maxHealthSegments)
+            while (amount > 0 && !IsMaxSegments)
             {
                 var startingHealth = Mathf.Min(amount, _maxHealthPerSegment);
                 _healthSegments.Push(new HealthSegment(_maxHealthPerSegment, startingHealth));
                 amount -= _maxHealthPerSegment;
             }
+
+            OnHealthChanged.Raise();
+        }
+
+        public void FillSegment()
+        {
+            if (_healthSegments.Count == 0) return;
+
+            if (_nextSegment.CurrentDamage != 0)
+            {
+                _nextSegment.ChangeHealth(_nextSegment.CurrentDamage);
+            }
+            else if (!IsMaxSegments)
+            {
+                _healthSegments.Push(new HealthSegment(_maxHealthPerSegment));
+            }
+
+            OnHealthChanged.Raise();
+        }
+
+        public void EmptySegment()
+        {
+            if (_healthSegments.Count == 0) return;
+
+            _healthSegments.Pop();
 
             OnHealthChanged.Raise();
         }

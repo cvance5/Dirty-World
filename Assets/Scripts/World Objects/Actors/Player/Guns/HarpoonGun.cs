@@ -31,11 +31,9 @@ namespace WorldObjects.Actors.Player.Guns
 
         [SerializeField]
         private float _climbSpeed = 0;
-
-        [SerializeField]
-        private PlayerMovement _playerMovement = null;
 #pragma warning restore IDE0044 // Add readonly modifier
 
+        private PlayerMovement _playerMovement;
         private LineRenderer _renderer;
         private DistanceJoint2D _joint;
         private Vector3 _attachementOffset;
@@ -45,6 +43,11 @@ namespace WorldObjects.Actors.Player.Guns
         {
             _renderer = GetComponent<LineRenderer>();
             _renderer.enabled = false;
+        }
+
+        public void Initialize(PlayerMovement playerMovement)
+        {
+            _playerMovement = playerMovement;
 
             _joint = _playerMovement.gameObject.AddComponent<DistanceJoint2D>();
             _joint.maxDistanceOnly = true;
