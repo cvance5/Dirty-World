@@ -7,6 +7,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class CavernousModifier : SpaceModifier
     {
+        public override ModifierTypes Type => ModifierTypes.Cavernous;
+
         private Space _modifiedSpace;
 
         private readonly float _stalagDensity;

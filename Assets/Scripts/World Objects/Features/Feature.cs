@@ -1,5 +1,6 @@
 ﻿using Utilities.Debug;
 using WorldObjects.Blocks;
+using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.FeatureGeneration;
 
 namespace WorldObjects.Features
@@ -10,13 +11,21 @@ namespace WorldObjects.Features
 
         public abstract FeatureTypes Type { get; }
 
-        private Block _attachedBlock;
+        protected Block _attachedBlock;
+        protected Space _containingSpace;
+
+        public virtual void Initialize() { }
 
         public void Assign(Block block)
         {
             _attachedBlock = block;
             _attachedBlock.OnBlockCrumbled += HandleAttachedBlockRemoval;
             _attachedBlock.OnBlockDestroyed += HandleAttachedBlockRemoval;
+        }
+
+        public void Assign(Space space)
+        {
+            _containingSpace = space;
         }
 
         private void HandleAttachedBlockRemoval(Block attachedBlock)

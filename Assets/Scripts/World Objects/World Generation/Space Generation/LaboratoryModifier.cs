@@ -5,6 +5,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class LaboratoryModifier : SpaceModifier
     {
+        public override ModifierTypes Type => ModifierTypes.Laboratory;
+
         public LaboratoryModifier(ChunkBuilder chunkBuilder, SpaceBuilder spaceBuilder)
             : base(chunkBuilder, spaceBuilder) { }
 
@@ -13,6 +15,10 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             if (target is Corridor)
             {
                 ModifyCorridor(target as Corridor);
+            }
+            else if (target is Shaft)
+            {
+                ModifyShaft(target as Shaft);
             }
         }
 
@@ -27,6 +33,14 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     corridor.AddFeature(new IntVector2(lightX, lightY), FeatureTypes.WallLight);
                 }
             }
+        }
+
+        private void ModifyShaft(Shaft shaft)
+        {
+            var randomElevatorHeight = UnityEngine.Random.Range(0, shaft.Height - 6);
+            var randomElevatorPosition = shaft.BottomLeftCorner + (Directions.Up * randomElevatorHeight);
+
+            shaft.AddFeature(randomElevatorPosition, FeatureTypes.Elevator);
         }
     }
 }

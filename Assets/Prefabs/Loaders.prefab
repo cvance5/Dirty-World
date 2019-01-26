@@ -108,9 +108,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _features:
-    keys: 01000000
+    keys: 0100000002000000
     values:
     - {fileID: 5870864609785946320, guid: 45549ed626795d940bdac66dce12e313, type: 3}
+    - {fileID: 9178543611424105197, guid: f4318c6c2df296d4b981940d38c95b87, type: 3}
 --- !u!114 &2092403610585268828
 MonoBehaviour:
   m_ObjectHideFlags: 0

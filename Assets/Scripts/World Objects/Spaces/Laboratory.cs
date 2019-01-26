@@ -74,6 +74,24 @@ namespace WorldObjects.Spaces
             return false;
         }
 
+        public override Space GetContainingSpace(IntVector2 position)
+        {
+            var containingRegions = Regions.FindAll(region => region.Contains(position));
+
+            foreach (var containingRegion in containingRegions)
+            {
+                foreach (var space in containingRegion.Spaces)
+                {
+                    if (space.Contains(position))
+                    {
+                        return space;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public override FeatureTypes GetFeatureType(IntVector2 position)
         {
             var containingRegions = Regions.FindAll(region => region.Contains(position));

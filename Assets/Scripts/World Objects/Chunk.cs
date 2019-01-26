@@ -59,12 +59,6 @@ namespace WorldObjects
             feature.transform.SetParent(transform, true);
 
             feature.OnFeaturedDestroyed += OnFeatureDestroyed;
-
-            if (BlockMap.TryGetValue(feature.Position, out var block))
-            {
-                feature.Assign(block);
-            }
-
             OnChunkChanged.Raise(this);
         }
 

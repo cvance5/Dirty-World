@@ -89,6 +89,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             foreach (var modifierApplied in _modifiersApplied)
             {
                 modifierApplied.Modify(rawSpace);
+                rawSpace.AddModifier(modifierApplied.Type);
             }
 
             return rawSpace;

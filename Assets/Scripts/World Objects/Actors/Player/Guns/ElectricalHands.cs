@@ -58,7 +58,7 @@ namespace WorldObjects.Actors.Player.Guns
 
                     var powerable = hit.collider.GetComponent<IPowerable>();
 
-                    if (powerable != null && !powerable.IsPowered)
+                    if (powerable != null && powerable.CanBePowered)
                     {
                         StartCoroutine(ConnectTo(hit, powerable));
                     }
@@ -87,7 +87,7 @@ namespace WorldObjects.Actors.Player.Guns
                     var hit = _hits[0];
 
                     var powerable = hit.collider.GetComponent<IPowerable>();
-                    if (powerable != null && powerable.IsPowered)
+                    if (powerable != null && powerable.HasPower)
                     {
                         StartCoroutine(DrainFrom(hit, powerable));
                     }
@@ -137,7 +137,7 @@ namespace WorldObjects.Actors.Player.Guns
 
             while (time < _chargeTime &&
                    Vector2.Distance(hit.point, transform.position) < _range &&
-                   !powerable.IsPowered &&
+                   powerable.CanBePowered &&
                    Input.GetButton("Fire"))
             {
                 if (time >= numPrimary * _flashDuration)
@@ -177,7 +177,7 @@ namespace WorldObjects.Actors.Player.Guns
 
             while (time < _drainTime &&
                    Vector2.Distance(hit.point, transform.position) < _range &&
-                   powerable.IsPowered &&
+                   powerable.HasPower &&
                    Input.GetButton("Alternate Fire"))
             {
 

@@ -3,6 +3,7 @@
     public enum FeatureTypes
     {
         None,
-        WallLight
+        WallLight,
+        Elevator
     }
 }

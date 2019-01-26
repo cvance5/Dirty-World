@@ -31,6 +31,7 @@ namespace WorldObjects.Spaces
 
         public void AddEnemySpawns(List<EnemySpawn> enemySpawns) => _enemySpawns.AddRange(enemySpawns);
         public void AddHazardBuilders(List<HazardBuilder> hazardBuilders) => _hazardBuilders.AddRange(hazardBuilders);
+        internal void AddModifier(ModifierTypes modifier) => _modifiers.Add(modifier);
         public void AddModifiers(List<ModifierTypes> modifiers) => _modifiers.AddRange(modifiers);
 
         public virtual List<EnemySpawn> GetEnemySpawnsInChunk(Chunk chunk)

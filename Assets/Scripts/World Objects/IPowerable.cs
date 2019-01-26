@@ -2,7 +2,8 @@
 {
     public interface IPowerable
     {
-        bool IsPowered { get; }
+        bool CanBePowered { get; }
+        bool HasPower { get; }
 
         void AddPower();
         void RemovePower();

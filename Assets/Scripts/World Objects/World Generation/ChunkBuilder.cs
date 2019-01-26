@@ -6,6 +6,7 @@ using Utilities.Debug;
 using WorldObjects.Actors.Enemies;
 using WorldObjects.Blocks;
 using WorldObjects.Construction;
+using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.EnemyGeneration;
 using WorldObjects.WorldGeneration.FeatureGeneration;
 
@@ -133,7 +134,7 @@ namespace WorldObjects.WorldGeneration
             _spaces.AddRange(spacesToAdd);
 
             OnChunkBuilderChanged.Raise(this);
-            
+
             return this;
         }
 
@@ -175,7 +176,7 @@ namespace WorldObjects.WorldGeneration
             yield return BuildBlocks(chunk, yieldTimer);
             yield return BuildHazardsAndEnemies(chunk, yieldTimer);
 
-            foreach(var space in _spaces)
+            foreach (var space in _spaces)
             {
                 chunk.Register(space.Name);
             }
@@ -190,30 +191,49 @@ namespace WorldObjects.WorldGeneration
             {
                 var position = builder.Position;
 
-                var block = BlockTypes.None;
-                var feature = FeatureTypes.None;
+                var blockToBuild = BlockTypes.None;
+                var featureToBuild = FeatureTypes.None;
 
                 var containingSpace = _spaces.Find(space => space.Contains(position));
+                if(containingSpace is ComplexSpace)
+                {
+                    var complexSpace = containingSpace as ComplexSpace;
+                    containingSpace = complexSpace.GetContainingSpace(position) ?? complexSpace;
+                }
 
                 if (containingSpace != null)
                 {
-                    block = containingSpace.GetBlockType(position);
-                    feature = containingSpace.GetFeatureType(position);
+                    blockToBuild = containingSpace.GetBlockType(position);
+                    featureToBuild = containingSpace.GetFeatureType(position);
                 }
                 else
                 {
                     if (builder.IsFill) builder.SetType(FillBlock);
-                    block = builder.Build();
+                    blockToBuild = builder.Build();
                 }
 
-                if (block != BlockTypes.None)
+                Block block = null;
+                if (blockToBuild != BlockTypes.None)
                 {
-                    chunk.Register(BlockLoader.CreateBlock(block, position));
+                    block = BlockLoader.CreateBlock(blockToBuild, position);
+                    chunk.Register(block);
                 }
 
-                if (feature != FeatureTypes.None)
+                if (featureToBuild != FeatureTypes.None)
                 {
-                    chunk.Register(FeatureLoader.CreateFeature(feature, position));
+                    var feature = FeatureLoader.CreateFeature(featureToBuild, position);
+                    chunk.Register(feature);
+
+                    if (block != null)
+                    {
+                        feature.Assign(block);
+                    }
+                    if (containingSpace != null)
+                    {
+                        feature.Assign(containingSpace);
+                    }
+
+                    feature.Initialize();
                 }
 
                 if (timer.CheckIncrement(Time.realtimeSinceStartup))
