@@ -14,7 +14,7 @@ namespace WorldObjects.WorldGeneration.EnemyGeneration
         private GameObject _maggot = null;
 #pragma warning restore IDE0044 // Add readonly modifier
 
-        public static EnemyData SpawnEnemy(EnemyTypes type, IntVector2 worldPosition)
+        public static EnemyHealth SpawnEnemy(EnemyTypes type, IntVector2 worldPosition)
         {
             GameObject enemyObject;
 
@@ -27,7 +27,7 @@ namespace WorldObjects.WorldGeneration.EnemyGeneration
             enemyObject = Instantiate(enemyObject);
             enemyObject.transform.position = worldPosition;
 
-            var enemyData = enemyObject.GetComponent<EnemyData>();
+            var enemyData = enemyObject.GetComponent<EnemyHealth>();
 
             _log.ErrorIfNull(enemyData, $"Enemy of type {type} has not been given an 'enemy' component.");
 
@@ -40,12 +40,12 @@ namespace WorldObjects.WorldGeneration.EnemyGeneration
         private static readonly Dictionary<EnemyTypes, Type> _enumToType = new Dictionary<EnemyTypes, Type>()
         {
             { EnemyTypes.None, null },
-            { EnemyTypes.Maggot, typeof(MaggotData) }
+            { EnemyTypes.Maggot, typeof(MaggotHealth) }
         };
 
         private static readonly Dictionary<Type, EnemyTypes> _typeToEnum = new Dictionary<Type, EnemyTypes>()
         {
-            { typeof(MaggotData), EnemyTypes.Maggot }
+            { typeof(MaggotHealth), EnemyTypes.Maggot }
         };
 
         private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("EnemySpawner");

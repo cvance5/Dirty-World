@@ -21,7 +21,7 @@ namespace WorldObjects.Actors.Player
         [SerializeField]
         private PlayerMovement _movement = null;
         [SerializeField]
-        private PlayerData _data = null;
+        private PlayerHealth _data = null;
         [SerializeField]
         private Rigidbody2D _rigidbody = null;
 #pragma warning restore IDE0044 // Add readonly modifier
@@ -61,7 +61,7 @@ namespace WorldObjects.Actors.Player
             Camera.main.orthographicSize = actualZoom;
         }
 
-        private void OnPlayerDeath(ActorData playerData)
+        private void OnPlayerDeath(ActorHealth playerData)
         {
             playerData.OnActorDeath -= OnPlayerDeath;
             Destroy(this);

@@ -15,7 +15,7 @@ namespace WorldObjects.Actors.Player
         private float _jumpForce = 10f;
 
         [SerializeField]
-        private PlayerData _data = null;
+        private PlayerHealth _data = null;
         [SerializeField]
         private ActorFeet _feet = null;
 #pragma warning restore IDE0044 // Add readonly modifier
@@ -89,7 +89,7 @@ namespace WorldObjects.Actors.Player
 
         private void OnAirborne() => _state = ActorFeetState.Airborne;
 
-        private void OnPlayerDeath(ActorData playerData)
+        private void OnPlayerDeath(ActorHealth playerData)
         {
             playerData.OnActorDeath -= OnPlayerDeath;
             Destroy(_feet);

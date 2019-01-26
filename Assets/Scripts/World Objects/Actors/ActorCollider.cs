@@ -5,7 +5,7 @@ using WorldObjects.Hazards;
 
 namespace WorldObjects.Actors
 {
-    [RequireComponent(typeof(ActorData))]
+    [RequireComponent(typeof(ActorHealth))]
     public abstract class ActorCollider : MonoBehaviour
     {
         public SmartEvent<int> OnDamageTaken = new SmartEvent<int>();

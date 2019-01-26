@@ -11,7 +11,7 @@ namespace WorldObjects.Actors.Player
         [SerializeField]
         private Gun _secondary = null;
         [SerializeField]
-        private PlayerData _data = null;
+        private PlayerHealth _data = null;
 #pragma warning restore IDE0044 // Add readonly modifier
 
         private WeaponMode _weaponMode = WeaponMode.Primary;
@@ -83,7 +83,7 @@ namespace WorldObjects.Actors.Player
             }
         }
 
-        private void OnPlayerDeath(ActorData playerData)
+        private void OnPlayerDeath(ActorHealth playerData)
         {
             playerData.OnActorDeath -= OnPlayerDeath;
             Destroy(this);

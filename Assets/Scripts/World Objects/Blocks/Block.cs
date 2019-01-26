@@ -235,7 +235,7 @@ namespace WorldObjects.Blocks
                         break;
                     case Tags.Enemy:
                     case Tags.Player:
-                        HandleActor(other.GetComponent<ActorData>(), unabsorbedImpactMagnitude);
+                        HandleActor(other.GetComponent<ActorHealth>(), unabsorbedImpactMagnitude);
                         break;
                 }
 
@@ -277,7 +277,7 @@ namespace WorldObjects.Blocks
             }
         }
 
-        protected void HandleActor(ActorData actorData, int impactMagnitude) => actorData.ApplyDamage(impactMagnitude);
+        protected void HandleActor(ActorHealth actorData, int impactMagnitude) => actorData.ApplyDamage(impactMagnitude);
 
         protected override void OnWorldObjectDestroy() => DropItem();
 

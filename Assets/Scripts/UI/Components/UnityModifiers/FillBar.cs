@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.Components.UnityModifiers
@@ -26,5 +27,7 @@ namespace UI.Components.UnityModifiers
             var distance = value - _minimum;
             _fillImage.fillAmount = value / _range;
         }
+
+        internal void UpdateValue(object newHealth) => throw new NotImplementedException();
     }
 }

@@ -29,8 +29,8 @@ namespace WorldObjects.WorldGeneration
         private readonly List<Space> _spaces = new List<Space>();
         public List<Space> Spaces => new List<Space>(_spaces);
 
-        private readonly List<EnemyData> _enemies = new List<EnemyData>();
-        public List<EnemyData> Enemies = new List<EnemyData>();
+        private readonly List<EnemyHealth> _enemies = new List<EnemyHealth>();
+        public List<EnemyHealth> Enemies = new List<EnemyHealth>();
 
         private readonly List<BlockBuilder> _blockBuilders = new List<BlockBuilder>();
         private readonly Dictionary<IntVector2, BlockBuilder> _blockMap
@@ -137,7 +137,7 @@ namespace WorldObjects.WorldGeneration
             return this;
         }
 
-        public ChunkBuilder AddEnemy(EnemyData enemy)
+        public ChunkBuilder AddEnemy(EnemyHealth enemy)
         {
             _enemies.Add(enemy);
 

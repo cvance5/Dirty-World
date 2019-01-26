@@ -78,9 +78,9 @@ namespace WorldObjects.Actors.Player
             playerWeapons.EquipPrimary(primaryWeapon);
             playerWeapons.EquipSecondary(secondaryWeapon);
 
-            var playerData = player.GetComponent<PlayerData>();
+            var playerData = player.GetComponent<PlayerHealth>();
             var healthOverlay = UIManager.Get<HealthOverlay>();
-            healthOverlay.AssignPlayer(playerData);
+            healthOverlay.AssignHealth(playerData.Health);
 
             return player;
         }

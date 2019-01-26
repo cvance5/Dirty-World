@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Effects.Actors
 {
-    [RequireComponent(typeof(ActorData), typeof(SpriteRenderer))]
+    [RequireComponent(typeof(ActorHealth), typeof(SpriteRenderer))]
     public class OnActorDamagedFlash : MonoBehaviour
     {
 #pragma warning disable IDE0044 // Add readonly modifier, Unity serialization requires it not be readonly
@@ -17,13 +17,13 @@ namespace Effects.Actors
 
         private void Awake()
         {
-            var actor = GetComponent<ActorData>();
+            var actor = GetComponent<ActorHealth>();
             actor.OnActorDamaged += OnActorDamaged;
 
             _sprite = GetComponent<SpriteRenderer>();
         }
 
-        private void OnActorDamaged(ActorData actor)
+        private void OnActorDamaged(ActorHealth actor)
         {
             if(_flashDamageCoroutine == null)
             {

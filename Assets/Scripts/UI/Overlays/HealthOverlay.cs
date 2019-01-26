@@ -1,6 +1,6 @@
 ﻿using UI.Components.UnityModifiers;
 using UnityEngine;
-using WorldObjects.Actors.Player;
+using WorldObjects.Actors;
 
 namespace UI.Overlays
 {
@@ -11,17 +11,19 @@ namespace UI.Overlays
         private FillBar _healthFill = null;
 #pragma warning restore IDE0044 // Add readonly modifier
 
-        private PlayerData _data;
+        private Health _health;
 
-        public void AssignPlayer(PlayerData data)
+        public void AssignHealth(Health health)
         {
-            _data = data;
-            _data.OnHealthChanged += OnHealthChanged;
+            _health = health;
+            _health.OnHealthChanged += OnHealthChanged;
 
-            _healthFill.SetRange(0, _data.MaxHealth);
+            _healthFill.SetRange(0, _health.MaxHealth);
         }
 
-        private void OnHealthChanged(int newHealth) => _healthFill.UpdateValue(newHealth);
-
+        private void OnHealthChanged()
+        {
+            _healthFill.UpdateValue(_health.CurrentHealth);
+        }
     }
 }

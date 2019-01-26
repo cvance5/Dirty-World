@@ -26,7 +26,7 @@ public class GameManager : Singleton<GameManager>
     public static User User { get; private set; }
     public static Character Character { get; private set; }
 
-    private PlayerData _player;
+    private PlayerHealth _player;
 
     private void Awake()
     {
@@ -119,7 +119,7 @@ public class GameManager : Singleton<GameManager>
         }
 
         var playerObj = PlayerSpawner.SpawnPlayer(Character.Equipment);
-        _player = playerObj.GetComponent<PlayerData>();
+        _player = playerObj.GetComponent<PlayerHealth>();
         _player.AssignCharacter(Character);
 
         PositionTracker.Subscribe(_player, OnPlayerPositionUpdate);
@@ -141,7 +141,7 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    private void OnPlayerDeath(ActorData playerData)
+    private void OnPlayerDeath(ActorHealth playerData)
     {
         var elapsedPlayTime = Timekeeper.EndStopwatch("PlaySession");
         Character.Metadata.AddTimePlayed(elapsedPlayTime);

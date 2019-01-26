@@ -20,7 +20,7 @@ namespace WorldObjects
         public IntVector2 TopRightCorner { get; protected set; }
 
         public List<Hazard> Hazards { get; private set; } = new List<Hazard>();
-        public List<EnemyData> Enemies { get; private set; } = new List<EnemyData>();
+        public List<EnemyHealth> Enemies { get; private set; } = new List<EnemyHealth>();
         public List<ItemActor> Items { get; private set; } = new List<ItemActor>();
 
         public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
@@ -87,7 +87,7 @@ namespace WorldObjects
             }
         }
 
-        public void Register(EnemyData enemy)
+        public void Register(EnemyHealth enemy)
         {
             Enemies.Add(enemy);
 
@@ -204,9 +204,9 @@ namespace WorldObjects
             OnChunkChanged.Raise(this);
         }
 
-        private void Unregister(ActorData enemy)
+        private void Unregister(ActorHealth enemy)
         {
-            Enemies.Remove(enemy as EnemyData);
+            Enemies.Remove(enemy as EnemyHealth);
 
             PositionTracker.Unsubscribe(enemy, OnEnemyPositionUpdate);
 
@@ -215,7 +215,7 @@ namespace WorldObjects
 
         private void OnEnemyPositionUpdate(ITrackable trackedEnemy, PositionData oldPosition, PositionData newPosition)
         {
-            var enemy = trackedEnemy as EnemyData;
+            var enemy = trackedEnemy as EnemyHealth;
 
             if (newPosition.Chunk != this)
             {

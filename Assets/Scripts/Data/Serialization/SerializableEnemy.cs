@@ -5,7 +5,7 @@ using WorldObjects.WorldGeneration.EnemyGeneration;
 namespace Data.Serialization
 {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class SerializableEnemy : ISerializable<EnemyData>
+    public class SerializableEnemy : ISerializable<EnemyHealth>
     {
         [JsonProperty("type")]
         private readonly EnemyTypes _type;
@@ -15,13 +15,13 @@ namespace Data.Serialization
         [JsonConstructor]
         public SerializableEnemy() { }
 
-        public SerializableEnemy(EnemyData enemy)
+        public SerializableEnemy(EnemyHealth enemy)
         {
             _type = EnemySpawner.ConvertToEnum(enemy.GetType());
             _position = enemy.Position;
         }
 
-        public EnemyData ToObject()
+        public EnemyHealth ToObject()
         {
             var enemyData = EnemySpawner.SpawnEnemy(_type, _position);
             return enemyData;
