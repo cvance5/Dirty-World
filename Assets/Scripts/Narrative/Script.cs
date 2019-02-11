@@ -9,8 +9,15 @@ namespace Narrative
     {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly if we want Unity Serialization
         [SerializeField]
+        private bool _skipScriptPlayback = false;
+
+        [SerializeField]
         private TextAsset _source = null;
 #pragma warning restore IDE0044 // Add readonly modifier
+
+        private static readonly List<IScriptedPlaybackListener> _scriptListeners = new List<IScriptedPlaybackListener>();
+
+        private static int _playbackSpeed = 1;
 
         private static Dictionary<ScriptKey, string> _scriptMap;
 
@@ -25,6 +32,14 @@ namespace Narrative
 
                 _scriptMap = JsonConvert.DeserializeObject<Dictionary<ScriptKey, string>>(_source.text);
             }
+
+#if UNITY_EDITOR
+            if (_skipScriptPlayback)
+            {
+                _playbackSpeed = 1000;
+                UpdatePlaybackSpeed();
+            }
+#endif  
         }
 
         public static string Read(ScriptKey key)
@@ -36,6 +51,33 @@ namespace Narrative
             }
 
             return value;
+        }
+
+        public static void Subscribe(IScriptedPlaybackListener listener)
+        {
+            if (_scriptListeners.Contains(listener))
+            {
+                throw new System.InvalidOperationException($"{listener} is already subscribed to this script.");
+            }
+            else _scriptListeners.Add(listener);
+
+            listener.SetPlaybackSpeed(_playbackSpeed);
+        }
+
+        public static void Unsubscribe(IScriptedPlaybackListener listener)
+        {
+            if (!_scriptListeners.Remove(listener))
+            {
+                throw new System.InvalidOperationException($"{listener} is not subscribed to this script and can't be removed.");
+            }
+        }
+
+        private static void UpdatePlaybackSpeed()
+        {
+            foreach (var listener in _scriptListeners)
+            {
+                listener.SetPlaybackSpeed(_playbackSpeed);
+            }
         }
 
         private const string NO_KEY_FOUND = "No key found.";

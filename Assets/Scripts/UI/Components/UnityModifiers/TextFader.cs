@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Narrative;
+using System.Collections;
 using System.Text;
 using UI.Effects;
 using UnityEngine;
@@ -8,7 +9,7 @@ using Utilities.Debug;
 namespace UI.Components.UnityModifiers
 {
     [RequireComponent(typeof(Text))]
-    public class TextFader : UIComponent
+    public class TextFader : UIComponent, IScriptedPlaybackListener
     {
         private Text _textBox;
 
@@ -16,10 +17,13 @@ namespace UI.Components.UnityModifiers
 
         private float _timestepSeconds;
         private int _numCharsAtATime;
+        private float _playbackSpeed;
 
         private CallbackEffect _fadeEffect;
 
         private void Awake() => _textBox = GetComponent<Text>();
+
+        private void OnEnable() => Script.Subscribe(this);
 
         public void AssignText(string textToDisplay) => _textToDisplay = textToDisplay;
 
@@ -37,6 +41,8 @@ namespace UI.Components.UnityModifiers
             _fadeEffect = new CallbackEffect(() => StartCoroutine(FadeInUpdate()));
             return _fadeEffect;
         }
+
+        public void SetPlaybackSpeed(int playbackSpeed) => _playbackSpeed = playbackSpeed;
 
         private IEnumerator FadeInUpdate()
         {
@@ -80,7 +86,7 @@ namespace UI.Components.UnityModifiers
                 builder.Clear();
 
                 yield return null;
-                time += Time.deltaTime;
+                time += (Time.deltaTime * _playbackSpeed);
             }
 
             CompleteFade();
@@ -105,6 +111,8 @@ namespace UI.Components.UnityModifiers
             var hexRepresentation = alpha.ToString("X2");
             return $"<color=#FFFFFF{hexRepresentation}>";
         }
+
+        private void OnDisable() => Script.Unsubscribe(this);
 
         private string GetAfterFaderTag() => "</color>";
 
