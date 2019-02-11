@@ -40,15 +40,20 @@ namespace WorldObjects
 
         private void OnPositionUpdate(ITrackable trackable, PositionData oldPosition, PositionData newPosition)
         {
+            if(newPosition.Position != null)
+            {
+
+            }
+
             if (newPosition.Chunk != null)
             {
-                var activeChunkList = DetermineChunkActivationDepth(newPosition.Chunk.Position);
+                var activeChunkList = DetermineActiveChunks(newPosition.Chunk.Position);
                 ChunkArchitect.SetActiveChunks(activeChunkList);
                 SpaceArchitect.SetActiveSpaces(ChunkArchitect.ActiveChunks);
             }
         }
 
-        private List<IntVector2> DetermineChunkActivationDepth(IntVector2 currentChunkPosition)
+        private List<IntVector2> DetermineActiveChunks(IntVector2 currentChunkPosition)
         {
             var activeChunks = new List<IntVector2>();
 

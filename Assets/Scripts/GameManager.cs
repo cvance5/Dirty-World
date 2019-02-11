@@ -99,8 +99,6 @@ public class GameManager : Singleton<GameManager>
         {
             _log.Info("Creating new save...");
             chunkArchitect.ActivateChunk(IntVector2.Zero);
-            GameSaves.SaveDirty();
-
             User.RegisterGame("Default");
             UserSaves.SaveUser();
         }
@@ -202,6 +200,6 @@ public class GameManager : Singleton<GameManager>
 
         yield return null;
     }
-
+    
     private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("GameManager");
 }
