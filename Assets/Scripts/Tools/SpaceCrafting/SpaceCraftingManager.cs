@@ -24,7 +24,13 @@ namespace Tools.SpaceCrafting
 
         private void Start() => SceneHelper.LoadScene(SceneHelper.Scenes.World);
 
-        private void OnValidate() => _world.ChunkActivationDepth = _gridSize;
+        private void OnValidate()
+        {
+            if (_world != null)
+            {
+                _world.ChunkActivationDepth = _gridSize;
+            }
+        }
 
         public void RebuildWorld()
         {
