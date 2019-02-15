@@ -10,6 +10,7 @@ MonoBehaviour:
   m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bce5c5d58ad6cc34dbcbfa9059cafcb2, type: 3}
-  m_Name: Script
+  m_Name: Debug Script
   m_EditorClassIdentifier: 
+  _skipScriptPlayback: 1
   _source: {fileID: 4900000, guid: b6690b8a50ced91468896a9025f3d9e5, type: 3}
