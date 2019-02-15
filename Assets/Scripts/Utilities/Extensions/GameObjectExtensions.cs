@@ -24,35 +24,39 @@ public static class GameObjectExtensions
         source.localScale = target.localScale;
     }
 
-    public static void SnapToGrid(this Transform source)
+    public static void SnapToGrid(this Transform source) => source.position = new Vector3()
     {
-        source.position = new Vector3()
+        x = Mathf.RoundToInt(source.position.x),
+        y = Mathf.RoundToInt(source.position.y),
+        z = Mathf.RoundToInt(source.position.z)
+    };
+
+    public static void SetActive(this Component component, bool isActive) => component.gameObject.SetActive(isActive);
+
+    public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component => gameObject.GetComponent<T>() ?? gameObject.AddComponent<T>();
+
+    public static List<Transform> GetChildren(this Transform parent)
+    {
+        var children = new List<Transform>();
+
+        for (var i = 0; i < parent.childCount; i++)
         {
-            x = Mathf.RoundToInt(source.position.x),
-            y = Mathf.RoundToInt(source.position.y),
-            z = Mathf.RoundToInt(source.position.z)
-        };
-    }
-
-    public static void SetActive(this Component component, bool isActive)
-    {
-        component.gameObject.SetActive(isActive);
-    }
-
-    public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
-    {
-        return gameObject.GetComponent<T>() ?? gameObject.AddComponent<T>();
-    }
-
-    public static List<Transform> GetAllChildren(this Transform parent)
-    {
-        List<Transform> children = new List<Transform>();
-
-        for (int i = 0; i < parent.childCount; i++)
-        {
-            Transform child = parent.GetChild(i);
+            var child = parent.GetChild(i);
             children.Add(child);
-            children.AddRange(child.GetAllChildren());
+        }
+
+        return children;
+    }
+
+    public static List<Transform> GetChildrenRecursive(this Transform parent)
+    {
+        var children = new List<Transform>();
+
+        for (var i = 0; i < parent.childCount; i++)
+        {
+            var child = parent.GetChild(i);
+            children.Add(child);
+            children.AddRange(child.GetChildrenRecursive());
         }
 
         return children;
@@ -60,7 +64,7 @@ public static class GameObjectExtensions
 
     public static void DestroyChildren(this Transform parent)
     {
-        for (int i = parent.childCount - 1; i >= 0; i--)
+        for (var i = parent.childCount - 1; i >= 0; i--)
         {
             Object.Destroy(parent.GetChild(i).gameObject);
         }

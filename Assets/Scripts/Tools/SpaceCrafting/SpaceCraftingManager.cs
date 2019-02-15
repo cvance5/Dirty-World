@@ -2,6 +2,7 @@
 using Utilities.Debug;
 using WorldObjects;
 using WorldObjects.WorldGeneration;
+using WorldObjects.WorldGeneration.BlockGeneration;
 
 namespace Tools.SpaceCrafting
 {
@@ -34,7 +35,11 @@ namespace Tools.SpaceCrafting
 
         public void RebuildWorld()
         {
-            _world.ChunkArchitect.Destroy();
+            if (_world != null)
+            {
+                _world.ChunkArchitect.Destroy();
+            }
+
             SceneHelper.ReloadScene();
         }
 
@@ -42,7 +47,8 @@ namespace Tools.SpaceCrafting
         {
             _world = new GameObject("World").AddComponent<World>();
 
-            var chunkArchitect = new ChunkArchitect();
+            var chunkArchitect = _world.gameObject.AddComponent<ChunkArchitect>();
+            chunkArchitect.Initialize(new BlockPicker());
             var spaceArchitect = new SpaceArchitect();
             _world.Initialize(chunkArchitect, spaceArchitect);
 

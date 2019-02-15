@@ -1,6 +1,4 @@
-﻿using Data.Serialization.SerializableSpaces;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Spaces;
 using Space = WorldObjects.Spaces.Space;
@@ -30,12 +28,6 @@ namespace Tools.SpaceCrafting
             gameObject.name = "Laboratory";
 
             MetalThickeness = 2;
-        }
-
-        public override void InitializeFromJSON(string json)
-        {
-            var laboratory = JsonConvert.DeserializeObject<SerializableLaboratory>(json, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto }).ToObject() as Laboratory;
-            InitializeFromSpace(laboratory);
         }
 
         public override void InitializeFromSpace(Space space)
@@ -84,7 +76,7 @@ namespace Tools.SpaceCrafting
         {
             var regions = new List<Region>();
 
-            foreach (var child in transform.GetAllChildren())
+            foreach (var child in transform.GetChildren())
             {
                 var mainShaft = child.GetComponent<ShaftCrafter>();
 
@@ -103,12 +95,15 @@ namespace Tools.SpaceCrafting
 
                     foreach (var subcrafter in mainShaft.GetComponentsInChildren<SpaceCrafter>())
                     {
-                        regionalSpaces.Add(subcrafter.Build());
+                        if (subcrafter != mainShaft)
+                        {
+                            regionalSpaces.Add(subcrafter.Build());
 
-                        regionMinX = Mathf.Min(regionMinX, subcrafter.MinX);
-                        regionMaxX = Mathf.Max(regionMaxX, subcrafter.MaxX);
-                        regionMinY = Mathf.Min(regionMinY, subcrafter.MinY);
-                        regionMaxY = Mathf.Max(regionMaxY, subcrafter.MaxY);
+                            regionMinX = Mathf.Min(regionMinX, subcrafter.MinX);
+                            regionMaxX = Mathf.Max(regionMaxX, subcrafter.MaxX);
+                            regionMinY = Mathf.Min(regionMinY, subcrafter.MinY);
+                            regionMaxY = Mathf.Max(regionMaxY, subcrafter.MaxY);
+                        }
                     }
 
                     regionMinX -= MetalThickeness;
@@ -123,9 +118,15 @@ namespace Tools.SpaceCrafting
 
                     regions.Add(new Region(new IntVector2(MinX, MinY), new IntVector2(regionMaxX, MaxY), regionalSpaces));
                 }
+                else
+                {
+                    _log.Warning($"No main shaft found.  This laboratory is invalid.");
+                }
             }
 
             return regions;
         }
+
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("LaboratoryCrafter");
     }
 }

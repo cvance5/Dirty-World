@@ -1,6 +1,4 @@
-﻿using Data.Serialization.SerializableSpaces;
-using Newtonsoft.Json;
-using WorldObjects.Spaces;
+﻿using WorldObjects.Spaces;
 
 namespace Tools.SpaceCrafting
 {
@@ -26,12 +24,6 @@ namespace Tools.SpaceCrafting
 
             Width = 4;
             Height = 2;
-        }
-
-        public override void InitializeFromJSON(string json)
-        {
-            var corridor = JsonConvert.DeserializeObject<SerializableCorridor>(json).ToObject() as Corridor;
-            InitializeFromSpace(corridor);
         }
 
         public override void InitializeFromSpace(Space space)

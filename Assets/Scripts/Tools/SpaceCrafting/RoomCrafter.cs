@@ -1,6 +1,4 @@
-﻿using Data.Serialization.SerializableSpaces;
-using Items;
-using Newtonsoft.Json;
+﻿using Items;
 using WorldObjects.Spaces;
 
 namespace Tools.SpaceCrafting
@@ -29,12 +27,6 @@ namespace Tools.SpaceCrafting
 
             Width = 4;
             Height = 4;
-        }
-
-        public override void InitializeFromJSON(string json)
-        {
-            var room = JsonConvert.DeserializeObject<SerializableTreasureRoom>(json).ToObject() as TreasureRoom;
-            InitializeFromSpace(room);
         }
 
         public override void InitializeFromSpace(Space space)

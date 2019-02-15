@@ -1,6 +1,4 @@
-﻿using Data.Serialization.SerializableSpaces;
-using Newtonsoft.Json;
-using WorldObjects.Spaces;
+﻿using WorldObjects.Spaces;
 
 namespace Tools.SpaceCrafting
 {
@@ -22,12 +20,6 @@ namespace Tools.SpaceCrafting
             gameObject.name = "Monster Den";
 
             Radius = 3;
-        }
-
-        public override void InitializeFromJSON(string json)
-        {
-            var room = JsonConvert.DeserializeObject<SerializableMonsterDen>(json).ToObject() as MonsterDen;
-            InitializeFromSpace(room);
         }
 
         public override void InitializeFromSpace(Space space)

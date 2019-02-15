@@ -323,4 +323,3 @@ F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Assembly-CSharp-Editor
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Assembly-CSharp-Editor.csproj.CopyComplete
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Assembly-CSharp-Editor.dll
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Assembly-CSharp-Editor.pdb
-F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Assembly-CSharp.pdb

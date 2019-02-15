@@ -23,12 +23,11 @@ namespace Tools.SpaceCrafting
         }
 
         protected abstract void OnCrafterAwake();
-        public abstract void InitializeFromJSON(string json);
         public abstract void InitializeFromSpace(Space space);
 
         public void InitializeEnemySpawns(List<EnemySpawn> spawns)
         {
-            foreach(var spawn in spawns)
+            foreach (var spawn in spawns)
             {
                 var crafter = AddEnemySpawnCrafter();
                 crafter.Type = spawn.Type;
