@@ -20,14 +20,14 @@ namespace WorldObjects.WorldGeneration
 
         private bool _isUncapped;
 
-        public ShaftBuilder(ChunkBuilder containingChunk)
-            : base(containingChunk)
+        public ShaftBuilder(ChunkBuilder chunkBuilder)
+            : base(chunkBuilder)
         {
             _width = Random.Range(1, 10);
             _height = Random.Range(_width + 1, 100);
 
-            var startingPoint = new IntVector2(Random.Range(containingChunk.BottomLeftCorner.X, containingChunk.TopRightCorner.X),
-                                               Random.Range(containingChunk.BottomLeftCorner.Y, containingChunk.TopRightCorner.Y));
+            var startingPoint = new IntVector2(Random.Range(chunkBuilder.BottomLeftCorner.X, chunkBuilder.TopRightCorner.X),
+                                               Random.Range(chunkBuilder.BottomLeftCorner.Y, chunkBuilder.TopRightCorner.Y));
 
             SetStartingPoint(startingPoint, Enum<ShaftAlignment>.Random);
         }

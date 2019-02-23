@@ -22,8 +22,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private int _extraRiskPoints;
         private bool _allowEnemies = true;
 
-        public CorridorBuilder(ChunkBuilder containingChunk)
-            : base(containingChunk)
+        public CorridorBuilder(ChunkBuilder chunkBuilder)
+            : base(chunkBuilder)
         {
             _height = Random.Range(1, 10);
             _length = Random.Range(_length + 1, 100);

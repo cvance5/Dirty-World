@@ -1,10 +1,13 @@
 ﻿using Data.Serialization.SerializableSpaces;
 using UnityEngine;
 
-public class CustomSpace : ScriptableObject
+namespace WorldObjects.Spaces
 {
-    private SerializableSpace _space;
+    public class CustomSpace : ScriptableObject
+    {
+        private string _serializedSpaceJson;
 
-    public void Set(SerializableSpace space) => _space = space;
-    public WorldObjects.Spaces.Space Load() => _space.ToObject();
+        public void Set(SerializableSpace space) => _serializedSpaceJson = space.Serialize();
+        public Space Build() => SerializableSpace.Deserialize(_serializedSpaceJson).ToObject();
+    }
 }

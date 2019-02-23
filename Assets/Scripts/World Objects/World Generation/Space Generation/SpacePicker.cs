@@ -26,7 +26,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             if (chunk.Depth <= World.SURFACE_DEPTH)
             {
-                spaces.AddRange(CheckForSpecialCasing(chunk));
+                //spaces.AddRange(CheckForSpecialCasing(chunk));
 
                 if (_canPickSpaces) spaces.AddRange(RandomlySelect(chunk));
             }
@@ -36,27 +36,27 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public void AllowSpaces(List<Type> allowedSpaceTypes)
         {
-            foreach (var type in allowedSpaceTypes)
+            foreach (var allowedType in allowedSpaceTypes)
             {
-                if (type.IsAssignableFrom(typeof(SpaceBuilder)))
+                if (typeof(SpaceBuilder).IsAssignableFrom(allowedType))
                 {
-                    _allowedSpaces.Add(type);
+                    _allowedSpaces.Add(allowedType);
                 }
-                else _log.Warning($"{type.Name} is not a spacebuilder and cannot be allowed.");
+                else _log.Warning($"{allowedType.Name} is not a spacebuilder and cannot be allowed.");
             }
         }
 
-        private List<SpaceBuilder> CheckForSpecialCasing(ChunkBuilder chunk)
+        private List<Space> CheckForSpecialCasing(ChunkBuilder chunk)
         {
-            var specialCaseSpaces = new List<SpaceBuilder>();
+            var specialCaseSpaces = new List<Space>();
 
             if (chunk.Position == IntVector2.Zero)
             {
-                var spaceBuilder = Activator.CreateInstance(typeof(LaboratoryBuilder), chunk) as SpaceBuilder;
-                specialCaseSpaces.Add(spaceBuilder);
+                var space = CustomSpaceLoader.Load("InitialLaboratory");
+                if (space != null) specialCaseSpaces.Add(space);
             }
 
-            if (chunk.Remoteness <= 4 || chunk.Depth <= 4)
+            if (chunk.Remoteness == 0)
             {
                 // Nothing but the initial laboratory here...
                 _canPickSpaces = false;
@@ -69,13 +69,17 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             var randomSpaces = new List<SpaceBuilder>();
 
-            var spaceBuilder = Activator.CreateInstance(_allowedSpaces.RandomItem(), chunk) as SpaceBuilder;
-            if (Chance.OneIn(4))
+            if (Chance.OneIn(3))
             {
-                spaceBuilder.AddModifier(ModifierTypes.Cavernous);
-            }
+                var spaceBuilder = Activator.CreateInstance(_allowedSpaces.RandomItem(), chunk) as SpaceBuilder;
 
-            randomSpaces.Add(spaceBuilder);
+                if (Chance.OneIn(4))
+                {
+                    spaceBuilder.AddModifier(ModifierTypes.Cavernous);
+                }
+
+                randomSpaces.Add(spaceBuilder);
+            }
 
             return randomSpaces;
         }

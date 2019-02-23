@@ -9,7 +9,7 @@ using WorldObjects.Construction;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.EnemyGeneration;
 using WorldObjects.WorldGeneration.FeatureGeneration;
-
+using WorldObjects.WorldGeneration.SpaceGeneration;
 using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects.WorldGeneration
@@ -29,6 +29,12 @@ namespace WorldObjects.WorldGeneration
 
         private readonly List<Space> _spaces = new List<Space>();
         public List<Space> Spaces => new List<Space>(_spaces);
+
+        private readonly List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
+        public List<SpaceBuilder> SpaceBuilders => new List<SpaceBuilder>(_spaceBuilders);
+
+        private readonly Dictionary<IntVector2, Chunk> _neighborChunks = new Dictionary<IntVector2, Chunk>();
+        private readonly Dictionary<IntVector2, ChunkBuilder> _neighborBuilders = new Dictionary<IntVector2, ChunkBuilder>();
 
         private readonly List<EnemyHealth> _enemies = new List<EnemyHealth>();
         public List<EnemyHealth> Enemies = new List<EnemyHealth>();
@@ -129,15 +135,6 @@ namespace WorldObjects.WorldGeneration
             return this;
         }
 
-        public ChunkBuilder AddSpaces(List<Space> spacesToAdd)
-        {
-            _spaces.AddRange(spacesToAdd);
-
-            OnChunkBuilderChanged.Raise(this);
-
-            return this;
-        }
-
         public ChunkBuilder AddEnemy(EnemyHealth enemy)
         {
             _enemies.Add(enemy);
@@ -154,6 +151,63 @@ namespace WorldObjects.WorldGeneration
             OnChunkBuilderChanged.Raise(this);
 
             return this;
+        }
+
+        public void AddNeighbor(Chunk neighbor, IntVector2 direction)
+        {
+            _neighborChunks[direction] = neighbor;
+            _neighborBuilders.Remove(direction);
+        }
+
+        public void AddNeighbor(ChunkBuilder neighbor, IntVector2 direction) => _neighborBuilders[direction] = neighbor;
+
+        public void SeekReachedEdges(SpaceBuilder spaceBuilder)
+        {
+            if (_spaceBuilders.Contains(spaceBuilder))
+            {
+                return;
+            }
+
+            _spaceBuilders.Add(spaceBuilder);
+
+
+            foreach (var direction in Directions.Cardinals)
+            {
+                var amount = GetMaximalValue(direction);
+
+                if (spaceBuilder.PassesBy(direction, amount) > 0)
+                {
+                    if (_neighborBuilders.TryGetValue(direction, out var neighborBuilder))
+                    {
+                        neighborBuilder.SeekReachedEdges(spaceBuilder);
+                    }
+                    else
+                    {
+                        spaceBuilder.AddBoundary(direction, amount);
+                    }
+                }
+            }
+        }
+
+        private int GetMaximalValue(IntVector2 direction)
+        {
+            if (direction == Directions.Up)
+            {
+                return Position.Y + _halfChunkSize;
+            }
+            else if (direction == Directions.Right)
+            {
+                return Position.X + _halfChunkSize;
+            }
+            else if (direction == Directions.Down)
+            {
+                return Position.Y - _halfChunkSize;
+            }
+            else if (direction == Directions.Left)
+            {
+                return Position.X - _halfChunkSize;
+            }
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
         }
 
         public BlockTypes GetAnticipatedBlockType(IntVector2 position)
@@ -195,7 +249,7 @@ namespace WorldObjects.WorldGeneration
                 var featureToBuild = FeatureTypes.None;
 
                 var containingSpace = _spaces.Find(space => space.Contains(position));
-                if(containingSpace is ComplexSpace)
+                if (containingSpace is ComplexSpace)
                 {
                     var complexSpace = containingSpace as ComplexSpace;
                     containingSpace = complexSpace.GetContainingSpace(position) ?? complexSpace;

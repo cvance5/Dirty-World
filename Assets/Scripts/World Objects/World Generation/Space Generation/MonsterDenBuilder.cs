@@ -15,8 +15,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private int _extraRiskPoints;
         private bool _allowEnemies = true;
 
-        public MonsterDenBuilder(ChunkBuilder containingChunk)
-            : base(containingChunk)
+        public MonsterDenBuilder(ChunkBuilder chunkBuilder)
+            : base(chunkBuilder)
         {
             _centerpoint = new IntVector2(Random.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
                                           Random.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));

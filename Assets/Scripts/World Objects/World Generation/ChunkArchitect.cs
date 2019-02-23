@@ -7,6 +7,7 @@ using UnityEngine;
 using Utilities.Debug;
 using WorldObjects.Blocks;
 using WorldObjects.WorldGeneration.BlockGeneration;
+using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace WorldObjects.WorldGeneration
 {
@@ -43,6 +44,7 @@ namespace WorldObjects.WorldGeneration
             SerializableChunk.OnChunkLoaded += OnChunkReadyToActivate;
 
             SpaceArchitect.OnNewSpaceRegistered += Register;
+            SpaceArchitect.OnNewSpaceBuilderDeclared += GenerateChunkBuildersForSpace;
         }
 
         public void ActivateChunk(IntVector2 worldPosition)
@@ -76,9 +78,46 @@ namespace WorldObjects.WorldGeneration
             _activeChunks.Add(chunk);
             _chunksByWorldPosition.Add(chunk.Position, chunk);
             chunk.transform.SetParent(transform);
+
+            foreach (var direction in Directions.Cardinals)
+            {
+                var neighborPos = chunk.Position + (direction * World.CHUNK_SIZE);
+
+                if (_chunkBuildersByWorldPosition.TryGetValue(neighborPos, out var neighborBuilder))
+                {
+                    neighborBuilder.AddNeighbor(chunk, -direction);
+                }
+            }
         }
 
         public void Register(Spaces.Space space)
+        {
+
+            var min = GetNearestChunkPosition(new IntVector2(space.GetMaximalValue(Directions.Left),
+                                                                  space.GetMaximalValue(Directions.Down)));
+
+            var max = GetNearestChunkPosition(new IntVector2(space.GetMaximalValue(Directions.Right),
+                                                                  space.GetMaximalValue(Directions.Up)));
+
+            for (var chunkX = min.X; chunkX <= max.X; chunkX += World.CHUNK_SIZE)
+            {
+                for (var chunkY = min.Y; chunkY <= max.Y; chunkY += World.CHUNK_SIZE)
+                {
+                    var pos = new IntVector2(chunkX, chunkY);
+                    if (_chunkBuildersByWorldPosition.TryGetValue(pos, out var builder))
+                    {
+                        builder.AddSpace(space);
+                    }
+                    else if (!_chunksByWorldPosition.ContainsKey(pos))
+                    {
+                        var newBuilder = GetBuilderAtPosition(pos);
+                        newBuilder.AddSpace(space);
+                    }
+                }
+            }
+        }
+
+        public void GenerateChunkBuildersForSpace(SpaceBuilder space)
         {
             var min = GetNearestChunkPosition(new IntVector2(space.GetMaximalValue(Directions.Left),
                                                                   space.GetMaximalValue(Directions.Down)));
@@ -90,8 +129,12 @@ namespace WorldObjects.WorldGeneration
             {
                 for (var chunkY = min.Y; chunkY <= max.Y; chunkY += World.CHUNK_SIZE)
                 {
-                    var affectedChunk = GetBuilderAtPosition(new IntVector2(chunkX, chunkY));
-                    affectedChunk.AddSpace(space);
+                    var pos = new IntVector2(chunkX, chunkY);
+                    // Space has not yet validated it does not overlap existing chunks
+                    if (!_chunksByWorldPosition.ContainsKey(pos))
+                    {
+                        GetBuilderAtPosition(pos);
+                    }
                 }
             }
         }
@@ -176,21 +219,47 @@ namespace WorldObjects.WorldGeneration
             var serializableBuilder = SerializableChunkBuilder.Deserialize(serializedBuilder);
 
             var chunkBuilder = serializableBuilder.ToObject();
-            _chunkBuilders.Add(chunkBuilder);
-            _chunkBuildersByWorldPosition[worldPosition] = chunkBuilder;
+            Register(chunkBuilder);
 
             return chunkBuilder;
         }
 
         private ChunkBuilder AddBuilder(IntVector2 worldPosition)
         {
-            var cBuilder = new ChunkBuilder(worldPosition, World.CHUNK_SIZE);
-            _chunkBuilders.Add(cBuilder);
-            _chunkBuildersByWorldPosition[worldPosition] = cBuilder;
+            var chunkBuilder = new ChunkBuilder(worldPosition, World.CHUNK_SIZE);
 
-            OnNewChunkBuilderAdded.Raise(cBuilder);
+            if (_chunkBuildersByWorldPosition.ContainsKey(worldPosition) ||
+                _chunksByWorldPosition.ContainsKey(worldPosition))
+            {
+                throw new InvalidOperationException($"This world already has a chunk registered at {worldPosition}.");
+            }
 
-            return cBuilder;
+            Register(chunkBuilder);
+
+            OnNewChunkBuilderAdded.Raise(chunkBuilder);
+
+            return chunkBuilder;
+        }
+
+        private void Register(ChunkBuilder chunkBuilder)
+        {
+            _chunkBuilders.Add(chunkBuilder);
+            _chunkBuildersByWorldPosition[chunkBuilder.Position] = chunkBuilder;
+
+            foreach (var direction in Directions.Cardinals)
+            {
+                var neighborPos = chunkBuilder.Position + (direction * World.CHUNK_SIZE);
+
+                if (_chunkBuildersByWorldPosition.TryGetValue(neighborPos, out var neighborBuilder))
+                {
+                    chunkBuilder.AddNeighbor(neighborBuilder, direction);
+                    neighborBuilder.AddNeighbor(chunkBuilder, -direction);
+                }
+                else if (_chunksByWorldPosition.TryGetValue(neighborPos, out var neighborChunk))
+                {
+                    chunkBuilder.AddNeighbor(neighborChunk, direction);
+                }
+            }
         }
 
         private void LoadChunk(IntVector2 worldPosition)
@@ -263,6 +332,9 @@ namespace WorldObjects.WorldGeneration
 
             ChunkBuilder.OnChunkBuilt -= OnChunkReadyToActivate;
             SerializableChunk.OnChunkLoaded -= OnChunkReadyToActivate;
+
+            SpaceArchitect.OnNewSpaceRegistered -= Register;
+            SpaceArchitect.OnNewSpaceBuilderDeclared -= GenerateChunkBuildersForSpace;
         }
 
         private static readonly Log _log = new Log("WorldBuilder");

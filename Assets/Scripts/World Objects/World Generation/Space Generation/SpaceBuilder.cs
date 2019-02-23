@@ -14,9 +14,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected readonly List<SpaceModifier> _modifiersApplied = new List<SpaceModifier>();
 
+        // Used reflectively via Activator
         public SpaceBuilder(ChunkBuilder chunkBuilder) => _chunkBuilder = chunkBuilder;
         public SpaceBuilder(SpaceBuilder spaceToCopy) => _chunkBuilder = spaceToCopy._chunkBuilder;
 
+        private void OnChunkBoundaryChanged(IntVector2 direction, int amount) => AddBoundary(direction, amount);
         public SpaceBuilder AddBoundary(IntVector2 direction, int amount)
         {
             // Tightness is the "magnitude" of the boundary, regardless of direction
@@ -57,6 +59,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             return this;
         }
+
+        public void CheckForBoundaries() => _chunkBuilder.SeekReachedEdges(this);
 
         public abstract void Shift(IntVector2 shift);
 

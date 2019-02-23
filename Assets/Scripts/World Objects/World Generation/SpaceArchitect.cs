@@ -11,6 +11,7 @@ namespace WorldObjects.WorldGeneration
     public class SpaceArchitect
     {
         public static SmartEvent<Space> OnNewSpaceRegistered = new SmartEvent<Space>();
+        public static SmartEvent<SpaceBuilder> OnNewSpaceBuilderDeclared = new SmartEvent<SpaceBuilder>();
 
         private readonly SpacePicker _sPicker;
 
@@ -80,12 +81,13 @@ namespace WorldObjects.WorldGeneration
         {
             if (_sPicker != null)
             {
-                var spaceBuilders = _sPicker.Select(sourceChunkBuilder);
+                var spaces = _sPicker.Select(sourceChunkBuilder);
 
-                foreach (var spaceBuilder in spaceBuilders)
+                foreach (var space in spaces)
                 {
-                    var space = spaceBuilder.Build();
-                    Register(space);
+                    OnNewSpaceBuilderDeclared.Raise(space);
+                    space.CheckForBoundaries();
+                    Register(space.Build());
                 }
             }
         }

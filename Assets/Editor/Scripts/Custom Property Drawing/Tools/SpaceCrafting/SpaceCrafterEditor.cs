@@ -2,6 +2,7 @@
 using Tools.SpaceCrafting;
 using UnityEditor;
 using UnityEngine;
+using WorldObjects.Spaces;
 
 namespace CustomPropertyDrawing.Tools.SpaceCrafting
 {
@@ -52,7 +53,7 @@ namespace CustomPropertyDrawing.Tools.SpaceCrafting
                 {
                     if (_asset != null)
                     {
-                        _target.InitializeFromSpace(_asset.Load());
+                        _target.InitializeFromSpace(_asset.Build());
                     }
                     else
                     {

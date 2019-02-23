@@ -6,7 +6,7 @@ namespace WorldObjects.Spaces
 {
     public class Laboratory : ComplexSpace
     {
-        public override string Name => $"Laboratory";
+        public override string Name => $"Laboratory with Extents {Extents[0]}, {Extents[1]}, {Extents[2]}, {Extents[3]}";
 
         public readonly int MetalThickness;
 
@@ -15,10 +15,10 @@ namespace WorldObjects.Spaces
             Regions = regions;
             MetalThickness = metalThickeness;
 
-            int minX = int.MaxValue;
-            int maxX = int.MinValue;
-            int minY = int.MaxValue;
-            int maxY = int.MinValue;
+            var minX = int.MaxValue;
+            var maxX = int.MinValue;
+            var minY = int.MaxValue;
+            var maxY = int.MinValue;
 
             foreach (var region in regions)
             {

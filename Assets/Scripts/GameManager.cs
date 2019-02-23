@@ -3,7 +3,9 @@ using Data;
 using GizmoDrawers;
 using Metadata;
 using Narrative;
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UI;
 using UI.Effects;
 using UI.Screens;
@@ -12,6 +14,7 @@ using Utilities.CustomYieldInstructions;
 using WorldObjects;
 using WorldObjects.Actors;
 using WorldObjects.Actors.Player;
+using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration;
 using WorldObjects.WorldGeneration.BlockGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
@@ -80,7 +83,13 @@ public class GameManager : Singleton<GameManager>
         var chunkArchitect = worldGameObject.AddComponent<ChunkArchitect>();
         chunkArchitect.Initialize(bPicker);
 
-        var sPicker = new SpacePicker();
+        var sPicker = new SpacePicker(new List<Type>()
+        {
+            typeof(ShaftBuilder),
+            typeof(CorridorBuilder),
+            typeof(MonsterDenBuilder),
+            typeof(RoomBuilder)
+        });
         var spaceArchitect = new SpaceArchitect(sPicker);
 
         World.Initialize(chunkArchitect, spaceArchitect);
@@ -129,11 +138,11 @@ public class GameManager : Singleton<GameManager>
 
     private void OnPlayerPositionUpdate(ITrackable player, PositionData oldData, PositionData newData)
     {
-        if(newData.Chunk == null)
+        if (newData.Chunk == null)
         {
             Timekeeper.TogglePause(true);
         }
-        else if(Timekeeper.IsPaused)
+        else if (Timekeeper.IsPaused)
         {
             Timekeeper.TogglePause(false);
         }
@@ -200,6 +209,6 @@ public class GameManager : Singleton<GameManager>
 
         yield return null;
     }
-    
+
     private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("GameManager");
 }
