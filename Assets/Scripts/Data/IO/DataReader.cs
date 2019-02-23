@@ -37,7 +37,7 @@ namespace Data.IO
 
         public static List<string> FindAllFiles(string readLocation)
         {
-            List<string> allFiles = new List<string>();
+            var allFiles = new List<string>();
 
             if (Directory.Exists(readLocation))
             {
@@ -60,15 +60,17 @@ namespace Data.IO
 
         public static List<string> FindAllDirectories(string readLocation)
         {
-            var allPaths = Directory.GetDirectories(readLocation);
-
             var allFiles = new List<string>();
 
-            foreach (var path in allPaths)
+            if (Directory.Exists(readLocation))
             {
-                allFiles.Add(Path.GetFileNameWithoutExtension(path));
-            }
+                var allPaths = Directory.GetDirectories(readLocation);
 
+                foreach (var path in allPaths)
+                {
+                    allFiles.Add(Path.GetFileNameWithoutExtension(path));
+                }
+            }
             return allFiles;
         }
     }
