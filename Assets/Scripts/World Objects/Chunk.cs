@@ -219,9 +219,13 @@ namespace WorldObjects
                 {
                     newPosition.Chunk.Register(enemy);
                 }
-                else
+                else if (newPosition.Builder != null)
                 {
                     newPosition.Builder.AddEnemy(enemy);
+                }
+                else
+                {
+                    _log.Error($"Enemy {trackedEnemy} has left known bounds at location {newPosition.Position}.");
                 }
             }
         }
