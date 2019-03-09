@@ -1,6 +1,6 @@
 ﻿using Characters;
 using Data;
-using GizmoDrawers;
+
 using Metadata;
 using Narrative;
 using System;
@@ -93,7 +93,9 @@ public class GameManager : Singleton<GameManager>
 
         World.Initialize(chunkArchitect, spaceArchitect);
 
-        ChunkGizmoDrawer.SetWorldToDraw(World);
+# if UNITY_EDITOR
+        GizmoDrawers.ChunkGizmoDrawer.SetWorldToDraw(World);
+#endif
         PositionTracker.SetWorldToTrack(World);
 
         GameState.Initialize();
