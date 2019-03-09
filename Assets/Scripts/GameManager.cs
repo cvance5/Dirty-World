@@ -14,7 +14,6 @@ using Utilities.CustomYieldInstructions;
 using WorldObjects;
 using WorldObjects.Actors;
 using WorldObjects.Actors.Player;
-using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration;
 using WorldObjects.WorldGeneration.BlockGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
@@ -136,11 +135,23 @@ public class GameManager : Singleton<GameManager>
         _player.OnActorDeath += OnPlayerDeath;
     }
 
-    private void OnPlayerPositionUpdate(ITrackable player, PositionData oldData, PositionData newData)
+    private void OnPlayerChunkActivated(Chunk chunk)
     {
-        if (newData.Chunk == null)
+        chunk.OnChunkActivated -= OnPlayerChunkActivated;
+        CheckPause(chunk);
+    }
+
+    private void OnPlayerPositionUpdate(ITrackable player, PositionData oldData, PositionData newData) => CheckPause(newData.Chunk);
+    private void CheckPause(Chunk playerChunk)
+    {
+        if (playerChunk == null)
         {
             Timekeeper.TogglePause(true);
+        }
+        else if (playerChunk.State != Chunk.ChunkState.Active)
+        {
+            Timekeeper.TogglePause(true);
+            playerChunk.OnChunkActivated += OnPlayerChunkActivated;
         }
         else if (Timekeeper.IsPaused)
         {

@@ -17,7 +17,6 @@ namespace WorldObjects.WorldGeneration
     public class ChunkBuilder
     {
         public static SmartEvent<ChunkBuilder> OnChunkBuilderChanged { get; set; } = new SmartEvent<ChunkBuilder>();
-        public static SmartEvent<Chunk> OnChunkBuilt { get; set; } = new SmartEvent<Chunk>();
 
         public IntVector2 Position { get; }
 
@@ -139,6 +138,7 @@ namespace WorldObjects.WorldGeneration
         {
             _enemies.Add(enemy);
 
+            enemy.gameObject.SetActive(false);
             OnChunkBuilderChanged.Raise(this);
 
             return this;
@@ -218,12 +218,18 @@ namespace WorldObjects.WorldGeneration
             else return builder.Type;
         }
 
-        public IEnumerator Build()
+        public Chunk Build()
         {
             var chunk = new GameObject($"Chunk [{Position.X}, {Position.Y}]").AddComponent<Chunk>();
             chunk.transform.position = Position;
             chunk.AssignExtents(BottomLeftCorner, TopRightCorner);
+            chunk.SetState(Chunk.ChunkState.Constructing);
 
+            return chunk;
+        }
+
+        public IEnumerator BuildCoroutine(Chunk chunk)
+        {
             // Never use more than 1/3 of a frame
             var yieldTimer = new IncrementalTimer(Time.realtimeSinceStartup, 1f / 180f);
 
@@ -235,7 +241,7 @@ namespace WorldObjects.WorldGeneration
                 chunk.Register(space.Name);
             }
 
-            OnChunkBuilt.Raise(chunk);
+            chunk.SetState(Chunk.ChunkState.Ready);
             Chunk.OnChunkChanged.Raise(chunk);
         }
 

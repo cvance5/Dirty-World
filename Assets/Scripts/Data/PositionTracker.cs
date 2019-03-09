@@ -15,7 +15,7 @@ namespace Data
             = new Dictionary<ITrackable, List<Action<ITrackable, PositionData, PositionData>>>();
 
         private static Coroutine _updateMethod;
-        private static readonly WaitForSecondsRealtime _positionUpdateTick = new WaitForSecondsRealtime(.1f);
+        private static readonly WaitForSecondsRealtime _positionUpdateTick = new WaitForSecondsRealtime(.075f);
 
         private static World _worldToTrack;
 
@@ -116,6 +116,7 @@ namespace Data
                     var position = target.Position;
                     var space = oldPositionData.Space;
 
+                    // See if any spaces contain this position
                     if (space == null || !space.Contains(position))
                     {
                         space = _worldToTrack.SpaceArchitect.GetContainingSpace(position) ?? null;
@@ -123,13 +124,22 @@ namespace Data
 
                     var newPositionData = new PositionData(space, position);
 
+                    // See if we are still in the same chunk (if any)
                     if (oldPositionData.Chunk == null ||
                         !oldPositionData.Chunk.Contains(position))
                     {
+                        // Else see what chunk we are in
                         newPositionData.Chunk = _worldToTrack.ChunkArchitect.GetContainingChunk(position);
                     }
                     else newPositionData.Chunk = oldPositionData.Chunk;
 
+                    // If we aren't in a chunk, we must be in a builder
+                    if (newPositionData.Chunk == null)
+                    {
+                        newPositionData.Builder = _worldToTrack.ChunkArchitect.GetContainingBuilder(position);
+                    }
+
+                    // If the position has changed, it is an update, so call everyone
                     if (oldPositionData != newPositionData)
                     {
                         if (_onPositionChangedCallbacks.TryGetValue(target, out var callbacksToCall))

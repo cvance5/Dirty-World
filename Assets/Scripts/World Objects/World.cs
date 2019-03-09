@@ -40,11 +40,6 @@ namespace WorldObjects
 
         private void OnPositionUpdate(ITrackable trackable, PositionData oldPosition, PositionData newPosition)
         {
-            if(newPosition.Position != null)
-            {
-
-            }
-
             if (newPosition.Chunk != null)
             {
                 var activeChunkList = DetermineActiveChunks(newPosition.Chunk.Position);

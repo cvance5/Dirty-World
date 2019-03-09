@@ -9,10 +9,8 @@ using WorldObjects.Hazards;
 namespace Data.Serialization
 {
     [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-    public class SerializableChunk
+    public class SerializableChunk : ISerializable<Chunk>
     {
-        public static SmartEvent<Chunk> OnChunkLoaded = new SmartEvent<Chunk>();
-
         [JsonProperty("position")]
         private readonly IntVector2 _position;
 
@@ -80,12 +78,18 @@ namespace Data.Serialization
         public string Serialize() => JsonConvert.SerializeObject(this, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
         public static SerializableChunk Deserialize(string chunkJson) => JsonConvert.DeserializeObject<SerializableChunk>(chunkJson, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Auto });
 
-        public IEnumerator ToObject()
+        public Chunk ToObject()
         {
             var chunk = new GameObject($"Chunk [{_position.X}, {_position.Y}]").AddComponent<Chunk>();
             chunk.transform.position = _position;
             chunk.AssignExtents(_bottomLeft, _topRight);
+            chunk.SetState(Chunk.ChunkState.Constructing);
 
+            return chunk;
+        }
+
+        public IEnumerator ReconstructCoroutine(Chunk chunk)
+        { 
             // Never use more than 1/3 of a frame
             var yieldTimer = new IncrementalTimer(Time.realtimeSinceStartup, 1f / 180f);
 
@@ -154,7 +158,7 @@ namespace Data.Serialization
                 chunk.Register(spaceUsed);
             }
 
-            OnChunkLoaded.Raise(chunk);
+            chunk.SetState(Chunk.ChunkState.Ready);
         }
 
         private SerializableHazard ToSerializableHazard(Hazard hazard)

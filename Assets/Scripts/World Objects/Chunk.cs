@@ -15,6 +15,9 @@ namespace WorldObjects
     {
         public static SmartEvent<Chunk> OnChunkChanged = new SmartEvent<Chunk>();
 
+        public SmartEvent<Chunk> OnChunkReady = new SmartEvent<Chunk>();
+        public SmartEvent<Chunk> OnChunkActivated = new SmartEvent<Chunk>();
+
         public IntVector2 Position => new IntVector2(transform.position);
         public IntVector2 BottomLeftCorner { get; protected set; }
         public IntVector2 TopRightCorner { get; protected set; }
@@ -28,6 +31,8 @@ namespace WorldObjects
 
         public List<string> SpacesUsed { get; private set; } = new List<string>();
 
+        public ChunkState State { get; private set; } = ChunkState.Constructing;
+
         public void AssignExtents(IntVector2 bottomLeftCorner, IntVector2 topRightCorner)
         {
             BottomLeftCorner = bottomLeftCorner;
@@ -39,7 +44,6 @@ namespace WorldObjects
             position.Y >= BottomLeftCorner.Y &&
             position.X <= TopRightCorner.X &&
             position.Y <= TopRightCorner.Y;
-
 
         public void Register(Block block)
         {
@@ -89,6 +93,8 @@ namespace WorldObjects
 
             enemy.OnActorDeath += Unregister;
 
+            enemy.gameObject.SetActive(gameObject.activeInHierarchy);
+
             OnChunkChanged.Raise(this);
         }
 
@@ -103,6 +109,55 @@ namespace WorldObjects
         {
             BlockMap.TryGetValue(position, out var block);
             return block;
+        }
+
+        public void SetState(ChunkState newState)
+        {
+            if (State == ChunkState.Constructing)
+            {
+                // Make sure we are set correctly
+                if (newState == ChunkState.Constructing)
+                {
+                    State = newState;
+                }
+                // The only transition out of constructing is to Ready
+                else if (newState == ChunkState.Ready)
+                {
+                    State = ChunkState.Ready;
+                }
+                else
+                {
+                    State = ChunkState.Constructing;
+                    _log.Warning($"Chunk is not ready to be {newState}.  Ignoring.");
+                }
+            }
+            else if (State != ChunkState.Constructing)
+            {
+                if (newState == ChunkState.Constructing)
+                {
+                    throw new InvalidOperationException($"Chunk cannot be returned to `Constructing` from {State}.");
+                }
+                else
+                {
+                    State = newState;
+                }
+            }
+
+            var isActive = State == ChunkState.Active;
+            gameObject.SetActive(isActive);
+            foreach (var enemy in Enemies)
+            {
+                enemy.SetActive(isActive);
+            }
+
+            if (State == ChunkState.Ready)
+            {
+                OnChunkReady.Raise(this);
+            }
+            else if (State == ChunkState.Active)
+            {
+                OnChunkActivated.Raise(this);
+            }
         }
 
         protected List<IntVector2> GetEdgesReached(IntVector2 extentPoint)
@@ -251,5 +306,13 @@ namespace WorldObjects
         }
 
         protected static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("Chunk");
+
+        public enum ChunkState
+        {
+            Constructing,
+            Ready,
+            Active,
+            Inactive
+        }
     }
 }
