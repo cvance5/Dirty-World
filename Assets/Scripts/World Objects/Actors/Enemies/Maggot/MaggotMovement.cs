@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using UnityEngine;
-using WorldObjects;
 
 namespace WorldObjects.Actors.Enemies.Maggot
 {
@@ -43,16 +42,18 @@ namespace WorldObjects.Actors.Enemies.Maggot
 
             _feet.OnFootTouch += OnLand;
             _feet.OnFootLeave += OnAirborne;
-
-            if (_state == ActorFeetState.Grounded)
-            {
-                _moveDelayCoroutine = StartCoroutine(Move());
-            }
-
             _collider = GetComponent<BoxCollider2D>();
 
             var footCollider = _feet.GetComponent<Collider2D>();
             Physics2D.IgnoreCollision(_collider, footCollider, true);
+        }
+
+        private void OnEnable()
+        {
+            if (_state == ActorFeetState.Grounded)
+            {
+                _moveDelayCoroutine = StartCoroutine(Move());
+            }
         }
 
         private IEnumerator Move()
@@ -177,6 +178,15 @@ namespace WorldObjects.Actors.Enemies.Maggot
             _backHalf.transform.localPosition = Vector2.zero;
 
             _collider.size = Vector2.one;
+        }
+
+        private void OnDisable()
+        {
+            if (_moveDelayCoroutine != null)
+            {
+                StopCoroutine(_moveDelayCoroutine);
+                _moveDelayCoroutine = null;
+            }
         }
     }
 }
