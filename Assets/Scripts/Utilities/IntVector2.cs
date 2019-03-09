@@ -19,7 +19,7 @@ public class IntVector2
     }
 
     public IntVector2(float x, float y)
-        : this((int)x, (int)y) { }
+        : this(Mathf.RoundToInt(x), Mathf.RoundToInt(y)) { }
 
     public IntVector2(Vector2 vec)
     {
