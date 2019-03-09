@@ -44,7 +44,7 @@ namespace WorldObjects
             {
                 var activeChunkList = DetermineActiveChunks(newPosition.Chunk.Position);
                 ChunkArchitect.SetActiveChunks(activeChunkList);
-                SpaceArchitect.SetActiveSpaces(ChunkArchitect.ActiveChunks);
+                SpaceArchitect.SetActiveSpaces(ChunkArchitect.ChunkCache);
             }
         }
 

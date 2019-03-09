@@ -2,11 +2,13 @@
 using Data.IO;
 using Data.Serialization;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Utilities.Debug;
 using WorldObjects.Blocks;
 using WorldObjects.WorldGeneration.BlockGeneration;
+using WorldObjects.WorldGeneration.ChunkGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace WorldObjects.WorldGeneration
@@ -17,16 +19,17 @@ namespace WorldObjects.WorldGeneration
 
         private BlockPicker _bPicker;
 
-        private readonly List<Chunk> _activeChunks = new List<Chunk>();
-        public List<Chunk> ActiveChunks => new List<Chunk>(_activeChunks);
+        private readonly List<Chunk> _chunkCache = new List<Chunk>();
+        public List<Chunk> ChunkCache => new List<Chunk>(_chunkCache);
+
+        private List<IntVector2> _activeChunksPositions;
         private Dictionary<IntVector2, Chunk> _chunksByWorldPosition = new Dictionary<IntVector2, Chunk>();
 
-        private readonly List<ChunkBuilder> _chunkBuilders = new List<ChunkBuilder>();
-        public List<ChunkBuilder> ActiveBuilders => new List<ChunkBuilder>(_chunkBuilders);
+        private readonly List<ChunkBuilder> _builderCache = new List<ChunkBuilder>();
+        public List<ChunkBuilder> BuilderCache => new List<ChunkBuilder>(_builderCache);
         private Dictionary<IntVector2, ChunkBuilder> _chunkBuildersByWorldPosition = new Dictionary<IntVector2, ChunkBuilder>();
 
-        private IntVector2 _chunkBeingActivated;
-        private readonly Queue<IntVector2> _chunksToActivate = new Queue<IntVector2>();
+        private readonly Queue<ChunkActivationCommand> _chunkActivationCommands = new Queue<ChunkActivationCommand>();
         private Coroutine _chunkConstructionCoroutine;
 
         private Dictionary<BlockTypes, Range> _fillRanges;
@@ -44,37 +47,54 @@ namespace WorldObjects.WorldGeneration
             SpaceArchitect.OnNewSpaceBuilderDeclared += GenerateChunkBuildersForSpace;
         }
 
-        public void ActivateChunk(IntVector2 worldPosition)
+        private void ActivateChunk(IntVector2 worldPosition)
         {
-            if (GetChunkAtPosition(worldPosition) != null) return;
-            else if (_chunkBeingActivated == worldPosition) return;
-            else if (_chunksToActivate.Contains(worldPosition)) return;
-            else if (_chunkBeingActivated == null)
+            if (GetNearestChunkPosition(worldPosition) != worldPosition)
             {
+                throw new InvalidOperationException($"Chunk cannot be spawned at {worldPosition}.");
+            }
+
+            if (_chunkBuildersByWorldPosition.ContainsKey(worldPosition)) return;
+            else
+            {
+                Chunk chunk;
+
                 if (GameSaves.HasGameData(worldPosition.ToString()))
                 {
                     _log.Info($"Loading Chunk at {worldPosition}.");
-                    LoadChunk(worldPosition);
+                    chunk = LoadChunk(worldPosition);
                 }
                 else
                 {
                     _log.Info($"Building Chunk at {worldPosition}.");
-                    BuildChunk(worldPosition);
+                    chunk = BuildChunk(worldPosition);
+                }
+
+                Register(chunk);
+
+                if (_chunkConstructionCoroutine == null)
+                {
+                    _chunkConstructionCoroutine = StartCoroutine(ChunkConstructionCoroutine());
                 }
             }
-            else _chunksToActivate.Enqueue(worldPosition);
         }
 
         public void Register(Chunk chunk)
         {
-            if (_activeChunks.Contains(chunk) || _chunksByWorldPosition.ContainsKey(chunk.Position))
+            if (_chunkCache.Contains(chunk) || _chunksByWorldPosition.ContainsKey(chunk.Position))
             {
                 throw new InvalidOperationException($"This world already has a chunk registered at {chunk.Position}.");
             }
 
-            _activeChunks.Add(chunk);
+            _chunkCache.Add(chunk);
             _chunksByWorldPosition.Add(chunk.Position, chunk);
             chunk.transform.SetParent(transform);
+
+            if (_chunkBuildersByWorldPosition.TryGetValue(chunk.Position, out var builderUsed))
+            {
+                _builderCache.Remove(builderUsed);
+                _chunkBuildersByWorldPosition.Remove(builderUsed.Position);
+            }
 
             foreach (var direction in Directions.Cardinals)
             {
@@ -162,24 +182,28 @@ namespace WorldObjects.WorldGeneration
         public Chunk GetContainingChunk(IntVector2 position)
         {
             var chunkPosition = GetNearestChunkPosition(position);
-            if (!_chunksByWorldPosition.TryGetValue(chunkPosition, out var chunk))
-            {
-                ActivateChunk(position);
-            }
-            return chunk;
+            return GetChunkAtPosition(chunkPosition);
         }
 
         public Chunk GetChunkAtPosition(IntVector2 chunkPosition)
         {
-            _chunksByWorldPosition.TryGetValue(chunkPosition, out var chunk);
+            if (!_chunksByWorldPosition.TryGetValue(chunkPosition, out var chunk))
+            {
+                ActivateChunk(chunkPosition);
+                chunk = _chunksByWorldPosition[chunkPosition];
+            }
+
             return chunk;
         }
 
         public void SetActiveChunks(List<IntVector2> activeChunkList)
         {
-            foreach (var chunk in _activeChunks)
+            _activeChunksPositions = activeChunkList;
+
+            foreach (var chunk in _chunkCache)
             {
-                if (!activeChunkList.Contains(chunk.Position))
+                if (!activeChunkList.Contains(chunk.Position) &&
+                 chunk.State == Chunk.ChunkState.Active)
                 {
                     chunk.SetState(Chunk.ChunkState.Inactive);
                 }
@@ -189,7 +213,10 @@ namespace WorldObjects.WorldGeneration
             {
                 if (_chunksByWorldPosition.TryGetValue(activeChunkPosition, out var chunk))
                 {
-                    chunk.SetState(Chunk.ChunkState.Active);
+                    if (chunk.State == Chunk.ChunkState.Inactive)
+                    {
+                        chunk.SetState(Chunk.ChunkState.Active);
+                    }
                 }
                 else ActivateChunk(activeChunkPosition);
             }
@@ -240,7 +267,7 @@ namespace WorldObjects.WorldGeneration
 
         private void Register(ChunkBuilder chunkBuilder)
         {
-            _chunkBuilders.Add(chunkBuilder);
+            _builderCache.Add(chunkBuilder);
             _chunkBuildersByWorldPosition[chunkBuilder.Position] = chunkBuilder;
 
             foreach (var direction in Directions.Cardinals)
@@ -259,25 +286,20 @@ namespace WorldObjects.WorldGeneration
             }
         }
 
-        private void LoadChunk(IntVector2 worldPosition)
+        private Chunk LoadChunk(IntVector2 worldPosition)
         {
-            _chunkBeingActivated = worldPosition;
-
             var serializedChunk = DataReader.Read(worldPosition.ToString(), DataTypes.CurrentGame);
             var serializableChunk = SerializableChunk.Deserialize(serializedChunk);
 
             var chunk = serializableChunk.ToObject();
-            Register(chunk);
+            var chunkActivationCommand = new ChunkActivationCommand(chunk, serializableChunk.ReconstructCoroutine);
+            _chunkActivationCommands.Enqueue(chunkActivationCommand);
 
-            // Wait for it to finish before building a new one
-            chunk.OnChunkReady += OnChunkReadyToActivate;
-            _chunkConstructionCoroutine = StartCoroutine(serializableChunk.ReconstructCoroutine(chunk));
+            return chunk;
         }
 
-        private void BuildChunk(IntVector2 worldPosition)
+        private Chunk BuildChunk(IntVector2 worldPosition)
         {
-            _chunkBeingActivated = worldPosition;
-
             var cBuilder = GetBuilderAtPosition(worldPosition);
 
             if (cBuilder == null) cBuilder = AddBuilder(worldPosition);
@@ -291,37 +313,31 @@ namespace WorldObjects.WorldGeneration
             cBuilder.SetFill(GetFill(cBuilder.Depth));
 
             var chunk = cBuilder.Build();
-            Register(chunk);
+            var chunkActivationCommand = new ChunkActivationCommand(chunk, cBuilder.BuildCoroutine);
+            _chunkActivationCommands.Enqueue(chunkActivationCommand);
 
-            // Wait for it to finish before building a new one
-            chunk.OnChunkReady += OnChunkReadyToActivate;
-            _chunkConstructionCoroutine = StartCoroutine(cBuilder.BuildCoroutine(chunk));
+            return chunk;
         }
 
-        private void OnChunkReadyToActivate(Chunk chunk)
+        private IEnumerator ChunkConstructionCoroutine()
         {
-            chunk.OnChunkReady -= OnChunkReadyToActivate;
+            while (_chunkActivationCommands.Count > 0)
+            {
+                var command = _chunkActivationCommands.Dequeue();
 
-            _chunkBeingActivated = null;
+                yield return StartCoroutine(command.Invoke());
+
+                if (_activeChunksPositions.Contains(command.Chunk.Position))
+                {
+                    command.Chunk.SetState(Chunk.ChunkState.Active);
+                }
+                else
+                {
+                    command.Chunk.SetState(Chunk.ChunkState.Inactive);
+                }
+            }
+
             _chunkConstructionCoroutine = null;
-
-            if (_chunkBuildersByWorldPosition.TryGetValue(chunk.Position, out var builderUsed))
-            {
-                _chunkBuilders.Remove(builderUsed);
-                _chunkBuildersByWorldPosition.Remove(builderUsed.Position);
-            }
-
-            if (_chunksToActivate.Count > 0)
-            {
-                ActivateChunk(_chunksToActivate.Dequeue());
-            }
-
-            // Make sure we still need this chunk
-            if (_activeChunks.Contains(chunk))
-            {
-                chunk.SetState(Chunk.ChunkState.Active);
-            }
-            else chunk.SetState(Chunk.ChunkState.Inactive);
         }
 
         private BlockTypes GetFill(int depth)
@@ -336,8 +352,7 @@ namespace WorldObjects.WorldGeneration
 
         public void Destroy()
         {
-            _chunksToActivate.Clear();
-            _chunkBeingActivated = null;
+            _chunkActivationCommands.Clear();
             if (_chunkConstructionCoroutine != null)
             {
                 StopCoroutine(_chunkConstructionCoroutine);

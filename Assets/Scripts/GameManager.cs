@@ -101,15 +101,15 @@ public class GameManager : Singleton<GameManager>
         if (GameSaves.HasSavedData)
         {
             _log.Info("Loading saved data...");
-            chunkArchitect.ActivateChunk(IntVector2.Zero);
         }
         else
         {
             _log.Info("Creating new save...");
-            chunkArchitect.ActivateChunk(IntVector2.Zero);
             User.RegisterGame("Default");
             UserSaves.SaveUser();
         }
+
+        chunkArchitect.GetChunkAtPosition(IntVector2.Zero);
 
         Character = GameState.CurrentCharacter;
 

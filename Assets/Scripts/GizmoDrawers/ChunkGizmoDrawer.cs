@@ -51,7 +51,7 @@ namespace GizmoDrawers
         {
             if (_worldToDraw == null) return;
 
-            var chunksInLoadOrder = _worldToDraw.ChunkArchitect.ActiveChunks;
+            var chunksInLoadOrder = _worldToDraw.ChunkArchitect.ChunkCache;
 
             UpdateShowChunkList(chunksInLoadOrder.Count);
 
@@ -72,7 +72,7 @@ namespace GizmoDrawers
                 }
             }
 
-            var buildersInCreationOrder = _worldToDraw.ChunkArchitect.ActiveBuilders;
+            var buildersInCreationOrder = _worldToDraw.ChunkArchitect.BuilderCache;
 
             UpdateShowBuilderList(buildersInCreationOrder.Count);
 
