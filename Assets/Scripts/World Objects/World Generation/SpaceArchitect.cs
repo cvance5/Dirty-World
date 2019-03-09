@@ -81,15 +81,40 @@ namespace WorldObjects.WorldGeneration
         {
             if (_sPicker != null)
             {
-                var spaces = _sPicker.Select(sourceChunkBuilder);
+                var spaces = CheckForSpecialCasing(sourceChunkBuilder);
 
-                foreach (var space in spaces)
+                if (spaces.Count > 0)
                 {
-                    OnNewSpaceBuilderDeclared.Raise(space);
-                    space.CheckForBoundaries();
-                    Register(space.Build());
+                    foreach (var space in spaces)
+                    {
+                        Register(space);
+                    }
+                }
+                else
+                {
+                    var spaceBuilders = _sPicker.Select(sourceChunkBuilder);
+
+                    foreach (var spaceBuilder in spaceBuilders)
+                    {
+                        OnNewSpaceBuilderDeclared.Raise(spaceBuilder);
+                        spaceBuilder.CheckForBoundaries();
+                        Register(spaceBuilder.Build());
+                    }
                 }
             }
+        }
+
+        private List<Space> CheckForSpecialCasing(ChunkBuilder chunk)
+        {
+            var specialCaseSpaces = new List<Space>();
+
+            if (chunk.Position == IntVector2.Zero)
+            {
+                var space = CustomSpaceLoader.Load("InitialLaboratory");
+                if (space != null) specialCaseSpaces.Add(space);
+            }
+
+            return specialCaseSpaces;
         }
 
         private void LoadSpace(string spaceName)

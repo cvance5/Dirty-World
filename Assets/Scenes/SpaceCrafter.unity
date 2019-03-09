@@ -142,7 +142,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gridSize: 2
-  _settings: {fileID: 11400000, guid: 14128f25eabb68b4eb2331c6d9a452df, type: 2}
 --- !u!4 &748463601
 Transform:
   m_ObjectHideFlags: 0

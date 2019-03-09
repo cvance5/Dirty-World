@@ -26,8 +26,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             if (chunk.Depth <= World.SURFACE_DEPTH)
             {
-                //spaces.AddRange(CheckForSpecialCasing(chunk));
-
                 if (_canPickSpaces) spaces.AddRange(RandomlySelect(chunk));
             }
 
@@ -44,25 +42,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 }
                 else _log.Warning($"{allowedType.Name} is not a spacebuilder and cannot be allowed.");
             }
-        }
-
-        private List<Space> CheckForSpecialCasing(ChunkBuilder chunk)
-        {
-            var specialCaseSpaces = new List<Space>();
-
-            if (chunk.Position == IntVector2.Zero)
-            {
-                var space = CustomSpaceLoader.Load("InitialLaboratory");
-                if (space != null) specialCaseSpaces.Add(space);
-            }
-
-            if (chunk.Remoteness == 0)
-            {
-                // Nothing but the initial laboratory here...
-                _canPickSpaces = false;
-            }
-
-            return specialCaseSpaces;
         }
 
         private List<SpaceBuilder> RandomlySelect(ChunkBuilder chunk)

@@ -1,8 +1,10 @@
 ﻿using Data.Serialization.SerializableSpaces;
+using System;
 using UnityEngine;
 
 namespace WorldObjects.Spaces
 {
+    [Serializable]
     public class CustomSpace : ScriptableObject
     {
         private string _serializedSpaceJson;
