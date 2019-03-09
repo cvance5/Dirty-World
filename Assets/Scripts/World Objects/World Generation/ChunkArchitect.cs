@@ -47,7 +47,7 @@ namespace WorldObjects.WorldGeneration
             SpaceArchitect.OnNewSpaceBuilderDeclared += GenerateChunkBuildersForSpace;
         }
 
-        private void ActivateChunk(IntVector2 worldPosition)
+        private void CreateChunk(IntVector2 worldPosition)
         {
             if (GetNearestChunkPosition(worldPosition) != worldPosition)
             {
@@ -189,7 +189,7 @@ namespace WorldObjects.WorldGeneration
         {
             if (!_chunksByWorldPosition.TryGetValue(chunkPosition, out var chunk))
             {
-                ActivateChunk(chunkPosition);
+                CreateChunk(chunkPosition);
                 chunk = _chunksByWorldPosition[chunkPosition];
             }
 
@@ -218,7 +218,7 @@ namespace WorldObjects.WorldGeneration
                         chunk.SetState(Chunk.ChunkState.Active);
                     }
                 }
-                else ActivateChunk(activeChunkPosition);
+                else CreateChunk(activeChunkPosition);
             }
         }
 

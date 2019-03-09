@@ -43,6 +43,16 @@ namespace WorldObjects
             if (newPosition.Chunk != null)
             {
                 var activeChunkList = DetermineActiveChunks(newPosition.Chunk.Position);
+
+                // Order by distance from player
+                activeChunkList.Sort((chunk1, chunk2) =>
+                {
+                    var distance1 = IntVector2.Distance(newPosition.Chunk.Position, chunk1);
+                    var distance2 = IntVector2.Distance(newPosition.Chunk.Position, chunk2);
+
+                    return distance1.CompareTo(distance2);
+                });
+
                 ChunkArchitect.SetActiveChunks(activeChunkList);
                 SpaceArchitect.SetActiveSpaces(ChunkArchitect.ChunkCache);
             }
