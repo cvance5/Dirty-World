@@ -24,15 +24,21 @@ namespace WorldObjects.WorldGeneration
 
         public BlockBuilder SetType(BlockTypes type)
         {
-            _block = type;
-            IsFill = false;
+            if (Space == null)
+            {
+                _block = type;
+                IsFill = false;
+            }
             return this;
         }
 
         public BlockBuilder SetSpace(Space space)
         {
             Space = space;
-            SetType(space.GetBlockType(Position));
+
+            _block = space.GetBlockType(Position);
+            IsFill = false;
+
             SetFeature(space.GetFeatureType(Position));
             return this;
         }
