@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Utilities.Debug;
 using WorldObjects.Spaces;
 
@@ -7,7 +8,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class SpacePicker
     {
-        private bool _canPickSpaces = true;
         private List<Type> _allowedSpaces = new List<Type>();
 
         public SpacePicker(List<Type> initialAllowedSpaces = null)
@@ -18,19 +18,31 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
         }
 
-        public List<SpaceBuilder> Select(ChunkBuilder chunk)
+        public bool NeedsMoreSpaces(ChunkBuilder sourceChunkBuilder)
         {
-            var spaces = new List<SpaceBuilder>();
+            var needsMoreSpaces = _allowedSpaces.Count > 0;
 
-            _canPickSpaces = _allowedSpaces.Count > 0;
-
-            if (chunk.Depth <= World.SURFACE_DEPTH)
+            if (needsMoreSpaces)
             {
-                if (_canPickSpaces) spaces.Add(RandomlySelect(chunk));
+                needsMoreSpaces = sourceChunkBuilder.Depth <= World.SURFACE_DEPTH;
             }
 
-            return spaces;
+            if (needsMoreSpaces)
+            {
+                var numBlocksAffectedBySpaces = sourceChunkBuilder.BlockBuilders.Count(bBuilder => bBuilder.Space != null);
+                var percentAffected = numBlocksAffectedBySpaces / sourceChunkBuilder.BlockBuilders.Count;
+                needsMoreSpaces = percentAffected < Chance.Percent;
+            }
+
+            if (needsMoreSpaces)
+            {
+                needsMoreSpaces = Chance.OneIn(3);
+            }
+
+            return needsMoreSpaces;
         }
+
+        public SpaceBuilder Select(ChunkBuilder chunk) => RandomlySelect(chunk);
 
         public void AllowSpaces(List<Type> allowedSpaceTypes)
         {

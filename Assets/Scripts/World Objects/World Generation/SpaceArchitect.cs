@@ -22,7 +22,7 @@ namespace WorldObjects.WorldGeneration
         public SpaceArchitect(SpacePicker sPicker = null)
         {
             _sPicker = sPicker;
-            ChunkArchitect.OnNewChunkBuilderAdded += AddSpace;
+            ChunkArchitect.OnNewChunkBuilderAdded += CheckForSpaces;
         }
 
         public void Register(Space space)
@@ -77,7 +77,7 @@ namespace WorldObjects.WorldGeneration
         }
 
 
-        private void AddSpace(ChunkBuilder sourceChunkBuilder)
+        private void CheckForSpaces(ChunkBuilder sourceChunkBuilder)
         {
             if (_sPicker != null)
             {
@@ -90,16 +90,18 @@ namespace WorldObjects.WorldGeneration
                         Register(space);
                     }
                 }
-                else
-                {
-                    var spaceBuilders = _sPicker.Select(sourceChunkBuilder);
 
-                    foreach (var spaceBuilder in spaceBuilders)
-                    {
-                        OnNewSpaceBuilderDeclared.Raise(spaceBuilder);
-                        spaceBuilder.CheckForBoundaries();
-                        Register(spaceBuilder.Build());
-                    }
+                while (_sPicker.NeedsMoreSpaces(sourceChunkBuilder))
+                {
+                    var spaceBuilder = _sPicker.Select(sourceChunkBuilder);
+
+                    spaceBuilder.CheckForBoundaries();
+                    OnNewSpaceBuilderDeclared.Raise(spaceBuilder);
+
+                    var space = spaceBuilder.Build();
+
+                    Register(space);
+                    sourceChunkBuilder.AddSpace(space);
                 }
             }
         }

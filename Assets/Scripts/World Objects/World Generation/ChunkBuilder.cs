@@ -37,7 +37,7 @@ namespace WorldObjects.WorldGeneration
         public List<EnemyHealth> Enemies => new List<EnemyHealth>(_enemies);
 
         private readonly List<BlockBuilder> _blockBuilders = new List<BlockBuilder>();
-        public List<BlockBuilder> BlockBuilders = new List<BlockBuilder>();
+        public List<BlockBuilder> BlockBuilders => new List<BlockBuilder>(_blockBuilders);
 
         private readonly Dictionary<IntVector2, BlockBuilder> _blockMap
                    = new Dictionary<IntVector2, BlockBuilder>();

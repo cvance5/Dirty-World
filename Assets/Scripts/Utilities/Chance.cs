@@ -8,6 +8,8 @@ public static class Chance
 
     public static bool CoinFlip => OneIn(2);
 
+    public static double Percent => _rand.NextDouble();
+
     public static bool OneIn(int x)
     {
         var rand = _rand.Next(x);
