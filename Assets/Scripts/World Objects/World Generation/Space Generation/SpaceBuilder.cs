@@ -18,7 +18,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public SpaceBuilder(ChunkBuilder chunkBuilder) => _chunkBuilder = chunkBuilder;
         public SpaceBuilder(SpaceBuilder spaceToCopy) => _chunkBuilder = spaceToCopy._chunkBuilder;
 
-        private void OnChunkBoundaryChanged(IntVector2 direction, int amount) => AddBoundary(direction, amount);
         public SpaceBuilder AddBoundary(IntVector2 direction, int amount)
         {
             // Tightness is the "magnitude" of the boundary, regardless of direction
