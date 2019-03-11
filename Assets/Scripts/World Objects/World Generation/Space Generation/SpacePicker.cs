@@ -26,7 +26,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             if (chunk.Depth <= World.SURFACE_DEPTH)
             {
-                if (_canPickSpaces) spaces.AddRange(RandomlySelect(chunk));
+                if (_canPickSpaces) spaces.Add(RandomlySelect(chunk));
             }
 
             return spaces;
@@ -44,23 +44,16 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
         }
 
-        private List<SpaceBuilder> RandomlySelect(ChunkBuilder chunk)
+        private SpaceBuilder RandomlySelect(ChunkBuilder cBuilder)
         {
-            var randomSpaces = new List<SpaceBuilder>();
+            var spaceBuilder = Activator.CreateInstance(_allowedSpaces.RandomItem(), cBuilder) as SpaceBuilder;
 
-            if (Chance.OneIn(3))
+            if (Chance.OneIn(4))
             {
-                var spaceBuilder = Activator.CreateInstance(_allowedSpaces.RandomItem(), chunk) as SpaceBuilder;
-
-                if (Chance.OneIn(4))
-                {
-                    spaceBuilder.AddModifier(ModifierTypes.Cavernous);
-                }
-
-                randomSpaces.Add(spaceBuilder);
+                spaceBuilder.AddModifier(ModifierTypes.Cavernous);
             }
 
-            return randomSpaces;
+            return spaceBuilder;
         }
 
         private static readonly Log _log = new Log("SpacePicker");
