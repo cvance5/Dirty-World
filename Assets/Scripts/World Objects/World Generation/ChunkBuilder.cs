@@ -6,7 +6,6 @@ using Utilities.Debug;
 using WorldObjects.Actors.Enemies;
 using WorldObjects.Blocks;
 using WorldObjects.Construction;
-using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.EnemyGeneration;
 using WorldObjects.WorldGeneration.FeatureGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
@@ -38,6 +37,8 @@ namespace WorldObjects.WorldGeneration
         public List<EnemyHealth> Enemies => new List<EnemyHealth>(_enemies);
 
         private readonly List<BlockBuilder> _blockBuilders = new List<BlockBuilder>();
+        public List<BlockBuilder> BlockBuilders = new List<BlockBuilder>();
+
         private readonly Dictionary<IntVector2, BlockBuilder> _blockMap
                    = new Dictionary<IntVector2, BlockBuilder>();
 
@@ -128,6 +129,14 @@ namespace WorldObjects.WorldGeneration
         {
             _spaces.Add(spaceToAdd);
 
+            foreach (var bBuilder in _blockBuilders)
+            {
+                if (spaceToAdd.Contains(bBuilder.Position))
+                {
+                    bBuilder.SetSpace(spaceToAdd);
+                }
+            }
+
             OnChunkBuilderChanged.Raise(this);
 
             return this;
@@ -168,7 +177,6 @@ namespace WorldObjects.WorldGeneration
             }
 
             _spaceBuilders.Add(spaceBuilder);
-
 
             foreach (var direction in Directions.Cardinals)
             {
@@ -214,7 +222,7 @@ namespace WorldObjects.WorldGeneration
             var builder = _blockMap[position];
 
             if (builder.IsFill) return FillBlock;
-            else return builder.Type;
+            else return builder.GetBlock();
         }
 
         public Chunk Build()
@@ -250,31 +258,18 @@ namespace WorldObjects.WorldGeneration
             {
                 var position = builder.Position;
 
-                var blockToBuild = BlockTypes.None;
+                var blockType = BlockTypes.None;
                 var featureToBuild = FeatureTypes.None;
 
-                var containingSpace = _spaces.Find(space => space.Contains(position));
-                if (containingSpace is ComplexSpace)
-                {
-                    var complexSpace = containingSpace as ComplexSpace;
-                    containingSpace = complexSpace.GetContainingSpace(position) ?? complexSpace;
-                }
+                if (builder.IsFill) builder.SetType(FillBlock);
 
-                if (containingSpace != null)
-                {
-                    blockToBuild = containingSpace.GetBlockType(position);
-                    featureToBuild = containingSpace.GetFeatureType(position);
-                }
-                else
-                {
-                    if (builder.IsFill) builder.SetType(FillBlock);
-                    blockToBuild = builder.Build();
-                }
+                blockType = builder.GetBlock();
+                featureToBuild = builder.GetFeature(); ;
 
                 Block block = null;
-                if (blockToBuild != BlockTypes.None)
+                if (blockType != BlockTypes.None)
                 {
-                    block = BlockLoader.CreateBlock(blockToBuild, position);
+                    block = BlockLoader.CreateBlock(blockType, position);
                     chunk.Register(block);
                 }
 
@@ -287,10 +282,7 @@ namespace WorldObjects.WorldGeneration
                     {
                         feature.Assign(block);
                     }
-                    if (containingSpace != null)
-                    {
-                        feature.Assign(containingSpace);
-                    }
+                    feature.Assign(builder.Space);
 
                     feature.Initialize();
                 }
