@@ -7,8 +7,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
     {
         public override ModifierTypes Type => ModifierTypes.Laboratory;
 
-        public LaboratoryModifier(ChunkBuilder chunkBuilder, SpaceBuilder spaceBuilder)
-            : base(chunkBuilder, spaceBuilder) { }
+        public LaboratoryModifier(SpaceBuilder spaceBuilder)
+            : base(spaceBuilder) { }
 
         public override void Modify(Space target)
         {

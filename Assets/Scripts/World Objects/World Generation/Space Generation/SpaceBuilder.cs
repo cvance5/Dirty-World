@@ -47,11 +47,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             switch (modifier)
             {
                 case ModifierTypes.Cavernous:
-                    _modifiersApplied.Add(new CavernousModifier(_chunkBuilder, this));
+                    _modifiersApplied.Add(new CavernousModifier(this));
                     break;
 
                 case ModifierTypes.Laboratory:
-                    _modifiersApplied.Add(new LaboratoryModifier(_chunkBuilder, this));
+                    _modifiersApplied.Add(new LaboratoryModifier(this));
                     break;
 
                 default: throw new System.ArgumentException($"Unknown modifier of type `{modifier}`.  Cannot construct.");
