@@ -30,13 +30,12 @@ namespace WorldObjects.WorldGeneration
         public List<Space> Spaces => new List<Space>(_spaces);
 
         private readonly List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
-        public List<SpaceBuilder> SpaceBuilders => new List<SpaceBuilder>(_spaceBuilders);
 
         private readonly Dictionary<IntVector2, Chunk> _neighborChunks = new Dictionary<IntVector2, Chunk>();
         private readonly Dictionary<IntVector2, ChunkBuilder> _neighborBuilders = new Dictionary<IntVector2, ChunkBuilder>();
 
         private readonly List<EnemyHealth> _enemies = new List<EnemyHealth>();
-        public List<EnemyHealth> Enemies = new List<EnemyHealth>();
+        public List<EnemyHealth> Enemies => new List<EnemyHealth>(_enemies);
 
         private readonly List<BlockBuilder> _blockBuilders = new List<BlockBuilder>();
         private readonly Dictionary<IntVector2, BlockBuilder> _blockMap
