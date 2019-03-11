@@ -300,6 +300,3 @@ F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\SourceAssembly.csproj.
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\SourceAssembly.csproj.CopyComplete
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\SourceAssembly.dll
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\SourceAssembly.pdb
-F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Boo.Lang.Parser.dll
-F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Boo.Lang.Compiler.dll
-F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Boo.Lang.dll

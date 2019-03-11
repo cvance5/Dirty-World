@@ -54,7 +54,7 @@ namespace WorldObjects.WorldGeneration
                 throw new InvalidOperationException($"Chunk cannot be spawned at {worldPosition}.");
             }
 
-            if (_chunkBuildersByWorldPosition.ContainsKey(worldPosition)) return;
+            if (_chunksByWorldPosition.ContainsKey(worldPosition)) return;
             else
             {
                 Chunk chunk;
