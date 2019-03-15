@@ -59,8 +59,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public void CheckForBoundaries() => _chunkBuilder.SeekReachedEdges(this);
-
         public abstract void Shift(IntVector2 shift);
 
         public abstract int PassesBy(IntVector2 direction, int amount);

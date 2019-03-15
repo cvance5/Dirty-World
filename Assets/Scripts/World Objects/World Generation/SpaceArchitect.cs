@@ -95,7 +95,7 @@ namespace WorldObjects.WorldGeneration
                 {
                     var spaceBuilder = _sPicker.Select(sourceChunkBuilder);
 
-                    spaceBuilder.CheckForBoundaries();
+                    sourceChunkBuilder.SeekReachedEdges(spaceBuilder);
                     OnNewSpaceBuilderDeclared.Raise(spaceBuilder);
 
                     var space = spaceBuilder.Build();
