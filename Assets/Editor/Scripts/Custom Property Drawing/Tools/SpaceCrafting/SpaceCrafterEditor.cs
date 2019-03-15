@@ -44,7 +44,9 @@ namespace CustomPropertyDrawing.Tools.SpaceCrafting
                         AssetDatabase.CreateAsset(_asset, ASSET_PATH + System.IO.Path.GetRandomFileName() + ".asset");
                     }
 
+                    Undo.RecordObject(_asset, "Set SerializableSpace JSON");
                     _asset.Set(SerializableSpaceHelper.ToSerializableSpace(_target.Build()));
+                    EditorUtility.SetDirty(_asset);
 
                     AssetDatabase.SaveAssets();
                 }

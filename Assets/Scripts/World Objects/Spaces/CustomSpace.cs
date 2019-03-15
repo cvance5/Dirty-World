@@ -9,6 +9,7 @@ namespace WorldObjects.Spaces
         private string _serializedSpaceJson;
 
         public void Set(SerializableSpace space) => _serializedSpaceJson = space.Serialize();
+
         public Space Build() => SerializableSpace.Deserialize(_serializedSpaceJson).ToObject();
     }
 }
