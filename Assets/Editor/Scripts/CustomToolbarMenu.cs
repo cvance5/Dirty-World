@@ -7,19 +7,26 @@ public class CustomToolbarMenu
     [MenuItem("Data/Clear User Data")]
     public static void ClearUserData()
     {
-        GameSaves.RefreshSavedGames();
-
-        if (GameSaves.SaveExists("Default"))
+        if (EditorApplication.isPlaying)
         {
-            GameSaves.UnloadCurrent();
-            GameSaves.DeleteSave("Default");
+            _log.Error($"Cannot delete during play mode.");
+        }
+        else
+        {
+            GameSaves.RefreshSavedGames();
+
+            if (GameSaves.SaveExists("Default"))
+            {
+                GameSaves.UnloadCurrent();
+                GameSaves.DeleteSave("Default");
+            }
+            else _log.Warning("No save data to delete.");
 
             var user = UserSaves.LoadUser("Default");
             user.UnregisterGame("Default");
 
-            UserSaves.SaveUser();            
+            UserSaves.SaveUser();
         }
-        else _log.Warning("No save data to delete.");
     }
 
     private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("CustomToolbar");
