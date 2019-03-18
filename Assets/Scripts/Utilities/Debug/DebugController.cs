@@ -5,6 +5,8 @@ namespace Utilities.Debug
 {
     public class DebugController : Singleton<DebugController>
     {
+        private void Awake() => DontDestroyOnLoad(gameObject);
+
 #if UNITY_EDITOR
         private void Update()
         {

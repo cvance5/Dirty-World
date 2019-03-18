@@ -29,6 +29,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public MonsterDenBuilder SetCenterpoint(IntVector2 centerpoint)
         {
             _centerpoint = centerpoint;
+            OnSpaceBuilderChanged.Raise(this);
             return this;
         }
 
@@ -37,6 +38,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _radius = radius;
             _radius = Mathf.Max(0, _radius);
             if (_radius == 0) SetAllowEnemies(false);
+            OnSpaceBuilderChanged.Raise(this);
             return this;
         }
 
@@ -135,6 +137,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 _centerpoint.X = amount + _radius;
             }
             else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+
+            OnSpaceBuilderChanged.Raise(this);
 
             return this;
         }

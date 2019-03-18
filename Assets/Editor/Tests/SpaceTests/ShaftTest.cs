@@ -5,6 +5,7 @@ using WorldObjects;
 using WorldObjects.Blocks;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration;
+using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace Tests.SpaceTests
 {
@@ -40,6 +41,11 @@ namespace Tests.SpaceTests
 
         [Test]
         public void ShaftBuilderClampTest()
+        {
+            NewMethod();
+        }
+
+        private static void NewMethod()
         {
             foreach (var alignment in (ShaftBuilder.ShaftAlignment[])System.Enum.GetValues(typeof(ShaftBuilder.ShaftAlignment)))
             {

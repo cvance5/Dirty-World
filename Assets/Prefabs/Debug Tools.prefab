@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2019366149810556469}
   - component: {fileID: 2019366149810556458}
-  - component: {fileID: 1026515057}
   m_Layer: 0
   m_Name: Debug Tools
   m_TagString: Untagged
@@ -28,7 +27,9 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 24.291182, y: -23.342638, z: 6.474745}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 438251650005452155}
+  - {fileID: 8135418566615810317}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -44,23 +45,97 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c118140202a39946b8b4d5d8b6d8760, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1026515057
+--- !u!1 &3279385389315050035
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 438251650005452155}
+  - component: {fileID: 8703845542105244447}
+  m_Layer: 0
+  m_Name: SpaceHistoryDrawer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &438251650005452155
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3279385389315050035}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2019366149810556469}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8703845542105244447
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2019366149810556456}
+  m_GameObject: {fileID: 3279385389315050035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: adc5fb632967a504e8ba2d0049a79aa2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &8423317487666153306
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8135418566615810317}
+  - component: {fileID: 1975280643706095847}
+  m_Layer: 0
+  m_Name: ChunkDrawer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8135418566615810317
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8423317487666153306}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2019366149810556469}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1975280643706095847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8423317487666153306}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1988c5798dbaaf54f9d58b362251f19d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _showChunkLoadOrder: 1
-  _showChunkBounderies: 1
-  _showChunkSpaces: 1
+  _showChunkLoadOrder: 0
+  _showChunkBounderies: 0
   _showChunk: 
-  _showBlueprintCreationOrder: 1
-  _showBlueprintBoundaries: 1
-  _showBlueprintSpaces: 1
-  _showBlueprint: 
+  _showBuilderCreationOrder: 1
+  _showBuilderBoundaries: 1
+  _showBuilder: 
+  _showSpaces: 1
+  _showSpaceNames: 0

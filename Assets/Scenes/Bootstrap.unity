@@ -382,25 +382,5 @@ PrefabInstance:
       propertyPath: m_Name
       value: Debug Tools
       objectReference: {fileID: 0}
-    - target: {fileID: 1026515057, guid: 370e5a67d0aaf7542b5c6810f6112b13, type: 3}
-      propertyPath: _showChunkLoadOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1026515057, guid: 370e5a67d0aaf7542b5c6810f6112b13, type: 3}
-      propertyPath: _showChunkBounderies
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1026515057, guid: 370e5a67d0aaf7542b5c6810f6112b13, type: 3}
-      propertyPath: _showBlueprintCreationOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1026515057, guid: 370e5a67d0aaf7542b5c6810f6112b13, type: 3}
-      propertyPath: _showBlueprintBoundaries
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1026515057, guid: 370e5a67d0aaf7542b5c6810f6112b13, type: 3}
-      propertyPath: _showSpaceNames
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 370e5a67d0aaf7542b5c6810f6112b13, type: 3}

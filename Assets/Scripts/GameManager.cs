@@ -95,6 +95,7 @@ public class GameManager : Singleton<GameManager>
 
 # if UNITY_EDITOR
         GizmoDrawers.ChunkGizmoDrawer.SetWorldToDraw(World);
+        GizmoDrawers.SpaceTimelineGizmoDrawer.BeginTracking();
 #endif
         PositionTracker.SetWorldToTrack(World);
 

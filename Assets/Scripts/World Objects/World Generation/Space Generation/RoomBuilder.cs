@@ -69,6 +69,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _bottomLeftCorner = new IntVector2(_centerpoint.X - _size, _centerpoint.Y - _size);
             _topRightCorner = new IntVector2(_centerpoint.X + _size, _centerpoint.Y + _size);
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         public override int PassesBy(IntVector2 direction, int amount)

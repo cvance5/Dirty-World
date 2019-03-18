@@ -39,6 +39,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _leftEnd += shift;
             _center += shift;
             _rightEnd += shift;
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         public CorridorBuilder SetStartingPoint(IntVector2 startingPoint, IntVector2 direction)
@@ -87,6 +89,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _height = blocksHigh - 1;
             _height = Mathf.Max(0, _height);
+            Rebuild();
             return this;
         }
 
@@ -279,6 +282,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     }
                     break;
             }
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         public enum CorridorAlignment

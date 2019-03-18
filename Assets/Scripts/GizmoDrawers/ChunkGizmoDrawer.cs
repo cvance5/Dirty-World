@@ -5,9 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using Utilities;
 using WorldObjects;
-using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration;
-using Space = WorldObjects.Spaces.Space;
 
 namespace GizmoDrawers
 {
@@ -33,17 +31,9 @@ namespace GizmoDrawers
 
         [SerializeField]
         private List<bool> _showBuilder = new List<bool>();
-
-        [Header("Spaces")]
-        [SerializeField]
-        private bool _showSpaces = true;
-        [SerializeField]
-        private bool _showSpaceNames = true;
 #pragma warning restore IDE0044 // Add readonly modifier
 
         private World _worldToDraw;
-
-        private void Awake() => DontDestroyOnLoad(gameObject);
 
         public static void SetWorldToDraw(World world) => Instance._worldToDraw = world;
 
@@ -90,14 +80,6 @@ namespace GizmoDrawers
                 if (_showBuilderBoundaries)
                 {
                     DrawBuilderBoundaries(builder);
-                }
-            }
-
-            if (_showSpaces)
-            {
-                foreach (var space in _worldToDraw.SpaceArchitect.ActiveSpaces)
-                {
-                    DrawSpace(space);
                 }
             }
         }
@@ -157,86 +139,13 @@ namespace GizmoDrawers
         private void DrawChunkBoundaries(Chunk chunk)
         {
             Gizmos.color = Color.white;
-            DrawRectangle(chunk.TopRightCorner, chunk.BottomLeftCorner);
+            GizmoShapeDrawer.DrawRectangle(chunk.TopRightCorner, chunk.BottomLeftCorner);
         }
 
         private void DrawBuilderBoundaries(ChunkBuilder builder)
         {
             Gizmos.color = Color.blue;
-            DrawRectangle(builder.TopRightCorner, builder.BottomLeftCorner);
-        }
-
-        private void DrawSpace(Space space, string prefixName = "")
-        {
-            if (space is Corridor)
-            {
-                Gizmos.color = Color.red;
-            }
-            else if (space is Shaft)
-            {
-                Gizmos.color = Color.green;
-            }
-            else if (space is MonsterDen)
-            {
-                Gizmos.color = Color.white;
-            }
-            else if (space is TreasureRoom)
-            {
-                Gizmos.color = Color.yellow;
-            }
-            else if (space is Room)
-            {
-                Gizmos.color = Color.black;
-            }
-            else if (space is Laboratory)
-            {
-                Gizmos.color = Color.gray;
-            }
-
-            DrawByExtents(space.Extents);
-            if (_showSpaceNames)
-            {
-                Handles.Label(space.Extents[0], $"{prefixName}{space.Name}");
-            }
-
-            if (space is ComplexSpace)
-            {
-                var complexSpace = space as ComplexSpace;
-                for (var regionNumber = 0; regionNumber < complexSpace.Regions.Count; regionNumber++)
-                {
-                    var region = complexSpace.Regions[regionNumber];
-                    for (var spaceNumber = 0; spaceNumber < region.Spaces.Count; spaceNumber++)
-                    {
-                        DrawSpace(region.Spaces[spaceNumber], $"{complexSpace.Name}'s #{spaceNumber + regionNumber}: ");
-                    }
-                }
-            }
-        }
-
-        private void DrawRectangle(Vector2 topRight, Vector2 bottomLeft)
-        {
-            var topLeft = new Vector2(bottomLeft.x, topRight.y);
-            var bottomRight = new Vector2(topRight.x, bottomLeft.y);
-
-            DrawRectangle(topLeft, topRight, bottomRight, bottomLeft);
-        }
-
-        private void DrawRectangle(Vector2 topLeft, Vector2 topRight, Vector2 bottomRight, Vector2 bottomLeft)
-        {
-            Gizmos.DrawLine(topLeft, topRight);
-            Gizmos.DrawLine(topRight, bottomRight);
-            Gizmos.DrawLine(bottomRight, bottomLeft);
-            Gizmos.DrawLine(bottomLeft, topLeft);
-        }
-
-        private void DrawByExtents(List<IntVector2> extents)
-        {
-            for (var i = 0; i < extents.Count - 1; i++)
-            {
-                Gizmos.DrawLine(extents[i], extents[i + 1]);
-            }
-
-            Gizmos.DrawLine(extents[extents.Count - 1], extents[0]);
+            GizmoShapeDrawer.DrawRectangle(builder.TopRightCorner, builder.BottomLeftCorner);
         }
     }
 }

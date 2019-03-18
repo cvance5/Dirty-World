@@ -45,6 +45,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             var randomConnectionWithRoom = _connectionsByCorridor.RandomItem(kvp => !(kvp.Value is null));
             _treasureRoom = PromoteTreasureRoom(randomConnectionWithRoom.Value);
             _connectionsByCorridor[randomConnectionWithRoom.Key] = _treasureRoom;
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         private void RegisterNewMainShaft(ShaftBuilder mainShaft, int height)
@@ -63,6 +65,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     _allowAdditionalMainShafts = false;
                 }
             }
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         private List<ShaftBuilder> FindMainShaftsThatReachPosition(IntVector2 position)
@@ -185,6 +189,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
 
             _corridorsByShaft[mainShaft] = corridors;
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         private void GenerateSecondaryShafts(ShaftBuilder mainShaft, int height)
@@ -281,34 +287,59 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
 
             _secondaryShaftsByShaft[mainShaft] = shafts;
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         private RoomBuilder AddRoom(IntVector2 corridorEndpoint, IntVector2 direction)
-            => new RoomBuilder(_chunkBuilder)
-                  .SetCenter(corridorEndpoint + (direction * ROOM_SIZE) + (Directions.Up * ROOM_SIZE))
-                  .SetSize(ROOM_SIZE)
-                  .SetMinimumSize(ROOM_SIZE);
+        {
+            var room = new RoomBuilder(_chunkBuilder)
+                             .SetCenter(corridorEndpoint + (direction * ROOM_SIZE) + (Directions.Up * ROOM_SIZE))
+                             .SetSize(ROOM_SIZE)
+                             .SetMinimumSize(ROOM_SIZE);
+
+            OnSpaceBuilderChanged.Raise(this);
+
+            return room;
+        }
 
         private TreasureRoomBuilder PromoteTreasureRoom(RoomBuilder roomBuilder)
-            => new TreasureRoomBuilder(roomBuilder)
-                  .SetTreasure(new UnlockItem("Seismic Bomb", UnlockTypes.Weapon));
+        {
+            var treasureRoom = new TreasureRoomBuilder(roomBuilder)
+                             .SetTreasure(new UnlockItem("Seismic Bomb", UnlockTypes.Weapon));
+
+            OnSpaceBuilderChanged.Raise(this);
+
+            return treasureRoom;
+        }
 
         private CorridorBuilder AddCorridor(IntVector2 attachPoint, IntVector2 direction)
-            => new CorridorBuilder(_chunkBuilder)
-                  .SetStartingPoint(attachPoint, direction)
-                  .SetHeight(CORRIDOR_HEIGHT)
-                  .SetLength(CORRIDOR_SEGMENT_LENGTH * Random.Range(1, _maximumCorridorSegments))
-                  .SetMinimumHeight(CORRIDOR_HEIGHT)
-                  .SetMinimumLength(CORRIDOR_SEGMENT_LENGTH);
+        {
+            var corridor = new CorridorBuilder(_chunkBuilder)
+                             .SetStartingPoint(attachPoint, direction)
+                             .SetHeight(CORRIDOR_HEIGHT)
+                             .SetLength(CORRIDOR_SEGMENT_LENGTH * Random.Range(1, _maximumCorridorSegments))
+                             .SetMinimumHeight(CORRIDOR_HEIGHT)
+                             .SetMinimumLength(CORRIDOR_SEGMENT_LENGTH);
+
+            OnSpaceBuilderChanged.Raise(this);
+
+            return corridor;
+        }
 
         private ShaftBuilder AddShaft(int startingStory, int endingStory, IntVector2 position)
-            => new ShaftBuilder(_chunkBuilder)
-                  .SetStartingPoint(position, startingStory < endingStory ? Directions.Up : Directions.Down)
-                  .SetWidth(ROOM_SIZE)
-                  .SetHeight(STORY_SIZE * (1 + Mathf.Abs((endingStory - startingStory))))
-                  .SetMinimumWidth(ROOM_SIZE)
-                  .SetMinimumHeight(STORY_SIZE)
-                  .SetUncapped(true);
+        {
+            var shaft = new ShaftBuilder(_chunkBuilder)
+                             .SetStartingPoint(position, startingStory < endingStory ? Directions.Up : Directions.Down)
+                             .SetWidth(ROOM_SIZE)
+                             .SetHeight(STORY_SIZE * (1 + Mathf.Abs((endingStory - startingStory))))
+                             .SetMinimumWidth(ROOM_SIZE)
+                             .SetMinimumHeight(STORY_SIZE)
+                             .SetUncapped(true);
+
+            OnSpaceBuilderChanged.Raise(this);
+
+            return shaft;
+        }
 
         public override bool Contains(IntVector2 point)
         {
@@ -423,6 +454,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     }
                 }
             }
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         public override void Shift(IntVector2 shift)
@@ -432,6 +465,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             {
                 spaceToShift.Shift(shift);
             }
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         private void RemoveMainShaft(ShaftBuilder mainShaft)
@@ -443,6 +478,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _corridorsByShaft.Remove(mainShaft);
             _secondaryShaftsByShaft.Remove(mainShaft);
             _mainShafts.Remove(mainShaft);
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         protected override Space BuildRaw()

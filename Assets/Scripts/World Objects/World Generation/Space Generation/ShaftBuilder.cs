@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using WorldObjects.Spaces;
-using WorldObjects.WorldGeneration.SpaceGeneration;
 
-namespace WorldObjects.WorldGeneration
+namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class ShaftBuilder : SpaceBuilder
     {
@@ -37,6 +36,8 @@ namespace WorldObjects.WorldGeneration
             _top += shift;
             _middle += shift;
             _bottom += shift;
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         public ShaftBuilder SetStartingPoint(IntVector2 startingPoint, IntVector2 direction)
@@ -244,6 +245,8 @@ namespace WorldObjects.WorldGeneration
                     }
                     break;
             }
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         public enum ShaftAlignment

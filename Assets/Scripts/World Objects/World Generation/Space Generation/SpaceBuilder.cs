@@ -6,6 +6,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public abstract class SpaceBuilder
     {
+        public static SmartEvent<SpaceBuilder> OnSpaceBuilderChanged = new SmartEvent<SpaceBuilder>();
+
         public abstract bool IsValid { get; }
 
         protected ChunkBuilder _chunkBuilder { get; private set; }
