@@ -3,6 +3,7 @@
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Utilities.Debug;
 
 namespace GizmoDrawers
 {
@@ -33,7 +34,13 @@ namespace GizmoDrawers
 
         public void LogChange(WorldObjects.Spaces.Space current)
         {
-            _history.Add(current.Extents);
+            var extents = new List<IntVector2>();
+            foreach (var extent in current.Extents)
+            {
+                extents.Add(new IntVector2(extent));
+            }
+
+            _history.Add(extents);
             _historyIndex = _history.Count - 1;
 
             _spaceName = current.Name;
@@ -60,6 +67,8 @@ namespace GizmoDrawers
                 _historyIndex++;
             }
         }
+
+        private static readonly Log _log = new Log("SpaceHistoryGizmoDrawer");
     }
 }
 #endif

@@ -27,6 +27,12 @@ public class IntVector2
         Y = Mathf.RoundToInt(vec.y);
     }
 
+    public IntVector2(IntVector2 other)
+    {
+        X = other.X;
+        Y = other.Y;
+    }
+
     public float Magnitude => Mathf.Sqrt((X * X) + (Y * Y));
     public Vector2 Normalized
     {
