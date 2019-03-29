@@ -18,10 +18,10 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public MonsterDenBuilder(ChunkBuilder chunkBuilder)
             : base(chunkBuilder)
         {
-            _centerpoint = new IntVector2(Random.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
-                                          Random.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
+            _centerpoint = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
+                                          Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
 
-            _radius = Random.Range(8, 20);
+            _radius = Chance.Range(8, 20);
         }
 
         public override void Shift(IntVector2 shift) => _centerpoint += shift;
@@ -104,8 +104,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public override IntVector2 GetRandomPoint()
         {
-            var randomX = Random.Range(_centerpoint.X - _radius, _centerpoint.X + _radius + 1);
-            var randomY = Random.Range(_centerpoint.Y, _centerpoint.Y + (_radius - DistanceFromCenterpoint(randomX)));
+            var randomX = Chance.Range(_centerpoint.X - _radius, _centerpoint.X + _radius + 1);
+            var randomY = Chance.Range(_centerpoint.Y, _centerpoint.Y + (_radius - DistanceFromCenterpoint(randomX)));
             return new IntVector2(randomX, randomY);
         }
 
@@ -183,7 +183,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
                     var requiredOffset = requirementsForEnemy.Height;
 
-                    var xPosition = Random.Range(-_radius + requiredOffset, _radius - requiredOffset) + _centerpoint.X;
+                    var xPosition = Chance.Range(-_radius + requiredOffset, _radius - requiredOffset) + _centerpoint.X;
 
                     var position = new IntVector2(xPosition, _centerpoint.Y);
 

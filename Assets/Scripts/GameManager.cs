@@ -35,6 +35,8 @@ public class GameManager : Singleton<GameManager>
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(UIManager.Instance.gameObject);
 
+        Chance.Seed(0);
+
         FindUser();
 
         StartGame();

@@ -21,7 +21,7 @@ public class Enum<T> where T : struct, IConvertible
                 throw new ArgumentException("T must be an enumerated type!");
 
             var allEnums = Enum.GetValues(typeof(T)) as T[];
-            var selected = allEnums[UnityEngine.Random.Range(0, allEnums.Length)];
+            var selected = allEnums[Chance.Range(0, allEnums.Length)];
             return selected;
         }
     }

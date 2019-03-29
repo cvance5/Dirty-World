@@ -25,11 +25,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public CorridorBuilder(ChunkBuilder chunkBuilder)
             : base(chunkBuilder)
         {
-            _height = Random.Range(1, 10);
-            _length = Random.Range(_length + 1, 100);
+            _height = Chance.Range(1, 10);
+            _length = Chance.Range(_length + 1, 100);
 
-            var startingPoint = new IntVector2(Random.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
-                                               Random.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
+            var startingPoint = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
+                                               Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
 
             SetStartingPoint(startingPoint, Enum<CorridorAlignment>.Random);
         }
@@ -139,8 +139,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             position.Y <= _leftEnd.Y + _height;
 
         public override IntVector2 GetRandomPoint() => 
-            new IntVector2(Random.Range(_leftEnd.X, _rightEnd.X + 1), 
-                           Random.Range(_leftEnd.Y, _leftEnd.Y + _height + 1));
+            new IntVector2(Chance.Range(_leftEnd.X, _rightEnd.X + 1),
+                           Chance.Range(_leftEnd.Y, _leftEnd.Y + _height + 1));
 
         public override int GetMaximalValue(IntVector2 direction)
         {
@@ -243,7 +243,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
                 foreach (var enemy in enemies)
                 {
-                    var xPos = Random.Range(_leftEnd.X, _rightEnd.X);
+                    var xPos = Chance.Range(_leftEnd.X, _rightEnd.X);
                     var position = new IntVector2(xPos, _leftEnd.Y);
 
                     containedEnemies.Add(new EnemySpawn(position, enemy));

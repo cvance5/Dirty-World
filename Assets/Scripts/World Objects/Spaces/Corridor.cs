@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using WorldObjects.Blocks;
+﻿using WorldObjects.Blocks;
 
 namespace WorldObjects.Spaces
 {
@@ -31,9 +30,8 @@ namespace WorldObjects.Spaces
             position.Y <= TopRightCorner.Y;
 
         public override IntVector2 GetRandomPosition() =>
-            new IntVector2(Random.Range(BottomLeftCorner.X, TopRightCorner.X),
-                           Random.Range(BottomLeftCorner.Y, TopRightCorner.Y));
-
+            new IntVector2(Chance.Range(BottomLeftCorner.X, TopRightCorner.X),
+                           Chance.Range(BottomLeftCorner.Y, TopRightCorner.Y));
 
         public override BlockTypes GetBlockType(IntVector2 position)
         {

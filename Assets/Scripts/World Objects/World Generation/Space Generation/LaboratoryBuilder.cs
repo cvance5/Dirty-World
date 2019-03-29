@@ -34,11 +34,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             _connectionsByCorridor = new Dictionary<CorridorBuilder, RoomBuilder>();
 
-            _maximumCorridorSegments = Random.Range(4, 8);
+            _maximumCorridorSegments = Chance.Range(4, 8);
 
-            var highestStory = Random.Range(6, 10);
-            var shaftPosition = new IntVector2(Random.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X + 1),
-                                               Random.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y + 1));
+            var highestStory = Chance.Range(6, 10);
+            var shaftPosition = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X + 1),
+                                               Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y + 1));
 
             RegisterNewMainShaft(AddShaft(0, highestStory, shaftPosition), highestStory);
 
@@ -231,7 +231,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     {
                         var storyStartForShaft = validStories.RandomItem();
                         var yPosition = GetYPositionForStory(shaftY, storyStartForShaft);
-                        var newShaftHeight = Random.Range(-10, 10);
+                        var newShaftHeight = Chance.Range(-10, 10);
 
                         var shaft = AddShaft(storyStartForShaft, storyStartForShaft + newShaftHeight, new IntVector2(xPosition, yPosition));
                         RegisterNewMainShaft(shaft, newShaftHeight);
@@ -240,7 +240,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     }
                     else if (validStories.Contains(0))
                     {
-                        var newShaftHeight = Random.Range(-10, -4);
+                        var newShaftHeight = Chance.Range(-10, -4);
 
                         var shaft = AddShaft(0, newShaftHeight, new IntVector2(xPosition, shaftY));
                         RegisterNewMainShaft(shaft, newShaftHeight);
@@ -249,7 +249,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     else if (validStories.Contains(height))
                     {
                         var yPosition = GetYPositionForStory(shaftY, height);
-                        var newShaftHeight = Random.Range(4, 10);
+                        var newShaftHeight = Chance.Range(4, 10);
 
                         var shaft = AddShaft(height, height + newShaftHeight, new IntVector2(xPosition, yPosition));
                         RegisterNewMainShaft(shaft, newShaftHeight);
@@ -317,7 +317,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             var corridor = new CorridorBuilder(_chunkBuilder)
                              .SetStartingPoint(attachPoint, direction)
                              .SetHeight(CORRIDOR_HEIGHT)
-                             .SetLength(CORRIDOR_SEGMENT_LENGTH * Random.Range(1, _maximumCorridorSegments))
+                             .SetLength(CORRIDOR_SEGMENT_LENGTH * Chance.Range(1, _maximumCorridorSegments))
                              .SetMinimumHeight(CORRIDOR_HEIGHT)
                              .SetMinimumLength(CORRIDOR_SEGMENT_LENGTH);
 

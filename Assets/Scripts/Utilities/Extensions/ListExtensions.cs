@@ -6,14 +6,14 @@ public static class List
 {
     public static T RandomItemOrNull<T>(this IEnumerable<T> list) where T : class
     {
-        var randomValue = UnityEngine.Random.Range(0, list.Count() + 1);
+        var randomValue = Chance.Range(0, list.Count() + 1);
         if (randomValue >= list.Count()) return null;
         else return list.ElementAt(randomValue);
     }
 
     public static T RandomItem<T>(this IEnumerable<T> list)
     {
-        var randomValue = UnityEngine.Random.Range(0, list.Count());
+        var randomValue = Chance.Range(0, list.Count());
         return list.ElementAt(randomValue);
     }
 
@@ -49,7 +49,7 @@ public static class List
 
     public static void RemoveAtRandom<T>(this List<T> list)
     {
-        var randomValue = UnityEngine.Random.Range(0, list.Count);
+        var randomValue = Chance.Range(0, list.Count);
         list.RemoveAt(randomValue);
     }
 

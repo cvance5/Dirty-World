@@ -8,7 +8,7 @@ namespace WorldObjects.WorldGeneration.EnemyGeneration
     {
         public static int DetermineRiskPoints(int chunkDepth, int chunkRemoteness)
         {
-            var randomizedValue = UnityEngine.Random.Range(-5, 5);
+            var randomizedValue = Chance.Range(-5, 5);
             return Mathf.Max(0, chunkDepth + chunkRemoteness + randomizedValue);
         }
 
@@ -23,7 +23,7 @@ namespace WorldObjects.WorldGeneration.EnemyGeneration
                 // Suffle all enemies, taking only ones we can afford
                 var possibleEnemies = _requirementsForEnemy
                                       .Where(requirement => requirement.Value.RiskPointCost <= riskPoints)
-                                      .OrderBy(requirement => UnityEngine.Random.value);
+                                      .OrderBy(requirement => Chance.Percent);
 
                 foreach (var possibleEnemy in possibleEnemies)
                 {

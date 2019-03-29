@@ -22,11 +22,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public ShaftBuilder(ChunkBuilder chunkBuilder)
             : base(chunkBuilder)
         {
-            _width = Random.Range(1, 10);
-            _height = Random.Range(_width + 1, 100);
+            _width = Chance.Range(1, 10);
+            _height = Chance.Range(_width + 1, 100);
 
-            var startingPoint = new IntVector2(Random.Range(chunkBuilder.BottomLeftCorner.X, chunkBuilder.TopRightCorner.X),
-                                               Random.Range(chunkBuilder.BottomLeftCorner.Y, chunkBuilder.TopRightCorner.Y));
+            var startingPoint = new IntVector2(Chance.Range(chunkBuilder.BottomLeftCorner.X, chunkBuilder.TopRightCorner.X),
+                                               Chance.Range(chunkBuilder.BottomLeftCorner.Y, chunkBuilder.TopRightCorner.Y));
 
             SetStartingPoint(startingPoint, Enum<ShaftAlignment>.Random);
         }
@@ -134,8 +134,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             position.Y <= _top.Y;
 
         public override IntVector2 GetRandomPoint() => 
-            new IntVector2(Random.Range(_bottom.X, _bottom.X + _width + 1), 
-                           Random.Range(_bottom.Y, _top.Y + 1));
+            new IntVector2(Chance.Range(_bottom.X, _bottom.X + _width + 1),
+                           Chance.Range(_bottom.Y, _top.Y + 1));
 
         public override int GetMaximalValue(IntVector2 direction)
         {

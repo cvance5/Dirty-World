@@ -38,8 +38,8 @@ namespace WorldObjects.Spaces
 
         public override IntVector2 GetRandomPosition()
         {
-            var randomX = Random.Range(Centerpoint.X - Radius, Centerpoint.X + Radius);
-            var randomY = Random.Range(Centerpoint.Y, Centerpoint.Y + Radius - DistanceFromCenterpoint(randomX));
+            var randomX = Chance.Range(Centerpoint.X - Radius, Centerpoint.X + Radius);
+            var randomY = Chance.Range(Centerpoint.Y, Centerpoint.Y + Radius - DistanceFromCenterpoint(randomX));
 
             return new IntVector2(randomX, randomY);
         }

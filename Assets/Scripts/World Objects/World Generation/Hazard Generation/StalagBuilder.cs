@@ -41,7 +41,7 @@ namespace WorldObjects.WorldGeneration.HazardGeneration
             }
 
             var stalag = HazardLoader.CreateHazard(HazardTypes.Stalag, Position) as StalagHazard;
-            stalag.Initialize(_facingDirection, UnityEngine.Random.Range(1, _maxSegments));
+            stalag.Initialize(_facingDirection, Chance.Range(1, _maxSegments));
             return stalag;
         }
 

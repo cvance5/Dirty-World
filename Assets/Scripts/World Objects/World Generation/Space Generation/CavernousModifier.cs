@@ -14,7 +14,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private readonly float _stalagDensity;
 
         public CavernousModifier(SpaceBuilder spaceBuilder)
-            : base(spaceBuilder) => _stalagDensity = UnityEngine.Random.Range(0.05f, 0.15f);
+            : base(spaceBuilder) => _stalagDensity = Chance.Range(0.05f, 0.15f);
 
         public override void Modify(Space modifiedSpace)
         {

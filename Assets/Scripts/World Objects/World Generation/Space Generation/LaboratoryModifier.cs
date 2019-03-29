@@ -37,7 +37,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         private void ModifyShaft(Shaft shaft)
         {
-            var randomElevatorHeight = UnityEngine.Random.Range(0, shaft.Height - 6);
+            var randomElevatorHeight = Chance.Range(0, shaft.Height - 6);
             var randomElevatorPosition = shaft.BottomLeftCorner + (Directions.Up * randomElevatorHeight);
 
             shaft.AddFeature(randomElevatorPosition, FeatureTypes.Elevator);

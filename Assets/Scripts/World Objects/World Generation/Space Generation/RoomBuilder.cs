@@ -19,9 +19,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public RoomBuilder(ChunkBuilder chunkBuilder)
             : base(chunkBuilder)
         {
-            _size = Random.Range(2, 7);
-            _centerpoint = new IntVector2(Random.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
-                                          Random.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
+            _size = Chance.Range(2, 7);
+            _centerpoint = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
+                                          Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
 
             Rebuild();
         }
@@ -105,8 +105,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             position.Y <= _topRightCorner.Y;
 
         public override IntVector2 GetRandomPoint() =>
-            new IntVector2(Random.Range(_bottomLeftCorner.X, _topRightCorner.X + 1),
-                           Random.Range(_bottomLeftCorner.Y, _topRightCorner.Y + 1));
+            new IntVector2(Chance.Range(_bottomLeftCorner.X, _topRightCorner.X + 1),
+                           Chance.Range(_bottomLeftCorner.Y, _topRightCorner.Y + 1));
 
         public override int GetMaximalValue(IntVector2 direction)
         {
