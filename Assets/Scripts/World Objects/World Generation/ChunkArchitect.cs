@@ -15,9 +15,8 @@ namespace WorldObjects.WorldGeneration
 {
     public class ChunkArchitect : MonoBehaviour
     {
-        public static SmartEvent<ChunkBuilder> OnNewChunkBuilderAdded { get; set; } = new SmartEvent<ChunkBuilder>();
-
         private BlockPicker _bPicker;
+        private SpaceArchitect _spaceArchitect;
 
         private readonly List<Chunk> _chunkCache = new List<Chunk>();
         public List<Chunk> ChunkCache => new List<Chunk>(_chunkCache);
@@ -34,8 +33,10 @@ namespace WorldObjects.WorldGeneration
 
         private Dictionary<BlockTypes, Range> _fillRanges;
 
-        public void Initialize(BlockPicker bPicker)
+        public void Initialize(BlockPicker bPicker, SpaceArchitect spaceArchitect)
         {
+            _spaceArchitect = spaceArchitect;
+
             _bPicker = bPicker;
             _fillRanges = new Dictionary<BlockTypes, Range>()
             {
@@ -75,6 +76,14 @@ namespace WorldObjects.WorldGeneration
                 if (_chunkConstructionCoroutine == null)
                 {
                     _chunkConstructionCoroutine = StartCoroutine(ChunkConstructionCoroutine());
+                }
+
+                foreach (var direction in Directions.Cardinals)
+                {
+                    if (_chunkBuildersByWorldPosition.TryGetValue(worldPosition + direction, out var neighborBuilder))
+                    {
+                        _spaceArchitect.CheckForSpaces(neighborBuilder);
+                    }
                 }
             }
         }
@@ -260,8 +269,6 @@ namespace WorldObjects.WorldGeneration
 
             Register(chunkBuilder);
 
-            OnNewChunkBuilderAdded.Raise(chunkBuilder);
-
             return chunkBuilder;
         }
 
@@ -302,7 +309,7 @@ namespace WorldObjects.WorldGeneration
         {
             var cBuilder = GetBuilderAtPosition(worldPosition);
 
-            if (cBuilder == null) cBuilder = AddBuilder(worldPosition);
+            _spaceArchitect.CheckForSpaces(cBuilder);
 
             if (_bPicker != null)
             {

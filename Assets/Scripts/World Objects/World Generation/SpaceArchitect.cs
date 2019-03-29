@@ -19,11 +19,7 @@ namespace WorldObjects.WorldGeneration
         public List<Space> ActiveSpaces => new List<Space>(_activeSpaces);
         private Dictionary<string, Space> _spacesByName = new Dictionary<string, Space>();
 
-        public SpaceArchitect(SpacePicker sPicker = null)
-        {
-            _sPicker = sPicker;
-            ChunkArchitect.OnNewChunkBuilderAdded += CheckForSpaces;
-        }
+        public SpaceArchitect(SpacePicker sPicker = null) => _sPicker = sPicker;
 
         public void Register(Space space)
         {
@@ -76,8 +72,7 @@ namespace WorldObjects.WorldGeneration
             return null;
         }
 
-
-        private void CheckForSpaces(ChunkBuilder sourceChunkBuilder)
+        public void CheckForSpaces(ChunkBuilder sourceChunkBuilder)
         {
             if (_sPicker != null)
             {

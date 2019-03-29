@@ -79,8 +79,6 @@ public class GameManager : Singleton<GameManager>
         World = worldGameObject.AddComponent<World>();
 
         var bPicker = new BlockPicker();
-        var chunkArchitect = worldGameObject.AddComponent<ChunkArchitect>();
-        chunkArchitect.Initialize(bPicker);
 
         var sPicker = new SpacePicker(new List<Type>()
         {
@@ -90,6 +88,9 @@ public class GameManager : Singleton<GameManager>
             typeof(RoomBuilder)
         });
         var spaceArchitect = new SpaceArchitect(sPicker);
+
+        var chunkArchitect = worldGameObject.AddComponent<ChunkArchitect>();
+        chunkArchitect.Initialize(bPicker, spaceArchitect);
 
         World.Initialize(chunkArchitect, spaceArchitect);
 

@@ -47,9 +47,9 @@ namespace Tools.SpaceCrafting
         {
             _world = new GameObject("World").AddComponent<World>();
 
-            var chunkArchitect = _world.gameObject.AddComponent<ChunkArchitect>();
-            chunkArchitect.Initialize(new BlockPicker());
             var spaceArchitect = new SpaceArchitect();
+            var chunkArchitect = _world.gameObject.AddComponent<ChunkArchitect>();
+            chunkArchitect.Initialize(new BlockPicker(), spaceArchitect);
             _world.Initialize(chunkArchitect, spaceArchitect);
 
             foreach (var crafter in transform.GetComponentsInChildren<SpaceCrafter>())
