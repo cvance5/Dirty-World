@@ -120,10 +120,10 @@ namespace WorldObjects.WorldGeneration
         {
 
             var min = GetNearestChunkPosition(new IntVector2(space.GetMaximalValue(Directions.Left),
-                                                                  space.GetMaximalValue(Directions.Down)));
+                                                             space.GetMaximalValue(Directions.Down)));
 
             var max = GetNearestChunkPosition(new IntVector2(space.GetMaximalValue(Directions.Right),
-                                                                  space.GetMaximalValue(Directions.Up)));
+                                                             space.GetMaximalValue(Directions.Up)));
 
             for (var chunkX = min.X; chunkX <= max.X; chunkX += World.CHUNK_SIZE)
             {

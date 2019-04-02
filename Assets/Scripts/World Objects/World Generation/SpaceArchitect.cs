@@ -90,13 +90,58 @@ namespace WorldObjects.WorldGeneration
                 {
                     var spaceBuilder = _sPicker.Select(sourceChunkBuilder);
 
-                    sourceChunkBuilder.SeekReachedEdges(spaceBuilder);
                     OnNewSpaceBuilderDeclared.Raise(spaceBuilder);
+
+                    FindSpaceBoundaries(spaceBuilder, sourceChunkBuilder);
 
                     var space = spaceBuilder.Build();
 
                     Register(space);
                     sourceChunkBuilder.AddSpace(space);
+                }
+            }
+        }
+
+        private void FindSpaceBoundaries(SpaceBuilder spaceBuilder, ChunkBuilder sourceChunkBuilder)
+        {
+            var chunksToCheck = new Queue<ChunkBuilder>();
+            var checkedChunks = new List<ChunkBuilder>();
+
+            chunksToCheck.Enqueue(sourceChunkBuilder);
+
+            while (chunksToCheck.Count > 0)
+            {
+                var nextChunkToCheck = chunksToCheck.Dequeue();
+
+                if (checkedChunks.Contains(nextChunkToCheck))
+                {
+                    continue;
+                }
+                else checkedChunks.Add(nextChunkToCheck);
+
+                foreach (var direction in Directions.Cardinals)
+                {
+                    var maximalValue = nextChunkToCheck.GetMaximalValue(direction);
+                    
+                    var amount = spaceBuilder.PassesBy(direction, maximalValue);
+
+                    if (amount > 0)
+                    {
+                        if (nextChunkToCheck.TryGetNeighborBuilder(direction, out var neighbor))
+                        {
+                            // Add every neighbor affected to be checked.
+                            chunksToCheck.Enqueue(neighbor);
+                        }
+                        else
+                        {
+                            // If we discovered a boundary, this greatly changes the space.  Check everything again.
+                            spaceBuilder.AddBoundary(direction, maximalValue);
+                            chunksToCheck.Clear();
+                            chunksToCheck.Enqueue(sourceChunkBuilder);
+                            checkedChunks.Clear();
+                            break;
+                        }
+                    }
                 }
             }
         }

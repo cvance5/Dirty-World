@@ -8,7 +8,6 @@ using WorldObjects.Blocks;
 using WorldObjects.Construction;
 using WorldObjects.WorldGeneration.EnemyGeneration;
 using WorldObjects.WorldGeneration.FeatureGeneration;
-using WorldObjects.WorldGeneration.SpaceGeneration;
 using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects.WorldGeneration
@@ -27,8 +26,6 @@ namespace WorldObjects.WorldGeneration
 
         private readonly List<Space> _spaces = new List<Space>();
         public List<Space> Spaces => new List<Space>(_spaces);
-
-        private readonly List<SpaceBuilder> _spaceBuilders = new List<SpaceBuilder>();
 
         private readonly Dictionary<IntVector2, Chunk> _neighborChunks = new Dictionary<IntVector2, Chunk>();
         private readonly Dictionary<IntVector2, ChunkBuilder> _neighborBuilders = new Dictionary<IntVector2, ChunkBuilder>();
@@ -168,35 +165,9 @@ namespace WorldObjects.WorldGeneration
         }
 
         public void AddNeighbor(ChunkBuilder neighbor, IntVector2 direction) => _neighborBuilders[direction] = neighbor;
+        public bool TryGetNeighborBuilder(IntVector2 direction, out ChunkBuilder neighbor) => _neighborBuilders.TryGetValue(direction, out neighbor);
 
-        public void SeekReachedEdges(SpaceBuilder spaceBuilder)
-        {
-            if (_spaceBuilders.Contains(spaceBuilder))
-            {
-                return;
-            }
-
-            _spaceBuilders.Add(spaceBuilder);
-
-            foreach (var direction in Directions.Cardinals)
-            {
-                var amount = GetMaximalValue(direction);
-
-                if (spaceBuilder.PassesBy(direction, amount) > 0)
-                {
-                    if (_neighborBuilders.TryGetValue(direction, out var neighborBuilder))
-                    {
-                        neighborBuilder.SeekReachedEdges(spaceBuilder);
-                    }
-                    else
-                    {
-                        spaceBuilder.AddBoundary(direction, amount);
-                    }
-                }
-            }
-        }
-
-        private int GetMaximalValue(IntVector2 direction)
+        public int GetMaximalValue(IntVector2 direction)
         {
             if (direction == Directions.Up)
             {

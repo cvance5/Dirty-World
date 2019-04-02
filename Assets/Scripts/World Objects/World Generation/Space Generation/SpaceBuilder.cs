@@ -25,18 +25,16 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             // Tightness is the "magnitude" of the boundary, regardless of direction
             // It makes it so that smaller numbers always equal a deeper restriction in the 
             // given direction, despite the fact that some X/Y coordinates are negative to begin with
-            var newBoundaryTightness = (int)(direction * amount).Magnitude;
-            if (!_boundedDirections.TryGetValue(direction, out var existingBoundaryTightness) ||
-               (existingBoundaryTightness > newBoundaryTightness))
+            if (IsStrongerBoundary(direction, amount))
             {
-                _boundedDirections[direction] = newBoundaryTightness;
+                _boundedDirections[direction] = amount;
 
                 Clamp(direction, amount);
 
                 if (_boundedDirections.ContainsKey(-direction))
                 {
                     // We are bounded in both sides and can't just shift that way
-                    Cut(-direction, (int)(-direction * _boundedDirections[-direction]).Magnitude);
+                    Cut(-direction, _boundedDirections[-direction]);
                 }
             }
 
@@ -59,6 +57,23 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
 
             return this;
+        }
+
+        public bool IsStrongerBoundary(IntVector2 direction, int amount)
+        {
+            if (_boundedDirections.TryGetValue(direction, out var existingBoundaryTightness))
+            {
+                if (direction == Directions.Up || direction == Directions.Right)
+                {
+                    return amount < existingBoundaryTightness;
+                }
+                else if (direction == Directions.Down || direction == Directions.Left)
+                {
+                    return amount > existingBoundaryTightness;
+                }
+            }
+
+            return true;
         }
 
         public abstract void Shift(IntVector2 shift);
