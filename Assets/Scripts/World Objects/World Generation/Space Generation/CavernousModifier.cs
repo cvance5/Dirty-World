@@ -11,7 +11,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         private Space _modifiedSpace;
 
-        private readonly float _stalagDensity;
+        private readonly double _stalagDensity;
 
         public CavernousModifier(SpaceBuilder spaceBuilder)
             : base(spaceBuilder) => _stalagDensity = Chance.Range(0.05f, 0.15f);

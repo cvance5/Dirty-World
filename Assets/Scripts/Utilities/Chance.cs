@@ -42,13 +42,10 @@ public static class Chance
     }
 
     public static int Range(int min, int max) => _rand.Next(min, max);
-    public static float Range(float min, float max)
+    public static double Range(float min, float max)
     {
-        // Perform arithmetic in double type to avoid overflowing
-        var range = float.MaxValue - (double)float.MinValue;
-        double sample = _rand.NextDouble();
-        double scaled = (sample * range) + float.MinValue;
-        return (float)scaled;
+        var next = _rand.NextDouble();
+        return min + (next * (max - min));
     }
 
     public static List<int> ExclusiveRandomOrder(int numNumbers)
