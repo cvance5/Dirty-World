@@ -20,10 +20,15 @@ public class CustomToolbarMenu
                 GameSaves.UnloadCurrent();
                 GameSaves.DeleteSave("Default");
             }
-            else _log.Warning("No save data to delete.");
+            else _log.Warning("No game save data to delete.");
 
             var user = UserSaves.LoadUser("Default");
-            user.UnregisterGame("Default");
+
+            if (user.HasRegisteredGame("Default"))
+            {
+                user.UnregisterGame("Default");
+            }
+            else _log.Warning("No game to unregister.");
 
             UserSaves.SaveUser();
         }

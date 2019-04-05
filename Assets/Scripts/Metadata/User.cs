@@ -23,6 +23,8 @@ namespace Metadata
             else Games.Add(gameName);
         }
 
+        public bool HasRegisteredGame(string gameName) => Games.Contains(gameName);
+
         public void UnregisterGame(string gameName)
         {
             if(!Games.Remove(gameName))

@@ -112,7 +112,6 @@ public class GameManager : Singleton<GameManager>
         {
             _log.Info("Creating new save...");
             User.RegisterGame("Default");
-            UserSaves.SaveUser();
         }
 
         chunkArchitect.GetChunkAtPosition(IntVector2.Zero);
@@ -201,8 +200,8 @@ public class GameManager : Singleton<GameManager>
         scrim.FadeTo(1f, .1f).Play(wfcc.Callback);
         yield return wfcc;
 
-        UserSaves.SaveUser();
         GameSaves.SaveDirty();
+        UserSaves.SaveUser();
 
         SceneHelper.ReloadScene();
         scrim.FadeTo(0, .5f).Play(() => Destroy(scrim));
