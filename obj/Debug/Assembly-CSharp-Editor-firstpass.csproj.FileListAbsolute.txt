@@ -121,8 +121,6 @@ F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Xml.XmlDoc
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Xml.XmlSerializer.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Xml.XPath.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Xml.XPath.XDocument.dll
-F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.Android.Editor.dll
-F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.Editor.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.StandardEvents.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.Tracker.dll
@@ -173,7 +171,6 @@ F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.Perfo
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.Physics2DModule.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.PhysicsModule.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.ProfilerModule.dll
-F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.Purchasing.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.ScreenCaptureModule.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.SharedInternalsModule.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.SpatialTracking.dll
@@ -233,7 +230,6 @@ F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\SourceAssembly.pd
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.xml
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEditor.xml
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.TextMeshPro.Editor.pdb
-F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.Android.Editor.pdb
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.PackageManagerUI.Editor.pdb
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.CollabProxy.Editor.pdb
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.TextMeshPro.pdb
@@ -322,3 +318,12 @@ F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Assembly-CSharp-Editor
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Assembly-CSharp-Editor-firstpass.csproj.CopyComplete
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Assembly-CSharp-Editor-firstpass.dll
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Assembly-CSharp-Editor-firstpass.pdb
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Microsoft.CSharp.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Data.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Net.Http.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.DataPrivacy.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEditor.Android.Extensions.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEditor.iOS.Extensions.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEditor.iOS.Extensions.Common.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Mono.Posix.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.DataPrivacy.pdb
