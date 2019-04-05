@@ -22,6 +22,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                                           Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
 
             _radius = Chance.Range(8, 20);
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         public override void Shift(IntVector2 shift) => _centerpoint += shift;
