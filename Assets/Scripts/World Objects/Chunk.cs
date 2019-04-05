@@ -88,6 +88,7 @@ namespace WorldObjects
         public void Register(EnemyHealth enemy)
         {
             Enemies.Add(enemy);
+            enemy.transform.SetParent(transform, true);
 
             PositionTracker.Subscribe(enemy, OnEnemyPositionUpdate);
 
