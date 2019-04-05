@@ -70,7 +70,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public ShaftBuilder SetWidth(int blocksWide)
         {
-            _width = blocksWide - 1;
+            _width = blocksWide;
             _width = Mathf.Max(0, _width);
             Rebuild();
             return this;
@@ -78,13 +78,13 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public ShaftBuilder SetMinimumWidth(int minBlocksWide)
         {
-            _minWidth = minBlocksWide - 1;
+            _minWidth = minBlocksWide;
             return this;
         }
 
         public ShaftBuilder SetHeight(int blockHigh)
         {
-            _height = blockHigh - 1;
+            _height = blockHigh;
             _height = Mathf.Max(0, _height);
             Rebuild();
             return this;
@@ -92,7 +92,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public ShaftBuilder SetMinimumHeight(int minBlocksHigh)
         {
-            _minHeight = minBlocksHigh - 1;
+            _minHeight = minBlocksHigh;
             return this;
         }
 

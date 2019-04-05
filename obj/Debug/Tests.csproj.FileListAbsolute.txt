@@ -121,7 +121,6 @@ F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Xml.XmlDoc
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Xml.XmlSerializer.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Xml.XPath.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Xml.XPath.XDocument.dll
-F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.Editor.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.StandardEvents.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Unity.Analytics.Tracker.dll
@@ -168,7 +167,6 @@ F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.Perfo
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.Physics2DModule.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.PhysicsModule.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.ProfilerModule.dll
-F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.Purchasing.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.ScreenCaptureModule.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.SharedInternalsModule.dll
 F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEngine.SpatialTracking.dll
@@ -312,3 +310,10 @@ F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Tests.csproj.CoreCompi
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Tests.csproj.CopyComplete
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Tests.dll
 F:\Development\Personal\Dirty-World\Dirty-World\obj\Debug\Tests.pdb
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Microsoft.CSharp.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Data.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\System.Net.Http.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEditor.Android.Extensions.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEditor.iOS.Extensions.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\UnityEditor.iOS.Extensions.Common.dll
+F:\Development\Personal\Dirty-World\Dirty-World\Temp\bin\Debug\Mono.Posix.dll
