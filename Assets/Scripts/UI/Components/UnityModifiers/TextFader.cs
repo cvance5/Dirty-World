@@ -94,6 +94,7 @@ namespace UI.Components.UnityModifiers
 
         private void CompleteFade()
         {
+            _textBox.text = _textToDisplay;
             _fadeEffect.Complete();
             _fadeEffect = null;
         }
