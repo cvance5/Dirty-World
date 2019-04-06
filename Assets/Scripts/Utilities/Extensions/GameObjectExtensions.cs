@@ -62,6 +62,24 @@ public static class GameObjectExtensions
         return children;
     }
 
+    public static List<T> GetComponentInImmediateChildren<T>(this Transform parent)
+    {
+        var children = parent.GetChildren();
+
+        var result = new List<T>();
+
+        foreach (var child in children)
+        {
+            var component = child.GetComponent<T>();
+            if (component != null)
+            {
+                result.Add(component);
+            }
+        }
+
+        return result;
+    }
+
     public static void DestroyChildren(this Transform parent)
     {
         for (var i = parent.childCount - 1; i >= 0; i--)

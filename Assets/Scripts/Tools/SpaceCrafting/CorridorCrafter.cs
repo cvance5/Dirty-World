@@ -26,14 +26,12 @@ namespace Tools.SpaceCrafting
             Height = 2;
         }
 
-        public override void InitializeFromSpace(Space space)
+        protected override void InitializeFromSpaceRaw(Space space)
         {
             var corridor = space as Corridor;
             transform.position = corridor.BottomLeftCorner;
             Width = corridor.TopRightCorner.X - corridor.BottomLeftCorner.X;
             Height = corridor.TopRightCorner.Y - corridor.BottomLeftCorner.Y;
-
-            InitializeEnemySpawns(corridor.EnemySpawns);
         }
 
         protected override Space RawBuild() => new Corridor(BottomLeftCorner, TopRightCorner);

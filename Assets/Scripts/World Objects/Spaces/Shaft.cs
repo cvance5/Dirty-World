@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using WorldObjects.Blocks;
+﻿using WorldObjects.Blocks;
 
 namespace WorldObjects.Spaces
 {
@@ -50,23 +49,29 @@ namespace WorldObjects.Spaces
         public override BlockTypes GetBlockType(IntVector2 position)
         {
             if (!Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
-
-            var block = BlockTypes.None;
-
-            if (!IsUncapped &&
-                position.Y == TopRightCorner.Y)
+            else if (_blockOverride.TryGetValue(position, out var overrideType))
             {
-                if (Chance.CoinFlip)
-                {
-                    block = BlockTypes.Stone;
-                }
-                else
-                {
-                    block = BlockTypes.Dirt;
-                }
+                return overrideType;
             }
+            else
+            {
+                var block = BlockTypes.None;
 
-            return block;
+                if (!IsUncapped &&
+                    position.Y == TopRightCorner.Y)
+                {
+                    if (Chance.CoinFlip)
+                    {
+                        block = BlockTypes.Stone;
+                    }
+                    else
+                    {
+                        block = BlockTypes.Dirt;
+                    }
+                }
+
+                return block;
+            }
         }
     }
 }

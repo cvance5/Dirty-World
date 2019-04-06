@@ -29,7 +29,7 @@ namespace Tools.SpaceCrafting
             Height = 4;
         }
 
-        public override void InitializeFromSpace(Space space)
+        protected override void InitializeFromSpaceRaw(Space space)
         {
             var room = space as Room;
             transform.position = room.BottomLeftCorner;
@@ -41,8 +41,6 @@ namespace Tools.SpaceCrafting
                 Treasure = treasureRoom.Treasure ?? new Item[0];
             }
             else Treasure = new Item[0];
-
-            InitializeEnemySpawns(room.EnemySpawns);
         }
 
         protected override Space RawBuild() => Treasure.Length == 0

@@ -15,6 +15,7 @@ namespace Data.Serialization.SerializableSpaces
         private SerializableRoom() { }
 
         public SerializableRoom(Room room)
+            :base(room)
         {
             _bottomLeftCorner = room.BottomLeftCorner;
             _topRightCorner = room.TopRightCorner;

@@ -30,7 +30,7 @@ namespace Tools.SpaceCrafting
             MetalThickeness = 2;
         }
 
-        public override void InitializeFromSpace(Space space)
+        protected override void InitializeFromSpaceRaw(Space space)
         {
             var laboratory = space as Laboratory;
             foreach (var region in laboratory.Regions)
@@ -40,7 +40,6 @@ namespace Tools.SpaceCrafting
 
                 mainShaftCrafter.transform.SetParent(transform);
                 mainShaftCrafter.InitializeFromSpace(mainShaft);
-                mainShaftCrafter.InitializeEnemySpawns(mainShaft.EnemySpawns);
 
                 for (var spaceNumber = 1; spaceNumber < region.Spaces.Count; spaceNumber++)
                 {
@@ -63,11 +62,8 @@ namespace Tools.SpaceCrafting
 
                     crafter.transform.SetParent(mainShaftCrafter.transform);
                     crafter.InitializeFromSpace(regionSpace);
-                    crafter.InitializeEnemySpawns(regionSpace.EnemySpawns);
                 }
             }
-
-            InitializeEnemySpawns(laboratory.EnemySpawns);
         }
 
         protected override Space RawBuild() => new Laboratory(BuildRegions(), MetalThickeness);

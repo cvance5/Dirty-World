@@ -12,21 +12,18 @@ namespace Data.Serialization.SerializableSpaces
         private readonly IntVector2 _topRightCorner;
 
         [JsonConstructor]
-        public SerializableCorridor() { }
+        private SerializableCorridor() { }
 
         public SerializableCorridor(Corridor corridor)
+            : base(corridor)
         {
             _bottomLeftCorner = corridor.BottomLeftCorner;
             _topRightCorner = corridor.TopRightCorner;
-
-            _modifiers = corridor.Modifiers;
-            _enemySpawns = corridor.EnemySpawns;
         }
 
         protected override Space ToRawObject()
         {
             Space corridor = new Corridor(_bottomLeftCorner, _topRightCorner);
-            corridor.AddEnemySpawns(_enemySpawns);
             return corridor;
         }
     }

@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using WorldObjects.Blocks;
+﻿using WorldObjects.Blocks;
 
 namespace WorldObjects.Spaces
 {
@@ -27,7 +26,11 @@ namespace WorldObjects.Spaces
             position.X <= TopRightCorner.X &&
             position.Y <= TopRightCorner.Y;
 
-        public override BlockTypes GetBlockType(IntVector2 position) => BlockTypes.None;
+        public override BlockTypes GetBlockType(IntVector2 position)
+        {
+            if (!Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
+            return _blockOverride.TryGetValue(position, out var type) ? type : BlockTypes.None;
+        }
 
         public override IntVector2 GetRandomPosition() =>
             new IntVector2(Chance.Range(BottomLeftCorner.X, TopRightCorner.X),

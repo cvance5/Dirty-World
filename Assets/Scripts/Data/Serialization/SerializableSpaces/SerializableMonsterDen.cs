@@ -12,21 +12,18 @@ namespace Data.Serialization.SerializableSpaces
         private readonly int _radius;
 
         [JsonConstructor]
-        public SerializableMonsterDen() { }
+        private SerializableMonsterDen() { }
 
         public SerializableMonsterDen(MonsterDen monsterDen)
+            : base(monsterDen)
         {
             _centerpoint = monsterDen.Centerpoint;
             _radius = monsterDen.Radius;
-
-            _modifiers = monsterDen.Modifiers;
-            _enemySpawns = monsterDen.EnemySpawns;
         }
 
         protected override Space ToRawObject()
         {
             Space monsterDen = new MonsterDen(_centerpoint, _radius);
-            monsterDen.AddEnemySpawns(_enemySpawns);
             return monsterDen;
         }
     }

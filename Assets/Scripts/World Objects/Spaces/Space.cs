@@ -13,26 +13,34 @@ namespace WorldObjects.Spaces
 
         protected readonly List<EnemySpawn> _enemySpawns = new List<EnemySpawn>();
         public virtual List<EnemySpawn> EnemySpawns => new List<EnemySpawn>(_enemySpawns);
+        public void AddEnemySpawns(List<EnemySpawn> enemySpawns) => _enemySpawns.AddRange(enemySpawns);
 
         protected readonly List<HazardBuilder> _hazardBuilders = new List<HazardBuilder>();
         public virtual List<HazardBuilder> HazardBuilders => new List<HazardBuilder>(_hazardBuilders);
+        public void AddHazardBuilders(List<HazardBuilder> hazardBuilders) => _hazardBuilders.AddRange(hazardBuilders);
 
         protected readonly List<ModifierTypes> _modifiers = new List<ModifierTypes>();
         public virtual List<ModifierTypes> Modifiers => new List<ModifierTypes>(_modifiers);
-
-        public abstract bool Contains(IntVector2 position);
-        public abstract IntVector2 GetRandomPosition();
+        internal void AddModifier(ModifierTypes modifier) => _modifiers.Add(modifier);
+        public void AddModifiers(List<ModifierTypes> modifiers) => _modifiers.AddRange(modifiers);
 
         protected readonly Dictionary<IntVector2, FeatureTypes> _features = new Dictionary<IntVector2, FeatureTypes>();
         public virtual FeatureTypes GetFeatureType(IntVector2 position) => _features.TryGetValue(position, out var type) ? type : FeatureTypes.None;
         public void AddFeature(IntVector2 position, FeatureTypes type) => _features[position] = type;
 
+        protected readonly Dictionary<IntVector2, BlockTypes> _blockOverride = new Dictionary<IntVector2, BlockTypes>();
+        public Dictionary<IntVector2, BlockTypes> BlockOverrides => new Dictionary<IntVector2, BlockTypes>(_blockOverride);
         public abstract BlockTypes GetBlockType(IntVector2 position);
+        public void AddBlockOverrides(Dictionary<IntVector2, BlockTypes> newOverrides)
+        {
+            foreach (var blockOverride in newOverrides)
+            {
+                _blockOverride[blockOverride.Key] = blockOverride.Value;
+            }
+        }
 
-        public void AddEnemySpawns(List<EnemySpawn> enemySpawns) => _enemySpawns.AddRange(enemySpawns);
-        public void AddHazardBuilders(List<HazardBuilder> hazardBuilders) => _hazardBuilders.AddRange(hazardBuilders);
-        internal void AddModifier(ModifierTypes modifier) => _modifiers.Add(modifier);
-        public void AddModifiers(List<ModifierTypes> modifiers) => _modifiers.AddRange(modifiers);
+        public abstract bool Contains(IntVector2 position);
+        public abstract IntVector2 GetRandomPosition();
 
         public virtual List<EnemySpawn> GetEnemySpawnsInChunk(Chunk chunk)
         {

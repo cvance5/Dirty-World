@@ -1,6 +1,6 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
+using WorldObjects.Blocks;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.EnemyGeneration;
 using Space = WorldObjects.Spaces.Space;
@@ -23,9 +23,17 @@ namespace Tools.SpaceCrafting
         }
 
         protected abstract void OnCrafterAwake();
-        public abstract void InitializeFromSpace(Space space);
 
-        public void InitializeEnemySpawns(List<EnemySpawn> spawns)
+        public void InitializeFromSpace(Space space)
+        {
+            InitializeFromSpaceRaw(space);
+
+            InitializeEnemySpawns(space.EnemySpawns);
+            InitializeBlockOverrides(space.BlockOverrides);
+        }
+        protected abstract void InitializeFromSpaceRaw(Space space);
+
+        private void InitializeEnemySpawns(List<EnemySpawn> spawns)
         {
             foreach (var spawn in spawns)
             {
@@ -35,10 +43,21 @@ namespace Tools.SpaceCrafting
             }
         }
 
+        private void InitializeBlockOverrides(Dictionary<IntVector2, BlockTypes> blockOverrides)
+        {
+            foreach (var blockOverride in blockOverrides)
+            {
+                var crafter = AddBlockOverride();
+                crafter.Type = blockOverride.Value;
+                crafter.transform.position = blockOverride.Key;
+            }
+        }
+
         public Space Build()
         {
             var space = RawBuild();
             space.AddEnemySpawns(BuildEnemySpawns());
+            space.AddBlockOverrides(BuildBlockOverrides());
             return space;
         }
 
@@ -65,6 +84,15 @@ namespace Tools.SpaceCrafting
             return chunksAffected;
         }
 
+        public BlockOverrideCrafter AddBlockOverride()
+        {
+            var crafterObject = new GameObject("Block Override");
+            var blockOverrideCrafter = crafterObject.AddComponent<BlockOverrideCrafter>();
+            blockOverrideCrafter.transform.SetParent(transform);
+
+            return blockOverrideCrafter;
+        }
+
         public EnemySpawnCrafter AddEnemySpawnCrafter()
         {
             var crafterObject = new GameObject("Enemy Spawn");
@@ -74,10 +102,21 @@ namespace Tools.SpaceCrafting
             return enemySpawnCrafter;
         }
 
+        private Dictionary<IntVector2, BlockTypes> BuildBlockOverrides()
+        {
+            var blockOverrides = new Dictionary<IntVector2, BlockTypes>();
+            foreach (var blockOverride in transform.GetComponentInImmediateChildren<BlockOverrideCrafter>())
+            {
+                blockOverrides[blockOverride.Position] = blockOverride.Type;
+            }
+
+            return blockOverrides;
+        }
+
         private List<EnemySpawn> BuildEnemySpawns()
         {
             var enemySpawns = new List<EnemySpawn>();
-            foreach (var enemySpawn in transform.GetComponentsInChildren<EnemySpawnCrafter>())
+            foreach (var enemySpawn in transform.GetComponentInImmediateChildren<EnemySpawnCrafter>())
             {
                 if (enemySpawn.Type != EnemyTypes.None)
                 {

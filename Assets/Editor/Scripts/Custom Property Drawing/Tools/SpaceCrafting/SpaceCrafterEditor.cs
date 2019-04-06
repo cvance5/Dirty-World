@@ -30,6 +30,11 @@ namespace CustomPropertyDrawing.Tools.SpaceCrafting
                 {
                     _target.AddEnemySpawnCrafter();
                 }
+
+                if(GUILayout.Button("Add Block Override"))
+                {
+                    _target.AddBlockOverride();
+                }
             }
             GUILayout.EndVertical();
 

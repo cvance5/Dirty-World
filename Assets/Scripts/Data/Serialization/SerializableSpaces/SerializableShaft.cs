@@ -15,22 +15,19 @@ namespace Data.Serialization.SerializableSpaces
         private readonly IntVector2 _topRightCorner;
 
         [JsonConstructor]
-        public SerializableShaft() { }
+        private SerializableShaft() { }
 
         public SerializableShaft(Shaft shaft)
+            : base(shaft)
         {
             _isUncapped = shaft.IsUncapped;
             _bottomLeftCorner = shaft.BottomLeftCorner;
             _topRightCorner = shaft.TopRightCorner;
-
-            _modifiers = shaft.Modifiers;
-            _enemySpawns = shaft.EnemySpawns;
         }
 
         protected override Space ToRawObject()
         {
             Space shaft = new Shaft(_bottomLeftCorner, _topRightCorner, _isUncapped);
-            shaft.AddEnemySpawns(_enemySpawns);
             return shaft;
         }
     }

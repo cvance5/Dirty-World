@@ -22,13 +22,11 @@ namespace Tools.SpaceCrafting
             Radius = 3;
         }
 
-        public override void InitializeFromSpace(Space space)
+        protected override void InitializeFromSpaceRaw(Space space)
         {
             var monsterDen = space as MonsterDen;
             transform.position = monsterDen.Centerpoint;
             Radius = monsterDen.Radius;
-
-            InitializeEnemySpawns(monsterDen.EnemySpawns);
         }
 
         protected override Space RawBuild() => new MonsterDen(Centerpoint, Radius);

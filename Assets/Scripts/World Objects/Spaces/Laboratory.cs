@@ -109,17 +109,24 @@ namespace WorldObjects.Spaces
 
         public override BlockTypes GetBlockType(IntVector2 position)
         {
-            var containingRegions = Regions.FindAll(region => region.Contains(position));
-            foreach (var containingRegion in containingRegions)
+            if (!Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
+            else if (_blockOverride.TryGetValue(position, out var overrideType))
             {
-                var containingSpace = containingRegion.Spaces.Find(space => space.Contains(position));
-                if (containingSpace != null)
-                {
-                    return containingSpace.GetBlockType(position);
-                }
+                return overrideType;
             }
-
-            return BlockTypes.SteelPlate;
+            else
+            {
+                var containingRegions = Regions.FindAll(region => region.Contains(position));
+                foreach (var containingRegion in containingRegions)
+                {
+                    var containingSpace = containingRegion.Spaces.Find(space => space.Contains(position));
+                    if (containingSpace != null)
+                    {
+                        return containingSpace.GetBlockType(position);
+                    }
+                }
+                return BlockTypes.SteelPlate;
+            }
         }
 
         public override IntVector2 GetRandomPosition() => Regions.RandomItem().Spaces.RandomItem().GetRandomPosition();

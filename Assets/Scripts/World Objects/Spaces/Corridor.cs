@@ -35,11 +35,8 @@ namespace WorldObjects.Spaces
 
         public override BlockTypes GetBlockType(IntVector2 position)
         {
-            if (!Contains(position))
-            {
-                throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
-            }
-            return BlockTypes.None;
+            if (!Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
+            else return _blockOverride.TryGetValue(position, out var type) ? type : BlockTypes.None;
         }
     }
 }

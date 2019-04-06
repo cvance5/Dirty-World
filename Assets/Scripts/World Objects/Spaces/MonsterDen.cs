@@ -47,7 +47,7 @@ namespace WorldObjects.Spaces
         public override BlockTypes GetBlockType(IntVector2 position)
         {
             if (!Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
-            return BlockTypes.None;
+            else return _blockOverride.TryGetValue(position, out var overrideType) ? overrideType : BlockTypes.None;
         }
 
         private int DistanceFromCenterpoint(int x) => Mathf.Abs(Centerpoint.X - x);

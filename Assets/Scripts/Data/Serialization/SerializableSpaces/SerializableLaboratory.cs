@@ -7,7 +7,7 @@ namespace Data.Serialization.SerializableSpaces
     public class SerializableLaboratory : SerializableSpace
     {
         [JsonProperty("spaces")]
-        private readonly List<Region> _regions;
+        private readonly List<SerializableRegion> _regions;
 
         [JsonProperty("metalThickness")]
         private readonly int _metalThickness;
@@ -16,11 +16,25 @@ namespace Data.Serialization.SerializableSpaces
         private SerializableLaboratory() { }
 
         public SerializableLaboratory(Laboratory laboratory)
+            :base(laboratory)
         {
-            _regions = laboratory.Regions;
+            var regions = new List<SerializableRegion>();
+            foreach(var region in laboratory.Regions)
+            {
+                regions.Add(new SerializableRegion(region));
+            }
+            _regions = regions;
             _metalThickness = laboratory.MetalThickness;
         }
 
-        protected override Space ToRawObject() => new Laboratory(_regions, _metalThickness);
+        protected override Space ToRawObject()
+        {
+            var regions = new List<Region>();
+            foreach(var region in _regions)
+            {
+                regions.Add(region.ToObject());
+            }
+            return new Laboratory(regions, _metalThickness);
+        }
     }
 }

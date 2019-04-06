@@ -29,15 +29,13 @@ namespace Tools.SpaceCrafting
             IsUncapped = false;
         }
 
-        public override void InitializeFromSpace(Space space)
+        protected override void InitializeFromSpaceRaw(Space space)
         {
             var shaft = space as Shaft;
             transform.position = shaft.BottomLeftCorner;
             Width = shaft.TopRightCorner.X - shaft.BottomLeftCorner.X;
             Height = shaft.TopRightCorner.Y - shaft.BottomLeftCorner.Y;
             IsUncapped = shaft.IsUncapped;
-
-            InitializeEnemySpawns(shaft.EnemySpawns);
         }
 
         protected override Space RawBuild() => new Shaft(BottomLeftCorner, TopRightCorner, IsUncapped);

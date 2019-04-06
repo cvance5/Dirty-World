@@ -19,6 +19,7 @@ namespace Data.Serialization.SerializableSpaces
         private SerializableTreasureRoom() { }
 
         public SerializableTreasureRoom(TreasureRoom treasureRoom)
+            :base(treasureRoom)
         {
             _bottomLeftCorner = treasureRoom.BottomLeftCorner;
             _topRightCorner = treasureRoom.TopRightCorner;
