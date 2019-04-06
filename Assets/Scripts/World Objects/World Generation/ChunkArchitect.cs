@@ -40,8 +40,8 @@ namespace WorldObjects.WorldGeneration
             _bPicker = bPicker;
             _fillRanges = new Dictionary<BlockTypes, Range>()
             {
-                {BlockTypes.None, new Range(World.SURFACE_DEPTH + 1, int.MaxValue) },
-                {BlockTypes.Dirt, new Range(int.MinValue, World.SURFACE_DEPTH) }
+                {BlockTypes.None, new Range(World.SURFACE_DEPTH, int.MaxValue) },
+                {BlockTypes.Dirt, new Range(int.MinValue, World.SURFACE_DEPTH - 1) }
             };
 
             SpaceArchitect.OnNewSpaceRegistered += Register;

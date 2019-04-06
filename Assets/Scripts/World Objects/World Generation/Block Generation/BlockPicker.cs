@@ -15,8 +15,8 @@ namespace WorldObjects.WorldGeneration.BlockGeneration
 
         public BlockPicker() => _blockRanges = new Dictionary<BlockTypes, Range>()
         {
-            { BlockTypes.Stone, new Range(int.MinValue, World.SURFACE_DEPTH) },
-            { BlockTypes.Copper, new Range(World.SURFACE_DEPTH - 15, World.SURFACE_DEPTH) },
+            { BlockTypes.Stone, new Range(int.MinValue, World.SURFACE_DEPTH - 1) },
+            { BlockTypes.Copper, new Range(World.SURFACE_DEPTH - 15, World.SURFACE_DEPTH - 1) },
             { BlockTypes.Silver,  new Range(World.SURFACE_DEPTH - 30, World.SURFACE_DEPTH - 10) },
             { BlockTypes.Gold,  new Range(World.SURFACE_DEPTH - 45, World.SURFACE_DEPTH - 25) },
             { BlockTypes.Platinum, new Range(int.MinValue, World.SURFACE_DEPTH - 40) }
