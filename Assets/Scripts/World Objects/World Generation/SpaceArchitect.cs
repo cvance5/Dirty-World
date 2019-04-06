@@ -150,11 +150,11 @@ namespace WorldObjects.WorldGeneration
         {
             var specialCaseSpaces = new List<Space>();
 
-            if (chunk.Position == IntVector2.Zero)
-            {
-                var space = CustomSpaceLoader.Load("InitialLaboratory");
-                if (space != null) specialCaseSpaces.Add(space);
-            }
+            //if (chunk.Position == IntVector2.Zero)
+            //{
+            //    var space = CustomSpaceLoader.Load("InitialLaboratory");
+            //    if (space != null) specialCaseSpaces.Add(space);
+            //}
 
             return specialCaseSpaces;
         }
