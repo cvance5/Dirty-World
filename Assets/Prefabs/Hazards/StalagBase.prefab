@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 68378e2e2c4f25d44b5a9f385ae41e96, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.33962262, g: 0.28975806, b: 0.20665716, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -97,7 +97,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06fa88250e2ef924cbfc05d45621f1be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _segmentObject: {fileID: 8432097471157424369, guid: 097fcba42462f214190e0554ceb7337c, type: 3}
+  _segmentObject: {fileID: 8432097471157424369, guid: 097fcba42462f214190e0554ceb7337c,
+    type: 3}
 --- !u!61 &2109913638274587865
 BoxCollider2D:
   m_ObjectHideFlags: 0
