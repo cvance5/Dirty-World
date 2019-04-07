@@ -5,9 +5,10 @@ namespace WorldObjects.Actors
 {
     public class Health
     {
-        public SmartEvent OnHealthChanged { get; set; } = new SmartEvent();
+        public SmartEvent<int> OnHealthChanged { get; set; } = new SmartEvent<int>();
 
         public bool IsAlive => _healthSegments.Count != 0;
+        public bool IsSegmentFull => IsAlive ? _nextSegment.CurrentDamage == 0 : false;
         public bool IsMaxSegments => _healthSegments.Count == _maxHealthSegments;
 
         private Stack<HealthSegment> _healthSegments = new Stack<HealthSegment>();
@@ -42,39 +43,46 @@ namespace WorldObjects.Actors
                 _healthSegments.Pop();
             }
 
-            OnHealthChanged.Raise();
+            OnHealthChanged.Raise(-amount);
         }
 
-        public void Heal(int amount)
+        public void Heal(int amount, bool allowOverfill = true)
         {
             if (_healthSegments.Count == 0) return;
 
             amount = _nextSegment.ChangeHealth(amount);
 
-            while (amount > 0 && !IsMaxSegments)
+            if (allowOverfill)
             {
-                var startingHealth = Mathf.Min(amount, _maxHealthPerSegment);
-                _healthSegments.Push(new HealthSegment(_maxHealthPerSegment, startingHealth));
-                amount -= _maxHealthPerSegment;
+                while (amount > 0 && !IsMaxSegments)
+                {
+                    var startingHealth = Mathf.Min(amount, _maxHealthPerSegment);
+                    _healthSegments.Push(new HealthSegment(_maxHealthPerSegment, startingHealth));
+                    amount -= _maxHealthPerSegment;
+                }
             }
 
-            OnHealthChanged.Raise();
+            OnHealthChanged.Raise(amount);
         }
 
         public void FillSegment()
         {
             if (_healthSegments.Count == 0) return;
 
+            var amountHealed = 0;
+
             if (_nextSegment.CurrentDamage != 0)
             {
+                amountHealed = _nextSegment.CurrentDamage;
                 _nextSegment.ChangeHealth(_nextSegment.CurrentDamage);
             }
             else if (!IsMaxSegments)
             {
+                amountHealed = _maxHealthPerSegment;
                 _healthSegments.Push(new HealthSegment(_maxHealthPerSegment));
             }
 
-            OnHealthChanged.Raise();
+            OnHealthChanged.Raise(amountHealed);
         }
 
         public void EmptySegment()
@@ -83,7 +91,7 @@ namespace WorldObjects.Actors
 
             _healthSegments.Pop();
 
-            OnHealthChanged.Raise();
+            OnHealthChanged.Raise(-_maxHealthPerSegment);
         }
     }
 }

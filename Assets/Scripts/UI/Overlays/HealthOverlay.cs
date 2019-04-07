@@ -21,7 +21,7 @@ namespace UI.Overlays
             _healthFill.SetRange(0, _health.MaxHealth);
         }
 
-        private void OnHealthChanged()
+        private void OnHealthChanged(int delta)
         {
             _healthFill.UpdateValue(_health.CurrentHealth);
         }
