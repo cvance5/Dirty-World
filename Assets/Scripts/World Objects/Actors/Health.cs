@@ -18,6 +18,7 @@ namespace WorldObjects.Actors
 
         public int MaxHealth => _maxHealthPerSegment * _maxHealthSegments;
         public int CurrentHealth => IsAlive ? (_maxHealthPerSegment * _healthSegments.Count) - _healthSegments.Peek().CurrentDamage : 0;
+        public int SegmentsAvailable => _healthSegments.Count;
 
         public Health(int maxHealthPerSegment, int maxHealthSegments)
         {

@@ -10,7 +10,7 @@ namespace WorldObjects.Actors.Player
     {
         private Character _character = null;
         private PlayerCollider _collider = null;
-        private Guns.ElectricalHands _hands = null;
+        private ElectricalHands _hands = null;
 
         public override string ObjectName => "Player";
 
@@ -45,6 +45,16 @@ namespace WorldObjects.Actors.Player
 
         public void ApplyHealing(int amount) => Health.Heal(amount);
         public override void Hit(int damage, int force) => ApplyDamage(damage);
+
+        public bool TryEmptySegment()
+        {
+            if (Health.SegmentsAvailable > 1)
+            {
+                EmptySegment();
+                return true;
+            }
+            else return false;
+        }
 
         public void EmptySegment()
         {
