@@ -15,11 +15,6 @@ namespace Utilities.Debug
                 FindObjectOfType<PlayerHealth>().ApplyDamage(10000);
             }
 
-            if(Input.GetKeyDown(KeyCode.RightBracket))
-            {
-                FindObjectOfType<PlayerHealth>().ApplyDamage(10);
-            }
-
             if (Input.GetKeyDown(KeyCode.KeypadMinus))
             {
                 FindObjectOfType<PlayerHealth>().ApplyDamage(30);

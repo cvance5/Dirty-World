@@ -15,10 +15,19 @@ namespace WorldObjects.Actors.Player
         private float _jumpForce = 10f;
 
         [SerializeField]
-        private PlayerHealth _data = null;
+        private float _jetpackForce = 2f;
+        [SerializeField]
+        private int _jetpackCost = 1;
+        [SerializeField]
+        private float _jetpackCostTick = .2f;
+
+        [SerializeField]
+        private PlayerHealth _health = null;
         [SerializeField]
         private ActorFeet _feet = null;
 #pragma warning restore IDE0044 // Add readonly modifier
+
+        private float _lastJetpackTick = 0;
 
         private ActorFeetState _state;
         private Rigidbody2D _rigidbody;
@@ -33,7 +42,7 @@ namespace WorldObjects.Actors.Player
             if (_feet.IsColliding) _state = ActorFeetState.Grounded;
             else _state = ActorFeetState.Airborne;
 
-            _data.OnActorDeath += OnPlayerDeath;
+            _health.OnActorDeath += OnPlayerDeath;
         }
 
         private void Update()
@@ -59,6 +68,18 @@ namespace WorldObjects.Actors.Player
                 if (Input.GetButtonDown("Jump"))
                 {
                     AddImpulse(Vector2.up * _jumpForce);
+                }
+            }
+            else if (_state == ActorFeetState.Airborne)
+            {
+                if (Input.GetButton("Jetpack"))
+                {
+                    AddForce(Vector2.up * _jetpackForce);
+                    if (Time.time > _lastJetpackTick + _jetpackCostTick)
+                    {
+                        _health.ApplyDeduct(_jetpackCost);
+                        _lastJetpackTick = Time.time;
+                    }
                 }
             }
         }

@@ -79,7 +79,10 @@ MonoBehaviour:
   _movementSpeed: 40
   _maximumSpeed: 80
   _jumpForce: 15
-  _data: {fileID: 114237843733034080}
+  _jetpackForce: 0.85
+  _jetpackCost: 1
+  _jetpackCostTick: 0.2
+  _health: {fileID: 114237843733034080}
   _feet: {fileID: 114836490637548964}
 --- !u!114 &114237843733034080
 MonoBehaviour:
@@ -97,6 +100,9 @@ MonoBehaviour:
   _maxHealthPerSegment: 25
   _damageInvulnerabilityDuration: 1
   _damageResistance: 10
+  _healthRegenerationDelay: 1
+  _healthRegenerationTick: 0.2
+  _healthRenerationAmount: 1
 --- !u!114 &114955982425071790
 MonoBehaviour:
   m_ObjectHideFlags: 0

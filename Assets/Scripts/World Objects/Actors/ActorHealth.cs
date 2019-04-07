@@ -43,20 +43,23 @@ namespace WorldObjects.Actors
             if (amount < _damageResistance) return;
             else amount -= _damageResistance;
 
-            if (!_isTakingDamage)
+            if (!_isTakingDamage && amount > 0)
             {
-                Health.Damage(amount);
-
-                if (!Health.IsAlive) Die();
-                else
+                ApplyDeduct(amount);
+                if (Health.IsAlive)
                 {
                     OnDamage();
                     OnActorDamaged.Raise(this);
+                    _isTakingDamage = true;
+                    Timekeeper.SetTimer(_damageInvulnerabilityDuration, () => _isTakingDamage = false);
                 }
-
-                _isTakingDamage = true;
-                Timekeeper.SetTimer(_damageInvulnerabilityDuration, () => _isTakingDamage = false);
             }
+        }
+
+        public void ApplyDeduct(int amount)
+        {
+            Health.Damage(amount);
+            if (!Health.IsAlive) Die();
         }
 
         public abstract void Hit(int damage, int force);
