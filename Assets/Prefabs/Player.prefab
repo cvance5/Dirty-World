@@ -79,7 +79,7 @@ MonoBehaviour:
   _movementSpeed: 40
   _maximumSpeed: 80
   _jumpForce: 15
-  _jetpackForce: 0.85
+  _jetpackForce: 1.25
   _jetpackCost: 1
   _jetpackCostTick: 0.2
   _health: {fileID: 114237843733034080}
