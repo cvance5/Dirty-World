@@ -81,7 +81,7 @@ namespace WorldObjects.Actors.Player
             var playerHealth = player.GetComponent<PlayerHealth>();
             playerHealth.SetHands(hands);
 
-            var healthOverlay = UIManager.Get<HealthOverlay>();
+            var healthOverlay = UIManager.Get<HealthHUD>();
             healthOverlay.AssignHealth(playerHealth.Health);
 
             return player;

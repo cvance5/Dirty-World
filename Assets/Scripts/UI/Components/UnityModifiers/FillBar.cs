@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.Components.UnityModifiers
@@ -7,11 +6,15 @@ namespace UI.Components.UnityModifiers
     [RequireComponent(typeof(Image))]
     public class FillBar : UIComponent
     {
+        public float FillAmount => _fillImage.fillAmount;
+        public float CurrentValue => _minimum + (FillAmount * Range);
+
+        public float Range { get; private set; }
+
         private Image _fillImage;
 
         private float _minimum;
         private float _maximum;
-        private float _range;
 
         private void Awake() => _fillImage = GetComponent<Image>();
 
@@ -19,15 +22,16 @@ namespace UI.Components.UnityModifiers
         {
             _minimum = minimum;
             _maximum = maximum;
-            _range = _maximum - _minimum;
+            Range = _maximum - _minimum;
         }
 
-        public void UpdateValue(float value)
+        public void UpdateValue(float newValue)
         {
-            var distance = value - _minimum;
-            _fillImage.fillAmount = value / _range;
+            var distance = newValue - _minimum;
+            _fillImage.fillAmount = newValue / Range;
         }
 
-        internal void UpdateValue(object newHealth) => throw new NotImplementedException();
+        public void SetFill(float fillPercent) => _fillImage.fillAmount = Mathf.Clamp01(fillPercent);
+        public void ApplyDelta(float delta) => UpdateValue(CurrentValue + delta);
     }
 }
