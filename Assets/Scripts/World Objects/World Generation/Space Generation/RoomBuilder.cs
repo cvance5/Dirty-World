@@ -51,7 +51,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public RoomBuilder SetSize(int size)
         {
-            _size = size;
+            _size = Mathf.Max(0, size);
 
             Rebuild();
 
@@ -67,8 +67,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected void Rebuild()
         {
-            _bottomLeftCorner = new IntVector2(_centerpoint.X - _size, _centerpoint.Y - _size);
-            _topRightCorner = new IntVector2(_centerpoint.X + _size, _centerpoint.Y + _size);
+            _bottomLeftCorner = new IntVector2(_centerpoint.X - (_size / 2), _centerpoint.Y - (_size / 2));
+            _topRightCorner = new IntVector2(_centerpoint.X + (_size / 2), _centerpoint.Y + (_size / 2));
 
             OnSpaceBuilderChanged.Raise(this);
         }
@@ -121,19 +121,19 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             if (direction == Directions.Up)
             {
-                _centerpoint.Y = amount - _size;
+                _centerpoint.Y = amount - (_size / 2);
             }
             else if (direction == Directions.Right)
             {
-                _centerpoint.X = amount - _size;
+                _centerpoint.X = amount - (_size / 2);
             }
             else if (direction == Directions.Down)
             {
-                _centerpoint.Y = amount + _size;
+                _centerpoint.Y = amount + (_size / 2);
             }
             else if (direction == Directions.Left)
             {
-                _centerpoint.X = amount + _size;
+                _centerpoint.X = amount + (_size / 2);
             }
             else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
 
@@ -159,6 +159,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             if (difference > 0)
             {
                 SetSize(_size - difference);
+                Align(direction, amount);
             }
         }
 
