@@ -42,11 +42,6 @@ namespace Tests.SpaceTests
         [Test]
         public void ShaftBuilderClampTest()
         {
-            NewMethod();
-        }
-
-        private static void NewMethod()
-        {
             foreach (var alignment in (ShaftBuilder.ShaftAlignment[])System.Enum.GetValues(typeof(ShaftBuilder.ShaftAlignment)))
             {
                 var clampLeftShaft = new ShaftBuilder(_testChunk)
@@ -97,10 +92,10 @@ namespace Tests.SpaceTests
             foreach (var alignment in (ShaftBuilder.ShaftAlignment[])System.Enum.GetValues(typeof(ShaftBuilder.ShaftAlignment)))
             {
                 var cutRightShaft = new ShaftBuilder(_testChunk)
-                                        .SetStartingPoint(-Vector2.one, alignment)
-                                        .AddBoundary(Directions.Right, 0)
-                                        .AddBoundary(Directions.Left, 0)
-                                        .Build();
+                                       .SetStartingPoint(-Vector2.one, alignment)
+                                       .AddBoundary(Directions.Right, 0)
+                                       .AddBoundary(Directions.Left, 0)
+                                       .Build();
 
                 foreach (var extent in cutRightShaft.Extents)
                 {
@@ -108,10 +103,10 @@ namespace Tests.SpaceTests
                 }
 
                 var cutUpShaft = new ShaftBuilder(_testChunk)
-                                        .SetStartingPoint(-Vector2.one, alignment)
-                                        .AddBoundary(Directions.Up, 0)
-                                        .AddBoundary(Directions.Down, 0)
-                                        .Build();
+                                    .SetStartingPoint(-Vector2.one, alignment)
+                                    .AddBoundary(Directions.Up, 0)
+                                    .AddBoundary(Directions.Down, 0)
+                                    .Build();
 
                 foreach (var extent in cutUpShaft.Extents)
                 {
@@ -119,10 +114,10 @@ namespace Tests.SpaceTests
                 }
 
                 var cutLeftShaft = new ShaftBuilder(_testChunk)
-                                         .SetStartingPoint(Vector2.one, alignment)
-                                         .AddBoundary(Directions.Left, 0)
-                                         .AddBoundary(Directions.Right, 0)
-                                         .Build();
+                                      .SetStartingPoint(Vector2.one, alignment)
+                                      .AddBoundary(Directions.Left, 0)
+                                      .AddBoundary(Directions.Right, 0)
+                                      .Build();
 
                 foreach (var extent in cutLeftShaft.Extents)
                 {
@@ -148,14 +143,14 @@ namespace Tests.SpaceTests
             foreach (var alignment in (ShaftBuilder.ShaftAlignment[])System.Enum.GetValues(typeof(ShaftBuilder.ShaftAlignment)))
             {
                 var setHeightShaft = new ShaftBuilder(_testChunk)
-                                            .SetHeight(10)
-                                            .Build() as Shaft;
+                                        .SetHeight(10)
+                                        .Build() as Shaft;
 
                 Assert.AreEqual(10, setHeightShaft.Height, $"Shaft height was not as expected for alignment {alignment}.");
 
                 var setLengthShaft = new ShaftBuilder(_testChunk)
-                                            .SetWidth(10)
-                                            .Build() as Shaft;
+                                        .SetWidth(10)
+                                        .Build() as Shaft;
 
                 Assert.AreEqual(10, setLengthShaft.Width, $"Shaft length was not as expected for alignment {alignment}.");
             }
@@ -165,7 +160,7 @@ namespace Tests.SpaceTests
         public void ShaftGetBlockTest()
         {
             var shaft = new ShaftBuilder(_testChunk)
-                               .Build() as Shaft;
+                           .Build() as Shaft;
 
             for (var x = shaft.BottomLeftCorner.X; x <= shaft.TopRightCorner.X; x++)
             {

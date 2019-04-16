@@ -132,11 +132,11 @@ namespace Tests.SpaceTests
         public void MonsterDenBuilderCutTest()
         {
             var cutRightMonsterDen = new MonsterDenBuilder(_testChunk)
-                                         .SetCenterpoint(-Vector2.one)
-                                         .SetRadius(5)
-                                         .AddBoundary(Directions.Right, 0)
-                                         .AddBoundary(Directions.Left, 0)
-                                         .Build();
+                                        .SetCenterpoint(-Vector2.one)
+                                        .SetRadius(5)
+                                        .AddBoundary(Directions.Right, 0)
+                                        .AddBoundary(Directions.Left, 0)
+                                        .Build();
 
             foreach (var extent in cutRightMonsterDen.Extents)
             {
@@ -144,10 +144,11 @@ namespace Tests.SpaceTests
             }
 
             var cutUpMonsterDen = new MonsterDenBuilder(_testChunk)
-                                         .SetCenterpoint(-Vector2.one)
-                                         .AddBoundary(Directions.Up, 0)
-                                         .AddBoundary(Directions.Down, 0)
-                                         .Build();
+                                     .SetCenterpoint(-Vector2.one)
+                                     .SetRadius(5)
+                                     .AddBoundary(Directions.Up, 0)
+                                     .AddBoundary(Directions.Down, 0)
+                                     .Build();
 
             foreach (var extent in cutUpMonsterDen.Extents)
             {
@@ -155,10 +156,11 @@ namespace Tests.SpaceTests
             }
 
             var cutLeftMonsterDen = new MonsterDenBuilder(_testChunk)
-                                          .SetCenterpoint(Vector2.one)
-                                          .AddBoundary(Directions.Left, 0)
-                                          .AddBoundary(Directions.Right, 0)
-                                          .Build();
+                                       .SetCenterpoint(Vector2.one)
+                                       .SetRadius(5)
+                                       .AddBoundary(Directions.Left, 0)
+                                       .AddBoundary(Directions.Right, 0)
+                                       .Build();
 
             foreach (var extent in cutRightMonsterDen.Extents)
             {
@@ -167,6 +169,7 @@ namespace Tests.SpaceTests
 
             var cutDownMonsterDen = new MonsterDenBuilder(_testChunk)
                                        .SetCenterpoint(Vector2.one)
+                                       .SetRadius(5)
                                        .AddBoundary(Directions.Down, 0)
                                        .AddBoundary(Directions.Up, 0)
                                        .Build();
@@ -190,16 +193,16 @@ namespace Tests.SpaceTests
         [Test]
         public void MonsterDenGetBlockTest()
         {
-            var MonsterDen = new MonsterDenBuilder(_testChunk)
-                               .Build() as MonsterDen;
+            var monsterDen = new MonsterDenBuilder(_testChunk)
+                                .Build() as MonsterDen;
 
-            for (var x = MonsterDen.Centerpoint.X - MonsterDen.Radius; x <= MonsterDen.Centerpoint.X + MonsterDen.Radius; x++)
+            for (var x = monsterDen.Centerpoint.X - monsterDen.Radius; x <= monsterDen.Centerpoint.X + monsterDen.Radius; x++)
             {
-                var offsetFromCenter = Mathf.Abs(x - MonsterDen.Centerpoint.X);
+                var offsetFromCenter = Mathf.Abs(x - monsterDen.Centerpoint.X);
 
-                for (var y = MonsterDen.Centerpoint.Y; y <= MonsterDen.Centerpoint.Y + MonsterDen.Radius - offsetFromCenter; y++)
+                for (var y = monsterDen.Centerpoint.Y; y <= monsterDen.Centerpoint.Y + monsterDen.Radius - offsetFromCenter; y++)
                 {
-                    var block = MonsterDen.GetBlockType(new IntVector2(x, y));
+                    var block = monsterDen.GetBlockType(new IntVector2(x, y));
                     Assert.AreEqual(block, BlockTypes.None, $"Found the wrong block at [{x},{y}].");
                 }
             }
