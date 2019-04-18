@@ -7,17 +7,17 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
     {
         public override bool IsValid => _height >= _minHeight && _width >= _minWidth;
 
-        private IntVector2 _top;
-        private IntVector2 _middle;
-        private IntVector2 _bottom;
+        protected IntVector2 _top;
+        protected IntVector2 _middle;
+        protected IntVector2 _bottom;
         private ShaftAlignment _alignment;
 
-        private int _height;
+        protected int _height;
         private int _minHeight = 1;
-        private int _width;
+        protected int _width;
         private int _minWidth = 1;
 
-        private bool _isUncapped;
+        protected bool _isUncapped;
 
         public ShaftBuilder(ChunkBuilder chunkBuilder)
             : base(chunkBuilder)
@@ -70,8 +70,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public ShaftBuilder SetWidth(int blocksWide)
         {
-            _width = blocksWide;
-            _width = Mathf.Max(0, _width);
+            _width = Mathf.Max(0, blocksWide);
             Rebuild();
             return this;
         }
@@ -82,10 +81,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public ShaftBuilder SetHeight(int blockHigh)
+        public virtual ShaftBuilder SetHeight(int blockHigh)
         {
-            _height = blockHigh;
-            _height = Mathf.Max(0, _height);
+            _height = Mathf.Max(0, blockHigh);
             Rebuild();
             return this;
         }
@@ -133,7 +131,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             position.Y >= _bottom.Y &&
             position.Y <= _top.Y;
 
-        public override IntVector2 GetRandomPoint() => 
+        public override IntVector2 GetRandomPoint() =>
             new IntVector2(Chance.Range(_bottom.X, _bottom.X + _width + 1),
                            Chance.Range(_bottom.Y, _top.Y + 1));
 
@@ -216,7 +214,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override Spaces.Space BuildRaw() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _isUncapped);
 
-        protected void Rebuild()
+        protected virtual void Rebuild()
         {
             switch (_alignment)
             {

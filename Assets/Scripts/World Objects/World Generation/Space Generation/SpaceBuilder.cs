@@ -14,7 +14,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         protected Dictionary<IntVector2, int> _boundedDirections { get; private set; } =
               new Dictionary<IntVector2, int>();
 
-        protected readonly List<SpaceModifier> _modifiersApplied = new List<SpaceModifier>();
+        protected readonly List<ModifierTypes> _modifiersApplied = new List<ModifierTypes>();
 
         // Used reflectively via Activator
         public SpaceBuilder(ChunkBuilder chunkBuilder) => _chunkBuilder = chunkBuilder;
@@ -41,21 +41,15 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
+        public SpaceBuilder AddModifiers(List<ModifierTypes> modifiersApplied)
+        {
+            _modifiersApplied.AddRange(modifiersApplied);
+            return this;
+        }
+
         public SpaceBuilder AddModifier(ModifierTypes modifier)
         {
-            switch (modifier)
-            {
-                case ModifierTypes.Cavernous:
-                    _modifiersApplied.Add(new CavernousModifier(this));
-                    break;
-
-                case ModifierTypes.Laboratory:
-                    _modifiersApplied.Add(new LaboratoryModifier(this));
-                    break;
-
-                default: throw new System.ArgumentException($"Unknown modifier of type `{modifier}`.  Cannot construct.");
-            }
-
+            _modifiersApplied.Add(modifier);
             return this;
         }
 
@@ -104,10 +98,25 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             var rawSpace = BuildRaw();
 
-            foreach (var modifierApplied in _modifiersApplied)
+            foreach (var modifierType in _modifiersApplied)
             {
-                modifierApplied.Modify(rawSpace);
-                rawSpace.AddModifier(modifierApplied.Type);
+                SpaceModifier modifier;
+                switch (modifierType)
+                {
+                    case ModifierTypes.Cavernous:
+                        modifier = new CavernousModifier(this);
+                        break;
+
+                    case ModifierTypes.Laboratory:
+                        modifier = new LaboratoryModifier(this);
+                        break;
+
+                    default: throw new System.ArgumentException($"Unknown modifier of type `{modifierType}`.  Cannot construct.");
+                }
+
+
+                modifier.Modify(rawSpace);
+                rawSpace.AddModifier(modifierType);
             }
 
             return rawSpace;
