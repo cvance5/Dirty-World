@@ -41,6 +41,12 @@ public static class Chance
         return (float)(mantissa * exponent);
     }
 
+    /// <summary>
+    /// Pass through to a Random.Next(min, max)
+    /// </summary>
+    /// <param name="min">Inclusive min</param>
+    /// <param name="max">Exclusive max</param>
+    /// <returns></returns>
     public static int Range(int min, int max) => _rand.Next(min, max);
     public static double Range(float min, float max)
     {
