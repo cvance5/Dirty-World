@@ -43,7 +43,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             {
                 _storyHeight = blockHigh / _numberOfStories;
             }
-
+            else
+            {
+                var nearestStoryToTarget = (blockHigh / _storyHeight);
+                var storyDifference = nearestStoryToTarget - _numberOfStories;
+                _numberOfStories += storyDifference;
+            }
             // If this height does not cleanly scale one of the other
             // fields, it will be reset in the rebuild
             _height = blockHigh;
