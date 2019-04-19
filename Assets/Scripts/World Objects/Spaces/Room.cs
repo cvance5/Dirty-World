@@ -4,7 +4,7 @@ namespace WorldObjects.Spaces
 {
     public class Room : Space
     {
-        public override string Name => $"Treasure Room from {BottomLeftCorner} to {TopRightCorner}";
+        public override string Name => $"Room from {BottomLeftCorner} to {TopRightCorner}";
 
         public readonly IntVector2 BottomLeftCorner;
         public readonly IntVector2 TopRightCorner;
