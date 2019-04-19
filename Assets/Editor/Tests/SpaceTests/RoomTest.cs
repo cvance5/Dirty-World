@@ -138,11 +138,18 @@ namespace Tests.SpaceTests
         [Test]
         public void RoomBuilderResizeTest()
         {
-            var setHeightRoom = new RoomBuilder(_testChunk)
-                                   .SetSize(10)
-                                   .Build() as Room;
+            var setEvenHeightRoom = new RoomBuilder(_testChunk)
+                                       .SetSize(10)
+                                       .Build() as Room;
 
-            Assert.AreEqual(10, setHeightRoom.TopRightCorner.Y - setHeightRoom.BottomLeftCorner.Y, $"Room height was not as expected.");
+            Assert.AreEqual(10, setEvenHeightRoom.TopRightCorner.Y - setEvenHeightRoom.BottomLeftCorner.Y, $"Room height was not as expected.");
+
+            var setOddHeightRoom = new RoomBuilder(_testChunk)
+                                      .SetSize(5)
+                                      .Build() as Room;
+
+            Assert.AreEqual(5, setOddHeightRoom.TopRightCorner.Y - setOddHeightRoom.BottomLeftCorner.Y, $"Room height was not as expected.");
+
         }
 
         [Test]

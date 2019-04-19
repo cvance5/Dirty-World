@@ -67,8 +67,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected void Rebuild()
         {
-            _bottomLeftCorner = new IntVector2(_centerpoint.X - (_size / 2), _centerpoint.Y - (_size / 2));
-            _topRightCorner = new IntVector2(_centerpoint.X + (_size / 2), _centerpoint.Y + (_size / 2));
+            // Odd numbers don't divide by 2 and will result in weird values,
+            // so this ensures the size is always right
+            var halfSize = _size / 2;
+            _bottomLeftCorner = new IntVector2(_centerpoint.X - halfSize, _centerpoint.Y - halfSize);
+            _topRightCorner = new IntVector2(_centerpoint.X + _size - halfSize, _centerpoint.Y + _size - halfSize);
 
             OnSpaceBuilderChanged.Raise(this);
         }
