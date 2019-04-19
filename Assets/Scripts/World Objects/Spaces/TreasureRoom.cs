@@ -5,7 +5,7 @@ namespace WorldObjects.Spaces
 {
     public class TreasureRoom : Room
     {
-        public override string Name => $"Treasure Room from {BottomLeftCorner} to {TopRightCorner}";
+        public override string Name => $"Treasure {base.Name}";
 
         public readonly Item[] Treasure;
 
