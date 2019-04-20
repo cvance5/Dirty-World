@@ -10,9 +10,7 @@ namespace UI
 
         public static Scrim ScrimOver(Transform target)
         {
-            Scrim scrim;
-
-            if (!_scrims.TryGetValue(target, out scrim))
+            if (!_scrims.TryGetValue(target, out var scrim))
             {
                 scrim = CreateScrim();
                 scrim.transform.SetParent(target);
@@ -27,15 +25,13 @@ namespace UI
 
         public static Scrim GetScrim(Transform target)
         {
-            Scrim scrim = null;
-            _scrims.TryGetValue(target, out scrim);
+            _scrims.TryGetValue(target, out var scrim);
             return scrim;
         }
 
         public static void ClearScrim(Transform target)
         {
-            Scrim scrim;
-            if (_scrims.TryGetValue(target, out scrim))
+            if (_scrims.TryGetValue(target, out var scrim))
             {
                 Object.Destroy(scrim.gameObject);
             }
@@ -51,9 +47,7 @@ namespace UI
 
         private static void OnScrimDestroyed(Transform target)
         {
-            Scrim scrim;
-
-            if (_scrims.TryGetValue(target, out scrim))
+            if (_scrims.TryGetValue(target, out var scrim))
             {
                 _scrims.Remove(target);
                 scrim.OnScrimDestroyed -= OnScrimDestroyed;
