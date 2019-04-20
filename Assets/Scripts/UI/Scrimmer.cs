@@ -37,7 +37,7 @@ namespace UI
             Scrim scrim;
             if (_scrims.TryGetValue(target, out scrim))
             {
-                Object.Destroy(scrim);
+                Object.Destroy(scrim.gameObject);
             }
         }
 
