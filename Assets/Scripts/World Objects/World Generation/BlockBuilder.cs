@@ -1,6 +1,6 @@
 ﻿using WorldObjects.Blocks;
 using WorldObjects.Spaces;
-using WorldObjects.WorldGeneration.FeatureGeneration;
+using WorldObjects.WorldGeneration.PropGeneration;
 
 namespace WorldObjects.WorldGeneration
 {
@@ -13,7 +13,7 @@ namespace WorldObjects.WorldGeneration
         private bool _exists;
 
         public BlockTypes _block = BlockTypes.None;
-        public FeatureTypes _feature = FeatureTypes.None;
+        public PropTypes _prop = PropTypes.None;
 
         public BlockBuilder(IntVector2 position)
         {
@@ -39,13 +39,13 @@ namespace WorldObjects.WorldGeneration
             _block = space.GetBlockType(Position);
             IsFill = false;
 
-            SetFeature(space.GetFeatureType(Position));
+            SetProp(space.GetProp(Position));
             return this;
         }
 
-        public BlockBuilder SetFeature(FeatureTypes feature)
+        public BlockBuilder SetProp(PropTypes prop)
         {
-            _feature = feature;
+            _prop = prop;
             return this;
         }
 
@@ -67,13 +67,13 @@ namespace WorldObjects.WorldGeneration
             return type;
         }
 
-        public FeatureTypes GetFeature()
+        public PropTypes GetProp()
         {
-            var type = FeatureTypes.None;
+            var type = PropTypes.None;
 
             if (_exists)
             {
-                type = _feature;
+                type = _prop;
             }
 
             return type;

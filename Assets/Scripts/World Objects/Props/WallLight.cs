@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-using WorldObjects.WorldGeneration.FeatureGeneration;
+using WorldObjects.WorldGeneration.PropGeneration;
 
-namespace WorldObjects.Features
+namespace WorldObjects.Props
 {
-    public class WallLight : Feature, IPowerable
+    public class WallLight : Prop, IPowerable
     {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [SerializeField]
@@ -15,7 +15,7 @@ namespace WorldObjects.Features
 
         public override string ObjectName => $"Wall Light at {Position}";
 
-        public override FeatureTypes Type { get; } = FeatureTypes.WallLight;
+        public override PropTypes Type { get; } = PropTypes.WallLight;
 
         protected override void OnWorldObjectAwake() => _light.enabled = CanBePowered;
 

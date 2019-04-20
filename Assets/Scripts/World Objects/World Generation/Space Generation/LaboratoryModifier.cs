@@ -1,5 +1,5 @@
 ﻿using WorldObjects.Spaces;
-using WorldObjects.WorldGeneration.FeatureGeneration;
+using WorldObjects.WorldGeneration.PropGeneration;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
@@ -16,10 +16,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             {
                 ModifyCorridor(target as Corridor);
             }
-            else if (target is Shaft)
-            {
-                ModifyShaft(target as Shaft);
-            }
         }
 
         private void ModifyCorridor(Corridor corridor)
@@ -30,17 +26,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             {
                 if (lightX % 8 == 0)
                 {
-                    corridor.AddFeature(new IntVector2(lightX, lightY), FeatureTypes.WallLight);
+                    corridor.AddProp(new IntVector2(lightX, lightY), PropTypes.WallLight);
                 }
             }
-        }
-
-        private void ModifyShaft(Shaft shaft)
-        {
-            var randomElevatorHeight = Chance.Range(0, shaft.Height - 6);
-            var randomElevatorPosition = shaft.BottomLeftCorner + (Directions.Up * randomElevatorHeight);
-
-            shaft.AddFeature(randomElevatorPosition, FeatureTypes.Elevator);
         }
     }
 }

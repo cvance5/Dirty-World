@@ -10,7 +10,7 @@ namespace WorldObjects.Construction
     public class FeatureLoader : Singleton<FeatureLoader>
     {
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
-        [Header("Features")]
+        [Header("features")]
         [SerializeField]
         private FeatureTypesGameObjectDictionary _features = new FeatureTypesGameObjectDictionary();
 #pragma warning restore IDE0044 // Add readonly modifier
@@ -30,8 +30,6 @@ namespace WorldObjects.Construction
             var feature = featureObject.GetComponent<Feature>();
             featureObject.name = feature.ObjectName;
 
-            _log.ErrorIfNull(feature, $"Block of type {type} has not been given a 'feature' component.");
-
             return feature;
         }
 
@@ -40,15 +38,14 @@ namespace WorldObjects.Construction
 
         private static readonly Dictionary<FeatureTypes, Type> _enumToType = new Dictionary<FeatureTypes, Type>()
         {
-            { FeatureTypes.None, null },
-            { FeatureTypes.WallLight, typeof(WallLight) }
+            { FeatureTypes.Elevator, typeof(Elevator) }
         };
 
         private static readonly Dictionary<Type, FeatureTypes> _typeToEnum = new Dictionary<Type, FeatureTypes>()
         {
-            { typeof(WallLight), FeatureTypes.WallLight }
+            { typeof(Elevator), FeatureTypes.Elevator }
         };
 
-        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("FeatureLoader");
+        private static readonly Utilities.Debug.Log _log = new Utilities.Debug.Log("PropLoader");
     }
 }
