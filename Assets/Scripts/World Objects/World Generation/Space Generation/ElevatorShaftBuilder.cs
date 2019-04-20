@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration.FeatureGeneration;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class ElevatorShaftBuilder : ShaftBuilder
     {
         public override bool IsValid => base.IsValid && _storyHeight >= _minStoryHeight &&
-                                        _numberOfStories >= _minNumberOfStories && _elevatorHeight < _height;
+                                        _numberOfStories >= _minNumberOfStories && _elevatorBuilder.IsValid;
 
-        private int _elevatorHeight;
+        private readonly ElevatorBuilder _elevatorBuilder = new ElevatorBuilder();
 
         private int _storyHeight;
         private int _minStoryHeight = 1;
@@ -28,7 +29,10 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             Rebuild();
 
-            SetElevatorSpawnHeight(Chance.Range(0, _height - 1));
+            SetElevatorSpawn(Chance.Range(0, _height - 1));
+
+            _elevatorBuilder.SetRail(_bottom, _top);
+            FillLandings();
         }
 
         public override ShaftBuilder SetHeight(int blockHigh)
@@ -83,9 +87,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public ElevatorShaftBuilder SetElevatorSpawnHeight(int elevatorSpawnHeight)
+        public ElevatorShaftBuilder SetElevatorSpawn(int elevatorSpawnHeight)
         {
-            _elevatorHeight = Mathf.Clamp(elevatorSpawnHeight, 0, _height - 1);
+            _elevatorBuilder.SetSpawnPosition(new IntVector2(_middle.X, elevatorSpawnHeight));
+
+            OnSpaceBuilderChanged.Raise(this);
+
             return this;
         }
 
@@ -94,7 +101,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _allowLandings = isAllowed;
             if (!_allowLandings)
             {
-                _landings.Clear();
+                ClearLandings();
             }
 
             return this;
@@ -111,6 +118,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             {
                 var roomBuilder = new RoomBuilder(_chunkBuilder);
                 _landings.Add(story, roomBuilder);
+                _elevatorBuilder.RegisterStop(new IntVector2(_middle.X, _bottom.X + (_storyHeight * story)));
+
+                OnSpaceBuilderChanged.Raise(this);
             }
 
             return this;
@@ -120,10 +130,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             for (var story = 0; story < _numberOfStories; story++)
             {
-                if (GetLanding(story) == null)
-                {
-                    AddLanding(story);
-                }
+                AddLanding(story);
             }
 
             return this;
@@ -132,6 +139,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public ElevatorShaftBuilder ClearLandings()
         {
             _landings.Clear();
+            _elevatorBuilder.ClearStops();
+
+            OnSpaceBuilderChanged.Raise(this);
 
             return this;
         }
@@ -149,25 +159,30 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
         }
 
+        private Room BuildLanding(int story, RoomBuilder landingBuilder)
+        {
+            var startingPoint = new IntVector2(_middle.X, _bottom.Y + (_storyHeight * story));
+
+            landingBuilder.SetSize(_width + 2)
+                          .Align(Directions.Down, startingPoint.Y + 1)
+                          .Align(Directions.Left, startingPoint.X - 1)
+                          .AddModifiers(_modifiersApplied);
+
+            return landingBuilder.Build() as Room;
+        }
+
         protected override Spaces.Space BuildRaw()
         {
             var landings = new List<Room>();
 
             foreach (var kvp in _landings)
             {
-                var startingPoint = new IntVector2(_middle.X + (_width / 2), _storyHeight * kvp.Key);
-
-                var landingBuilder = kvp.Value
-                                    .SetCenter(startingPoint)
-                                    .SetSize(_storyHeight)
-                                    .AddModifiers(_modifiersApplied);
-
-                var landing = landingBuilder.Build() as Room;
+                var landing = BuildLanding(kvp.Key, kvp.Value);
                 landings.Add(landing);
             }
 
             var shaft = new ElevatorShaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _isUncapped, landings);
-            shaft.AddFeature(new IntVector2(_middle.X, _elevatorHeight), FeatureGeneration.FeatureTypes.Elevator);
+            shaft.AddFeatureBuilder(_elevatorBuilder);
             return shaft;
         }
 
@@ -178,6 +193,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _landings.RemoveAll(landing => landing.Key >= _numberOfStories);
 
             base.Rebuild();
+
+            _elevatorBuilder.SetRail(_bottom, _top);
         }
     }
 }

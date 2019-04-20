@@ -7,7 +7,7 @@ using WorldObjects.Actors.Enemies;
 using WorldObjects.Blocks;
 using WorldObjects.Construction;
 using WorldObjects.WorldGeneration.EnemyGeneration;
-using WorldObjects.WorldGeneration.FeatureGeneration;
+using WorldObjects.WorldGeneration.PropGeneration;
 using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects.WorldGeneration
@@ -212,7 +212,7 @@ namespace WorldObjects.WorldGeneration
             var yieldTimer = new IncrementalTimer(Time.realtimeSinceStartup, 1f / 180f);
 
             yield return BuildBlocks(chunk, yieldTimer);
-            yield return BuildHazardsAndEnemies(chunk, yieldTimer);
+            yield return BuildFromBuilders(chunk, yieldTimer);
 
             foreach (var space in _spaces)
             {
@@ -230,12 +230,12 @@ namespace WorldObjects.WorldGeneration
                 var position = builder.Position;
 
                 var blockType = BlockTypes.None;
-                var featureToBuild = FeatureTypes.None;
+                var propToBuild = PropTypes.None;
 
                 if (builder.IsFill) builder.SetType(FillBlock);
 
                 blockType = builder.GetBlock();
-                featureToBuild = builder.GetFeature(); ;
+                propToBuild = builder.GetProp(); ;
 
                 Block block = null;
                 if (blockType != BlockTypes.None)
@@ -244,18 +244,18 @@ namespace WorldObjects.WorldGeneration
                     chunk.Register(block);
                 }
 
-                if (featureToBuild != FeatureTypes.None)
+                if (propToBuild != PropTypes.None)
                 {
-                    var feature = FeatureLoader.CreateFeature(featureToBuild, position);
-                    chunk.Register(feature);
+                    var prop = PropLoader.CreateProp(propToBuild, position);
+                    chunk.Register(prop);
 
                     if (block != null)
                     {
-                        feature.Assign(block);
+                        prop.Assign(block);
                     }
-                    feature.Assign(builder.Space);
+                    prop.Assign(builder.Space);
 
-                    feature.Initialize();
+                    prop.Initialize();
                 }
 
                 if (timer.CheckIncrement(Time.realtimeSinceStartup))
@@ -266,25 +266,33 @@ namespace WorldObjects.WorldGeneration
             }
         }
 
-        private IEnumerator BuildHazardsAndEnemies(Chunk chunk, IncrementalTimer timer)
+        private IEnumerator BuildFromBuilders(Chunk chunk, IncrementalTimer timer)
         {
             foreach (var space in _spaces)
             {
-                foreach (var hazardSpawn in space.GetHazardBuildersInChunk(chunk))
-                {
-                    var hazard = hazardSpawn.Build(chunk, space);
-                    if (hazard != null) chunk.Register(hazard);
-                }
-
+                // Register enemies as we spawn them
                 foreach (var enemySpawn in space.GetEnemySpawnsInChunk(chunk))
                 {
                     var enemyData = EnemySpawner.SpawnEnemy(enemySpawn.Type, enemySpawn.Position);
                     chunk.Register(enemyData);
                 }
 
+                // Now register any already-spawned enemies
                 foreach (var enemy in _enemies)
                 {
                     chunk.Register(enemy);
+                }
+
+                foreach (var hazardSpawn in space.GetHazardBuildersInChunk(chunk))
+                {
+                    var hazard = hazardSpawn.Build(chunk, space);
+                    if (hazard != null) chunk.Register(hazard);
+                }
+
+                foreach(var featureSpawn in space.GetFeatureBuildersInChunk(chunk))
+                {
+                    var feature = featureSpawn.Build();
+                    if (feature != null) chunk.Register(feature);
                 }
 
                 if (timer.CheckIncrement(Time.realtimeSinceStartup))

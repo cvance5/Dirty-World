@@ -8,6 +8,7 @@ using WorldObjects.Actors.Enemies;
 using WorldObjects.Blocks;
 using WorldObjects.Features;
 using WorldObjects.Hazards;
+using WorldObjects.Props;
 
 namespace WorldObjects
 {
@@ -22,12 +23,13 @@ namespace WorldObjects
         public IntVector2 BottomLeftCorner { get; protected set; }
         public IntVector2 TopRightCorner { get; protected set; }
 
-        public List<Hazard> Hazards { get; private set; } = new List<Hazard>();
         public List<EnemyHealth> Enemies { get; private set; } = new List<EnemyHealth>();
+        public List<Hazard> Hazards { get; private set; } = new List<Hazard>();
+        public List<Feature> Features { get; private set; } = new List<Feature>();
         public List<ItemActor> Items { get; private set; } = new List<ItemActor>();
 
         public Dictionary<IntVector2, Block> BlockMap { get; private set; } = new Dictionary<IntVector2, Block>();
-        public Dictionary<IntVector2, Feature> FeatureMap { get; private set; } = new Dictionary<IntVector2, Feature>();
+        public Dictionary<IntVector2, Prop> PropMap { get; private set; } = new Dictionary<IntVector2, Prop>();
 
         public List<string> SpacesUsed { get; private set; } = new List<string>();
 
@@ -57,12 +59,12 @@ namespace WorldObjects
             OnChunkChanged.Raise(this);
         }
 
-        public void Register(Feature feature)
+        public void Register(Prop prop)
         {
-            FeatureMap[feature.Position] = feature;
-            feature.transform.SetParent(transform, true);
+            PropMap[prop.Position] = prop;
+            prop.transform.SetParent(transform, true);
 
-            feature.OnFeaturedDestroyed += OnFeatureDestroyed;
+            prop.OnPropDestroyed += OnPropDestroyed;
             OnChunkChanged.Raise(this);
         }
 
@@ -73,6 +75,17 @@ namespace WorldObjects
 
             hazard.OnHazardChanged += OnHazardChanged;
             hazard.OnHazardDestroyed += OnHazardDestroyed;
+
+            OnChunkChanged.Raise(this);
+        }
+
+        public void Register(Feature feature)
+        {
+            Features.Add(feature);
+            feature.transform.SetParent(transform, true);
+
+            feature.OnFeatureChanged += OnFeatureChanged;
+            feature.OnFeatureDestroyed += OnFeatureDestroyed;
 
             OnChunkChanged.Raise(this);
         }
@@ -205,13 +218,13 @@ namespace WorldObjects
             OnChunkChanged.Raise(this);
         }
 
-        private void OnFeatureDestroyed(Feature feature)
+        private void OnPropDestroyed(Prop prop)
         {
 
-            feature.OnFeaturedDestroyed -= OnFeatureDestroyed;
+            prop.OnPropDestroyed -= OnPropDestroyed;
 
-            if (!FeatureMap.Remove(feature.Position)) _log.Info($"Attempted to destroy feature, but could not find it at {feature.Position}.");
-            else _log.Info($"Feature destroyed at {feature.Position}.");
+            if (!PropMap.Remove(prop.Position)) _log.Info($"Attempted to destroy prop, but could not find it at {prop.Position}.");
+            else _log.Info($"Prop destroyed at {prop.Position}.");
 
             OnChunkChanged.Raise(this);
         }
@@ -236,6 +249,30 @@ namespace WorldObjects
 
             hazard.OnHazardChanged -= OnHazardChanged;
             hazard.OnHazardDestroyed -= OnHazardDestroyed;
+
+            OnChunkChanged.Raise(this);
+        }
+
+        private void OnFeatureChanged(Feature feature)
+        {
+            if (!Features.Contains(feature))
+            {
+                throw new InvalidOperationException($"Attempted to updated feature `{feature}` but it could not be found!");
+            }
+            else OnChunkChanged.Raise(this);
+        }
+
+        private void OnFeatureDestroyed(Feature feature)
+        {
+            if (Features.Contains(feature))
+            {
+                Features.Remove(feature);
+                _log.Info($"Feature {feature} has been removed.");
+            }
+            else throw new InvalidOperationException($"Attempted to remove feature {feature} but it could not be found!");
+
+            feature.OnFeatureChanged -= OnFeatureChanged;
+            feature.OnFeatureDestroyed -= OnFeatureDestroyed;
 
             OnChunkChanged.Raise(this);
         }

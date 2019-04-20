@@ -27,12 +27,12 @@ namespace CustomPropertyDrawing.SerializedDictionaries
     // ---------------
     //  Feature Types => GameObjects
     // ---------------
-    [CustomPropertyDrawer(typeof(FeatureTypesGameObjectDictionary))]
-    public class FeatureTypesGameObjectsPropertyDrawer : SerializableDictionaryDrawer<WorldObjects.WorldGeneration.FeatureGeneration.FeatureTypes, GameObject>
+    [CustomPropertyDrawer(typeof(PropTypesGameObjectDictionary))]
+    public class PropTypesGameObjectsPropertyDrawer : SerializableDictionaryDrawer<WorldObjects.WorldGeneration.PropGeneration.PropTypes, GameObject>
     {
-        protected override SerializableKeyValueTemplate<WorldObjects.WorldGeneration.FeatureGeneration.FeatureTypes, GameObject> GetTemplate() => GetGenericTemplate<FeatureTypesGameObjectDictionaryTemplate>();
+        protected override SerializableKeyValueTemplate<WorldObjects.WorldGeneration.PropGeneration.PropTypes, GameObject> GetTemplate() => GetGenericTemplate<PropTypesGameObjectDictionaryTemplate>();
     }
-    internal class FeatureTypesGameObjectDictionaryTemplate : SerializableKeyValueTemplate<WorldObjects.WorldGeneration.FeatureGeneration.FeatureTypes, GameObject> { }
+    internal class PropTypesGameObjectDictionaryTemplate : SerializableKeyValueTemplate<WorldObjects.WorldGeneration.PropGeneration.PropTypes, GameObject> { }
 
     // ---------------
     //  Item Actor Types => GameObjects
@@ -43,4 +43,14 @@ namespace CustomPropertyDrawing.SerializedDictionaries
         protected override SerializableKeyValueTemplate<Items.ItemActors.ItemActorTypes, GameObject> GetTemplate() => GetGenericTemplate<ItemActorTypesGameObjectDictionaryTemplate>();
     }
     internal class ItemActorTypesGameObjectDictionaryTemplate : SerializableKeyValueTemplate<Items.ItemActors.ItemActorTypes, GameObject> { }
+
+    // ---------------
+    //  Feature Types => GameObjects
+    // ---------------
+    [CustomPropertyDrawer(typeof(FeatureTypesGameObjectDictionary))]
+    public class FeatureTypesGameObjectDictionaryDrawer : SerializableDictionaryDrawer<WorldObjects.WorldGeneration.FeatureGeneration.FeatureTypes, GameObject>
+    {
+        protected override SerializableKeyValueTemplate<WorldObjects.WorldGeneration.FeatureGeneration.FeatureTypes, GameObject> GetTemplate() => GetGenericTemplate<FeatureTypesGameObjectDictionaryTemplate>();
+    }
+    internal class FeatureTypesGameObjectDictionaryTemplate : SerializableKeyValueTemplate<WorldObjects.WorldGeneration.FeatureGeneration.FeatureTypes, GameObject> { }
 }

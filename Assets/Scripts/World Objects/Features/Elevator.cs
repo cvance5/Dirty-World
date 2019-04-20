@@ -1,71 +1,87 @@
-﻿using UnityEngine;
-using WorldObjects.Spaces;
-using WorldObjects.WorldGeneration.FeatureGeneration;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace WorldObjects.Features
 {
     public class Elevator : Feature, IPowerable
     {
+        public override string ObjectName => "Elevator";
+
 #pragma warning disable IDE0044 // Add readonly modifier, cannot be readonly since we want it serialized by unity
         [SerializeField]
         private int _maxPower = 1;
+        public int MaxPower => _maxPower;
         [SerializeField]
         private float _speed = 3f;
+        public float Speed => _speed;
 #pragma warning restore IDE0044 // Add readonly modifier
-
-        public override FeatureTypes Type => FeatureTypes.Elevator;
-        public override string ObjectName => "Elevator";
 
         public bool CanBePowered { get; private set; }
         public bool HasPower { get; private set; }
 
         private int _currentPower = 0;
 
-        private IntVector2 _highestStory;
-        private IntVector2 _lowestStory;
-        private ElevatorDirection _direction = ElevatorDirection.Up;
+        private IntVector2 _targetStop;
+        public List<IntVector2> Stops { get; private set; } = new List<IntVector2>();
 
-        public override void Initialize()
+        private ElevatorDirection _direction = ElevatorDirection.Forward;
+
+        public void Initialize(List<IntVector2> stops)
         {
-            if (_containingSpace is Shaft)
-            {
-                var containingShaft = _containingSpace as Shaft;
-                _lowestStory = containingShaft.BottomLeftCorner;
-                _highestStory = new IntVector2(_lowestStory.X, containingShaft.TopRightCorner.Y - 2);
-            }
+            Stops = stops;
+
+            _targetStop = IntVector2.Nearest(Position, Stops);
 
             CheckPoweredStatus();
+
+            OnFeatureChanged.Raise(this);
         }
 
         private void Update()
         {
-            if (_currentPower == _maxPower)
+            if (HasPower)
             {
-                if (_direction == ElevatorDirection.Up)
+                if (Position == _targetStop)
                 {
-                    transform.position += (Vector3.up * _speed * Time.deltaTime);
-                    if (transform.position.y > _highestStory.Y)
-                    {
-                        transform.position = _highestStory;
-                    }
+                    transform.position = Position;
+                    _currentPower--;
 
-                    if (transform.position == _highestStory)
-                    {
-                        _direction = ElevatorDirection.Down;
-                    }
+                    CheckPoweredStatus();
+                    SelectNextStop();
                 }
                 else
                 {
-                    transform.position += (Vector3.down * _speed * Time.deltaTime);
-                    if (transform.position.y < _lowestStory.Y)
-                    {
-                        transform.position = _lowestStory;
-                    }
+                    transform.position = Vector2.MoveTowards(transform.position, _targetStop, Time.deltaTime * _speed);
+                }
+            }
+        }
 
-                    if (transform.position == _lowestStory)
-                    {
-                        _direction = ElevatorDirection.Up;
-                    }
+        private void SelectNextStop()
+        {
+            var indexOf = Stops.IndexOf(_targetStop);
+
+            if (_direction == ElevatorDirection.Forward)
+            {
+                if (indexOf < Stops.Count - 1)
+                {
+                    _targetStop = Stops.LoopedNext(indexOf);
+                }
+                else
+                {
+                    _direction = ElevatorDirection.Reverse;
+                    SelectNextStop();
+                }
+            }
+            else if (_direction == ElevatorDirection.Reverse)
+            {
+                if (indexOf > 0)
+                {
+                    _targetStop = Stops.LoopedPrevious(indexOf);
+                }
+                else
+                {
+                    _direction = ElevatorDirection.Forward;
+                    SelectNextStop();
                 }
             }
         }
@@ -99,8 +115,8 @@ namespace WorldObjects.Features
 
         private enum ElevatorDirection
         {
-            Up,
-            Down
+            Forward,
+            Reverse
         }
     }
 }

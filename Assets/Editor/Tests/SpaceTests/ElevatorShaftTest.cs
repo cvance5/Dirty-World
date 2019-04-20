@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using System.Collections.Generic;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using WorldObjects;
@@ -22,7 +21,7 @@ namespace Tests.SpaceTests
         [Test]
         public void ElevatorShaftContainsTest()
         {
-            var shaft = new ElevatorShaft(new IntVector2(-2, -2), new IntVector2(2, 2), false, new List<Room>());
+            var shaft = new ElevatorShaft(new IntVector2(-2, -2), new IntVector2(2, 2), false, null);
 
             for (var x = -5; x <= 5; x++)
             {

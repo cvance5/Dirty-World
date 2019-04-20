@@ -3,6 +3,7 @@ using System.Linq;
 using WorldObjects.Blocks;
 using WorldObjects.WorldGeneration.FeatureGeneration;
 using WorldObjects.WorldGeneration.HazardGeneration;
+using WorldObjects.WorldGeneration.PropGeneration;
 
 namespace WorldObjects.Spaces
 {
@@ -19,14 +20,19 @@ namespace WorldObjects.Spaces
         public virtual List<HazardBuilder> HazardBuilders => new List<HazardBuilder>(_hazardBuilders);
         public void AddHazardBuilders(List<HazardBuilder> hazardBuilders) => _hazardBuilders.AddRange(hazardBuilders);
 
+        protected readonly List<FeatureBuilder> _featureBuilders = new List<FeatureBuilder>();
+        public virtual List<FeatureBuilder> FeatureBuilders => new List<FeatureBuilder>(_featureBuilders);
+        public void AddFeatureBuilder(FeatureBuilder featureBuilder) => _featureBuilders.Add(featureBuilder);
+        public void AddFeatureBuilders(List<FeatureBuilder> featureBuilders) => _featureBuilders.AddRange(featureBuilders);
+
         protected readonly List<ModifierTypes> _modifiers = new List<ModifierTypes>();
         public virtual List<ModifierTypes> Modifiers => new List<ModifierTypes>(_modifiers);
         internal void AddModifier(ModifierTypes modifier) => _modifiers.Add(modifier);
         public void AddModifiers(List<ModifierTypes> modifiers) => _modifiers.AddRange(modifiers);
 
-        protected readonly Dictionary<IntVector2, FeatureTypes> _features = new Dictionary<IntVector2, FeatureTypes>();
-        public virtual FeatureTypes GetFeatureType(IntVector2 position) => _features.TryGetValue(position, out var type) ? type : FeatureTypes.None;
-        public void AddFeature(IntVector2 position, FeatureTypes type) => _features[position] = type;
+        protected readonly Dictionary<IntVector2, PropTypes> _props = new Dictionary<IntVector2, PropTypes>();
+        public virtual PropTypes GetProp(IntVector2 position) => _props.TryGetValue(position, out var type) ? type : PropTypes.None;
+        public void AddProp(IntVector2 position, PropTypes type) => _props[position] = type;
 
         protected readonly Dictionary<IntVector2, BlockTypes> _blockOverride = new Dictionary<IntVector2, BlockTypes>();
         public Dictionary<IntVector2, BlockTypes> BlockOverrides => new Dictionary<IntVector2, BlockTypes>(_blockOverride);
@@ -80,6 +86,26 @@ namespace WorldObjects.Spaces
             }
 
             return hazardBuildersInChunk;
+        }
+
+        public virtual List<FeatureBuilder> GetFeatureBuildersInChunk(Chunk chunk)
+        {
+            var featureBuildersInChunk = new List<FeatureBuilder>();
+
+            foreach (var featureBuilder in _featureBuilders)
+            {
+                if (chunk.Contains(featureBuilder.Position))
+                {
+                    featureBuildersInChunk.Add(featureBuilder);
+                }
+            }
+
+            foreach (var featureBuilder in featureBuildersInChunk)
+            {
+                _featureBuilders.Remove(featureBuilder);
+            }
+
+            return featureBuildersInChunk;
         }
 
         public int GetMaximalValue(IntVector2 direction)
