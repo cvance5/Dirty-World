@@ -50,14 +50,38 @@ public class IntVector2
     public static float Distance(IntVector2 pos1, Vector2 pos2) => ((pos1.X - pos2.x) * (pos1.X - pos2.x) + (pos1.Y - pos2.y) * (pos1.Y - pos2.y));
     public static IntVector2 Lerp(IntVector2 start, IntVector2 target, float time) => new IntVector2((int)Mathf.Lerp(start.X, target.X, time), (int)Mathf.Lerp(start.Y, target.Y, time));
 
-    public static bool IsOnLine(IntVector2 lineStart, IntVector2 lineEnd, IntVector2 point)
+    public static bool IsOnLine(IntVector2 lineSampleA, IntVector2 lineSampleB, IntVector2 point)
     {
         // if AC is horizontal
-        if (lineStart.X == point.X) return lineEnd.X == point.X;
+        if (lineSampleA.X == point.X) return lineSampleB.X == point.X;
         // if AC is vertical.
-        if (lineStart.Y == point.Y) return lineEnd.Y == point.Y;
+        if (lineSampleA.Y == point.Y) return lineSampleB.Y == point.Y;
         // match the gradients
-        return (lineStart.X - point.X) * (lineStart.Y - point.Y) == (point.X - lineEnd.X) * (point.Y - lineEnd.Y);
+        return (lineSampleA.X - point.X) * (lineSampleA.Y - point.Y) == (point.X - lineSampleB.X) * (point.Y - lineSampleB.Y);
+    }
+
+    // https://stackoverflow.com/questions/42868214/determine-if-a-point-is-between-2-other-points-on-a-line
+    public static bool IsBetween(IntVector2 lineStart, IntVector2 lineEnd, IntVector2 point)
+    {
+        var isOnLine = IsOnLine(lineStart, lineEnd, point);
+
+        if (!isOnLine) return false;
+        else
+        {
+            var dxc = point.X - lineStart.X;
+            var dyc = point.Y - lineStart.Y;
+
+            var dxl = lineEnd.X - lineStart.X;
+            var dyl = lineEnd.Y - lineStart.Y;
+
+            if (Mathf.Abs(dxl) >= Mathf.Abs(dyl))
+                return dxl > 0 ?
+                  lineStart.X <= point.X && point.X <= lineEnd.X :
+                  lineEnd.X <= point.X && point.X <= lineStart.X;
+            else return dyl > 0 ?
+                  lineStart.Y <= point.Y && point.Y <= lineEnd.Y :
+                  lineEnd.Y <= point.Y && point.Y <= lineStart.Y;
+        }
     }
 
     public static IntVector2 Nearest(IntVector2 position, List<IntVector2> options)
