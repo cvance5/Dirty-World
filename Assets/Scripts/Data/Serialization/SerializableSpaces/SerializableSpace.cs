@@ -19,7 +19,7 @@ namespace Data.Serialization.SerializableSpaces
         [JsonConstructor]
         protected SerializableSpace() { }
 
-        public SerializableSpace(Space space)
+        protected SerializableSpace(Space space)
         {
             _enemySpawns = space.EnemySpawns;
             foreach(var blockOverride in space.BlockOverrides)
