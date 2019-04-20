@@ -219,7 +219,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             switch (_alignment)
             {
                 case ShaftAlignment.StartFromTop:
-                    if (_top == null) throw new System.InvalidOperationException("Corridor builder has not been assigned a left position.");
+                    if (_top == null) throw new System.InvalidOperationException("Shaft builder has not been assigned a top position.");
                     else
                     {
                         _middle = new IntVector2(_top.X, _top.Y - (_height / 2));
@@ -227,7 +227,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     }
                     break;
                 case ShaftAlignment.StartFromMiddle:
-                    if (_middle == null) throw new System.InvalidOperationException("Corridor builder has not been assigned a central position.");
+                    if (_middle == null) throw new System.InvalidOperationException("Shaft builder has not been assigned a middle position.");
                     else
                     {
                         _top = new IntVector2(_middle.X, _middle.Y + (_height / 2));
@@ -235,7 +235,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     }
                     break;
                 case ShaftAlignment.StartFromBottom:
-                    if (_bottom == null) throw new System.InvalidOperationException("Corridor builder has not been assigned a right position.");
+                    if (_bottom == null) throw new System.InvalidOperationException("Shaft builder has not been assigned a bottom position.");
                     else
                     {
                         _middle = new IntVector2(_bottom.X, _bottom.Y + (_height / 2));
