@@ -7,15 +7,15 @@ namespace Data.Serialization.SerializableSpaces
     public class SerializableShaft : SerializableSpace
     {
         [JsonProperty("isUncapped")]
-        private readonly bool _isUncapped;
+        protected readonly bool _isUncapped;
 
         [JsonProperty("bottomLeftCorner")]
-        private readonly IntVector2 _bottomLeftCorner;
+        protected readonly IntVector2 _bottomLeftCorner;
         [JsonProperty("topRightCorner")]
-        private readonly IntVector2 _topRightCorner;
+        protected readonly IntVector2 _topRightCorner;
 
         [JsonConstructor]
-        private SerializableShaft() { }
+        protected SerializableShaft() { }
 
         public SerializableShaft(Shaft shaft)
             : base(shaft)

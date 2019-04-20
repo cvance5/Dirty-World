@@ -33,6 +33,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             _elevatorBuilder.SetRail(_bottom, _top);
             FillLandings();
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         public override ShaftBuilder SetHeight(int blockHigh)
@@ -89,7 +91,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public ElevatorShaftBuilder SetElevatorSpawn(int elevatorSpawnHeight)
         {
-            _elevatorBuilder.SetSpawnPosition(new IntVector2(_middle.X, elevatorSpawnHeight));
+            _elevatorBuilder.SetSpawnPosition(new IntVector2(_middle.X, _bottom.Y + elevatorSpawnHeight));
 
             OnSpaceBuilderChanged.Raise(this);
 
@@ -118,9 +120,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             {
                 var roomBuilder = new RoomBuilder(_chunkBuilder);
                 _landings.Add(story, roomBuilder);
-                _elevatorBuilder.RegisterStop(new IntVector2(_middle.X, _bottom.X + (_storyHeight * story)));
-
-                OnSpaceBuilderChanged.Raise(this);
+                _elevatorBuilder.RegisterStop(new IntVector2(_middle.X, _bottom.Y + (_storyHeight * story)));
             }
 
             return this;
@@ -140,8 +140,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _landings.Clear();
             _elevatorBuilder.ClearStops();
-
-            OnSpaceBuilderChanged.Raise(this);
 
             return this;
         }

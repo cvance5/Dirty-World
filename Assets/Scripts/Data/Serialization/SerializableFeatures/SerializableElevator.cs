@@ -11,6 +11,9 @@ namespace Data.Serialization.SerializableFeatures
         [JsonProperty("stops")]
         private readonly List<IntVector2> _stops = new List<IntVector2>();
 
+        [JsonConstructor]
+        protected SerializableElevator() { }
+
         public SerializableElevator(Elevator elevator)
             : base(elevator) => _stops = elevator.Stops;
 

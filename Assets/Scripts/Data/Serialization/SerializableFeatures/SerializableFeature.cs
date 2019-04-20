@@ -8,6 +8,8 @@ namespace Data.Serialization.SerializableFeatures
         [JsonProperty("position")]
         protected readonly IntVector2 _position;
 
+        protected SerializableFeature() { }
+
         public SerializableFeature(Feature feature) => _position = feature.Position;
 
         public abstract Feature ToObject();

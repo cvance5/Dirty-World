@@ -21,7 +21,7 @@ namespace WorldObjects.WorldGeneration.FeatureGeneration
 
         public ElevatorBuilder RegisterStop(IntVector2 stop)
         {
-            if (!IntVector2.IsOnLine(_railStart, _railEnd, stop))
+            if (!IntVector2.IsBetween(_railStart, _railEnd, stop))
             {
                 throw new ArgumentException($"Cannot stop at point not on rail.");
             }
@@ -42,7 +42,7 @@ namespace WorldObjects.WorldGeneration.FeatureGeneration
 
         public ElevatorBuilder SetSpawnPosition(IntVector2 position)
         {
-            if (!IntVector2.IsOnLine(_railStart, _railEnd, position))
+            if (!IntVector2.IsBetween(_railStart, _railEnd, position))
             {
                 throw new ArgumentException($"Cannot spawn off of rail.");
             }
@@ -56,14 +56,14 @@ namespace WorldObjects.WorldGeneration.FeatureGeneration
             _railStart = startRail;
             _railEnd = endRail;
 
-            if (!IntVector2.IsOnLine(startRail, endRail, Position))
+            if (!IntVector2.IsBetween(startRail, endRail, Position))
             {
                 Position = startRail;
             }
 
             foreach (var stop in _stops.ToArray())
             {
-                if (!IntVector2.IsOnLine(startRail, endRail, stop))
+                if (!IntVector2.IsBetween(startRail, endRail, stop))
                 {
                     _stops.Remove(stop);
                 }

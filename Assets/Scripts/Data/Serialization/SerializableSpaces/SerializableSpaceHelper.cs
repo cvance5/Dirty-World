@@ -6,7 +6,11 @@ namespace Data.Serialization.SerializableSpaces
     {
         public static SerializableSpace ToSerializableSpace(Space space)
         {
-            if (space is Shaft)
+            if(space is ElevatorShaft)
+            {
+                return new SerializableElevatorShaft(space as ElevatorShaft);
+            }
+            else if (space is Shaft)
             {
                 return new SerializableShaft(space as Shaft);
             }
