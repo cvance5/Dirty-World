@@ -36,9 +36,9 @@ public static class List
     {
         var newList = new List<T>();
 
-        foreach(var item in list)
+        foreach (var item in list)
         {
-            if(condition(item))
+            if (condition(item))
             {
                 newList.Add(item);
             }
@@ -69,6 +69,12 @@ public static class List
         }
 
         return list[index];
+    }
+
+    public static T LoopedNext<T>(this List<T> list, T item)
+    {
+        var indexOf = list.IndexOf(item);
+        return LoopedNext(list, indexOf);
     }
 
     public static T LoopedNext<T>(this T[] array, int index)
@@ -105,6 +111,13 @@ public static class List
 
         return list[index];
     }
+
+    public static T LoopedPrevious<T>(this List<T> list, T item)
+    {
+        var indexOf = list.IndexOf(item);
+        return LoopedPrevious(list, indexOf);
+    }
+
     public static T LoopedPrevious<T>(this T[] array, int index)
     {
         if (array == null || array.Length == 0 || index > array.Length || index < 0)
