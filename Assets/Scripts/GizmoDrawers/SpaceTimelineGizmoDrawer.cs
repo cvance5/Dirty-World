@@ -46,38 +46,41 @@ namespace GizmoDrawers
 
         private static void LogSpaceHistory(SpaceBuilder changedBuilder)
         {
-            var space = changedBuilder.Build();
-
-            if (space is ComplexSpace)
+            if (changedBuilder.IsValid)
             {
-                var complexSpace = space as ComplexSpace;
-                foreach (var region in complexSpace.Regions)
+                var space = changedBuilder.Build();
+
+                if (space is ComplexSpace)
                 {
-                    foreach (var regionSpace in region.Spaces)
+                    var complexSpace = space as ComplexSpace;
+                    foreach (var region in complexSpace.Regions)
                     {
-                        if (!_historyPerBuilder.TryGetValue(changedBuilder, out var history))
+                        foreach (var regionSpace in region.Spaces)
                         {
-                            history = CreateHistory();
+                            if (!_historyPerBuilder.TryGetValue(changedBuilder, out var history))
+                            {
+                                history = CreateHistory();
 
-                            _historyPerBuilder[changedBuilder] = history;
+                                _historyPerBuilder[changedBuilder] = history;
+                            }
+
+                            history.LogChange(regionSpace);
+                            _timeline.Add(history);
                         }
-
-                        history.LogChange(regionSpace);
-                        _timeline.Add(history);
                     }
                 }
-            }
-            else
-            {
-                if (!_historyPerBuilder.TryGetValue(changedBuilder, out var history))
+                else
                 {
-                    history = CreateHistory();
+                    if (!_historyPerBuilder.TryGetValue(changedBuilder, out var history))
+                    {
+                        history = CreateHistory();
 
-                    _historyPerBuilder[changedBuilder] = history;
+                        _historyPerBuilder[changedBuilder] = history;
+                    }
+
+                    history.LogChange(space);
+                    _timeline.Add(history);
                 }
-
-                history.LogChange(space);
-                _timeline.Add(history);
             }
         }
 
