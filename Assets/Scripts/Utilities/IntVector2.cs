@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
@@ -57,6 +58,24 @@ public class IntVector2
         if (lineStart.Y == point.Y) return lineEnd.Y == point.Y;
         // match the gradients
         return (lineStart.X - point.X) * (lineStart.Y - point.Y) == (point.X - lineEnd.X) * (point.Y - lineEnd.Y);
+    }
+
+    public static IntVector2 Nearest(IntVector2 position, List<IntVector2> options)
+    {
+        var nearestDistance = Distance(position, options[0]);
+        var nearest = options[0];
+
+        foreach (var option in options)
+        {
+            var distance = Distance(position, option);
+            if (distance < nearestDistance)
+            {
+                nearest = option;
+                nearestDistance = distance;
+            }
+        }
+
+        return nearest;
     }
 
     public static IntVector2 operator +(IntVector2 lhs, IntVector2 rhs) => new IntVector2(lhs.X + rhs.X, lhs.Y + rhs.Y);
