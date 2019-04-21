@@ -13,21 +13,21 @@ namespace WorldObjects.Spaces
         public List<IntVector2> Extents { get; protected set; } = new List<IntVector2>();
 
         protected readonly List<EnemySpawn> _enemySpawns = new List<EnemySpawn>();
-        public virtual List<EnemySpawn> EnemySpawns => new List<EnemySpawn>(_enemySpawns);
+        public List<EnemySpawn> EnemySpawns => new List<EnemySpawn>(_enemySpawns);
         public void AddEnemySpawns(List<EnemySpawn> enemySpawns) => _enemySpawns.AddRange(enemySpawns);
 
         protected readonly List<HazardBuilder> _hazardBuilders = new List<HazardBuilder>();
-        public virtual List<HazardBuilder> HazardBuilders => new List<HazardBuilder>(_hazardBuilders);
+        public List<HazardBuilder> HazardBuilders => new List<HazardBuilder>(_hazardBuilders);
         public void AddHazardBuilders(List<HazardBuilder> hazardBuilders) => _hazardBuilders.AddRange(hazardBuilders);
 
         protected readonly List<FeatureBuilder> _featureBuilders = new List<FeatureBuilder>();
-        public virtual List<FeatureBuilder> FeatureBuilders => new List<FeatureBuilder>(_featureBuilders);
+        public List<FeatureBuilder> FeatureBuilders => new List<FeatureBuilder>(_featureBuilders);
         public void AddFeatureBuilder(FeatureBuilder featureBuilder) => _featureBuilders.Add(featureBuilder);
         public void AddFeatureBuilders(List<FeatureBuilder> featureBuilders) => _featureBuilders.AddRange(featureBuilders);
 
         protected readonly List<ModifierTypes> _modifiers = new List<ModifierTypes>();
-        public virtual List<ModifierTypes> Modifiers => new List<ModifierTypes>(_modifiers);
-        internal void AddModifier(ModifierTypes modifier) => _modifiers.Add(modifier);
+        public List<ModifierTypes> Modifiers => new List<ModifierTypes>(_modifiers);
+        public void AddModifier(ModifierTypes modifier) => _modifiers.Add(modifier);
         public void AddModifiers(List<ModifierTypes> modifiers) => _modifiers.AddRange(modifiers);
 
         protected readonly Dictionary<IntVector2, PropTypes> _props = new Dictionary<IntVector2, PropTypes>();
@@ -48,7 +48,7 @@ namespace WorldObjects.Spaces
         public abstract bool Contains(IntVector2 position);
         public abstract IntVector2 GetRandomPosition();
 
-        public virtual List<EnemySpawn> GetEnemySpawnsInChunk(Chunk chunk)
+        public List<EnemySpawn> GetEnemySpawnsInChunk(Chunk chunk)
         {
             var enemySpawnsInChunk = new List<EnemySpawn>();
 
@@ -68,7 +68,7 @@ namespace WorldObjects.Spaces
             return enemySpawnsInChunk;
         }
 
-        public virtual List<HazardBuilder> GetHazardBuildersInChunk(Chunk chunk)
+        public List<HazardBuilder> GetHazardBuildersInChunk(Chunk chunk)
         {
             var hazardBuildersInChunk = new List<HazardBuilder>();
 
@@ -88,7 +88,7 @@ namespace WorldObjects.Spaces
             return hazardBuildersInChunk;
         }
 
-        public virtual List<FeatureBuilder> GetFeatureBuildersInChunk(Chunk chunk)
+        public List<FeatureBuilder> GetFeatureBuildersInChunk(Chunk chunk)
         {
             var featureBuildersInChunk = new List<FeatureBuilder>();
 

@@ -68,7 +68,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public ShaftBuilder SetWidth(int blocksWide)
+        public virtual ShaftBuilder SetWidth(int blocksWide)
         {
             _width = Mathf.Max(0, blocksWide);
             Rebuild();

@@ -18,8 +18,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         private int _minNumberOfStories = 1;
 
         private bool _allowLandings = true;
-        private readonly Dictionary<int, RoomBuilder> _landings
-                   = new Dictionary<int, RoomBuilder>();
+        private readonly List<int> _landings = new List<int>();
 
         public ElevatorShaftBuilder(ChunkBuilder chunkBuilder)
             : base(chunkBuilder)
@@ -30,8 +29,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             Rebuild();
 
             SetElevatorSpawn(Chance.Range(0, _height - 1));
-
+            _elevatorBuilder.SetPlatformSize(_width);
             _elevatorBuilder.SetRail(_bottom, _top);
+
             FillLandings();
 
             OnSpaceBuilderChanged.Raise(this);
@@ -61,6 +61,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             Rebuild();
 
             return this;
+        }
+
+        public override ShaftBuilder SetWidth(int blocksWide)
+        {
+            _elevatorBuilder.SetPlatformSize(blocksWide);
+            return base.SetWidth(blocksWide);
         }
 
         public ElevatorShaftBuilder SetStoryHeight(int newStoryHeight)
@@ -116,11 +122,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 throw new System.ArgumentException($"This elevator shaft does not allow landings!");
             }
 
-            if (GetLanding(story) == null)
+            var height = story * _storyHeight;
+            if (!_landings.Contains(height))
             {
-                var roomBuilder = new RoomBuilder(_chunkBuilder);
-                _landings.Add(story, roomBuilder);
-                _elevatorBuilder.RegisterStop(new IntVector2(_middle.X, _bottom.Y + (_storyHeight * story)));
+                _landings.Add(story);
+                _elevatorBuilder.RegisterStop(height);
             }
 
             return this;
@@ -144,39 +150,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public RoomBuilder GetLanding(int story)
-        {
-            if (story < 0 || story >= _numberOfStories)
-            {
-                throw new System.ArgumentException($"This elevator shaft doesn't have a story `{story}`.");
-            }
-            else
-            {
-                _landings.TryGetValue(story, out var landing);
-                return landing;
-            }
-        }
-
-        private Room BuildLanding(int story, RoomBuilder landingBuilder)
-        {
-            var startingPoint = new IntVector2(_middle.X, _bottom.Y + (_storyHeight * story));
-
-            landingBuilder.SetSize(_width + 2)
-                          .Align(Directions.Down, startingPoint.Y + 1)
-                          .Align(Directions.Left, startingPoint.X - 1)
-                          .AddModifiers(_modifiersApplied);
-
-            return landingBuilder.Build() as Room;
-        }
-
         protected override Spaces.Space BuildRaw()
         {
-            var landings = new List<Room>();
-
-            foreach (var kvp in _landings)
+            var landings = new List<IntVector2>();
+            foreach (var landing in _landings)
             {
-                var landing = BuildLanding(kvp.Key, kvp.Value);
-                landings.Add(landing);
+                landings.Add(new IntVector2(_middle.X, _bottom.Y + landing));
             }
 
             var shaft = new ElevatorShaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _isUncapped, landings);
@@ -188,7 +167,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _height = _storyHeight * _numberOfStories;
 
-            _landings.RemoveAll(landing => landing.Key >= _numberOfStories);
+            _landings.RemoveAll(landing => landing % _storyHeight != 0 || landing >= _height);
 
             base.Rebuild();
 

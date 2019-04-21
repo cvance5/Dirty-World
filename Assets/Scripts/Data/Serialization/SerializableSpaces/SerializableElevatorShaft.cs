@@ -7,29 +7,14 @@ namespace Data.Serialization.SerializableSpaces
     public class SerializableElevatorShaft : SerializableShaft
     {
         [JsonProperty("landings")]
-        private readonly List<SerializableRoom> _landings = new List<SerializableRoom>();
+        private readonly List<IntVector2> _landings = new List<IntVector2>();
 
         [JsonConstructor]
         private SerializableElevatorShaft() { }
 
         public SerializableElevatorShaft(ElevatorShaft shaft)
-            : base(shaft)
-        {
-            foreach (var landing in shaft.Landings)
-            {
-                _landings.Add(new SerializableRoom(landing));
-            }
-        }
+            : base(shaft) => _landings = shaft.Landings;
 
-        protected override Space ToRawObject()
-        {
-            var landings = new List<Room>();
-            foreach (var serializedLanding in _landings)
-            {
-                landings.Add(serializedLanding.ToObject() as Room);
-            }
-
-            return new ElevatorShaft(_bottomLeftCorner, _topRightCorner, _isUncapped, landings);
-        }
+        protected override Space ToRawObject() => new ElevatorShaft(_bottomLeftCorner, _topRightCorner, _isUncapped, _landings);
     }
 }

@@ -6,9 +6,9 @@ namespace WorldObjects.Spaces
     {
         public override string Name => $"Elevator {base.Name}";
 
-        public readonly List<Room> Landings = new List<Room>();
+        public readonly List<IntVector2> Landings = new List<IntVector2>();
 
-        public ElevatorShaft(IntVector2 bottomLeftCorner, IntVector2 topRightCorner, bool isUncapped, List<Room> landings)
+        public ElevatorShaft(IntVector2 bottomLeftCorner, IntVector2 topRightCorner, bool isUncapped, List<IntVector2> landings)
             : base(bottomLeftCorner, topRightCorner, isUncapped) => Landings = landings;
     }
 }

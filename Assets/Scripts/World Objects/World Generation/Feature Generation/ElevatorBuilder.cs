@@ -12,24 +12,24 @@ namespace WorldObjects.WorldGeneration.FeatureGeneration
 
         public override IntVector2 Position { get; protected set; } = IntVector2.Zero;
 
-        private readonly int _platformWidth = 1;
+        private int _platformWidth = 1;
 
         private IntVector2 _railStart = IntVector2.Zero;
         private IntVector2 _railEnd = IntVector2.Zero;
 
-        private readonly List<IntVector2> _stops = new List<IntVector2>();
+        private readonly List<int> _stops = new List<int>();
 
-        public ElevatorBuilder RegisterStop(IntVector2 stop)
+        public ElevatorBuilder RegisterStop(int distance)
         {
-            if (!IntVector2.IsBetween(_railStart, _railEnd, stop))
+            if (IntVector2.Distance(_railStart, _railEnd) < distance)
             {
                 throw new ArgumentException($"Cannot stop at point not on rail.");
             }
-            else if (_stops.Contains(stop))
+            else if (_stops.Contains(distance))
             {
-                throw new InvalidOperationException($"Elevator already contains stop {stop}.");
+                throw new InvalidOperationException($"Elevator already contains stop at {distance}.");
             }
-            else _stops.Add(stop);
+            else _stops.Add(distance);
 
             return this;
         }
@@ -61,21 +61,33 @@ namespace WorldObjects.WorldGeneration.FeatureGeneration
                 Position = startRail;
             }
 
-            foreach (var stop in _stops.ToArray())
+            foreach (var stopDistance in _stops.ToArray())
             {
-                if (!IntVector2.IsBetween(startRail, endRail, stop))
+                if (IntVector2.Distance(_railStart, _railEnd) < stopDistance)
                 {
-                    _stops.Remove(stop);
+                    _stops.Remove(stopDistance);
                 }
             }
 
             return this;
         }
 
+        public ElevatorBuilder SetPlatformSize(int size)
+        {
+            _platformWidth = size;
+            return this;
+        }
+
         public override Feature Build()
         {
             var elevator = FeatureLoader.CreateFeature(FeatureTypes.Elevator, Position) as Elevator;
-            elevator.Initialize(_stops);
+
+            var stops = new List<IntVector2>();
+            foreach (var stopDistance in _stops)
+            {
+                stops.Add(_railStart + ((_railEnd - _railStart).Normalized * stopDistance));
+            }
+            elevator.Initialize(stops);
 
             var spriteRenderer = elevator.GetComponent<SpriteRenderer>();
             spriteRenderer.size = new Vector2(_platformWidth, spriteRenderer.size.y);
