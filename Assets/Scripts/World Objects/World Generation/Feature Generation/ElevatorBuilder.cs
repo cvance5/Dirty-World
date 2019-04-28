@@ -89,7 +89,7 @@ namespace WorldObjects.WorldGeneration.FeatureGeneration
             }
             elevator.Initialize(stops);
 
-            var spriteRenderer = elevator.GetComponent<SpriteRenderer>();
+            var spriteRenderer = elevator.GetComponentInChildren<SpriteRenderer>();
             spriteRenderer.size = new Vector2(_platformWidth, spriteRenderer.size.y);
 
             return elevator;

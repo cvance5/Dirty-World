@@ -29,7 +29,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             Rebuild();
 
             SetElevatorSpawn(Chance.Range(0, _height - 1));
-            _elevatorBuilder.SetPlatformSize(_width);
+            _elevatorBuilder.SetPlatformSize(_width + 1);
             _elevatorBuilder.SetRail(_bottom, _top);
 
             FillLandings();
@@ -65,7 +65,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public override ShaftBuilder SetWidth(int blocksWide)
         {
-            _elevatorBuilder.SetPlatformSize(blocksWide);
+            _elevatorBuilder.SetPlatformSize(blocksWide + 1);
             return base.SetWidth(blocksWide);
         }
 
