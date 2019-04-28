@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using WorldObjects.Blocks;
+using WorldObjects.Spaces.Geometry;
 using WorldObjects.WorldGeneration.FeatureGeneration;
 using WorldObjects.WorldGeneration.HazardGeneration;
 using WorldObjects.WorldGeneration.PropGeneration;
 
 namespace WorldObjects.Spaces
 {
-    public abstract class Space : IBoundary
+    public abstract class Space
     {
         public abstract string Name { get; }
-        public List<IntVector2> Extents { get; protected set; } = new List<IntVector2>();
+        public Extents Extents { get; } = new Extents();
 
         protected readonly List<EnemySpawn> _enemySpawns = new List<EnemySpawn>();
         public List<EnemySpawn> EnemySpawns => new List<EnemySpawn>(_enemySpawns);
@@ -45,7 +45,6 @@ namespace WorldObjects.Spaces
             }
         }
 
-        public abstract bool Contains(IntVector2 position);
         public abstract IntVector2 GetRandomPosition();
 
         public List<EnemySpawn> GetEnemySpawnsInChunk(Chunk chunk)
@@ -110,40 +109,23 @@ namespace WorldObjects.Spaces
 
         public int GetMaximalValue(IntVector2 direction)
         {
-            if (direction == Directions.Up) return Extents.Max(extent => extent.Y);
-            else if (direction == Directions.Right) return Extents.Max(extent => extent.X);
-            else if (direction == Directions.Down) return Extents.Min(extent => extent.Y);
-            else if (direction == Directions.Left) return Extents.Min(Extents => Extents.X);
+            if (direction == Directions.Up) return Extents.Max.Y;
+            else if (direction == Directions.Right) return Extents.Max.X;
+            else if (direction == Directions.Down) return Extents.Min.Y;
+            else if (direction == Directions.Left) return Extents.Min.X;
             else throw new System.ArgumentException($"Expected a cardinal direction.  Cannot operate on {direction}.");
         }
 
         public override string ToString() => Name;
 
-        public bool Equals(Space other)
-        {
-            var isEqual = true;
-
-            if (Extents.Count != other.Extents.Count)
-            {
-                isEqual = false;
-            }
-            else
-            {
-                foreach (var extent in other.Extents)
-                {
-                    if (!Extents.Contains(extent))
-                    {
-                        isEqual = false;
-                        break;
-                    }
-                }
-            }
-
-            return isEqual;
-        }
-
+        public bool Equals(Space other) => Extents.Equals(other.Extents);
         public override bool Equals(object obj) => obj is Space ? Equals(obj as Space) : false;
 
-        public override int GetHashCode() => 623212078 + EqualityComparer<List<IntVector2>>.Default.GetHashCode(Extents);
+        public override int GetHashCode()
+        {
+            var hashCode = -1094564240;
+            hashCode = hashCode * -1521134295 + EqualityComparer<Extents>.Default.GetHashCode(Extents);
+            return hashCode;
+        }
     }
 }

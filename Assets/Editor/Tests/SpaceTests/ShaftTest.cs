@@ -32,7 +32,7 @@ namespace Tests.SpaceTests
                                       x >= -2
                                       && x <= 2;
 
-                    var actual = shaft.Contains(new IntVector2(x, y));
+                    var actual = shaft.Extents.Contains(new IntVector2(x, y));
 
                     Assert.AreEqual(actual, expectation, $"Position: [{x},{y}] | Expected: {expectation} | Actual: {actual}");
                 }
@@ -49,7 +49,7 @@ namespace Tests.SpaceTests
                                         .AddBoundary(Directions.Left, 0)
                                         .Build();
 
-                foreach (var extent in clampLeftShaft.Extents)
+                foreach (var extent in clampLeftShaft.Extents.Perimeter.Vertices)
                 {
                     Assert.LessOrEqual(0, extent.X, $"Failed to clamp left for {alignment}, as one extent is at {extent}.");
                 }
@@ -59,7 +59,7 @@ namespace Tests.SpaceTests
                                         .AddBoundary(Directions.Down, 0)
                                         .Build();
 
-                foreach (var extent in clampDownShaft.Extents)
+                foreach (var extent in clampDownShaft.Extents.Perimeter.Vertices)
                 {
                     Assert.LessOrEqual(0, extent.Y, $"Failed to clamp down for {alignment}, as one extent is at {extent}.");
                 }
@@ -69,7 +69,7 @@ namespace Tests.SpaceTests
                                          .AddBoundary(Directions.Right, 0)
                                          .Build();
 
-                foreach (var extent in clampRightShaft.Extents)
+                foreach (var extent in clampRightShaft.Extents.Perimeter.Vertices)
                 {
                     Assert.GreaterOrEqual(0, extent.X, $"Failed to clamp right for {alignment}, as one extent is at {extent}.");
                 }
@@ -79,7 +79,7 @@ namespace Tests.SpaceTests
                                       .AddBoundary(Directions.Up, 0)
                                       .Build();
 
-                foreach (var extent in clampUpShaft.Extents)
+                foreach (var extent in clampUpShaft.Extents.Perimeter.Vertices)
                 {
                     Assert.GreaterOrEqual(0, extent.Y, $"Failed to clamp up for {alignment}, as one extent is at {extent}.");
                 }
@@ -97,7 +97,7 @@ namespace Tests.SpaceTests
                                        .AddBoundary(Directions.Left, 0)
                                        .Build();
 
-                foreach (var extent in cutRightShaft.Extents)
+                foreach (var extent in cutRightShaft.Extents.Perimeter.Vertices)
                 {
                     Assert.AreEqual(0, extent.X, $"Failed to cut right for {alignment}, as one extent is at {extent}.");
                 }
@@ -108,7 +108,7 @@ namespace Tests.SpaceTests
                                     .AddBoundary(Directions.Down, 0)
                                     .Build();
 
-                foreach (var extent in cutUpShaft.Extents)
+                foreach (var extent in cutUpShaft.Extents.Perimeter.Vertices)
                 {
                     Assert.AreEqual(0, extent.Y, $"Failed to cut up for {alignment}, as one extent is at {extent}.");
                 }
@@ -119,7 +119,7 @@ namespace Tests.SpaceTests
                                       .AddBoundary(Directions.Right, 0)
                                       .Build();
 
-                foreach (var extent in cutLeftShaft.Extents)
+                foreach (var extent in cutLeftShaft.Extents.Perimeter.Vertices)
                 {
                     Assert.AreEqual(0, extent.X, $"Failed to cut left for {alignment}, as one extent is at {extent}.");
                 }
@@ -130,7 +130,7 @@ namespace Tests.SpaceTests
                                       .AddBoundary(Directions.Up, 0)
                                       .Build();
 
-                foreach (var extent in cutDownShaft.Extents)
+                foreach (var extent in cutDownShaft.Extents.Perimeter.Vertices)
                 {
                     Assert.AreEqual(0, extent.Y, $"Failed to cut down for {alignment}, as one extent is at {extent}.");
                 }

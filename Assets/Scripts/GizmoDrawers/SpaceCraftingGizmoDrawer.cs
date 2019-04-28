@@ -1,6 +1,5 @@
 ﻿#if UNITY_EDITOR
 
-using System.Collections.Generic;
 using Tools.SpaceCrafting;
 using UnityEditor;
 using UnityEngine;
@@ -65,8 +64,8 @@ namespace GizmoDrawers
                 Gizmos.color = Color.gray;
             }
 
-            DrawByExtents(space.Extents);
-            Handles.Label(space.Extents[0], $"{prefixName} {space.Name}");
+            GizmoShapeDrawer.DrawByExtents(space.Extents);
+            Handles.Label(space.Extents.Shapes[0].Vertices[0], $"{prefixName} {space.Name}");
 
             if (space is ComplexSpace)
             {
@@ -96,16 +95,6 @@ namespace GizmoDrawers
             Gizmos.DrawLine(topRight, bottomRight);
             Gizmos.DrawLine(bottomRight, bottomLeft);
             Gizmos.DrawLine(bottomLeft, topLeft);
-        }
-
-        private void DrawByExtents(List<IntVector2> extents)
-        {
-            for (var i = 0; i < extents.Count - 1; i++)
-            {
-                Gizmos.DrawLine(extents[i], extents[i + 1]);
-            }
-
-            Gizmos.DrawLine(extents[extents.Count - 1], extents[0]);
         }
 
         private void DrawCircle(Vector2 center, float radius) => Gizmos.DrawSphere(center, radius);

@@ -64,7 +64,7 @@ namespace WorldObjects.WorldGeneration
         {
             foreach (var space in _activeSpaces)
             {
-                if (space.Contains(position))
+                if (space.Extents.Contains(position))
                 {
                     return space;
                 }

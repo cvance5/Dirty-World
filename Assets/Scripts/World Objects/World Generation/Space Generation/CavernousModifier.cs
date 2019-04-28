@@ -24,24 +24,21 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             var totalTestedPositions = 0;
 
-            for (var extentIndex = 0; extentIndex < modifiedSpace.Extents.Count; extentIndex++)
+            foreach (var segment in modifiedSpace.Extents.Perimeter.Segments)
             {
-                var extent = modifiedSpace.Extents[extentIndex];
-                var nextExtent = modifiedSpace.Extents.LoopedNext(extentIndex);
-
-                var direction = (nextExtent - extent);
+                var direction = (segment.End - segment.Start);
                 var unitPerStep = direction.Normalized;
 
                 for (var step = 0; step < direction.Magnitude; step++)
                 {
                     totalTestedPositions++;
-                    var testPosition = new IntVector2(extent + (unitPerStep * step));
+                    var testPosition = new IntVector2(segment.Start + (unitPerStep * step));
 
                     // If this block is not already filled, check to see if we are at the top or bottom 
                     // edge of the space, and tell the StalagBuilder to go the other way.
                     if (modifiedSpace.GetBlockType(testPosition) != BlockTypes.None) continue;
-                    else if (modifiedSpace.Contains(testPosition + Directions.Down)) stalagBuilders.Add(new StalagBuilder(testPosition, Directions.Down, modifiedSpace));
-                    else if (modifiedSpace.Contains(testPosition + Directions.Up)) stalagBuilders.Add(new StalagBuilder(testPosition, Directions.Up, modifiedSpace));
+                    else if (modifiedSpace.Extents.Contains(testPosition + Directions.Down)) stalagBuilders.Add(new StalagBuilder(testPosition, Directions.Down, modifiedSpace));
+                    else if (modifiedSpace.Extents.Contains(testPosition + Directions.Up)) stalagBuilders.Add(new StalagBuilder(testPosition, Directions.Up, modifiedSpace));
                 }
             }
 

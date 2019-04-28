@@ -32,7 +32,7 @@ namespace Tests.SpaceTests
                                       x >= -2
                                       && x <= 2;
 
-                    var actual = room.Contains(new IntVector2(x, y));
+                    var actual = room.Extents.Contains(new IntVector2(x, y));
 
                     Assert.AreEqual(actual, expectation, $"Position: [{x},{y}] | Expected: {expectation} | Actual: {actual}");
                 }
@@ -47,7 +47,7 @@ namespace Tests.SpaceTests
                                    .AddBoundary(Directions.Left, 0)
                                    .Build();
 
-            foreach (var extent in clampLeftRoom.Extents)
+            foreach (var extent in clampLeftRoom.Extents.Perimeter.Vertices)
             {
                 Assert.GreaterOrEqual(extent.X, 0, $"Failed to clamp left, as one extent is at {extent}.");
             }
@@ -57,7 +57,7 @@ namespace Tests.SpaceTests
                                    .AddBoundary(Directions.Down, 0)
                                    .Build();
 
-            foreach (var extent in clampDownRoom.Extents)
+            foreach (var extent in clampDownRoom.Extents.Perimeter.Vertices)
             {
                 Assert.GreaterOrEqual(extent.Y, 0, $"Failed to clamp down, as one extent is at {extent}.");
             }
@@ -67,7 +67,7 @@ namespace Tests.SpaceTests
                                     .AddBoundary(Directions.Right, 0)
                                     .Build();
 
-            foreach (var extent in clampRightRoom.Extents)
+            foreach (var extent in clampRightRoom.Extents.Perimeter.Vertices)
             {
                 Assert.LessOrEqual(extent.X, 0, $"Failed to clamp right, as one extent is at {extent}.");
             }
@@ -77,7 +77,7 @@ namespace Tests.SpaceTests
                                  .AddBoundary(Directions.Up, 0)
                                  .Build();
 
-            foreach (var extent in clampUpRoom.Extents)
+            foreach (var extent in clampUpRoom.Extents.Perimeter.Vertices)
             {
                 Assert.LessOrEqual(extent.Y, 0, $"Failed to clamp up, as one extent is at {extent}.");
             }
@@ -93,7 +93,7 @@ namespace Tests.SpaceTests
                                   .AddBoundary(Directions.Left, 0)
                                   .Build();
 
-            foreach (var extent in cutRightRoom.Extents)
+            foreach (var extent in cutRightRoom.Extents.Perimeter.Vertices)
             {
                 Assert.AreEqual(extent.X, 0, $"Failed to cut right, as one extent is at {extent}.");
             }
@@ -105,7 +105,7 @@ namespace Tests.SpaceTests
                                .AddBoundary(Directions.Down, 0)
                                .Build();
 
-            foreach (var extent in cutUpRoom.Extents)
+            foreach (var extent in cutUpRoom.Extents.Perimeter.Vertices)
             {
                 Assert.AreEqual(extent.Y, 0, $"Failed to cut up, as one extent is at {extent}.");
             }
@@ -117,7 +117,7 @@ namespace Tests.SpaceTests
                                  .AddBoundary(Directions.Right, 0)
                                  .Build();
 
-            foreach (var extent in cutRightRoom.Extents)
+            foreach (var extent in cutRightRoom.Extents.Perimeter.Vertices)
             {
                 Assert.AreEqual(extent.X, 0, $"Failed to cut left, as one extent is at {extent}.");
             }
@@ -129,7 +129,7 @@ namespace Tests.SpaceTests
                                  .AddBoundary(Directions.Up, 0)
                                  .Build();
 
-            foreach (var extent in cutUpRoom.Extents)
+            foreach (var extent in cutUpRoom.Extents.Perimeter.Vertices)
             {
                 Assert.AreEqual(extent.Y, 0, $"Failed to cut down, as one extent is at {extent}.");
             }

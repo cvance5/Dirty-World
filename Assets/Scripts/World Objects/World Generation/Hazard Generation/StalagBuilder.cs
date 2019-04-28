@@ -31,7 +31,7 @@ namespace WorldObjects.WorldGeneration.HazardGeneration
             while (_maxSegments <= MAX_STALAG_SEGMENTS)
             {
                 var nextSegmentLocation = Position + (_facingDirection * _maxSegments);
-                if (!containingSpace.Contains(nextSegmentLocation) ||
+                if (!containingSpace.Extents.Contains(nextSegmentLocation) ||
                     !containingChunk.Contains(nextSegmentLocation) ||
                     containingSpace.GetBlockType(nextSegmentLocation) != Blocks.BlockTypes.None)
                 {

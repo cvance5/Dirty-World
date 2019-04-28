@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using WorldObjects.Blocks;
 
 namespace WorldObjects.Spaces
@@ -15,25 +16,12 @@ namespace WorldObjects.Spaces
             Centerpoint = centerpoint;
             Radius = radius;
 
-            Extents.Add(new IntVector2(Centerpoint.X - Radius, Centerpoint.Y));
-            Extents.Add(new IntVector2(Centerpoint.X + Radius, Centerpoint.Y));
-            Extents.Add(new IntVector2(Centerpoint.X, Centerpoint.Y + Radius));
-        }
-
-        public override bool Contains(IntVector2 position)
-        {
-            if (position.X < Centerpoint.X - Radius ||
-                position.X > Centerpoint.X + Radius ||
-                position.Y > Centerpoint.Y + Radius ||
-                position.Y < Centerpoint.Y)
+            Extents.AddShape(new List<IntVector2>()
             {
-                return false;
-            }
-            else
-            {
-                var maxHeightAtDistance = Centerpoint.Y + Radius - DistanceFromCenterpoint(position.X);
-                return position.Y <= maxHeightAtDistance;
-            }
+                new IntVector2(Centerpoint.X - Radius, Centerpoint.Y),
+                new IntVector2(Centerpoint.X + Radius, Centerpoint.Y),
+                new IntVector2(Centerpoint.X, Centerpoint.Y + Radius)
+            });
         }
 
         public override IntVector2 GetRandomPosition()
@@ -46,7 +34,7 @@ namespace WorldObjects.Spaces
 
         public override BlockTypes GetBlockType(IntVector2 position)
         {
-            if (!Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
+            if (!Extents.Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
             else return _blockOverride.TryGetValue(position, out var overrideType) ? overrideType : BlockTypes.None;
         }
 

@@ -34,7 +34,7 @@ namespace Tests.SpaceTests
                                       x >= -2
                                       && x <= 2;
 
-                    var actual = corridor.Contains(new IntVector2(x, y));
+                    var actual = corridor.Extents.Contains(new IntVector2(x, y));
 
                     Assert.AreEqual(actual, expectation, $"Position: [{x},{y}] | Expected: {expectation} | Actual: {actual}");
                 }
@@ -59,7 +59,7 @@ namespace Tests.SpaceTests
 
                 foreach (var enemy in enemySpawns)
                 {
-                    Assert.True(corridor.Contains(enemy.Position), $"Enemy spawned outside of monster den.");
+                    Assert.True(corridor.Extents.Contains(enemy.Position), $"Enemy spawned outside of monster den.");
                     Assert.AreNotEqual(EnemyTypes.None, enemy.Type, $"Enemy spawned as `none`.");
                 }
             }
@@ -75,7 +75,7 @@ namespace Tests.SpaceTests
                                            .AddBoundary(Directions.Left, 0)
                                            .Build();
 
-                foreach (var extent in clampLeftCorridor.Extents)
+                foreach (var extent in clampLeftCorridor.Extents.Perimeter.Vertices)
                 {
                     Assert.LessOrEqual(0, extent.X, $"Failed to clamp left for {alignment}, as one extent is at {extent}.");
                 }
@@ -85,7 +85,7 @@ namespace Tests.SpaceTests
                                            .AddBoundary(Directions.Down, 0)
                                            .Build();
 
-                foreach (var extent in clampDownCorridor.Extents)
+                foreach (var extent in clampDownCorridor.Extents.Perimeter.Vertices)
                 {
                     Assert.LessOrEqual(0, extent.Y, $"Failed to clamp down for {alignment}, as one extent is at {extent}.");
                 }
@@ -95,7 +95,7 @@ namespace Tests.SpaceTests
                                             .AddBoundary(Directions.Right, 0)
                                             .Build();
 
-                foreach (var extent in clampRightCorridor.Extents)
+                foreach (var extent in clampRightCorridor.Extents.Perimeter.Vertices)
                 {
                     Assert.GreaterOrEqual(0, extent.X, $"Failed to clamp right for {alignment}, as one extent is at {extent}.");
                 }
@@ -105,7 +105,7 @@ namespace Tests.SpaceTests
                                          .AddBoundary(Directions.Up, 0)
                                          .Build();
 
-                foreach (var extent in clampUpCorridor.Extents)
+                foreach (var extent in clampUpCorridor.Extents.Perimeter.Vertices)
                 {
                     Assert.GreaterOrEqual(0, extent.Y, $"Failed to clamp up for {alignment}, as one extent is at {extent}.");
                 }
@@ -123,7 +123,7 @@ namespace Tests.SpaceTests
                                            .AddBoundary(Directions.Left, 0)
                                            .Build();
 
-                foreach (var extent in cutRightCorridor.Extents)
+                foreach (var extent in cutRightCorridor.Extents.Perimeter.Vertices)
                 {
                     Assert.AreEqual(0, extent.X, $"Failed to cut right for {alignment}, as one extent is at {extent}.");
                 }
@@ -134,7 +134,7 @@ namespace Tests.SpaceTests
                                            .AddBoundary(Directions.Down, 0)
                                            .Build();
 
-                foreach (var extent in cutUpCorridor.Extents)
+                foreach (var extent in cutUpCorridor.Extents.Perimeter.Vertices)
                 {
                     Assert.AreEqual(0, extent.Y, $"Failed to cut up for {alignment}, as one extent is at {extent}.");
                 }
@@ -145,7 +145,7 @@ namespace Tests.SpaceTests
                                             .AddBoundary(Directions.Right, 0)
                                             .Build();
 
-                foreach (var extent in cutLeftCorridor.Extents)
+                foreach (var extent in cutLeftCorridor.Extents.Perimeter.Vertices)
                 {
                     Assert.AreEqual(0, extent.X, $"Failed to cut left for {alignment}, as one extent is at {extent}.");
                 }
@@ -156,7 +156,7 @@ namespace Tests.SpaceTests
                                          .AddBoundary(Directions.Up, 0)
                                          .Build();
 
-                foreach (var extent in cutDownCorridor.Extents)
+                foreach (var extent in cutDownCorridor.Extents.Perimeter.Vertices)
                 {
                     Assert.AreEqual(0, extent.Y, $"Failed to cut down for {alignment}, as one extent is at {extent}.");
                 }

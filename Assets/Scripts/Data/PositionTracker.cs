@@ -117,7 +117,7 @@ namespace Data
                     var space = oldPositionData.Space;
 
                     // See if any spaces contain this position
-                    if (space == null || !space.Contains(position))
+                    if (space == null || !space.Extents.Contains(position))
                     {
                         space = _worldToTrack.SpaceArchitect.GetContainingSpace(position) ?? null;
                     }

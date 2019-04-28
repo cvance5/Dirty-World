@@ -1,4 +1,5 @@
-﻿using WorldObjects.Blocks;
+﻿using System.Collections.Generic;
+using WorldObjects.Blocks;
 
 namespace WorldObjects.Spaces
 {
@@ -17,17 +18,14 @@ namespace WorldObjects.Spaces
             BottomLeftCorner = bottomLeftCorner;
             TopRightCorner = topRightCorner;
 
-            Extents.Add(BottomLeftCorner);
-            Extents.Add(new IntVector2(BottomLeftCorner.X, TopRightCorner.Y));
-            Extents.Add(TopRightCorner);
-            Extents.Add(new IntVector2(TopRightCorner.X, BottomLeftCorner.Y));
+            Extents.AddShape(new List<IntVector2>()
+            {
+                BottomLeftCorner,
+                new IntVector2(BottomLeftCorner.X, TopRightCorner.Y),
+                TopRightCorner,
+                new IntVector2(TopRightCorner.X, BottomLeftCorner.Y)
+            });
         }
-
-        public override bool Contains(IntVector2 position) =>
-            position.X >= BottomLeftCorner.X &&
-            position.Y >= BottomLeftCorner.Y &&
-            position.X <= TopRightCorner.X &&
-            position.Y <= TopRightCorner.Y;
 
         public override IntVector2 GetRandomPosition() =>
             new IntVector2(Chance.Range(BottomLeftCorner.X, TopRightCorner.X),
@@ -35,7 +33,7 @@ namespace WorldObjects.Spaces
 
         public override BlockTypes GetBlockType(IntVector2 position)
         {
-            if (!Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
+            if (!Extents.Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
             else return _blockOverride.TryGetValue(position, out var type) ? type : BlockTypes.None;
         }
     }

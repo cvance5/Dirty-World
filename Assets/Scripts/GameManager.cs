@@ -84,9 +84,10 @@ public class GameManager : Singleton<GameManager>
 
         var sPicker = new SpacePicker(new List<Type>()
         {
-            typeof(ShaftBuilder),
+            //typeof(ShaftBuilder),
+            typeof(ElevatorShaftBuilder),
             typeof(CorridorBuilder),
-            typeof(MonsterDenBuilder),
+            //typeof(MonsterDenBuilder),
             typeof(RoomBuilder)
         });
         var spaceArchitect = new SpaceArchitect(sPicker);

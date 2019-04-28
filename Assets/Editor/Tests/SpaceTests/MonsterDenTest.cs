@@ -24,40 +24,40 @@ namespace Tests.SpaceTests
         {
             var monsterDen = new MonsterDen(Vector2.zero, 3);
 
-            var containsBottomLeft = monsterDen.Contains(new IntVector2(-3, 0));
+            var containsBottomLeft = monsterDen.Extents.Contains(new IntVector2(-3, 0));
             Assert.True(containsBottomLeft, "Monster den does not contain it's bottom-left-most point.");
 
-            var containsMidLeft = monsterDen.Contains(new IntVector2(-2, 1));
+            var containsMidLeft = monsterDen.Extents.Contains(new IntVector2(-2, 1));
             Assert.True(containsMidLeft, "Monster den does not contain it's mid-left point.");
 
-            var containsTopMiddle = monsterDen.Contains(new IntVector2(0, 3));
+            var containsTopMiddle = monsterDen.Extents.Contains(new IntVector2(0, 3));
             Assert.True(containsTopMiddle, "Monster den does not contain it's top point.");
 
-            var containsMidRight = monsterDen.Contains(new IntVector2(1, 2));
+            var containsMidRight = monsterDen.Extents.Contains(new IntVector2(1, 2));
             Assert.True(containsMidRight, "Monster den does not contain it's mid-right point.");
 
-            var containsBottomRight = monsterDen.Contains(new IntVector2(3, 0));
+            var containsBottomRight = monsterDen.Extents.Contains(new IntVector2(3, 0));
             Assert.True(containsBottomRight, "Monster den does not contain it's bottom-right-most point.");
 
-            var containsBottomMiddle = monsterDen.Contains(new IntVector2(0, 0));
+            var containsBottomMiddle = monsterDen.Extents.Contains(new IntVector2(0, 0));
             Assert.True(containsBottomMiddle, "Monster den does not contain it's bottom-middle point.");
 
-            var doesNotContainFarLeft = monsterDen.Contains(new IntVector2(-4, 0));
+            var doesNotContainFarLeft = monsterDen.Extents.Contains(new IntVector2(-4, 0));
             Assert.False(doesNotContainFarLeft, "Monster den contains a point too far left.");
 
-            var doesNotContainMidLeft = monsterDen.Contains(new IntVector2(-2, 2));
+            var doesNotContainMidLeft = monsterDen.Extents.Contains(new IntVector2(-2, 2));
             Assert.False(doesNotContainMidLeft, "Monster den contains a point above its left leg.");
 
-            var doesNotContainFarUp = monsterDen.Contains(new IntVector2(0, 4));
+            var doesNotContainFarUp = monsterDen.Extents.Contains(new IntVector2(0, 4));
             Assert.False(doesNotContainFarUp, "Monster den contains a point too far up.");
 
-            var doesNotContainMidRight = monsterDen.Contains(new IntVector2(1, 3));
+            var doesNotContainMidRight = monsterDen.Extents.Contains(new IntVector2(1, 3));
             Assert.False(doesNotContainMidRight, "Monster den contains a point above its right leg.");
 
-            var doesNotContainFarRight = monsterDen.Contains(new IntVector2(4, 0));
+            var doesNotContainFarRight = monsterDen.Extents.Contains(new IntVector2(4, 0));
             Assert.False(doesNotContainFarRight, "Monster den contains a point too far right.");
 
-            var doesNotContainFarDown = monsterDen.Contains(new IntVector2(0, -1));
+            var doesNotContainFarDown = monsterDen.Extents.Contains(new IntVector2(0, -1));
             Assert.False(doesNotContainFarDown, "Monster den contains a point too far down.");
         }
 
@@ -78,7 +78,7 @@ namespace Tests.SpaceTests
 
                 foreach (var enemy in enemySpawns)
                 {
-                    Assert.True(monsterDen.Contains(enemy.Position), $"Enemy spawned outside of monster den.");
+                    Assert.True(monsterDen.Extents.Contains(enemy.Position), $"Enemy spawned outside of monster den.");
                     Assert.AreNotEqual(EnemyTypes.None, enemy.Type, $"Enemy spawned as `none`.");
                 }
             }
@@ -92,7 +92,7 @@ namespace Tests.SpaceTests
                                          .AddBoundary(Directions.Left, 0)
                                          .Build();
 
-            foreach (var extent in clampLeftMonsterDen.Extents)
+            foreach (var extent in clampLeftMonsterDen.Extents.Perimeter.Vertices)
             {
                 Assert.GreaterOrEqual(extent.X, 0, $"Failed to clamp left, as one extent is at {extent}.");
             }
@@ -102,7 +102,7 @@ namespace Tests.SpaceTests
                                          .AddBoundary(Directions.Down, 0)
                                          .Build();
 
-            foreach (var extent in clampDownMonsterDen.Extents)
+            foreach (var extent in clampDownMonsterDen.Extents.Perimeter.Vertices)
             {
                 Assert.GreaterOrEqual(extent.Y, 0, $"Failed to clamp down, as one extent is at {extent}.");
             }
@@ -112,7 +112,7 @@ namespace Tests.SpaceTests
                                           .AddBoundary(Directions.Right, 0)
                                           .Build();
 
-            foreach (var extent in clampRightMonsterDen.Extents)
+            foreach (var extent in clampRightMonsterDen.Extents.Perimeter.Vertices)
             {
                 Assert.LessOrEqual(extent.X, 0, $"Failed to clamp right, as one extent is at {extent}.");
             }
@@ -122,7 +122,7 @@ namespace Tests.SpaceTests
                                        .AddBoundary(Directions.Up, 0)
                                        .Build();
 
-            foreach (var extent in clampUpMonsterDen.Extents)
+            foreach (var extent in clampUpMonsterDen.Extents.Perimeter.Vertices)
             {
                 Assert.LessOrEqual(extent.Y, 0, $"Failed to clamp up, as one extent is at {extent}.");
             }
@@ -138,7 +138,7 @@ namespace Tests.SpaceTests
                                         .AddBoundary(Directions.Left, 0)
                                         .Build();
 
-            foreach (var extent in cutRightMonsterDen.Extents)
+            foreach (var extent in cutRightMonsterDen.Extents.Perimeter.Vertices)
             {
                 Assert.AreEqual(extent.X, 0, $"Failed to cut right, as one extent is at {extent}.");
             }
@@ -150,7 +150,7 @@ namespace Tests.SpaceTests
                                      .AddBoundary(Directions.Down, 0)
                                      .Build();
 
-            foreach (var extent in cutUpMonsterDen.Extents)
+            foreach (var extent in cutUpMonsterDen.Extents.Perimeter.Vertices)
             {
                 Assert.AreEqual(extent.Y, 0, $"Failed to cut up, as one extent is at {extent}.");
             }
@@ -162,7 +162,7 @@ namespace Tests.SpaceTests
                                        .AddBoundary(Directions.Right, 0)
                                        .Build();
 
-            foreach (var extent in cutRightMonsterDen.Extents)
+            foreach (var extent in cutRightMonsterDen.Extents.Perimeter.Vertices)
             {
                 Assert.AreEqual(extent.X, 0, $"Failed to cut left, as one extent is at {extent}.");
             }
@@ -174,7 +174,7 @@ namespace Tests.SpaceTests
                                        .AddBoundary(Directions.Up, 0)
                                        .Build();
 
-            foreach (var extent in cutUpMonsterDen.Extents)
+            foreach (var extent in cutUpMonsterDen.Extents.Perimeter.Vertices)
             {
                 Assert.AreEqual(extent.Y, 0, $"Failed to cut down, as one extent is at {extent}.");
             }

@@ -6,7 +6,7 @@ namespace WorldObjects.Spaces
 {
     public class Laboratory : ComplexSpace
     {
-        public override string Name => $"Laboratory with Extents {Extents[0]}, {Extents[1]}, {Extents[2]}, {Extents[3]}";
+        public override string Name => $"Laboratory";
 
         public readonly int MetalThickness;
 
@@ -40,38 +40,10 @@ namespace WorldObjects.Spaces
                 }
             }
 
-            Extents.Add(new IntVector2(minX, maxY));
-            Extents.Add(new IntVector2(maxX, maxY));
-            Extents.Add(new IntVector2(maxX, minY));
-            Extents.Add(new IntVector2(minX, minY));
-        }
-
-        public override bool Contains(IntVector2 position)
-        {
-            var containingRegions = Regions.FindAll(region => region.Contains(position));
-
-            foreach (var containingRegion in containingRegions)
-            {
-                foreach (var space in containingRegion.Spaces)
-                {
-                    if (space.Contains(position))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        foreach (var direction in Directions.Compass)
-                        {
-                            if (space.Contains(position + (direction * MetalThickness)))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false;
+            //Extents.Add(new IntVector2(minX, maxY));
+            //Extents.Add(new IntVector2(maxX, maxY));
+            //Extents.Add(new IntVector2(maxX, minY));
+            //Extents.Add(new IntVector2(minX, minY));
         }
 
         public override Space GetContainingSpace(IntVector2 position)
@@ -82,7 +54,7 @@ namespace WorldObjects.Spaces
             {
                 foreach (var space in containingRegion.Spaces)
                 {
-                    if (space.Contains(position))
+                    if (space.Extents.Contains(position))
                     {
                         return space;
                     }
@@ -97,7 +69,7 @@ namespace WorldObjects.Spaces
             var containingRegions = Regions.FindAll(region => region.Contains(position));
             foreach (var containingRegion in containingRegions)
             {
-                var containingSpace = containingRegion.Spaces.Find(space => space.Contains(position));
+                var containingSpace = containingRegion.Spaces.Find(space => space.Extents.Contains(position));
                 if (containingSpace != null)
                 {
                     return containingSpace.GetProp(position);
@@ -109,7 +81,7 @@ namespace WorldObjects.Spaces
 
         public override BlockTypes GetBlockType(IntVector2 position)
         {
-            if (!Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
+            if (!Extents.Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
             else if (_blockOverride.TryGetValue(position, out var overrideType))
             {
                 return overrideType;
@@ -119,7 +91,7 @@ namespace WorldObjects.Spaces
                 var containingRegions = Regions.FindAll(region => region.Contains(position));
                 foreach (var containingRegion in containingRegions)
                 {
-                    var containingSpace = containingRegion.Spaces.Find(space => space.Contains(position));
+                    var containingSpace = containingRegion.Spaces.Find(space => space.Extents.Contains(position));
                     if (containingSpace != null)
                     {
                         return containingSpace.GetBlockType(position);

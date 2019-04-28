@@ -128,7 +128,7 @@ namespace WorldObjects.WorldGeneration
 
             foreach (var bBuilder in _blockBuilders)
             {
-                if (spaceToAdd.Contains(bBuilder.Position))
+                if (spaceToAdd.Extents.Contains(bBuilder.Position))
                 {
                     bBuilder.SetSpace(spaceToAdd);
                 }
@@ -289,7 +289,7 @@ namespace WorldObjects.WorldGeneration
                     if (hazard != null) chunk.Register(hazard);
                 }
 
-                foreach(var featureSpawn in space.GetFeatureBuildersInChunk(chunk))
+                foreach (var featureSpawn in space.GetFeatureBuildersInChunk(chunk))
                 {
                     var feature = featureSpawn.Build();
                     if (feature != null) chunk.Register(feature);

@@ -1,6 +1,6 @@
 ﻿#if UNITY_EDITOR
-using System.Collections.Generic;
 using UnityEngine;
+using WorldObjects.Spaces.Geometry;
 
 namespace GizmoDrawers
 {
@@ -22,14 +22,21 @@ namespace GizmoDrawers
             Gizmos.DrawLine(bottomLeft, topLeft);
         }
 
-        public static void DrawByExtents(List<IntVector2> extents)
+        public static void DrawByExtents(Extents extents)
         {
-            for (var i = 0; i < extents.Count - 1; i++)
+            foreach (var shape in extents.Shapes)
             {
-                Gizmos.DrawLine(extents[i], extents[i + 1]);
+                DrawByShape(shape);
             }
+        }
 
-            Gizmos.DrawLine(extents[extents.Count - 1], extents[0]);
+        public static void DrawByShape(Shape shape)
+        {
+            for (var i = 0; i < shape.Vertices.Count - 1; i++)
+            {
+                Gizmos.DrawLine(shape.Vertices[i], shape.Vertices[i + 1]);
+            }
+            Gizmos.DrawLine(shape.Vertices[shape.Vertices.Count - 1], shape.Vertices[0]);
         }
     }
 }

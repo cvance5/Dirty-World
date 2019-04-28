@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Utilities.Debug;
+using WorldObjects.Spaces.Geometry;
 
 namespace GizmoDrawers
 {
@@ -13,11 +14,11 @@ namespace GizmoDrawers
 
         private Color _drawColor;
         private string _spaceName;
-        private List<List<IntVector2>> _history = new List<List<IntVector2>>();
+        private List<Extents> _history = new List<Extents>();
 
         private void Awake() =>
             // All spaces start out...not existing
-            _history.Add(new List<IntVector2>());
+            _history.Add(null);
 
         public void OnDrawGizmosSelected()
         {
@@ -25,22 +26,16 @@ namespace GizmoDrawers
 
             var extents = _history[_historyIndex];
 
-            if (extents.Count > 0)
+            if (extents != null)
             {
                 GizmoShapeDrawer.DrawByExtents(extents);
-                Handles.Label(extents[0], _spaceName);
+                Handles.Label(extents.Max, _spaceName);
             }
         }
 
         public void LogChange(WorldObjects.Spaces.Space current)
         {
-            var extents = new List<IntVector2>();
-            foreach (var extent in current.Extents)
-            {
-                extents.Add(new IntVector2(extent));
-            }
-
-            _history.Add(extents);
+            _history.Add(new Extents(current.Extents));
             _historyIndex = _history.Count - 1;
 
             _spaceName = current.Name;
