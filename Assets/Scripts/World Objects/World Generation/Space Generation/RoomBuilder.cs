@@ -122,21 +122,22 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public override SpaceBuilder Align(IntVector2 direction, int amount)
         {
+            var halfsize = _size / 2;
             if (direction == Directions.Up)
             {
-                _centerpoint.Y = amount - (_size / 2);
+                _centerpoint.Y = amount - (_size - halfsize);
             }
             else if (direction == Directions.Right)
             {
-                _centerpoint.X = amount - (_size / 2);
+                _centerpoint.X = amount - (_size - halfsize);
             }
             else if (direction == Directions.Down)
             {
-                _centerpoint.Y = amount + (_size / 2);
+                _centerpoint.Y = amount + halfsize;
             }
             else if (direction == Directions.Left)
             {
-                _centerpoint.X = amount + (_size / 2);
+                _centerpoint.X = amount + halfsize;
             }
             else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
 

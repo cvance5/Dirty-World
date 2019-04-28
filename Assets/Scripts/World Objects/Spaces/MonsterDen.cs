@@ -19,8 +19,8 @@ namespace WorldObjects.Spaces
             Extents.AddShape(new List<IntVector2>()
             {
                 new IntVector2(Centerpoint.X - Radius, Centerpoint.Y),
-                new IntVector2(Centerpoint.X + Radius, Centerpoint.Y),
-                new IntVector2(Centerpoint.X, Centerpoint.Y + Radius)
+                new IntVector2(Centerpoint.X, Centerpoint.Y + Radius),
+                new IntVector2(Centerpoint.X + Radius, Centerpoint.Y)
             });
         }
 

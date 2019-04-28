@@ -17,7 +17,7 @@ namespace WorldObjects.Spaces.Geometry
         {
             if (vertices == null || vertices.Count < 2)
             {
-                throw new System.InvalidOperationException($"Bounds must have at least 2 verticies.");
+                throw new System.ArgumentException($"Bounds must have at least 2 verticies.");
             }
 
             Max = new IntVector2(int.MinValue, int.MinValue);
@@ -65,30 +65,46 @@ namespace WorldObjects.Spaces.Geometry
 
             do
             {
-                var anyIntersections = false;
+                IntVector2 intersection = null;
+                Segment intersectingSegment = null;
+                var intersectionDistance = float.MaxValue;
                 foreach (var otherSegment in otherShape._segments)
                 {
                     var point = Segment.Intersect(currentSegment, otherSegment);
 
                     if (point != null)
                     {
-                        result.Add(point);
-                        result.Add(otherSegment.End);
-                        currentSegment = otherSegment;
-                        currentShape = otherShape;
-
-                        anyIntersections = true;
-                        break;
+                        var pointDistance = IntVector2.Distance(point, currentSegment.Start);
+                        if (pointDistance < intersectionDistance)
+                        {
+                            intersection = point;
+                            intersectingSegment = otherSegment;
+                            intersectionDistance = pointDistance;
+                        }
                     }
                 }
 
-                if (!anyIntersections)
+                if (intersection == null)
                 {
                     result.Add(currentSegment.End);
                     currentSegment = currentShape._segments.LoopedNext(currentSegment);
                 }
+                else
+                {
+                    result.Add(intersection);
+                    result.Add(intersectingSegment.End);
+
+                    currentSegment = otherShape.Segments.LoopedNext(intersectingSegment);
+
+                    var swap = currentShape;
+                    currentShape = otherShape;
+                    otherShape = swap;
+                }
 
             } while (result[0] != result[result.Count - 1]);
+
+            // Trim the last one vertex
+            result.RemoveAt(result.Count - 1);
 
             var intersectedShape = new Shape(result);
 
@@ -110,8 +126,20 @@ namespace WorldObjects.Spaces.Geometry
             else return Relationships.Undefined;
         }
 
-        public override bool Equals(object obj) =>
-            obj is Shape shape && EqualityComparer<List<IntVector2>>.Default.Equals(_vertices, shape._vertices);
+        public override bool Equals(object obj)
+        {
+            if (obj is Shape shape)
+            {
+                if (_vertices.Count != shape._vertices.Count) return false;
+
+                for (var vertexIndex = 0; vertexIndex < _vertices.Count; vertexIndex++)
+                {
+                    if (_vertices[vertexIndex] != shape._vertices[vertexIndex]) return false;
+                }
+                return true;
+            }
+            else return false;
+        }
 
         public override int GetHashCode() => 59827589 + EqualityComparer<List<IntVector2>>.Default.GetHashCode(_vertices);
 

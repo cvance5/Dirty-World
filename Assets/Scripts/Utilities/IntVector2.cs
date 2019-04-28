@@ -63,6 +63,8 @@ public class IntVector2
     // https://stackoverflow.com/questions/42868214/determine-if-a-point-is-between-2-other-points-on-a-line
     public static bool IsBetween(IntVector2 lineStart, IntVector2 lineEnd, IntVector2 point)
     {
+        if (point == lineStart || point == lineEnd) return true;
+
         var isOnLine = IsOnLine(lineStart, lineEnd, point);
 
         if (!isOnLine) return false;
