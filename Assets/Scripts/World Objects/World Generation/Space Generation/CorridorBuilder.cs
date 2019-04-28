@@ -130,7 +130,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             {
                 return amount - _leftEnd.X;
             }
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
         }
 
         public override bool Contains(IntVector2 position) =>
@@ -149,7 +149,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             else if (direction == Directions.Right) return _rightEnd.X;
             else if (direction == Directions.Down) return _leftEnd.Y;
             else if (direction == Directions.Left) return _leftEnd.X;
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
         }
 
         public override SpaceBuilder Align(IntVector2 direction, int amount)
@@ -176,7 +176,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 _leftEnd.X = Mathf.Max(_leftEnd.X, amount);
                 _alignment = CorridorAlignment.StartFromLeft; // We have to enforce this boundary
             }
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
 
             Rebuild();
 
@@ -216,7 +216,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 {
                     SetLength(_length - difference);
                 }
-                else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+                else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
             }
         }
 

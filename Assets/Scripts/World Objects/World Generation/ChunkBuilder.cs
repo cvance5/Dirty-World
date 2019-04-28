@@ -171,11 +171,11 @@ namespace WorldObjects.WorldGeneration
         {
             if (direction == Directions.Up)
             {
-                return Position.Y + _halfChunkSize;
+                return Position.Y + (_halfChunkSize - 1);
             }
             else if (direction == Directions.Right)
             {
-                return Position.X + _halfChunkSize;
+                return Position.X + (_halfChunkSize - 1);
             }
             else if (direction == Directions.Down)
             {
