@@ -29,10 +29,6 @@ namespace GizmoDrawers
             {
                 return Color.black;
             }
-            else if (space is Laboratory)
-            {
-                return Color.gray;
-            }
             else throw new System.ArgumentOutOfRangeException($"No color assigned for {space.GetType()}.");
         }
     }

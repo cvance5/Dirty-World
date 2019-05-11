@@ -30,10 +30,6 @@ namespace Data.Serialization.SerializableSpaces
             {
                 return new SerializableTreasureRoom(space as TreasureRoom);
             }
-            else if (space is Laboratory)
-            {
-                return new SerializableLaboratory(space as Laboratory);
-            }
             else throw new System.Exception($"Unknown space type: {space.GetType().Name}. Cannot serialize.");
         }
     }

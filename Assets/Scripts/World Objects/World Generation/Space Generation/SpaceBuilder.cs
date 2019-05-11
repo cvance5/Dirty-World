@@ -107,10 +107,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                         modifier = new CavernousModifier(this);
                         break;
 
-                    case ModifierTypes.Laboratory:
-                        modifier = new LaboratoryModifier(this);
-                        break;
-
                     default: throw new System.ArgumentException($"Unknown modifier of type `{modifierType}`.  Cannot construct.");
                 }
 

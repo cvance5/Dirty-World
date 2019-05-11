@@ -50,63 +50,24 @@ namespace GizmoDrawers
             {
                 var space = changedBuilder.Build();
 
-                if (space is ComplexSpace)
+                if (!_historyPerBuilder.TryGetValue(changedBuilder, out var history))
                 {
-                    var complexSpace = space as ComplexSpace;
-                    foreach (var region in complexSpace.Regions)
-                    {
-                        foreach (var regionSpace in region.Spaces)
-                        {
-                            if (!_historyPerBuilder.TryGetValue(changedBuilder, out var history))
-                            {
-                                history = CreateHistory();
+                    history = CreateHistory();
 
-                                _historyPerBuilder[changedBuilder] = history;
-                            }
-
-                            history.LogChange(regionSpace);
-                            _timeline.Add(history);
-                        }
-                    }
+                    _historyPerBuilder[changedBuilder] = history;
                 }
-                else
-                {
-                    if (!_historyPerBuilder.TryGetValue(changedBuilder, out var history))
-                    {
-                        history = CreateHistory();
 
-                        _historyPerBuilder[changedBuilder] = history;
-                    }
-
-                    history.LogChange(space);
-                    _timeline.Add(history);
-                }
+                history.LogChange(space);
+                _timeline.Add(history);
             }
         }
 
         private static void LogCustomSpace(WorldObjects.Spaces.Space customSpace)
         {
-            if (customSpace is ComplexSpace)
-            {
-                var complexSpace = customSpace as ComplexSpace;
-                foreach (var region in complexSpace.Regions)
-                {
-                    foreach (var regionSpace in region.Spaces)
-                    {
-                        var history = CreateHistory();
+            var history = CreateHistory();
 
-                        history.LogChange(regionSpace);
-                        _timeline.Add(history);
-                    }
-                }
-            }
-            else
-            {
-                var history = CreateHistory();
-
-                history.LogChange(customSpace);
-                _timeline.Add(history);
-            }
+            history.LogChange(customSpace);
+            _timeline.Add(history);
         }
 
         private static SpaceHistoryGizmoDrawer CreateHistory()

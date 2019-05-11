@@ -48,11 +48,6 @@ namespace CustomPropertyDrawing.Tools.SpaceCrafting
                 {
                     _target.AddNewCrafter<MonsterDenCrafter>();
                 }
-
-                if (GUILayout.Button("New Laboratory"))
-                {
-                    _target.AddNewCrafter<LaboratoryCrafter>();
-                }
             }
             GUILayout.EndVertical();
         }

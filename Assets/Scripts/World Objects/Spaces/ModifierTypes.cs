@@ -2,7 +2,6 @@
 {
     public enum ModifierTypes
     {
-        Cavernous,
-        Laboratory
+        Cavernous
     }
 }
