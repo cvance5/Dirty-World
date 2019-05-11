@@ -10,13 +10,9 @@ namespace Data.Serialization.SerializableSpaces
             {
                 return new SerializableElevatorShaft(space as ElevatorShaft);
             }
-            else if (space is Shaft)
+            else if (space is Tunnel)
             {
-                return new SerializableShaft(space as Shaft);
-            }
-            else if (space is Corridor)
-            {
-                return new SerializableCorridor(space as Corridor);
+                return new SerializableTunnel(space as Tunnel);
             }
             else if (space is MonsterDen)
             {

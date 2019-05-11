@@ -29,14 +29,9 @@ namespace CustomPropertyDrawing.Tools.SpaceCrafting
             GUILayout.BeginVertical();
             {
                 GUILayout.Label("Build Spaces");
-                if (GUILayout.Button("New Shaft"))
+                if (GUILayout.Button("New Tunnel"))
                 {
-                    _target.AddNewCrafter<ShaftCrafter>();
-                }
-
-                if (GUILayout.Button("New Corridor"))
-                {
-                    _target.AddNewCrafter<CorridorCrafter>();
+                    _target.AddNewCrafter<TunnelCrafter>();
                 }
 
                 if (GUILayout.Button("New Room"))

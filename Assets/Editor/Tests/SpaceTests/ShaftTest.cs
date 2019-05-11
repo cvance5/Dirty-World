@@ -19,27 +19,6 @@ namespace Tests.SpaceTests
         public void PrepareTestChunk() => _testChunk = new ChunkBuilder(Vector2.zero, 32);
 
         [Test]
-        public void ShaftContainsTest()
-        {
-            var shaft = new Shaft(new IntVector2(-2, -2), new IntVector2(2, 2), false);
-
-            for (var x = -5; x <= 5; x++)
-            {
-                for (var y = -5; y <= 5; y++)
-                {
-                    var expectation = y >= -2 &&
-                                      y <= 2 &&
-                                      x >= -2
-                                      && x <= 2;
-
-                    var actual = shaft.Extents.Contains(new IntVector2(x, y));
-
-                    Assert.AreEqual(actual, expectation, $"Position: [{x},{y}] | Expected: {expectation} | Actual: {actual}");
-                }
-            }
-        }
-
-        [Test]
         public void ShaftBuilderClampTest()
         {
             foreach (var alignment in (ShaftBuilder.ShaftAlignment[])System.Enum.GetValues(typeof(ShaftBuilder.ShaftAlignment)))
@@ -144,15 +123,15 @@ namespace Tests.SpaceTests
             {
                 var setHeightShaft = new ShaftBuilder(_testChunk)
                                         .SetHeight(10)
-                                        .Build() as Shaft;
+                                        .Build() as Tunnel;
 
-                Assert.AreEqual(10, setHeightShaft.Height, $"Shaft height was not as expected for alignment {alignment}.");
+                Assert.AreEqual(10, setHeightShaft.Height, $"Tunnel height was not as expected for alignment {alignment}.");
 
                 var setLengthShaft = new ShaftBuilder(_testChunk)
                                         .SetWidth(10)
-                                        .Build() as Shaft;
+                                        .Build() as Tunnel;
 
-                Assert.AreEqual(10, setLengthShaft.Width, $"Shaft length was not as expected for alignment {alignment}.");
+                Assert.AreEqual(10, setLengthShaft.Width, $"Tunnel length was not as expected for alignment {alignment}.");
             }
         }
 
@@ -160,22 +139,14 @@ namespace Tests.SpaceTests
         public void ShaftGetBlockTest()
         {
             var shaft = new ShaftBuilder(_testChunk)
-                           .Build() as Shaft;
+                           .Build() as Tunnel;
 
             for (var x = shaft.BottomLeftCorner.X; x <= shaft.TopRightCorner.X; x++)
             {
                 for (var y = shaft.BottomLeftCorner.Y; y <= shaft.TopRightCorner.Y; y++)
                 {
                     var block = shaft.GetBlockType(new IntVector2(x, y));
-
-                    if (y == shaft.TopRightCorner.Y)
-                    {
-                        Assert.AreNotEqual(BlockTypes.None, block, $"Didn't find a block at [{x},{y}].");
-                    }
-                    else
-                    {
-                        Assert.AreEqual(BlockTypes.None, block, $"Found the wrong block at [{x},{y}].");
-                    }
+                    Assert.AreEqual(BlockTypes.None, block, $"Found the wrong block at [{x},{y}].");
                 }
             }
         }

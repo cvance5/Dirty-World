@@ -21,7 +21,7 @@ namespace Tests.SpaceTests
         [Test]
         public void ElevatorShaftContainsTest()
         {
-            var shaft = new ElevatorShaft(new IntVector2(-2, -2), new IntVector2(2, 2), false, null);
+            var shaft = new ElevatorShaft(new IntVector2(-2, -2), new IntVector2(2, 2), null);
 
             for (var x = -5; x <= 5; x++)
             {
@@ -150,30 +150,30 @@ namespace Tests.SpaceTests
                                       .SetHeight(10) as ElevatorShaftBuilder;
 
             var defaultValueShaft = setHeightBuilder.Build() as ElevatorShaft;
-            Assert.AreEqual(10, defaultValueShaft.Height, $"Shaft height was changed unexpectedly.");
+            Assert.AreEqual(10, defaultValueShaft.Height, $"Tunnel height was changed unexpectedly.");
 
             setHeightBuilder.SetNumberOfStories(2);
 
             var setStoriesShaft = setHeightBuilder.Build() as ElevatorShaft;
-            Assert.AreEqual(20, setStoriesShaft.Height, $"Shaft height did not scale when stories changed.");
+            Assert.AreEqual(20, setStoriesShaft.Height, $"Tunnel height did not scale when stories changed.");
 
             setHeightBuilder.SetNumberOfStories(1)
                             .SetStoryHeight(20);
 
             var setStoryHeightShaft = setHeightBuilder.Build() as ElevatorShaft;
-            Assert.AreEqual(20, setStoryHeightShaft.Height, $"Shaft height did not scale when story height changed.");
+            Assert.AreEqual(20, setStoryHeightShaft.Height, $"Tunnel height did not scale when story height changed.");
 
             setHeightBuilder.SetNumberOfStories(3)
                             .SetStoryHeight(5)
                             .SetHeight(20);
 
             var setHeightErraticallyShaft = setHeightBuilder.Build() as ElevatorShaft;
-            Assert.AreEqual(20, setHeightErraticallyShaft.Height, $"Shaft height did not set correctly with acceptable values.");
+            Assert.AreEqual(20, setHeightErraticallyShaft.Height, $"Tunnel height did not set correctly with acceptable values.");
 
             setHeightBuilder.SetHeight(8);
 
             var setHeightInvalidShaft = setHeightBuilder.Build() as ElevatorShaft;
-            Assert.AreNotEqual(8, setHeightInvalidShaft, $"Shaft height should not be set to an impossible value.");
+            Assert.AreNotEqual(8, setHeightInvalidShaft, $"Tunnel height should not be set to an impossible value.");
         }
 
         [Test]
@@ -185,15 +185,15 @@ namespace Tests.SpaceTests
                                         .SetStoryHeight(5)
                                         .SetNumberOfStories(2)
                                         .SetHeight(10)
-                                        .Build() as Shaft;
+                                        .Build() as Tunnel;
 
-                Assert.AreEqual(10, setHeightShaft.Height, $"Shaft height was not as expected for alignment {alignment}.");
+                Assert.AreEqual(10, setHeightShaft.Height, $"Tunnel height was not as expected for alignment {alignment}.");
 
                 var setLengthShaft = new ElevatorShaftBuilder(_testChunk)
                                         .SetWidth(10)
-                                        .Build() as Shaft;
+                                        .Build() as Tunnel;
 
-                Assert.AreEqual(10, setLengthShaft.Width, $"Shaft length was not as expected for alignment {alignment}.");
+                Assert.AreEqual(10, setLengthShaft.Width, $"Tunnel length was not as expected for alignment {alignment}.");
             }
         }
 
@@ -201,22 +201,14 @@ namespace Tests.SpaceTests
         public void ElevatorShaftGetBlockTest()
         {
             var shaft = new ElevatorShaftBuilder(_testChunk)
-                           .Build() as Shaft;
+                           .Build() as Tunnel;
 
             for (var x = shaft.BottomLeftCorner.X; x <= shaft.TopRightCorner.X; x++)
             {
                 for (var y = shaft.BottomLeftCorner.Y; y <= shaft.TopRightCorner.Y; y++)
                 {
                     var block = shaft.GetBlockType(new IntVector2(x, y));
-
-                    if (y == shaft.TopRightCorner.Y)
-                    {
-                        Assert.AreNotEqual(BlockTypes.None, block, $"Didn't find a block at [{x},{y}].");
-                    }
-                    else
-                    {
-                        Assert.AreEqual(BlockTypes.None, block, $"Found the wrong block at [{x},{y}].");
-                    }
+                    Assert.AreEqual(BlockTypes.None, block, $"Found the wrong block at [{x},{y}].");
                 }
             }
         }

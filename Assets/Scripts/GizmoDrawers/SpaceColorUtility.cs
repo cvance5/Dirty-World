@@ -9,13 +9,9 @@ namespace GizmoDrawers
     {
         public static Color GetOutlineColor(WorldObjects.Spaces.Space space)
         {
-            if (space is Corridor)
+            if (space is Tunnel)
             {
                 return Color.red;
-            }
-            else if (space is Shaft)
-            {
-                return Color.green;
             }
             else if (space is MonsterDen)
             {

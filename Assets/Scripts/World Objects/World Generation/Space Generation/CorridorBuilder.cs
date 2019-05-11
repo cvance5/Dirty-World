@@ -222,7 +222,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override Spaces.Space BuildRaw()
         {
-            var corridor = new Corridor(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height));
+            var corridor = new Tunnel(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height));
             corridor.AddEnemySpawns(GenerateContainedEnemies());
             return corridor;
         }

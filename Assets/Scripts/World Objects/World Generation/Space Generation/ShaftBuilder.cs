@@ -17,8 +17,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         protected int _width;
         private int _minWidth = 1;
 
-        protected bool _isUncapped;
-
         public ShaftBuilder(ChunkBuilder chunkBuilder)
             : base(chunkBuilder)
         {
@@ -94,12 +92,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public ShaftBuilder SetUncapped(bool isUncapped)
-        {
-            _isUncapped = isUncapped;
-            return this;
-        }
-
         public override int PassesBy(IntVector2 direction, int amount)
         {
             var difference = 0;
@@ -150,7 +142,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             {
                 _top.Y = amount;
                 _alignment = ShaftAlignment.StartFromTop; // We have to enforce this boundary
-                _isUncapped = true; // We shouldn't spawn blocks here, as it may be clamped by another space or chunk
             }
             else if (direction == Directions.Right)
             {
@@ -212,7 +203,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
         }
 
-        protected override Spaces.Space BuildRaw() => new Shaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _isUncapped);
+        protected override Spaces.Space BuildRaw() => new Tunnel(_bottom, new IntVector2(_top.X + _width, _top.Y));
 
         protected virtual void Rebuild()
         {

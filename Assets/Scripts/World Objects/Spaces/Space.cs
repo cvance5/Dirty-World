@@ -37,11 +37,12 @@ namespace WorldObjects.Spaces
         protected readonly Dictionary<IntVector2, BlockTypes> _blockOverride = new Dictionary<IntVector2, BlockTypes>();
         public Dictionary<IntVector2, BlockTypes> BlockOverrides => new Dictionary<IntVector2, BlockTypes>(_blockOverride);
         public abstract BlockTypes GetBlockType(IntVector2 position);
+        public void AddBlockOverride(IntVector2 position, BlockTypes blockOverride) => _blockOverride[position] = blockOverride;
         public void AddBlockOverrides(Dictionary<IntVector2, BlockTypes> newOverrides)
         {
             foreach (var blockOverride in newOverrides)
             {
-                _blockOverride[blockOverride.Key] = blockOverride.Value;
+                AddBlockOverride(blockOverride.Key, blockOverride.Value);
             }
         }
 

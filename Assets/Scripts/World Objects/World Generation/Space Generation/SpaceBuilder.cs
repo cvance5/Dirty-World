@@ -4,7 +4,7 @@ using WorldObjects.Spaces;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
-    public abstract class SpaceBuilder
+    public abstract class SpaceBuilder : IBoundary
     {
         public static SmartEvent<SpaceBuilder> OnSpaceBuilderChanged = new SmartEvent<SpaceBuilder>();
 

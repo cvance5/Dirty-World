@@ -39,13 +39,9 @@ namespace GizmoDrawers
 
         private void DrawSpace(WorldObjects.Spaces.Space space, string prefixName = "")
         {
-            if (space is Corridor)
+            if (space is Tunnel)
             {
                 Gizmos.color = Color.red;
-            }
-            else if (space is Shaft)
-            {
-                Gizmos.color = Color.green;
             }
             else if (space is MonsterDen)
             {

@@ -19,28 +19,6 @@ namespace Tests.SpaceTests
         [SetUp]
         public void PrepareTestChunk() => _testChunk = new ChunkBuilder(Vector2.zero, 32);
 
-
-        [Test]
-        public void CorridorContainsTest()
-        {
-            var corridor = new Corridor(new IntVector2(-2, -2), new IntVector2(2, 2));
-
-            for (var x = -5; x <= 5; x++)
-            {
-                for (var y = -5; y <= 5; y++)
-                {
-                    var expectation = y >= -2 &&
-                                      y <= 2 &&
-                                      x >= -2
-                                      && x <= 2;
-
-                    var actual = corridor.Extents.Contains(new IntVector2(x, y));
-
-                    Assert.AreEqual(actual, expectation, $"Position: [{x},{y}] | Expected: {expectation} | Actual: {actual}");
-                }
-            }
-        }
-
         [Test]
         public void CorridorEnemyGenerationTest()
         {
@@ -170,15 +148,15 @@ namespace Tests.SpaceTests
             {
                 var setHeightCorridor = new CorridorBuilder(_testChunk)
                                             .SetHeight(10)
-                                            .Build() as Corridor;
+                                            .Build() as Tunnel;
 
-                Assert.AreEqual(10, setHeightCorridor.Height, $"Corridor height was not as expected for alignment {alignment}.");
+                Assert.AreEqual(10, setHeightCorridor.Height, $"Tunnel height was not as expected for alignment {alignment}.");
 
                 var setLengthCorridor = new CorridorBuilder(_testChunk)
                                             .SetLength(10)
-                                            .Build() as Corridor;
+                                            .Build() as Tunnel;
 
-                Assert.AreEqual(10, setLengthCorridor.Length, $"Corridor length was not as expected for alignment {alignment}.");
+                Assert.AreEqual(10, setLengthCorridor.Width, $"Tunnel width was not as expected for alignment {alignment}.");
             }
         }
 
@@ -186,7 +164,7 @@ namespace Tests.SpaceTests
         public void CorridorGetBlockTest()
         {
             var corridor = new CorridorBuilder(_testChunk)
-                               .Build() as Corridor;
+                               .Build() as Tunnel;
 
             for (var x = corridor.BottomLeftCorner.X; x <= corridor.TopRightCorner.X; x++)
             {

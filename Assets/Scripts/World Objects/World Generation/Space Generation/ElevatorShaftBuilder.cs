@@ -158,7 +158,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 landings.Add(new IntVector2(_middle.X, _bottom.Y + landing));
             }
 
-            var shaft = new ElevatorShaft(_bottom, new IntVector2(_top.X + _width, _top.Y), _isUncapped, landings);
+            var shaft = new ElevatorShaft(_bottom, new IntVector2(_top.X + _width, _top.Y), landings);
             shaft.AddFeatureBuilder(_elevatorBuilder);
             return shaft;
         }
