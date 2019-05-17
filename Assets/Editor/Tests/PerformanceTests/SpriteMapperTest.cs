@@ -5,7 +5,7 @@ using UnityEngine;
 using Utilities.Debug;
 using WorldObjects.Construction;
 
-namespace Tests
+namespace Tests.PerformanceTests
 {
     public class SpriteMapperTest
     {
