@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using MathConcepts;
+using UnityEditor;
 using UnityEngine;
 
 namespace CustomPropertyDrawing
@@ -19,3 +21,4 @@ namespace CustomPropertyDrawing
         }
     }
 }
+#endif
