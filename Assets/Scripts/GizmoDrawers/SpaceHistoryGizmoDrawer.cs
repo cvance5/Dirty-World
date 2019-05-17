@@ -1,10 +1,9 @@
 ﻿#if UNITY_EDITOR
-
+using MathConcepts.Geometry;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using Utilities.Debug;
-using WorldObjects.Spaces.Geometry;
 
 namespace GizmoDrawers
 {

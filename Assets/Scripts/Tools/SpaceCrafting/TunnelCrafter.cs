@@ -1,4 +1,5 @@
-﻿using WorldObjects.Spaces;
+﻿using MathConcepts;
+using WorldObjects.Spaces;
 
 namespace Tools.SpaceCrafting
 {

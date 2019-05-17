@@ -1,4 +1,5 @@
-﻿using WorldObjects.Features;
+﻿using MathConcepts;
+using WorldObjects.Features;
 
 namespace WorldObjects.WorldGeneration.FeatureGeneration
 {

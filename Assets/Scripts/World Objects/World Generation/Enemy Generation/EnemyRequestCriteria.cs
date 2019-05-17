@@ -1,4 +1,6 @@
-﻿namespace WorldObjects.WorldGeneration.EnemyGeneration
+﻿using MathConcepts;
+
+namespace WorldObjects.WorldGeneration.EnemyGeneration
 {
     public class EnemyRequestCriteria
     {

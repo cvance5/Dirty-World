@@ -1,4 +1,5 @@
-﻿using WorldObjects.WorldGeneration.EnemyGeneration;
+﻿using MathConcepts;
+using WorldObjects.WorldGeneration.EnemyGeneration;
 
 namespace WorldObjects.Spaces
 {

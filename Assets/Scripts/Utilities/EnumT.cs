@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MathConcepts;
+using System;
 
 public class Enum<T> where T : struct, IConvertible
 {

@@ -1,7 +1,8 @@
-﻿using NUnit.Framework;
+﻿using MathConcepts;
+using MathConcepts.Geometry;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using WorldObjects.Spaces.Geometry;
 
 namespace Tests.SpaceTests
 {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MathConcepts;
+using System.Collections.Generic;
 using WorldObjects.Blocks;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.HazardGeneration;

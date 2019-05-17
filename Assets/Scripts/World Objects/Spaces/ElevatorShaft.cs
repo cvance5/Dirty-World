@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using MathConcepts;
+using System.Collections.Generic;
 
 namespace WorldObjects.Spaces
 {

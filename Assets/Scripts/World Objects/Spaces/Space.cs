@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using MathConcepts;
+using MathConcepts.Geometry;
+using System.Collections.Generic;
 using WorldObjects.Blocks;
-using WorldObjects.Spaces.Geometry;
 using WorldObjects.WorldGeneration.FeatureGeneration;
 using WorldObjects.WorldGeneration.HazardGeneration;
 using WorldObjects.WorldGeneration.PropGeneration;

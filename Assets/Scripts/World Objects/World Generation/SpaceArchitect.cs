@@ -1,5 +1,6 @@
 ﻿using Data.IO;
 using Data.Serialization.SerializableSpaces;
+using MathConcepts;
 using System;
 using System.Collections.Generic;
 using Utilities.Debug;

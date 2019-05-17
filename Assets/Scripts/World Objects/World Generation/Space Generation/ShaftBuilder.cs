@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using MathConcepts;
+using UnityEngine;
 using WorldObjects.Spaces;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration

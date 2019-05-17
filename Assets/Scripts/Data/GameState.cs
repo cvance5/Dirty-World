@@ -2,6 +2,7 @@
 using Data.IO;
 using Data.Serialization;
 using Data.Serialization.SerializableSpaces;
+using MathConcepts;
 using System.Collections.Generic;
 using WorldObjects;
 using WorldObjects.Spaces;

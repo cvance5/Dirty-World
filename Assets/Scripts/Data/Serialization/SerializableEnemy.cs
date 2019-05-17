@@ -1,6 +1,7 @@
 ﻿using WorldObjects.Actors.Enemies;
 using Newtonsoft.Json;
 using WorldObjects.WorldGeneration.EnemyGeneration;
+using MathConcepts;
 
 namespace Data.Serialization
 {

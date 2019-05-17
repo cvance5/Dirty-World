@@ -1,4 +1,5 @@
-﻿using WorldObjects.Construction;
+﻿using MathConcepts;
+using WorldObjects.Construction;
 using WorldObjects.Hazards;
 using WorldObjects.Spaces;
 

@@ -1,4 +1,5 @@
-﻿using WorldObjects.Hazards;
+﻿using MathConcepts;
+using WorldObjects.Hazards;
 using WorldObjects.Spaces;
 
 namespace WorldObjects.WorldGeneration.HazardGeneration

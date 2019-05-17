@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using MathConcepts;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using WorldObjects.Spaces;
 

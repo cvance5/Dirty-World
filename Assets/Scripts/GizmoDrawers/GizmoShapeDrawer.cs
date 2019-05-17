@@ -1,6 +1,6 @@
 ﻿#if UNITY_EDITOR
+using MathConcepts.Geometry;
 using UnityEngine;
-using WorldObjects.Spaces.Geometry;
 
 namespace GizmoDrawers
 {
