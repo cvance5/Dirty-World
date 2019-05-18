@@ -14,6 +14,8 @@ namespace MathConcepts
 
         public static double Percent => _rand.NextDouble();
 
+        public static int RandomSignFlip(int value) => CoinFlip ? value : value *= -1;
+
         public static bool OneIn(int x)
         {
             var rand = _rand.Next(x);
@@ -42,6 +44,8 @@ namespace MathConcepts
             var exponent = Math.Pow(2.0, _rand.Next(-126, 128));
             return (float)(mantissa * exponent);
         }
+
+        public static int Range(Range range) => Range(range.Min, range.Max);
 
         /// <summary>
         /// Pass through to a Random.Next(min, max)
