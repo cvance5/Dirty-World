@@ -4,8 +4,8 @@ namespace MathConcepts
 {
     public struct Range
     {
-        public int Min { get; private set; }
-        public int Max { get; private set; }
+        public int Min { get; set; }
+        public int Max { get; set; }
 
         public int Size { get; }
         public float Center { get; }
