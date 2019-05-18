@@ -47,8 +47,6 @@ namespace WorldObjects.Spaces
             }
         }
 
-        public abstract IntVector2 GetRandomPosition();
-
         public List<EnemySpawn> GetEnemySpawnsInChunk(Chunk chunk)
         {
             var enemySpawnsInChunk = new List<EnemySpawn>();

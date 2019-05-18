@@ -38,9 +38,5 @@ namespace WorldObjects.Spaces
             _blockOverride.TryGetValue(position, out var result);
             return result;
         }
-
-        public override IntVector2 GetRandomPosition() => new IntVector2(
-            Chance.Range(BottomLeftCorner.X, TopRightCorner.X),
-            Chance.Range(BottomLeftCorner.Y, TopRightCorner.Y));
     }
 }

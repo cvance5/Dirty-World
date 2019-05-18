@@ -30,9 +30,5 @@ namespace WorldObjects.Spaces
             if (!Extents.Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
             return _blockOverride.TryGetValue(position, out var type) ? type : BlockTypes.None;
         }
-
-        public override IntVector2 GetRandomPosition() =>
-            new IntVector2(Chance.Range(BottomLeftCorner.X, TopRightCorner.X),
-                           Chance.Range(BottomLeftCorner.Y, TopRightCorner.Y));
     }
 }

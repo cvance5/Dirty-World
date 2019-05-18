@@ -1,6 +1,5 @@
 ﻿using MathConcepts;
 using System.Collections.Generic;
-using UnityEngine;
 using WorldObjects.Blocks;
 
 namespace WorldObjects.Spaces
@@ -25,20 +24,10 @@ namespace WorldObjects.Spaces
             });
         }
 
-        public override IntVector2 GetRandomPosition()
-        {
-            var randomX = Chance.Range(Centerpoint.X - Radius, Centerpoint.X + Radius);
-            var randomY = Chance.Range(Centerpoint.Y, Centerpoint.Y + Radius - DistanceFromCenterpoint(randomX));
-
-            return new IntVector2(randomX, randomY);
-        }
-
         public override BlockTypes GetBlockType(IntVector2 position)
         {
             if (!Extents.Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
             else return _blockOverride.TryGetValue(position, out var overrideType) ? overrideType : BlockTypes.None;
         }
-
-        private int DistanceFromCenterpoint(int x) => Mathf.Abs(Centerpoint.X - x);
     }
 }
