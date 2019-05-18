@@ -97,6 +97,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public Space Build()
         {
+            if (!IsValid) throw new System.InvalidOperationException($"SpaceBuilder is not valid and should not be built.");
+
             var rawSpace = BuildRaw();
 
             foreach (var modifierType in _modifiersApplied)

@@ -95,10 +95,13 @@ namespace WorldObjects.WorldGeneration
 
                     FindSpaceBoundaries(spaceBuilder, sourceChunkBuilder);
 
-                    var space = spaceBuilder.Build();
+                    if (spaceBuilder.IsValid)
+                    {
+                        var space = spaceBuilder.Build();
 
-                    Register(space);
-                    sourceChunkBuilder.AddSpace(space);
+                        Register(space);
+                        sourceChunkBuilder.AddSpace(space);
+                    }
                 }
             }
         }
@@ -110,7 +113,7 @@ namespace WorldObjects.WorldGeneration
 
             chunksToCheck.Enqueue(sourceChunkBuilder);
 
-            while (chunksToCheck.Count > 0)
+            while (chunksToCheck.Count > 0 && spaceBuilder.IsValid)
             {
                 var nextChunkToCheck = chunksToCheck.Dequeue();
 
@@ -123,7 +126,7 @@ namespace WorldObjects.WorldGeneration
                 foreach (var direction in Directions.Cardinals)
                 {
                     var maximalValue = nextChunkToCheck.GetMaximalValue(direction);
-                    
+
                     var amount = spaceBuilder.PassesBy(direction, maximalValue);
 
                     if (amount > 0)
