@@ -13,15 +13,15 @@ namespace MathConcepts.Geometry
         public Shape Perimeter { get; private set; }
 
         public Extents() { }
+        public Extents(Extents other) => AddExtents(other);
 
-        public Extents(Extents other)
+        public void AddExtents(Extents other)
         {
             foreach (var shape in other.Shapes)
             {
-                AddShape(shape.Vertices);
+                AddShape(shape);
             }
         }
-
         public void AddShape(List<IntVector2> vertexes) => AddShape(new Shape(vertexes));
         private void AddShape(Shape shape)
         {
