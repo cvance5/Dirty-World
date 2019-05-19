@@ -24,11 +24,5 @@ namespace WorldObjects.Spaces
                 new IntVector2(TopRightCorner.X, BottomLeftCorner.Y)
             });
         }
-
-        public override BlockTypes GetBlockType(IntVector2 position)
-        {
-            if (!Extents.Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
-            return _blockOverride.TryGetValue(position, out var type) ? type : BlockTypes.None;
-        }
     }
 }

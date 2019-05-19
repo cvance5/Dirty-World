@@ -37,7 +37,6 @@ namespace WorldObjects.Spaces
 
         protected readonly Dictionary<IntVector2, BlockTypes> _blockOverride = new Dictionary<IntVector2, BlockTypes>();
         public Dictionary<IntVector2, BlockTypes> BlockOverrides => new Dictionary<IntVector2, BlockTypes>(_blockOverride);
-        public abstract BlockTypes GetBlockType(IntVector2 position);
         public void AddBlockOverride(IntVector2 position, BlockTypes blockOverride) => _blockOverride[position] = blockOverride;
         public void AddBlockOverrides(Dictionary<IntVector2, BlockTypes> newOverrides)
         {
@@ -45,6 +44,13 @@ namespace WorldObjects.Spaces
             {
                 AddBlockOverride(blockOverride.Key, blockOverride.Value);
             }
+        }
+
+        public BlockTypes GetBlockType(IntVector2 position)
+        {
+            if (!Extents.Contains(position)) throw new System.ArgumentOutOfRangeException($"{Name} does not contain {position}.  Cannot get block.");
+            else if (_blockOverride.TryGetValue(position, out var overrideType)) return overrideType;
+            else return BlockTypes.None;
         }
 
         public List<EnemySpawn> GetEnemySpawnsInChunk(Chunk chunk)

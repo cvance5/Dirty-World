@@ -1,6 +1,5 @@
 ﻿using MathConcepts;
 using System.Collections.Generic;
-using WorldObjects.Blocks;
 
 namespace WorldObjects.Spaces
 {
@@ -31,12 +30,6 @@ namespace WorldObjects.Spaces
                 TopRightCorner,
                 new IntVector2(topRightCorner.X, bottomLeftCorner.Y)
             });
-        }
-
-        public override BlockTypes GetBlockType(IntVector2 position)
-        {
-            _blockOverride.TryGetValue(position, out var result);
-            return result;
         }
     }
 }
