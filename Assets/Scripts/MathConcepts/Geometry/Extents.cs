@@ -36,8 +36,8 @@ namespace MathConcepts.Geometry
                 if (_shapes.Count == 1)
                 {
                     Perimeter = shape;
-                    Max = shape.Max;
-                    Min = shape.Min;
+                    Max = new IntVector2(shape.Max);
+                    Min = new IntVector2(shape.Min);
 
                 }
                 else
