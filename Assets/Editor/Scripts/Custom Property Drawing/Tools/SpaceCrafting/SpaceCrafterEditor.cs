@@ -1,4 +1,4 @@
-﻿using Data.Serialization.SerializableSpaces;
+﻿using Data.Serialization;
 using Tools.SpaceCrafting;
 using UnityEditor;
 using UnityEngine;
@@ -50,7 +50,7 @@ namespace CustomPropertyDrawing.Tools.SpaceCrafting
                     }
 
                     Undo.RecordObject(_asset, "Set SerializableSpace JSON");
-                    _asset.Set(SerializableSpaceHelper.ToSerializableSpace(_target.Build()));
+                    _asset.Set(new SerializableSpace(_target.Build()));
                     EditorUtility.SetDirty(_asset);
 
                     AssetDatabase.SaveAssets();

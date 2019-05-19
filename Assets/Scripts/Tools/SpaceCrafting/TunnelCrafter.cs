@@ -1,5 +1,8 @@
 ﻿using MathConcepts;
+using MathConcepts.Geometry;
+using System.Collections.Generic;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace Tools.SpaceCrafting
 {
@@ -29,12 +32,23 @@ namespace Tools.SpaceCrafting
 
         protected override void InitializeFromSpaceRaw(Space space)
         {
-            var tunnel = space as Tunnel;
-            transform.position = tunnel.BottomLeftCorner;
-            Width = tunnel.TopRightCorner.X - tunnel.BottomLeftCorner.X;
-            Height = tunnel.TopRightCorner.Y - tunnel.BottomLeftCorner.Y;
+            var tunnel = space;
+            transform.position = tunnel.Extents.Min;
+            Width = tunnel.Extents.Max.X - tunnel.Extents.Min.X;
+            Height = tunnel.Extents.Max.Y - tunnel.Extents.Min.Y;
         }
 
-        protected override Space RawBuild() => new Tunnel(BottomLeftCorner, TopRightCorner);
+        protected override Space RawBuild()
+        {
+            var extents = new Extents(new List<IntVector2>()
+            {
+                new IntVector2(BottomLeftCorner),
+                new IntVector2(BottomLeftCorner.X, TopRightCorner.Y),
+                new IntVector2(TopRightCorner),
+                new IntVector2(TopRightCorner.X, BottomLeftCorner.Y)
+            });
+
+            return new Space($"Tunnel {SpaceNamer.GetName()}", extents);
+        }
     }
 }

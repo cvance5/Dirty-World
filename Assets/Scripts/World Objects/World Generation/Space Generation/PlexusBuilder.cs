@@ -348,7 +348,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
         }
 
-        protected override Spaces.Space BuildRaw() => new Plexus(_origin, _horizontalGrid, _verticalGrid, _gridScalar);
+        protected override Spaces.Space BuildRaw() => throw new System.Exception();
 
         public enum PlexusOrientation
         {

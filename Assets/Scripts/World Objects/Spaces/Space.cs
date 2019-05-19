@@ -8,10 +8,10 @@ using WorldObjects.WorldGeneration.PropGeneration;
 
 namespace WorldObjects.Spaces
 {
-    public abstract class Space
+    public class Space
     {
-        public abstract string Name { get; }
-        public Extents Extents { get; } = new Extents();
+        public string Name { get; set; }
+        public Extents Extents { get; set; }
 
         protected readonly List<EnemySpawn> _enemySpawns = new List<EnemySpawn>();
         public List<EnemySpawn> EnemySpawns => new List<EnemySpawn>(_enemySpawns);
@@ -44,6 +44,12 @@ namespace WorldObjects.Spaces
             {
                 AddBlockOverride(blockOverride.Key, blockOverride.Value);
             }
+        }
+
+        public Space(string name, Extents extents)
+        {
+            Extents = extents;
+            Name = name;
         }
 
         public BlockTypes GetBlockType(IntVector2 position)

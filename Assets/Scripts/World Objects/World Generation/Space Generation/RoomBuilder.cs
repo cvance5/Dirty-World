@@ -1,6 +1,7 @@
 ﻿using MathConcepts;
+using MathConcepts.Geometry;
+using System.Collections.Generic;
 using UnityEngine;
-using WorldObjects.Spaces;
 using Space = WorldObjects.Spaces.Space;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
@@ -168,6 +169,17 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
         }
 
-        protected override Space BuildRaw() => new Room(_bottomLeftCorner, _topRightCorner);
+        protected override Space BuildRaw()
+        {
+            var extents = new Extents(new List<IntVector2>()
+            {
+                new IntVector2(_bottomLeftCorner),
+                new IntVector2(_bottomLeftCorner.X, _topRightCorner.Y),
+                new IntVector2(_topRightCorner),
+                new IntVector2(_topRightCorner.X, _bottomLeftCorner.Y)
+            });
+
+            return new Space($"Room {SpaceNamer.GetName()}", extents);
+        }
     }
 }

@@ -3,7 +3,6 @@
 using Tools.SpaceCrafting;
 using UnityEditor;
 using UnityEngine;
-using WorldObjects.Spaces;
 
 namespace GizmoDrawers
 {
@@ -39,22 +38,7 @@ namespace GizmoDrawers
 
         private void DrawSpace(WorldObjects.Spaces.Space space, string prefixName = "")
         {
-            if (space is Tunnel)
-            {
-                Gizmos.color = Color.red;
-            }
-            else if (space is MonsterDen)
-            {
-                Gizmos.color = Color.white;
-            }
-            else if (space is TreasureRoom)
-            {
-                Gizmos.color = Color.yellow;
-            }
-            else if (space is Room)
-            {
-                Gizmos.color = Color.black;
-            }
+            Gizmos.color = SpaceColorUtility.GetOutlineColor(space);
             GizmoShapeDrawer.DrawByExtents(space.Extents);
             Handles.Label(space.Extents.Shapes[0].Vertices[0], $"{prefixName} {space.Name}");
         }

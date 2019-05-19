@@ -1,4 +1,5 @@
 ﻿using MathConcepts;
+using MathConcepts.Geometry;
 using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Spaces;
@@ -58,9 +59,14 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override Spaces.Space BuildRaw()
         {
-            var monsterDen = new MonsterDen(_centerpoint, _radius);
-            monsterDen.AddEnemySpawns(GenerateContainedEnemies());
-            return monsterDen;
+            var extents = new Extents(new List<IntVector2>()
+            {
+                new IntVector2(_centerpoint.X - _radius, _centerpoint.Y),
+                new IntVector2(_centerpoint.X, _centerpoint.Y + _radius),
+                new IntVector2(_centerpoint.X + _radius, _centerpoint.Y)
+            });
+
+            return new Spaces.Space($"Monster Den {SpaceNamer.GetName()}", extents);
         }
 
         public override int PassesBy(IntVector2 direction, int amount)

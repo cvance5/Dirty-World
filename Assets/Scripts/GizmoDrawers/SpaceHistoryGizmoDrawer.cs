@@ -34,7 +34,7 @@ namespace GizmoDrawers
 
         public void LogChange(WorldObjects.Spaces.Space current)
         {
-            _history.Add(new Extents(current.Extents));
+            _history.Add(new Extents(current.Extents.Shapes));
             _historyIndex = _history.Count - 1;
 
             _spaceName = current.Name;

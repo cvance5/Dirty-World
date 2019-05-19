@@ -9,19 +9,19 @@ namespace GizmoDrawers
     {
         public static Color GetOutlineColor(WorldObjects.Spaces.Space space)
         {
-            if (space is Tunnel)
+            if (space.Name.Contains("Tunnel"))
             {
                 return Color.red;
             }
-            else if (space is MonsterDen)
+            else if (space.Name.Contains("Monster Den"))
             {
                 return Color.white;
             }
-            else if (space is TreasureRoom)
+            else if (space.Name.Contains("Treasure Room"))
             {
                 return Color.yellow;
             }
-            else if (space is Room)
+            else if (space.Name.Contains("Room"))
             {
                 return Color.black;
             }

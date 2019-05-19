@@ -1,7 +1,6 @@
 ﻿using Characters;
 using Data.IO;
 using Data.Serialization;
-using Data.Serialization.SerializableSpaces;
 using MathConcepts;
 using System.Collections.Generic;
 using WorldObjects;
@@ -83,8 +82,8 @@ namespace Data
             foreach(var kvp in _dirtySpaces)
             {
                 var fileName = kvp.Key;
-                var data = SerializableSpaceHelper.ToSerializableSpace(kvp.Value).Serialize();
-                filesToWrite.Add(fileName, data);
+                var data = new SerializableSpace(kvp.Value);
+                filesToWrite.Add(fileName, data.Serialize());
             }
 
             var characterFile = new SerializableCharacter(CurrentCharacter);

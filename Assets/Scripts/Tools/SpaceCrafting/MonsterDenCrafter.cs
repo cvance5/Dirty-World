@@ -1,5 +1,8 @@
 ﻿using MathConcepts;
+using MathConcepts.Geometry;
+using System.Collections.Generic;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace Tools.SpaceCrafting
 {
@@ -25,11 +28,21 @@ namespace Tools.SpaceCrafting
 
         protected override void InitializeFromSpaceRaw(Space space)
         {
-            var monsterDen = space as MonsterDen;
-            transform.position = monsterDen.Centerpoint;
-            Radius = monsterDen.Radius;
+            var monsterDen = space;
+            transform.position = new UnityEngine.Vector3((space.Extents.Min.X + space.Extents.Max.X) / 2, space.Extents.Max.Y);
+            Radius = space.Extents.Max.Y - space.Extents.Min.Y;
         }
 
-        protected override Space RawBuild() => new MonsterDen(Centerpoint, Radius);
+        protected override Space RawBuild()
+        {
+            var extents = new Extents(new List<IntVector2>()
+            {
+                new IntVector2(Centerpoint.X - Radius, Centerpoint.Y),
+                new IntVector2(Centerpoint.X, Centerpoint.Y + Radius),
+                new IntVector2(Centerpoint.X + Radius, Centerpoint.Y)
+            });
+
+            return new Space($"Monster Den {SpaceNamer.GetName()}", extents);
+        }
     }
 }

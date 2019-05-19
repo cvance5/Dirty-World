@@ -1,6 +1,7 @@
 ﻿using MathConcepts;
+using MathConcepts.Geometry;
+using System.Collections.Generic;
 using UnityEngine;
-using WorldObjects.Spaces;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
@@ -204,7 +205,18 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
         }
 
-        protected override Spaces.Space BuildRaw() => new Tunnel(_bottom, new IntVector2(_top.X + _width, _top.Y));
+        protected override Spaces.Space BuildRaw()
+        {
+            var extents = new Extents(new List<IntVector2>()
+            {
+                new IntVector2(_bottom),
+                new IntVector2(_top),
+                new IntVector2(_top.X + _width, _top.Y),
+                new IntVector2(_bottom.X + _width, _bottom.Y)
+            });
+
+            return new Spaces.Space($"Shaft {SpaceNamer.GetName()}", extents);
+        }
 
         protected virtual void Rebuild()
         {

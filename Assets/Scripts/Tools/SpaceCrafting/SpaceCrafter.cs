@@ -10,6 +10,8 @@ namespace Tools.SpaceCrafting
 {
     public abstract class SpaceCrafter : MonoBehaviour
     {
+        public string Name;
+
         public abstract bool IsValid { get; }
 
         public abstract int MinX { get; }
@@ -27,6 +29,7 @@ namespace Tools.SpaceCrafting
 
         public void InitializeFromSpace(Space space)
         {
+            Name = space.Name;
             InitializeFromSpaceRaw(space);
 
             InitializeEnemySpawns(space.EnemySpawns);

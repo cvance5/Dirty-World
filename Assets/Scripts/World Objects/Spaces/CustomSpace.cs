@@ -1,4 +1,4 @@
-﻿using Data.Serialization.SerializableSpaces;
+﻿using Data.Serialization;
 using UnityEngine;
 
 namespace WorldObjects.Spaces

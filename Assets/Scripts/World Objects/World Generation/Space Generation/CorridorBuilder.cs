@@ -1,4 +1,5 @@
 ﻿using MathConcepts;
+using MathConcepts.Geometry;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -140,7 +141,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             position.X <= _rightEnd.X &&
             position.Y <= _leftEnd.Y + _height;
 
-        public override IntVector2 GetRandomPoint() => 
+        public override IntVector2 GetRandomPoint() =>
             new IntVector2(Chance.Range(_leftEnd.X, _rightEnd.X + 1),
                            Chance.Range(_leftEnd.Y, _leftEnd.Y + _height + 1));
 
@@ -223,9 +224,15 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override Spaces.Space BuildRaw()
         {
-            var corridor = new Tunnel(_leftEnd, new IntVector2(_rightEnd.X, _rightEnd.Y + _height));
-            corridor.AddEnemySpawns(GenerateContainedEnemies());
-            return corridor;
+            var extents = new Extents(new List<IntVector2>()
+            {
+                new IntVector2(_leftEnd),
+                new IntVector2(_leftEnd.X, _leftEnd.Y   + _height),
+                new IntVector2(_rightEnd.X, _rightEnd.Y + _height),
+                new IntVector2(_rightEnd)
+            });
+
+            return new Spaces.Space($"Corridor {SpaceNamer.GetName()}", extents);
         }
 
         private List<EnemySpawn> GenerateContainedEnemies()

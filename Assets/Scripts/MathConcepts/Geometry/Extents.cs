@@ -12,17 +12,17 @@ namespace MathConcepts.Geometry
         public IntVector2 Min { get; private set; }
         public Shape Perimeter { get; private set; }
 
-        public Extents() { }
-        public Extents(Extents other) => AddExtents(other);
+        public Extents(List<IntVector2> startingShape) => AddShape(new Shape(startingShape));
+        public Extents(List<Shape> shapes) => AddShapes(shapes);
 
-        public void AddExtents(Extents other)
+        public void AddShapes(List<Shape> shapes)
         {
-            foreach (var shape in other.Shapes)
+            foreach (var shape in shapes)
             {
-                AddShape(shape);
+                AddShape(new Shape(shape.Vertices));
             }
         }
-        public void AddShape(List<IntVector2> vertexes) => AddShape(new Shape(vertexes));
+
         private void AddShape(Shape shape)
         {
             if (_shapes.Contains(shape))

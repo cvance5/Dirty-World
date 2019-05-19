@@ -1,5 +1,5 @@
 ﻿using Data.IO;
-using Data.Serialization.SerializableSpaces;
+using Data.Serialization;
 using MathConcepts;
 using System;
 using System.Collections.Generic;

@@ -1,6 +1,8 @@
-﻿using Items;
-using MathConcepts;
+﻿using MathConcepts;
+using MathConcepts.Geometry;
+using System.Collections.Generic;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace Tools.SpaceCrafting
 {
@@ -20,8 +22,6 @@ namespace Tools.SpaceCrafting
         public override int MinY => BottomLeftCorner.Y;
         public override int MaxY => TopRightCorner.Y;
 
-        public Item[] Treasure = new Item[0];
-
         protected override void OnCrafterAwake()
         {
             gameObject.name = "Room";
@@ -32,20 +32,23 @@ namespace Tools.SpaceCrafting
 
         protected override void InitializeFromSpaceRaw(Space space)
         {
-            var room = space as Room;
-            transform.position = room.BottomLeftCorner;
-            Width = room.TopRightCorner.X - room.BottomLeftCorner.X;
-            Height = room.TopRightCorner.Y - room.BottomLeftCorner.Y;
-
-            if (space is TreasureRoom treasureRoom)
-            {
-                Treasure = treasureRoom.Treasure ?? new Item[0];
-            }
-            else Treasure = new Item[0];
+            var room = space;
+            transform.position = room.Extents.Min;
+            Width = room.Extents.Max.X - room.Extents.Min.X;
+            Height = room.Extents.Max.Y - room.Extents.Min.Y;
         }
 
-        protected override Space RawBuild() => Treasure.Length == 0
-                ? new Room(BottomLeftCorner, TopRightCorner)
-                : new TreasureRoom(BottomLeftCorner, TopRightCorner, Treasure);
+        protected override Space RawBuild()
+        {
+            var extents = new Extents(new List<IntVector2>()
+            {
+                new IntVector2(BottomLeftCorner),
+                new IntVector2(BottomLeftCorner.X, TopRightCorner.Y),
+                new IntVector2(TopRightCorner),
+                new IntVector2(TopRightCorner.X, BottomLeftCorner.Y)
+            });
+
+            return new Space($"Room {SpaceNamer.GetName()}", extents);
+        }
     }
 }

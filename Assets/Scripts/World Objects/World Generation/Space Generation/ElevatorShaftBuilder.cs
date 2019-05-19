@@ -1,7 +1,6 @@
 ﻿using MathConcepts;
 using System.Collections.Generic;
 using UnityEngine;
-using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration.FeatureGeneration;
 
 namespace WorldObjects.WorldGeneration.SpaceGeneration
@@ -159,7 +158,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 landings.Add(new IntVector2(_middle.X, _bottom.Y + landing));
             }
 
-            var shaft = new ElevatorShaft(_bottom, new IntVector2(_top.X + _width, _top.Y), landings);
+            var shaft = base.BuildRaw();
+            shaft.Name = $"Elevator {shaft.Name}";
             shaft.AddFeatureBuilder(_elevatorBuilder);
             return shaft;
         }
