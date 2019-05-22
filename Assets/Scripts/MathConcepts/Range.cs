@@ -24,5 +24,9 @@ namespace MathConcepts
         public bool IsInRange(int value) => (value >= Min && value <= Max);
 
         public int DistanceFromCenter(int value) => (int)Math.Abs(Center - value);
+
+        public Range ClampBetween(Range clamper) =>
+            new Range(clamper.Min < Min ? Min : clamper.Min,
+                      clamper.Max > Max ? Max : clamper.Max);
     }
 }
