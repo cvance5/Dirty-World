@@ -26,7 +26,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _storyHeight = Chance.Range(3, 7);
             _numberOfStories = Chance.Range(2, 7);
 
-            Rebuild();
+            Recalculate();
 
             SetElevatorSpawn(Chance.Range(0, _height - 1));
             _elevatorBuilder.SetPlatformSize(_width + 1);
@@ -58,7 +58,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             // If this height does not cleanly scale one of the other
             // fields, it will be reset in the rebuild
             _height = blockHigh;
-            Rebuild();
+            Recalculate();
 
             return this;
         }
@@ -72,7 +72,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public ElevatorShaftBuilder SetStoryHeight(int newStoryHeight)
         {
             _storyHeight = Mathf.Max(0, newStoryHeight);
-            Rebuild();
+            Recalculate();
             return this;
         }
 
@@ -85,7 +85,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public ElevatorShaftBuilder SetNumberOfStories(int newNumberOfStories)
         {
             _numberOfStories = Mathf.Max(0, newNumberOfStories);
-            Rebuild();
+            Recalculate();
             return this;
         }
 
@@ -164,13 +164,13 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return shaft;
         }
 
-        protected override void Rebuild()
+        protected override void Recalculate()
         {
             _height = _storyHeight * _numberOfStories;
 
             _landings.RemoveAll(landing => landing % _storyHeight != 0 || landing >= _height);
 
-            base.Rebuild();
+            base.Recalculate();
 
             _elevatorBuilder.SetRail(_bottom, _top);
         }

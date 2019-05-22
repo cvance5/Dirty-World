@@ -15,6 +15,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         protected Dictionary<IntVector2, int> _boundedDirections { get; private set; } =
               new Dictionary<IntVector2, int>();
 
+        protected Dictionary<IntVector2, int> _maximalValues { get; private set; } =
+              new Dictionary<IntVector2, int>();
+
+        public Dictionary<IntVector2, int> MaximalValues => new Dictionary<IntVector2, int>(_maximalValues);
+
         protected readonly List<ModifierTypes> _modifiersApplied = new List<ModifierTypes>();
 
         // Used reflectively via Activator
@@ -72,8 +77,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         }
 
         public abstract void Shift(IntVector2 shift);
-
-        public abstract int PassesBy(IntVector2 direction, int amount);
         public abstract bool Contains(IntVector2 point);
         public bool IntersectsWith(SpaceBuilder other) =>
                !(other is null) &&
@@ -82,16 +85,40 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
              // If any of my edges is beyond your opposite edge, we do not intersect
              // Otherwise, we do.
              // This method only works if we don't have spaces with gaps in the middle
-             !(GetMaximalValue(Directions.Up) <= other.GetMaximalValue(Directions.Down) ||
-               GetMaximalValue(Directions.Right) <= other.GetMaximalValue(Directions.Left) ||
-               GetMaximalValue(Directions.Down) >= other.GetMaximalValue(Directions.Up) ||
-               GetMaximalValue(Directions.Left) >= other.GetMaximalValue(Directions.Right));
+             !(_maximalValues[Directions.Up] <= other._maximalValues[Directions.Down] ||
+               _maximalValues[Directions.Right] <= other._maximalValues[Directions.Left] ||
+               _maximalValues[Directions.Down] >= other._maximalValues[Directions.Up] ||
+               _maximalValues[Directions.Left] >= other._maximalValues[Directions.Right]);
 
+        public int PassesBy(IntVector2 direction, int amount)
+        {
+            if (!_maximalValues.TryGetValue(direction, out var maximalValue))
+            {
+                throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+            }
 
-        public abstract IntVector2 GetRandomPoint();
-        public abstract int GetMaximalValue(IntVector2 direction);
+            var difference = 0;
+            if (direction == Directions.Up || direction == Directions.Right)
+            {
+                difference = maximalValue - amount;
+            }
+            else if (direction == Directions.Down || direction == Directions.Left)
+            {
+                difference = amount - maximalValue;
+            }
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
 
-        public abstract SpaceBuilder Align(IntVector2 direction, int amount);
+            return UnityEngine.Mathf.Min(difference, 0);
+        }
+
+        public SpaceBuilder Align(IntVector2 direction, int amount)
+        {
+            var difference = _maximalValues[direction];
+            Shift(direction * amount);
+
+            return this;
+        }
+
         public abstract void Clamp(IntVector2 direction, int amount);
         public abstract void Cut(IntVector2 direction, int amount);
 
@@ -122,6 +149,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         }
 
         protected abstract Space BuildRaw();
+        protected abstract void Recalculate();
 
         private static readonly Log _log = new Log("SpaceBuilder");
     }

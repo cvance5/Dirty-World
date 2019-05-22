@@ -25,7 +25,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _centerpoint = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
                                           Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
 
-            Rebuild();
+            Recalculate();
         }
 
         public RoomBuilder(RoomBuilder roomBuilder)
@@ -37,7 +37,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             _modifiersApplied.AddRange(roomBuilder._modifiersApplied);
 
-            Rebuild();
+            Recalculate();
         }
 
         public override void Shift(IntVector2 shift) => SetCenter(_centerpoint + shift);
@@ -46,7 +46,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _centerpoint = centerofRoom;
 
-            Rebuild();
+            Recalculate();
 
             return this;
         }
@@ -55,7 +55,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _size = Mathf.Max(0, size);
 
-            Rebuild();
+            Recalculate();
 
             return this;
         }
@@ -67,86 +67,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        protected void Rebuild()
-        {
-            // Odd numbers don't divide by 2 and will result in weird values,
-            // so this ensures the size is always right
-            var halfSize = _size / 2;
-            _bottomLeftCorner = new IntVector2(_centerpoint.X - halfSize, _centerpoint.Y - halfSize);
-            _topRightCorner = new IntVector2(_centerpoint.X + _size - halfSize, _centerpoint.Y + _size - halfSize);
-
-            OnSpaceBuilderChanged.Raise(this);
-        }
-
-        public override int PassesBy(IntVector2 direction, int amount)
-        {
-            var difference = 0;
-
-            if (direction == Directions.Up)
-            {
-                difference = _topRightCorner.Y - amount;
-            }
-            else if (direction == Directions.Right)
-            {
-                difference = (_topRightCorner.X) - amount;
-            }
-            else if (direction == Directions.Down)
-            {
-                difference = amount - _bottomLeftCorner.Y;
-            }
-            else if (direction == Directions.Left)
-            {
-                difference = amount - _bottomLeftCorner.X;
-            }
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-
-            return Mathf.Max(0, difference);
-        }
-
         public override bool Contains(IntVector2 position) =>
             position.X >= _bottomLeftCorner.X &&
             position.X <= _topRightCorner.X &&
             position.Y >= _bottomLeftCorner.Y &&
             position.Y <= _topRightCorner.Y;
-
-        public override IntVector2 GetRandomPoint() =>
-            new IntVector2(Chance.Range(_bottomLeftCorner.X, _topRightCorner.X + 1),
-                           Chance.Range(_bottomLeftCorner.Y, _topRightCorner.Y + 1));
-
-        public override int GetMaximalValue(IntVector2 direction)
-        {
-            if (direction == Directions.Up) return _topRightCorner.Y;
-            else if (direction == Directions.Right) return _topRightCorner.X;
-            else if (direction == Directions.Down) return _bottomLeftCorner.Y;
-            else if (direction == Directions.Left) return _bottomLeftCorner.X;
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-        }
-
-        public override SpaceBuilder Align(IntVector2 direction, int amount)
-        {
-            var halfsize = _size / 2;
-            if (direction == Directions.Up)
-            {
-                _centerpoint.Y = amount - (_size - halfsize);
-            }
-            else if (direction == Directions.Right)
-            {
-                _centerpoint.X = amount - (_size - halfsize);
-            }
-            else if (direction == Directions.Down)
-            {
-                _centerpoint.Y = amount + halfsize;
-            }
-            else if (direction == Directions.Left)
-            {
-                _centerpoint.X = amount + halfsize;
-            }
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-
-            Rebuild();
-
-            return this;
-        }
 
         public override void Clamp(IntVector2 direction, int amount)
         {
@@ -171,15 +96,31 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override Space BuildRaw()
         {
-            var extents = new Extents(new List<IntVector2>()
+            var extents = new Extents(new Shape(new List<IntVector2>()
             {
                 new IntVector2(_bottomLeftCorner),
                 new IntVector2(_bottomLeftCorner.X, _topRightCorner.Y),
                 new IntVector2(_topRightCorner),
                 new IntVector2(_topRightCorner.X, _bottomLeftCorner.Y)
-            });
+            }));
 
             return new Space($"Room {SpaceNamer.GetName()}", extents);
+        }
+
+        protected override void Recalculate()
+        {
+            // Odd numbers don't divide by 2 and will result in weird values,
+            // so this ensures the size is always right
+            var halfSize = _size / 2;
+            _bottomLeftCorner = new IntVector2(_centerpoint.X - halfSize, _centerpoint.Y - halfSize);
+            _topRightCorner = new IntVector2(_centerpoint.X + _size - halfSize, _centerpoint.Y + _size - halfSize);
+
+            _maximalValues[Directions.Up] = _topRightCorner.Y;
+            _maximalValues[Directions.Right] = _topRightCorner.X;
+            _maximalValues[Directions.Down] = _bottomLeftCorner.Y;
+            _maximalValues[Directions.Left] = _bottomLeftCorner.X;
+
+            OnSpaceBuilderChanged.Raise(this);
         }
     }
 }

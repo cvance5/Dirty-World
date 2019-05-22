@@ -69,7 +69,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
 
             _alignment = alignment;
-            Rebuild();
+            Recalculate();
 
             return this;
         }
@@ -78,7 +78,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _length = blocksLong;
             _length = Mathf.Max(0, _length);
-            Rebuild();
+            Recalculate();
             return this;
         }
 
@@ -92,7 +92,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _height = blocksHigh;
             _height = Mathf.Max(0, _height);
-            Rebuild();
+            Recalculate();
             return this;
         }
 
@@ -114,76 +114,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public override int PassesBy(IntVector2 direction, int amount)
-        {
-            if (direction == Directions.Up)
-            {
-                return (_leftEnd.Y + _height) - amount;
-            }
-            else if (direction == Directions.Right)
-            {
-                return _rightEnd.X - amount;
-            }
-            else if (direction == Directions.Down)
-            {
-                return amount - _rightEnd.Y;
-            }
-            else if (direction == Directions.Left)
-            {
-                return amount - _leftEnd.X;
-            }
-            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-        }
-
         public override bool Contains(IntVector2 position) =>
             position.X >= _leftEnd.X &&
             position.Y >= _leftEnd.Y &&
             position.X <= _rightEnd.X &&
             position.Y <= _leftEnd.Y + _height;
-
-        public override IntVector2 GetRandomPoint() =>
-            new IntVector2(Chance.Range(_leftEnd.X, _rightEnd.X + 1),
-                           Chance.Range(_leftEnd.Y, _leftEnd.Y + _height + 1));
-
-        public override int GetMaximalValue(IntVector2 direction)
-        {
-            if (direction == Directions.Up) return _leftEnd.Y + _height;
-            else if (direction == Directions.Right) return _rightEnd.X;
-            else if (direction == Directions.Down) return _leftEnd.Y;
-            else if (direction == Directions.Left) return _leftEnd.X;
-            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-        }
-
-        public override SpaceBuilder Align(IntVector2 direction, int amount)
-        {
-            if (direction == Directions.Up)
-            {
-                _leftEnd.Y = amount - _height;
-                _center.Y = amount - _height;
-                _rightEnd.Y = amount - _height;
-            }
-            else if (direction == Directions.Right)
-            {
-                _rightEnd.X = amount;
-                _alignment = CorridorAlignment.StartFromRight; // We have to enforce this boundary
-            }
-            else if (direction == Directions.Down)
-            {
-                _leftEnd.Y = amount;
-                _center.Y = amount;
-                _rightEnd.Y = amount;
-            }
-            else if (direction == Directions.Left)
-            {
-                _leftEnd.X = Mathf.Max(_leftEnd.X, amount);
-                _alignment = CorridorAlignment.StartFromLeft; // We have to enforce this boundary
-            }
-            else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-
-            Rebuild();
-
-            return this;
-        }
 
         public override void Clamp(IntVector2 direction, int amount)
         {
@@ -224,45 +159,18 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override Spaces.Space BuildRaw()
         {
-            var extents = new Extents(new List<IntVector2>()
+            var extents = new Extents(new Shape(new List<IntVector2>()
             {
                 new IntVector2(_leftEnd),
                 new IntVector2(_leftEnd.X, _leftEnd.Y   + _height),
                 new IntVector2(_rightEnd.X, _rightEnd.Y + _height),
                 new IntVector2(_rightEnd)
-            });
+            }));
 
             return new Spaces.Space($"Corridor {SpaceNamer.GetName()}", extents);
         }
 
-        private List<EnemySpawn> GenerateContainedEnemies()
-        {
-            var containedEnemies = new List<EnemySpawn>();
-
-            if (_allowEnemies)
-            {
-                var riskPoints = EnemyPicker.DetermineRiskPoints(_chunkBuilder.Depth, _chunkBuilder.Remoteness);
-                riskPoints += _extraRiskPoints;
-
-                var enemies = EnemyPicker.RequestEnemies(riskPoints, new EnemyRequestCriteria()
-                {
-                    HeightsAllowed = new Range(0, _height),
-                    LengthsAllowed = new Range(0, _length)
-                });
-
-                foreach (var enemy in enemies)
-                {
-                    var xPos = Chance.Range(_leftEnd.X, _rightEnd.X);
-                    var position = new IntVector2(xPos, _leftEnd.Y);
-
-                    containedEnemies.Add(new EnemySpawn(position, enemy));
-                }
-            }
-
-            return containedEnemies;
-        }
-
-        private void Rebuild()
+        protected override void Recalculate()
         {
             switch (_alignment)
             {
@@ -292,7 +200,39 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     break;
             }
 
+            _maximalValues[Directions.Up] = _leftEnd.Y + _height;
+            _maximalValues[Directions.Right] = _rightEnd.X;
+            _maximalValues[Directions.Down] = _rightEnd.Y;
+            _maximalValues[Directions.Left] = _leftEnd.X;
+
             OnSpaceBuilderChanged.Raise(this);
+        }
+
+        private List<EnemySpawn> GenerateContainedEnemies()
+        {
+            var containedEnemies = new List<EnemySpawn>();
+
+            if (_allowEnemies)
+            {
+                var riskPoints = EnemyPicker.DetermineRiskPoints(_chunkBuilder.Depth, _chunkBuilder.Remoteness);
+                riskPoints += _extraRiskPoints;
+
+                var enemies = EnemyPicker.RequestEnemies(riskPoints, new EnemyRequestCriteria()
+                {
+                    HeightsAllowed = new Range(0, _height),
+                    LengthsAllowed = new Range(0, _length)
+                });
+
+                foreach (var enemy in enemies)
+                {
+                    var xPos = Chance.Range(_leftEnd.X, _rightEnd.X);
+                    var position = new IntVector2(xPos, _leftEnd.Y);
+
+                    containedEnemies.Add(new EnemySpawn(position, enemy));
+                }
+            }
+
+            return containedEnemies;
         }
 
         public enum CorridorAlignment

@@ -37,7 +37,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _middle += shift;
             _bottom += shift;
 
-            OnSpaceBuilderChanged.Raise(this);
+            Recalculate();
         }
 
         public ShaftBuilder SetStartingPoint(IntVector2 startingPoint, IntVector2 direction)
@@ -64,14 +64,14 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             _alignment = alignment;
 
-            Rebuild();
+            Recalculate();
             return this;
         }
 
         public virtual ShaftBuilder SetWidth(int blocksWide)
         {
             _width = Mathf.Max(0, blocksWide);
-            Rebuild();
+            Recalculate();
             return this;
         }
 
@@ -84,7 +84,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public virtual ShaftBuilder SetHeight(int blockHigh)
         {
             _height = Mathf.Max(0, blockHigh);
-            Rebuild();
+            Recalculate();
             return this;
         }
 
@@ -94,79 +94,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public override int PassesBy(IntVector2 direction, int amount)
-        {
-            var difference = 0;
-
-            if (direction == Directions.Up)
-            {
-                difference = _top.Y - amount;
-            }
-            else if (direction == Directions.Right)
-            {
-                difference = (_top.X + _width) - amount;
-            }
-            else if (direction == Directions.Down)
-            {
-                difference = amount - _bottom.Y;
-            }
-            else if (direction == Directions.Left)
-            {
-                difference = amount - _bottom.X;
-            }
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-
-            return Mathf.Max(0, difference);
-        }
-
         public override bool Contains(IntVector2 position) =>
             position.X >= _bottom.X &&
             position.X <= _bottom.X + _width &&
             position.Y >= _bottom.Y &&
             position.Y <= _top.Y;
-
-        public override IntVector2 GetRandomPoint() =>
-            new IntVector2(Chance.Range(_bottom.X, _bottom.X + _width + 1),
-                           Chance.Range(_bottom.Y, _top.Y + 1));
-
-        public override int GetMaximalValue(IntVector2 direction)
-        {
-            if (direction == Directions.Up) return _top.Y;
-            else if (direction == Directions.Right) return _top.X + _width;
-            else if (direction == Directions.Down) return _bottom.Y;
-            else if (direction == Directions.Left) return _top.X;
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-        }
-
-        public override SpaceBuilder Align(IntVector2 direction, int amount)
-        {
-            if (direction == Directions.Up)
-            {
-                _top.Y = amount;
-                _alignment = ShaftAlignment.StartFromTop; // We have to enforce this boundary
-            }
-            else if (direction == Directions.Right)
-            {
-                _bottom.X = amount - _width;
-                _middle.X = amount - _width;
-                _top.X = amount - _width;
-            }
-            else if (direction == Directions.Down)
-            {
-                _bottom.Y = amount;
-                _alignment = ShaftAlignment.StartFromBottom; // We have to enforce this boundary
-            }
-            else if (direction == Directions.Left)
-            {
-                _bottom.X = amount;
-                _middle.X = amount;
-                _top.X = amount;
-            }
-
-            Rebuild();
-
-            return this;
-        }
 
         public override void Clamp(IntVector2 direction, int amount)
         {
@@ -207,18 +139,18 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override Spaces.Space BuildRaw()
         {
-            var extents = new Extents(new List<IntVector2>()
+            var extents = new Extents(new Shape(new List<IntVector2>()
             {
                 new IntVector2(_bottom),
                 new IntVector2(_top),
                 new IntVector2(_top.X + _width, _top.Y),
                 new IntVector2(_bottom.X + _width, _bottom.Y)
-            });
+            }));
 
             return new Spaces.Space($"Shaft {SpaceNamer.GetName()}", extents);
         }
 
-        protected virtual void Rebuild()
+        protected override void Recalculate()
         {
             switch (_alignment)
             {
@@ -247,6 +179,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     }
                     break;
             }
+
+            _maximalValues[Directions.Up] = _top.Y;
+            _maximalValues[Directions.Right] = _top.X + _width;
+            _maximalValues[Directions.Down] = _bottom.Y;
+            _maximalValues[Directions.Left] = _bottom.X;
 
             OnSpaceBuilderChanged.Raise(this);
         }

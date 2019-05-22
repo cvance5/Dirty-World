@@ -24,15 +24,22 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                                           Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
 
             _radius = Chance.Range(8, 20);
-            OnSpaceBuilderChanged.Raise(this);
+
+            Recalculate();
         }
 
-        public override void Shift(IntVector2 shift) => _centerpoint += shift;
+        public override void Shift(IntVector2 shift)
+        {
+            _centerpoint += shift;
+            Recalculate();
+        }
 
         public MonsterDenBuilder SetCenterpoint(IntVector2 centerpoint)
         {
             _centerpoint = centerpoint;
-            OnSpaceBuilderChanged.Raise(this);
+
+            Recalculate();
+
             return this;
         }
 
@@ -41,7 +48,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _radius = radius;
             _radius = Mathf.Max(0, _radius);
             if (_radius == 0) SetAllowEnemies(false);
-            OnSpaceBuilderChanged.Raise(this);
+
+            Recalculate();
             return this;
         }
 
@@ -59,39 +67,14 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override Spaces.Space BuildRaw()
         {
-            var extents = new Extents(new List<IntVector2>()
+            var extents = new Extents(new Shape(new List<IntVector2>()
             {
                 new IntVector2(_centerpoint.X - _radius, _centerpoint.Y),
                 new IntVector2(_centerpoint.X, _centerpoint.Y + _radius),
                 new IntVector2(_centerpoint.X + _radius, _centerpoint.Y)
-            });
+            }));
 
             return new Spaces.Space($"Monster Den {SpaceNamer.GetName()}", extents);
-        }
-
-        public override int PassesBy(IntVector2 direction, int amount)
-        {
-            var difference = 0;
-
-            if (direction == Directions.Up)
-            {
-                difference = (_centerpoint.Y + _radius) - amount;
-            }
-            else if (direction == Directions.Right)
-            {
-                difference = (_centerpoint.X + _radius) - amount;
-            }
-            else if (direction == Directions.Down)
-            {
-                difference = amount - _centerpoint.Y;
-            }
-            else if (direction == Directions.Left)
-            {
-                difference = amount - (_centerpoint.X - _radius);
-            }
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-
-            return Mathf.Max(0, difference);
         }
 
         public override bool Contains(IntVector2 position)
@@ -110,47 +93,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
         }
 
-        public override IntVector2 GetRandomPoint()
-        {
-            var randomX = Chance.Range(_centerpoint.X - _radius, _centerpoint.X + _radius + 1);
-            var randomY = Chance.Range(_centerpoint.Y, _centerpoint.Y + (_radius - DistanceFromCenterpoint(randomX)));
-            return new IntVector2(randomX, randomY);
-        }
-
-        public override int GetMaximalValue(IntVector2 direction)
-        {
-            if (direction == Directions.Up) return _centerpoint.Y + _radius;
-            else if (direction == Directions.Right) return _centerpoint.X + _radius;
-            else if (direction == Directions.Down) return _centerpoint.Y;
-            else if (direction == Directions.Left) return _centerpoint.X - _radius;
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-        }
-
-        public override SpaceBuilder Align(IntVector2 direction, int amount)
-        {
-            if (direction == Directions.Up)
-            {
-                _centerpoint.Y = amount - _radius;
-            }
-            else if (direction == Directions.Right)
-            {
-                _centerpoint.X = amount - _radius;
-            }
-            else if (direction == Directions.Down)
-            {
-                _centerpoint.Y = amount;
-            }
-            else if (direction == Directions.Left)
-            {
-                _centerpoint.X = amount + _radius;
-            }
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
-
-            OnSpaceBuilderChanged.Raise(this);
-
-            return this;
-        }
-
         public override void Clamp(IntVector2 direction, int amount)
         {
             var difference = PassesBy(direction, amount);
@@ -167,6 +109,16 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             SetRadius(_radius - difference);
             Clamp(direction, amount);
+        }
+
+        protected override void Recalculate()
+        {
+            _maximalValues[Directions.Up] = _centerpoint.Y + _radius;
+            _maximalValues[Directions.Right] = _centerpoint.X + _radius;
+            _maximalValues[Directions.Down] = _centerpoint.Y;
+            _maximalValues[Directions.Left] = _centerpoint.X - _radius;
+
+            OnSpaceBuilderChanged.Raise(this);
         }
 
         private List<EnemySpawn> GenerateContainedEnemies()
