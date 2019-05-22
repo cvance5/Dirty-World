@@ -10,16 +10,17 @@ namespace MathConcepts.Geometry
 
         public IntVector2 Max { get; private set; }
         public IntVector2 Min { get; private set; }
-        public Shape Perimeter { get; private set; }
 
-        public Extents(List<IntVector2> startingShape) => AddShape(new Shape(startingShape));
-        public Extents(List<Shape> shapes) => AddShapes(shapes);
+        public Extents(Shape startingShape)
+        {
+            AddShape(startingShape);
+        }
 
-        public void AddShapes(List<Shape> shapes)
+        public Extents(List<Shape> shapes)
         {
             foreach (var shape in shapes)
             {
-                AddShape(new Shape(shape.Vertices));
+                AddShape(shape);
             }
         }
 
@@ -35,14 +36,12 @@ namespace MathConcepts.Geometry
 
                 if (_shapes.Count == 1)
                 {
-                    Perimeter = shape;
                     Max = new IntVector2(shape.Max);
                     Min = new IntVector2(shape.Min);
 
                 }
                 else
                 {
-                    Perimeter = Shape.Intersect(Perimeter, shape);
                     if (shape.Max.X > Max.X) Max.X = shape.Max.X;
                     if (shape.Max.Y > Max.Y) Max.Y = shape.Max.Y;
                     if (shape.Min.X < Min.X) Min.X = shape.Min.X;

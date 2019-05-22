@@ -77,45 +77,5 @@ namespace Tests.SpaceTests
             Assert.False(triangleContainsOne.Contains(new IntVector2(0, -1)));
             Assert.False(triangleContainsOne.Contains(new IntVector2(0, -4)));
         }
-
-        [Test]
-        public void ShapeIntersectsTest()
-        {
-            var squareIntersectsOne = new Shape(new List<IntVector2>()
-            {
-                new IntVector2(-2, -2),
-                new IntVector2(-2, 2),
-                new IntVector2(2, 2),
-                new IntVector2(2, -2)
-            });
-
-            var squareIntersectsTwo = new Shape(new List<IntVector2>()
-            {
-                new IntVector2(-1, -3),
-                new IntVector2(-1, 3),
-                new IntVector2(1, 3),
-                new IntVector2(1, -3)
-            });
-
-            var squaresIntersectTest = Shape.Intersect(squareIntersectsOne, squareIntersectsTwo);
-
-            var squareIntersectsExpected = new Shape(new List<IntVector2>()
-            {
-                new IntVector2(-2, -2),
-                new IntVector2(-2, 2),
-                new IntVector2(-1, 2),
-                new IntVector2(-1, 3),
-                new IntVector2(1, 3),
-                new IntVector2(1, 2),
-                new IntVector2(2, 2),
-                new IntVector2(2, -2),
-                new IntVector2(1, -2),
-                new IntVector2(1, -3),
-                new IntVector2(-1, -3),
-                new IntVector2(-1, -2)
-            });
-
-            Assert.AreEqual(squareIntersectsExpected, squaresIntersectTest);
-        }
     }
 }

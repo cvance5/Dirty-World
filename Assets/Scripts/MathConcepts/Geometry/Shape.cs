@@ -54,65 +54,14 @@ namespace MathConcepts.Geometry
             return true;
         }
 
-        public static Shape Intersect(Shape shapeOne, Shape shapeTwo)
+        public static bool DoesIntersect(Shape shapeOne, Shape shapeTwo)
         {
-            var result = new List<IntVector2>();
-
-            var currentShape = shapeOne;
-            var otherShape = shapeTwo;
-            var currentSegment = currentShape._segments[0];
-            result.Add(currentSegment.Start);
-
-            do
+            foreach (var vertex in shapeOne.Vertices)
             {
-                IntVector2 intersection = null;
-                Segment intersectingSegment = null;
-                var intersectionDistance = float.MaxValue;
-                foreach (var otherSegment in otherShape._segments)
-                {
-                    var point = Segment.Intersect(currentSegment, otherSegment);
-
-                    if (point != null)
-                    {
-                        var pointDistance = IntVector2.Distance(point, currentSegment.Start);
-                        if (pointDistance < intersectionDistance)
-                        {
-                            intersection = point;
-                            intersectingSegment = otherSegment;
-                            intersectionDistance = pointDistance;
-                        }
-                    }
-                }
-
-                if (intersection == null)
-                {
-                    result.Add(currentSegment.End);
-                    currentSegment = currentShape._segments.LoopedNext(currentSegment);
-                }
-                else
-                {
-                    result.Add(intersection);
-                    result.Add(intersectingSegment.End);
-
-                    currentSegment = otherShape.Segments.LoopedNext(intersectingSegment);
-
-                    var swap = currentShape;
-                    currentShape = otherShape;
-                    otherShape = swap;
-                }
-
-            } while (result[0] != result[result.Count - 1]);
-
-            // Trim the last one vertex
-            result.RemoveAt(result.Count - 1);
-
-            var intersectedShape = new Shape(result);
-
-            if (intersectedShape == shapeOne || intersectedShape == shapeTwo)
-            {
-                throw new System.Exception($"Shapes do not intersect.");
+                if (shapeTwo.Contains(vertex)) return true;
             }
-            else return intersectedShape;
+
+            return false;
         }
 
         // http://www.eecs.umich.edu/courses/eecs380/HANDOUTS/PROJ2/InsidePoly.html

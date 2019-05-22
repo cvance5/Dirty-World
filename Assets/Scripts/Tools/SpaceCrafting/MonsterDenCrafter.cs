@@ -35,12 +35,12 @@ namespace Tools.SpaceCrafting
 
         protected override Space RawBuild()
         {
-            var extents = new Extents(new List<IntVector2>()
+            var extents = new Extents(new Shape(new List<IntVector2>()
             {
                 new IntVector2(Centerpoint.X - Radius, Centerpoint.Y),
                 new IntVector2(Centerpoint.X, Centerpoint.Y + Radius),
                 new IntVector2(Centerpoint.X + Radius, Centerpoint.Y)
-            });
+            }));
 
             return new Space($"Monster Den {SpaceNamer.GetName()}", extents);
         }

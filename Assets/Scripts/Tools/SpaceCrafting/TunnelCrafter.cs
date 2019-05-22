@@ -40,13 +40,13 @@ namespace Tools.SpaceCrafting
 
         protected override Space RawBuild()
         {
-            var extents = new Extents(new List<IntVector2>()
+            var extents = new Extents(new Shape(new List<IntVector2>()
             {
                 new IntVector2(BottomLeftCorner),
                 new IntVector2(BottomLeftCorner.X, TopRightCorner.Y),
                 new IntVector2(TopRightCorner),
                 new IntVector2(TopRightCorner.X, BottomLeftCorner.Y)
-            });
+            }));
 
             return new Space($"Tunnel {SpaceNamer.GetName()}", extents);
         }

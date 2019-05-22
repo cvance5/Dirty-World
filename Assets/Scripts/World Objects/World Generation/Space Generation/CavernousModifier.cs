@@ -25,21 +25,24 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             var totalTestedPositions = 0;
 
-            foreach (var segment in modifiedSpace.Extents.Perimeter.Segments)
+            foreach (var shape in _modifiedSpace.Extents.Shapes)
             {
-                var direction = (segment.End - segment.Start);
-                var unitPerStep = direction.Normalized;
-
-                for (var step = 0; step < direction.Magnitude; step++)
+                foreach (var segment in shape.Segments)
                 {
-                    totalTestedPositions++;
-                    var testPosition = new IntVector2(segment.Start + (unitPerStep * step));
+                    var direction = (segment.End - segment.Start);
+                    var unitPerStep = direction.Normalized;
 
-                    // If this block is not already filled, check to see if we are at the top or bottom 
-                    // edge of the space, and tell the StalagBuilder to go the other way.
-                    if (modifiedSpace.GetBlockType(testPosition) != BlockTypes.None) continue;
-                    else if (modifiedSpace.Extents.Contains(testPosition + Directions.Down)) stalagBuilders.Add(new StalagBuilder(testPosition, Directions.Down, modifiedSpace));
-                    else if (modifiedSpace.Extents.Contains(testPosition + Directions.Up)) stalagBuilders.Add(new StalagBuilder(testPosition, Directions.Up, modifiedSpace));
+                    for (var step = 0; step < direction.Magnitude; step++)
+                    {
+                        totalTestedPositions++;
+                        var testPosition = new IntVector2(segment.Start + (unitPerStep * step));
+
+                        // If this block is not already filled, check to see if we are at the top or bottom 
+                        // edge of the space, and tell the StalagBuilder to go the other way.
+                        if (modifiedSpace.GetBlockType(testPosition) != BlockTypes.None) continue;
+                        else if (modifiedSpace.Extents.Contains(testPosition + Directions.Down)) stalagBuilders.Add(new StalagBuilder(testPosition, Directions.Down, modifiedSpace));
+                        else if (modifiedSpace.Extents.Contains(testPosition + Directions.Up)) stalagBuilders.Add(new StalagBuilder(testPosition, Directions.Up, modifiedSpace));
+                    }
                 }
             }
 
