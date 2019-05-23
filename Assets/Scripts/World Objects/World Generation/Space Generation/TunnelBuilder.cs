@@ -41,6 +41,18 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
+        public TunnelBuilder TrimToLength(int maximumLength)
+        {
+            if (_length > maximumLength)
+            {
+                _length = maximumLength;
+
+                Recalculate();
+            }
+
+            return this;
+        }
+
         public TunnelBuilder SetMinimumLength(int minLength)
         {
             _minLength = minLength;
@@ -50,9 +62,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public TunnelBuilder SetWidth(int width)
         {
-            _width = width;
+            if (_width != width)
+            {
+                _width = width;
 
-            Recalculate();
+                Recalculate();
+            }
 
             return this;
         }
@@ -66,18 +81,43 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public TunnelBuilder SetRotation(float rotation)
         {
-            _rotation = Quaternion.Euler(0, 0, rotation);
+            var quatRotation = Quaternion.Euler(0, 0, rotation);
 
-            Recalculate();
+            if (_rotation != quatRotation)
+            {
+                _rotation = quatRotation;
+
+                Recalculate();
+            }
+
+            return this;
+        }
+
+        public TunnelBuilder SetRotation(Quaternion rotation)
+        {
+            if (_rotation.eulerAngles.x != 0 ||
+               _rotation.eulerAngles.y != 0)
+            {
+                throw new System.ArgumentOutOfRangeException($"Tunnels cannot rotate on any non-Z axis.");
+            }
+            else if (_rotation != rotation)
+            {
+                _rotation = rotation;
+
+                Recalculate();
+            }
 
             return this;
         }
 
         public TunnelBuilder SetOrigin(IntVector2 origin)
         {
-            _origin = origin;
+            if (_origin != origin)
+            {
+                _origin = origin;
 
-            Recalculate();
+                Recalculate();
+            }
 
             return this;
         }
@@ -90,46 +130,51 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public override void Cut(IntVector2 direction, int amount)
         {
-            if (direction == Directions.Up)
-            {
-                if (_origin.Y > _offset.Y)
-                {
-                    _origin.Y = amount;
-                }
-                else _offset.Y = amount;
-            }
-            else if (direction == Directions.Right)
-            {
-                if (_origin.X > _offset.X)
-                {
-                    _origin.X = amount;
-                }
-                else _offset.X = amount;
-            }
-            else if (direction == Directions.Down)
-            {
-                if (_origin.Y < _offset.Y)
-                {
-                    _origin.Y = amount;
-                }
-                else _offset.Y = amount;
-            }
-            else if (direction == Directions.Left)
-            {
-                if (_origin.X < _offset.X)
-                {
-                    _origin.X = amount;
-                }
-                else _offset.X = amount;
-            }
-            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+            var difference = PassesBy(direction, amount);
 
-            var unrotatedOffset = new IntVector2(Quaternion.Inverse(_rotation) * (Vector2)_offset);
+            if (difference > 0)
+            {
+                if (direction == Directions.Up)
+                {
+                    if (_origin.Y > _offset.Y)
+                    {
+                        _origin.Y = amount;
+                    }
+                    else _offset.Y = amount;
+                }
+                else if (direction == Directions.Right)
+                {
+                    if (_origin.X > _offset.X)
+                    {
+                        _origin.X = amount;
+                    }
+                    else _offset.X = amount;
+                }
+                else if (direction == Directions.Down)
+                {
+                    if (_origin.Y < _offset.Y)
+                    {
+                        _origin.Y = amount;
+                    }
+                    else _offset.Y = amount;
+                }
+                else if (direction == Directions.Left)
+                {
+                    if (_origin.X < _offset.X)
+                    {
+                        _origin.X = amount;
+                    }
+                    else _offset.X = amount;
+                }
+                else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
 
-            _length = _origin.X - unrotatedOffset.X;
-            _width = _origin.Y - unrotatedOffset.Y;
+                var unrotatedOffset = new IntVector2(Quaternion.Inverse(_rotation) * (Vector2)_offset);
 
-            Recalculate();
+                _length = _origin.X - unrotatedOffset.X;
+                _width = _origin.Y - unrotatedOffset.Y;
+
+                Recalculate();
+            }
         }
 
         protected override Spaces.Space BuildRaw()
