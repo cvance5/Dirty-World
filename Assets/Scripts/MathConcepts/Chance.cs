@@ -14,7 +14,7 @@ namespace MathConcepts
 
         public static double Percent => _rand.NextDouble();
 
-        public static int RandomSignFlip(int value) => CoinFlip ? value : value *= -1;
+        public static int SignFlip(int value) => CoinFlip ? value : value *= -1;
 
         public static bool OneIn(int x)
         {
