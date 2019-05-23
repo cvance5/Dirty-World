@@ -8,7 +8,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class RoomBuilder : SpaceBuilder
     {
-        public override bool IsValid => _size >= _minimumSize;
+        public override bool IsValid => _origin != null && _size >= _minimumSize;
 
         protected int _size;
         protected int _minimumSize = 1;

@@ -10,7 +10,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class CorridorBuilder : SpaceBuilder
     {
-        public override bool IsValid => _height >= _minHeight && _length >= _minLength;
+        public override bool IsValid => _origin != null && _height >= _minHeight && _length >= _minLength;
 
         private IntVector2 _leftEnd;
         private IntVector2 _center;

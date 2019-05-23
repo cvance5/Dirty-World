@@ -7,7 +7,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class ShaftBuilder : SpaceBuilder
     {
-        public override bool IsValid => _height >= _minHeight && _width >= _minWidth;
+        public override bool IsValid => _origin != null && _height >= _minHeight && _width >= _minWidth;
 
         protected IntVector2 _top;
         protected IntVector2 _middle;

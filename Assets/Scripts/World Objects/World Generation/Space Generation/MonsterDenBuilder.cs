@@ -9,7 +9,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class MonsterDenBuilder : SpaceBuilder
     {
-        public override bool IsValid => _radius > 0;
+        public override bool IsValid => _origin != null && _radius > 0;
 
         private int _radius;
 
