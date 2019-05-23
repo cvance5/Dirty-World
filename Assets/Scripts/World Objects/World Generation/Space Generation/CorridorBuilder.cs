@@ -120,16 +120,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             position.X <= _rightEnd.X &&
             position.Y <= _leftEnd.Y + _height;
 
-        public override void Clamp(IntVector2 direction, int amount)
-        {
-            var difference = PassesBy(direction, amount);
-
-            if (difference > 0)
-            {
-                Align(direction, amount);
-            }
-        }
-
         public override void Cut(IntVector2 direction, int amount)
         {
             var difference = PassesBy(direction, amount);

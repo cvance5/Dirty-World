@@ -85,7 +85,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             Recalculate();
         }
 
-        public abstract bool Contains(IntVector2 point);
         public bool IntersectsWith(SpaceBuilder other) =>
                !(other is null) &&
                // Can't intersect with yourself!
@@ -127,8 +126,15 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return this;
         }
 
-        public abstract void Clamp(IntVector2 direction, int amount);
-        public abstract void Cut(IntVector2 direction, int amount);
+        public void Clamp(IntVector2 direction, int amount)
+        {
+            var difference = PassesBy(direction, amount);
+
+            if (difference > 0)
+            {
+                Align(direction, amount);
+            }
+        }
 
         public Space Build()
         {
@@ -155,6 +161,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             return rawSpace;
         }
+
+        public abstract bool Contains(IntVector2 point);
+        public abstract void Cut(IntVector2 direction, int amount);
 
         protected abstract Space BuildRaw();
         protected abstract void Recalculate();

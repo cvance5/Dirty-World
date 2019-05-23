@@ -100,16 +100,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             position.Y >= _bottom.Y &&
             position.Y <= _top.Y;
 
-        public override void Clamp(IntVector2 direction, int amount)
-        {
-            var difference = PassesBy(direction, amount);
-
-            if (difference > 0)
-            {
-                Align(direction, amount);
-            }
-        }
-
         public override void Cut(IntVector2 direction, int amount)
         {
             var difference = PassesBy(direction, amount);
