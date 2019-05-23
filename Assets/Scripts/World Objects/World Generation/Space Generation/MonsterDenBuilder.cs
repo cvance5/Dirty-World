@@ -90,8 +90,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             var difference = PassesBy(direction, amount);
 
-            SetRadius(_radius - difference);
-            Clamp(direction, amount);
+            if (difference > 0)
+            {
+                SetRadius(_radius - difference);
+                Clamp(direction, amount);
+            }
         }
 
         protected override void Recalculate()
