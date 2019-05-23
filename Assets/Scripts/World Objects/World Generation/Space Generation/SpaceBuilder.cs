@@ -12,6 +12,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public abstract bool IsValid { get; }
 
         protected ChunkBuilder _chunkBuilder { get; private set; }
+
+        protected IntVector2 _origin { get; set; }
+
         protected Dictionary<IntVector2, int> _boundedDirections { get; private set; } =
               new Dictionary<IntVector2, int>();
 
@@ -76,7 +79,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return true;
         }
 
-        public abstract void Shift(IntVector2 shift);
+        public void Shift(IntVector2 shift)
+        {
+            _origin += shift;
+            Recalculate();
+        }
+
         public abstract bool Contains(IntVector2 point);
         public bool IntersectsWith(SpaceBuilder other) =>
                !(other is null) &&

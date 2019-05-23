@@ -31,15 +31,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             SetStartingPoint(startingPoint, Enum<ShaftAlignment>.Random);
         }
 
-        public override void Shift(IntVector2 shift)
-        {
-            _top += shift;
-            _middle += shift;
-            _bottom += shift;
-
-            Recalculate();
-        }
-
         public ShaftBuilder SetStartingPoint(IntVector2 startingPoint, IntVector2 direction)
         {
             if (direction == Directions.Up)
@@ -57,9 +48,18 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             switch (alignment)
             {
-                case ShaftAlignment.StartFromTop: _top = startingPoint; break;
-                case ShaftAlignment.StartFromMiddle: _middle = startingPoint; break;
-                case ShaftAlignment.StartFromBottom: _bottom = startingPoint; break;
+                case ShaftAlignment.StartFromTop:
+                    _top = startingPoint;
+                    _origin = _top;
+                    break;
+                case ShaftAlignment.StartFromMiddle:
+                    _middle = startingPoint;
+                    _origin = _middle;
+                    break;
+                case ShaftAlignment.StartFromBottom:
+                    _bottom = startingPoint;
+                    _origin = _bottom;
+                    break;
             }
 
             _alignment = alignment;
