@@ -182,9 +182,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             var extents = new Extents(new Shape(new List<IntVector2>()
             {
                 _origin,
-                new IntVector2(_rotation * new Vector2(_origin.X, _origin.Y + _width)),
-                new IntVector2(_rotation * new Vector2(_origin.X + _length, _origin.Y + _width)),
-                new IntVector2(_rotation * new Vector2(_origin.X + _length, _origin.Y))
+                _origin + new IntVector2(_rotation * new Vector2(0, _width)),
+                _origin + new IntVector2(_rotation * new Vector2(_length,_width)),
+                _origin + new IntVector2(_rotation * new Vector2(_length, 0))
             }));
 
             return new Spaces.Space($"Tunnel {SpaceNamer.GetName()}", extents);
