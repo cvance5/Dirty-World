@@ -2,6 +2,15 @@
 {
     public static class SpaceNamer
     {
-        public static string GetName() => System.DateTime.Now.ToString();
+        private static int _counter = 0;
+
+        public static string GetName()
+        {
+            var name = $"{System.DateTime.Now.Ticks.ToString()}_{_counter}";
+
+            _counter++;
+
+            return name;
+        }
     }
 }

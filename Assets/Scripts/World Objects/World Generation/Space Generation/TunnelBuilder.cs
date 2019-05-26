@@ -130,7 +130,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public override void Cut(IntVector2 direction, int amount)
         {
-            var difference = PassesBy(direction, amount);
+            var difference = DistanceFrom(direction, amount);
 
             if (difference > 0)
             {
@@ -192,7 +192,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override void Recalculate()
         {
-            _offset = new IntVector2(_rotation * new Vector2(_origin.X + _length, _origin.Y + _width));
+            _offset = _origin + new IntVector2(_rotation * new Vector2(_length, _width));
 
             _maximalValues[Directions.Up] = _offset.Y > _origin.Y ? _offset.Y : _origin.Y;
             _maximalValues[Directions.Right] = _offset.X > _origin.X ? _offset.X : _origin.X;

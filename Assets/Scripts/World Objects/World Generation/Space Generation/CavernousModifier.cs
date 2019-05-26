@@ -39,7 +39,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
                         // If this block is not already filled, check to see if we are at the top or bottom 
                         // edge of the space, and tell the StalagBuilder to go the other way.
-                        if (modifiedSpace.GetBlockType(testPosition) != BlockTypes.None) continue;
+                        if (!modifiedSpace.Extents.Contains(testPosition) || modifiedSpace.GetBlockType(testPosition) != BlockTypes.None) continue;
                         else if (modifiedSpace.Extents.Contains(testPosition + Directions.Down)) stalagBuilders.Add(new StalagBuilder(testPosition, Directions.Down, modifiedSpace));
                         else if (modifiedSpace.Extents.Contains(testPosition + Directions.Up)) stalagBuilders.Add(new StalagBuilder(testPosition, Directions.Up, modifiedSpace));
                     }

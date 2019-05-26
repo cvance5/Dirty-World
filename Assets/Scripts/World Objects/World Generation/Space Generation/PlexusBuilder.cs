@@ -123,7 +123,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             foreach (var direction in Directions.Cardinals)
             {
-                if (tunnel.PassesBy(direction, _maximalValues[direction]) > 0)
+                if (tunnel.DistanceFrom(direction, _maximalValues[direction]) > 0)
                 {
                     _maximalValues[direction] = tunnel.MaximalValues[direction];
                 }

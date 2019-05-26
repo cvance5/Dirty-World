@@ -127,7 +127,7 @@ namespace WorldObjects.WorldGeneration
                 {
                     var maximalValue = nextChunkToCheck.GetMaximalValue(direction);
 
-                    var amount = spaceBuilder.PassesBy(direction, maximalValue);
+                    var amount = spaceBuilder.DistanceFrom(direction, maximalValue);
 
                     if (amount > 0)
                     {

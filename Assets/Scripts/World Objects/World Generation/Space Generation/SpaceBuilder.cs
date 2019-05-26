@@ -97,7 +97,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                _maximalValues[Directions.Down] >= other._maximalValues[Directions.Up] ||
                _maximalValues[Directions.Left] >= other._maximalValues[Directions.Right]);
 
-        public int PassesBy(IntVector2 direction, int amount)
+        public int DistanceFrom(IntVector2 direction, int amount)
         {
             if (!_maximalValues.TryGetValue(direction, out var maximalValue))
             {
@@ -115,24 +115,24 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             }
             else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
 
-            return UnityEngine.Mathf.Min(difference, 0);
+            return difference;
         }
 
         public SpaceBuilder Align(IntVector2 direction, int amount)
         {
-            var difference = _maximalValues[direction];
-            Shift(direction * amount);
+            var difference = DistanceFrom(direction, amount);
+            Shift(direction * -difference);
 
             return this;
         }
 
         public void Clamp(IntVector2 direction, int amount)
         {
-            var difference = PassesBy(direction, amount);
+            var difference = DistanceFrom(direction, amount);
 
             if (difference > 0)
             {
-                Align(direction, amount);
+                Shift(direction * -difference);
             }
         }
 

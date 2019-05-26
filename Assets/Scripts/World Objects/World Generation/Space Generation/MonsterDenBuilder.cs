@@ -88,7 +88,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public override void Cut(IntVector2 direction, int amount)
         {
-            var difference = PassesBy(direction, amount);
+            var difference = DistanceFrom(direction, amount);
 
             if (difference > 0)
             {
