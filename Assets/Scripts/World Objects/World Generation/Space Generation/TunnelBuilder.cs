@@ -197,7 +197,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _maximalValues[Directions.Up] = _offset.Y > _origin.Y ? _offset.Y : _origin.Y;
             _maximalValues[Directions.Right] = _offset.X > _origin.X ? _offset.X : _origin.X;
             _maximalValues[Directions.Down] = _offset.Y < _origin.Y ? _offset.Y : _origin.Y;
-            _maximalValues[Directions.Right] = _offset.X < _origin.X ? _offset.X : _origin.X;
+            _maximalValues[Directions.Left] = _offset.X < _origin.X ? _offset.X : _origin.X;
 
             OnSpaceBuilderChanged.Raise(this);
         }
