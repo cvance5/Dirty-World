@@ -67,7 +67,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 new IntVector2(_origin.X + _radius, _origin.Y)
             }));
 
-            return new Spaces.Space($"Monster Den {SpaceNamer.GetName()}", extents);
+            return new Spaces.Space($"Monster Den {Name}", extents);
         }
 
         public override bool Contains(IntVector2 position)

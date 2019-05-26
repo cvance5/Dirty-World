@@ -6,7 +6,7 @@
 
         public static string GetName()
         {
-            var name = $"{System.DateTime.Now.Ticks.ToString()}_{_counter}";
+            var name = $"{_counter}";
 
             _counter++;
 

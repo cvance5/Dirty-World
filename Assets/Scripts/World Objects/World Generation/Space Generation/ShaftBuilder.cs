@@ -137,7 +137,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 new IntVector2(_bottom.X + _width, _bottom.Y)
             }));
 
-            return new Spaces.Space($"Shaft {SpaceNamer.GetName()}", extents);
+            return new Spaces.Space($"Shaft {Name}", extents);
         }
 
         protected override void Recalculate()

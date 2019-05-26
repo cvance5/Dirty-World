@@ -90,7 +90,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 new IntVector2(_topRightCorner.X, _bottomLeftCorner.Y)
             }));
 
-            return new Space($"Room {SpaceNamer.GetName()}", extents);
+            return new Space($"Room {Name}", extents);
         }
 
         protected override void Recalculate()

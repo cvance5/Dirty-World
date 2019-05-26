@@ -165,7 +165,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 shapes.AddRange(space.Extents.Shapes);
             }
 
-            return new Spaces.Space($"Plexus {SpaceNamer.GetName()}", new Extents(shapes));
+            return new Spaces.Space($"Plexus {Name}", new Extents(shapes));
         }
 
         protected override void Recalculate()

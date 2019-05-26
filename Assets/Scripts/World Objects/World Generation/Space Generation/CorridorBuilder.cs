@@ -157,7 +157,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 new IntVector2(_rightEnd)
             }));
 
-            return new Spaces.Space($"Corridor {SpaceNamer.GetName()}", extents);
+            return new Spaces.Space($"Corridor {Name}", extents);
         }
 
         protected override void Recalculate()

@@ -21,10 +21,10 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public TunnelBuilder(ChunkBuilder chunkBuilder)
             : base(chunkBuilder)
         {
-            _length = Chance.Range(4, 12);
+            _length = Chance.Range(4, 40);
             _width = Chance.Range(3, 6);
 
-            _rotation = Quaternion.Euler(0, 0, Chance.Range(0, 180));
+            _rotation = Quaternion.Euler(0, 0, Chance.Range(0, 359));
 
             _origin = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
                                      Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
@@ -187,7 +187,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 _origin + new IntVector2(_rotation * new Vector2(_length, 0))
             }));
 
-            return new Spaces.Space($"Tunnel {SpaceNamer.GetName()}", extents);
+            return new Spaces.Space($"Tunnel {Name}", extents);
         }
 
         protected override void Recalculate()
