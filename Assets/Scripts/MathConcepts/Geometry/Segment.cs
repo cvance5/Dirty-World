@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace MathConcepts.Geometry
 {
@@ -7,16 +8,90 @@ namespace MathConcepts.Geometry
         public IntVector2 Start { get; }
         public IntVector2 End { get; }
 
+        public IntVector2 Vector => End - Start;
+        public float Length => Vector.Magnitude;
+        public float Rotation => MathUtils.RadianToDegree(Mathf.Atan2(Vector.Y, Vector.X));
+
         public Segment(IntVector2 start, IntVector2 end)
         {
             Start = start;
             End = end;
         }
 
+        public bool PassesX(int xValue) =>
+            (Start.X <= xValue && xValue <= End.X) ||
+            (Start.X >= xValue && xValue >= End.X);
+
+        public bool PassesY(int YValue) =>
+            (Start.Y <= YValue && YValue <= End.Y) ||
+            (Start.Y >= YValue && YValue >= End.Y);
+
+        public void Trim(IntVector2 direction, int newValue)
+        {
+            if (direction == Directions.Right || direction == Directions.Left)
+            {
+                if (PassesX(newValue))
+                {
+                    // Anchor at whichever one point is less far in that direction
+                    var anchorPosition = Start;
+                    if ((direction == Directions.Right && End.X < Start.X) ||
+                       (direction == Directions.Left && End.X > Start.X))
+                    {
+                        anchorPosition = End;
+                    }
+
+                    // Move the other guy
+                    var movablePosition = anchorPosition == Start ? End : Start;
+
+                    // Figure out % of change and apply same change to y
+                    var percent = 1 - (newValue - (float)anchorPosition.X) / ((float)movablePosition.X - anchorPosition.X);
+
+                    // This line is parallel with the cut point
+                    if (float.IsNaN(percent)) return;
+
+                    var newY = Mathf.Lerp(movablePosition.Y, anchorPosition.Y, percent);
+                    var newYValue = Mathf.RoundToInt(newY);
+
+                    // Calculate delta and set
+                    movablePosition.X = newValue;
+                    movablePosition.Y = newYValue;
+                }
+            }
+            else if (direction == Directions.Up || direction == Directions.Down)
+            {
+                if (PassesY(newValue))
+                {
+                    // Anchor at whichever one point is less far in that direction
+                    var anchorPosition = Start;
+                    if ((direction == Directions.Up && End.Y < Start.Y) ||
+                       (direction == Directions.Down && End.Y > Start.Y))
+                    {
+                        anchorPosition = End;
+                    }
+
+                    // Move the other guy
+                    var movablePosition = anchorPosition == Start ? End : Start;
+
+                    // Figure out % of change and apply same change to y
+                    var percent = 1 - (newValue - (float)anchorPosition.Y) / ((float)movablePosition.Y - anchorPosition.Y);
+
+                    // This line is parallel with the cut point
+                    if (float.IsNaN(percent)) return;
+
+                    var newX = Mathf.Lerp(movablePosition.X, anchorPosition.X, percent);
+                    var newXValue = Mathf.RoundToInt(newX);
+
+                    // Calculate delta and set
+                    movablePosition.X = newXValue;
+                    movablePosition.Y = newValue;
+                }
+            }
+            else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
+        }
+
         // https://stackoverflow.com/questions/4543506/algorithm-for-intersection-of-2-lines
         public static IntVector2 Intersect(Segment segmentOne, Segment segmentTwo)
         {
-
             // See if the lines will ever intersect
             float a1 = segmentOne.End.Y - segmentOne.Start.Y;
             float b1 = segmentOne.End.X - segmentOne.Start.X;
@@ -45,6 +120,8 @@ namespace MathConcepts.Geometry
                 else return result;
             }
         }
+
+        public static Segment Shift(Segment segment, IntVector2 shift) => new Segment(segment.Start + shift, segment.End + shift);
 
         public override bool Equals(object obj)
         {

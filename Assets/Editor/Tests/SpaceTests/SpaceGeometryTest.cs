@@ -9,7 +9,7 @@ namespace Tests.SpaceTests
     public class SpaceGeometryTest
     {
         [Test]
-        public void SegmentTests()
+        public void SegmentIntersectionTests()
         {
             var segmentIntersectsMidpointOne = new Segment(new IntVector2(-5, 0), new IntVector2(5, 0));
             var segmentIntersectsMidpointTwo = new Segment(new IntVector2(0, -5), new IntVector2(0, 5));
@@ -38,6 +38,43 @@ namespace Tests.SpaceTests
             var doesNotIntersectTest = Segment.Intersect(doesNotIntersectOne, doesNotIntersectTwo);
 
             Assert.AreEqual(null, doesNotIntersectTest);
+        }
+
+        [Test]
+        public void SegmentReachesTest()
+        {
+            var testSegment = new Segment(new IntVector2(-2, -2), new IntVector2(2, 2));
+
+            Assert.True(testSegment.PassesX(0), $"Test segment did not reach expected X in center.");
+            Assert.True(testSegment.PassesY(0), $"Test segment did not reach expected Y in center.");
+
+            Assert.True(testSegment.PassesX(-2), $"Test segment did not reach expected X at edge.");
+            Assert.True(testSegment.PassesY(-2), $"Test segment did not reach expected Y at edge.");
+
+            Assert.False(testSegment.PassesX(-3), $"Test segment reached X beyond edge.");
+            Assert.False(testSegment.PassesY(-3), $"Test segment reached Y beyond edge.");
+        }
+
+        [Test]
+        public void SegmentTrimTest()
+        {
+            var testSegment = new Segment(new IntVector2(-2, -2), new IntVector2(2, 2));
+            testSegment.Trim(Directions.Right, 1);
+
+            Assert.AreEqual(-2, testSegment.Start.X, $"Test segment trimmed wrong side X.");
+            Assert.AreEqual(1, testSegment.End.X, $"Test segment did not trim X correctly.");
+            Assert.AreEqual(-2, testSegment.Start.Y, $"Test segment trimmed wrong side Y.");
+            Assert.AreEqual(1, testSegment.End.X, $"Test segment did not trim Y correctly.");
+
+            testSegment = new Segment(new IntVector2(0, 0), new IntVector2(-10, -2));
+            testSegment.Trim(Directions.Up, -1);
+
+            Assert.AreEqual(-5, testSegment.Start.X, $"Test segment did not trim X correctly.");
+            Assert.AreEqual(-10, testSegment.End.X, $"Test segment trimmed wrong side X.");
+            Assert.AreEqual(-1, testSegment.Start.Y, $"Test segment did not trim Y correctly.");
+            Assert.AreEqual(-2, testSegment.End.Y, $"Test segment trimmed wrong side Y.");
+
+            Assert.Throws<ArgumentException>(() => testSegment.Trim(Directions.Right + Directions.Up, -4));
         }
 
         [Test]
