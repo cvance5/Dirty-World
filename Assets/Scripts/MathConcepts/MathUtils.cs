@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -53,5 +54,10 @@ namespace MathConcepts
         {
             return Mathf.RoundToInt(Mathf.Clamp((x - minIn) * (maxOut - minOut) / (float)(maxIn - minIn) + minOut, minOut, maxOut));
         }
+
+        public static float DegreeToRadian(float angle) => (float)(Math.PI * angle / 180.0f);
+        public static float RadianToDegree(float angle) => (float)(angle * (180.0 / Math.PI));
+
+        public static int TruncateAwayFromZero(float value) => value < 0 ? Mathf.FloorToInt(value) : Mathf.CeilToInt(value);
     }
 }
