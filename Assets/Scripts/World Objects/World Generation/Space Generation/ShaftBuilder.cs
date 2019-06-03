@@ -46,19 +46,17 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public ShaftBuilder SetStartingPoint(IntVector2 startingPoint, ShaftAlignment alignment)
         {
+            _origin = startingPoint;
             switch (alignment)
             {
                 case ShaftAlignment.StartFromTop:
-                    _top = startingPoint;
-                    _origin = _top;
+                    _top = _origin;
                     break;
                 case ShaftAlignment.StartFromMiddle:
-                    _middle = startingPoint;
-                    _origin = _middle;
+                    _middle = _origin;
                     break;
                 case ShaftAlignment.StartFromBottom:
-                    _bottom = startingPoint;
-                    _origin = _bottom;
+                    _bottom = _origin;
                     break;
             }
 
@@ -148,6 +146,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     if (_top == null) throw new System.InvalidOperationException("Shaft builder has not been assigned a top position.");
                     else
                     {
+                        _top = _origin;
                         _middle = new IntVector2(_top.X, _top.Y - (_height / 2));
                         _bottom = new IntVector2(_top.X, _top.Y - _height);
                     }
@@ -156,6 +155,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     if (_middle == null) throw new System.InvalidOperationException("Shaft builder has not been assigned a middle position.");
                     else
                     {
+                        _middle = _origin;
                         _top = new IntVector2(_middle.X, _middle.Y + (_height / 2));
                         _bottom = new IntVector2(_middle.X, _middle.Y - (_height / 2));
                     }
@@ -164,6 +164,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     if (_bottom == null) throw new System.InvalidOperationException("Shaft builder has not been assigned a bottom position.");
                     else
                     {
+                        _bottom = _origin;
                         _middle = new IntVector2(_bottom.X, _bottom.Y + (_height / 2));
                         _top = new IntVector2(_bottom.X, _bottom.Y + _height);
                     }

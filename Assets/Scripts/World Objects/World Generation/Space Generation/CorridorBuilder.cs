@@ -52,19 +52,17 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public CorridorBuilder SetStartingPoint(IntVector2 startingPoint, CorridorAlignment alignment)
         {
+            _origin = startingPoint;
             switch (alignment)
             {
                 case CorridorAlignment.StartFromLeft:
-                    _leftEnd = startingPoint;
-                    _origin = _leftEnd;
+                    _leftEnd = _origin;
                     break;
                 case CorridorAlignment.StartFromCenter:
-                    _center = startingPoint;
-                    _origin = _center;
+                    _center = _origin;
                     break;
                 case CorridorAlignment.StartFromRight:
-                    _rightEnd = startingPoint;
-                    _origin = _rightEnd;
+                    _rightEnd = _origin;
                     break;
             }
 
@@ -168,6 +166,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     if (_leftEnd == null) throw new InvalidOperationException("Corridor builder has not been assigned a left position.");
                     else
                     {
+                        _leftEnd = _origin;
                         _center = new IntVector2(_leftEnd.X + (_length / 2), _leftEnd.Y);
                         _rightEnd = new IntVector2(_leftEnd.X + _length, _leftEnd.Y);
                     }
@@ -176,6 +175,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     if (_center == null) throw new InvalidOperationException("Corridor builder has not been assigned a central position.");
                     else
                     {
+                        _center = _origin;
                         _leftEnd = new IntVector2(_center.X - (_length / 2), _center.Y);
                         _rightEnd = new IntVector2(_center.X + (_length / 2), _center.Y);
                     }
@@ -184,6 +184,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     if (_rightEnd == null) throw new InvalidOperationException("Corridor builder has not been assigned a right position.");
                     else
                     {
+                        _rightEnd = _origin;
                         _leftEnd = new IntVector2(_rightEnd.X - _length, _rightEnd.Y);
                         _center = new IntVector2(_rightEnd.X - (_length / 2), _rightEnd.Y);
                     }
