@@ -130,6 +130,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 }
                 else if (direction == Directions.Right)
                 {
+                    SetStartingPoint(_leftEnd, CorridorAlignment.StartFromLeft);
                     SetLength(_length - difference);
                 }
                 else if (direction == Directions.Down)
@@ -139,6 +140,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 }
                 else if (direction == Directions.Left)
                 {
+                    SetStartingPoint(_rightEnd, CorridorAlignment.StartFromRight);
                     SetLength(_length - difference);
                 }
                 else throw new ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
@@ -177,7 +179,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     {
                         _center = _origin;
                         _leftEnd = new IntVector2(_center.X - (_length / 2), _center.Y);
-                        _rightEnd = new IntVector2(_center.X + (_length / 2), _center.Y);
+                        _rightEnd = new IntVector2(_center.X + (_length - (_length / 2)), _center.Y);
                     }
                     break;
                 case CorridorAlignment.StartFromRight:

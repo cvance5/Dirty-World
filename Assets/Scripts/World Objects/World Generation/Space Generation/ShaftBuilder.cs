@@ -106,6 +106,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             {
                 if (direction == Directions.Up)
                 {
+                    SetStartingPoint(_bottom, ShaftAlignment.StartFromBottom);
                     SetHeight(_height - difference);
                 }
                 else if (direction == Directions.Right)
@@ -114,6 +115,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 }
                 else if (direction == Directions.Down)
                 {
+                    SetStartingPoint(_top, ShaftAlignment.StartFromTop);
                     SetHeight(_height - difference);
                 }
                 else if (direction == Directions.Left)
@@ -157,7 +159,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     {
                         _middle = _origin;
                         _top = new IntVector2(_middle.X, _middle.Y + (_height / 2));
-                        _bottom = new IntVector2(_middle.X, _middle.Y - (_height / 2));
+                        _bottom = new IntVector2(_middle.X, _middle.Y - (_height - (_height / 2)));
                     }
                     break;
                 case ShaftAlignment.StartFromBottom:
