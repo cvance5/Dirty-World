@@ -15,12 +15,12 @@ namespace Tests.SpaceTests
 
         private static readonly List<Type> _builderTypes = new List<Type>()
         {
-            typeof(TunnelBuilder)
-            //typeof(CorridorBuilder),
-            //typeof(ShaftBuilder),
-            //typeof(ElevatorShaftBuilder),
-            //typeof(RoomBuilder),
-            //typeof(MonsterDenBuilder)
+            typeof(TunnelBuilder),
+            typeof(CorridorBuilder),
+            typeof(ShaftBuilder),
+            typeof(ElevatorShaftBuilder),
+            typeof(RoomBuilder),
+            typeof(MonsterDenBuilder)
             //typeof(PlexusBuilder)
         };
 
@@ -93,8 +93,9 @@ namespace Tests.SpaceTests
         [Test]
         public void CutTest()
         {
-            for (var run = 0; run < 1000; run++)
+            for (var run = 0; run < 100; run++)
             {
+                Chance.Seed(run);
                 foreach (var builderType in _builderTypes)
                 {
                     foreach (var cutDirection in Directions.Cardinals)
@@ -130,11 +131,11 @@ namespace Tests.SpaceTests
                         var actualValue = currentBuilderToTest.MaximalValues[cutDirection];
                         Assert.AreEqual(actualValue, initialValue, $"Builder Type {builderType.Name} should have not have cut direction {cutDirection}, but cut from {initialValue} to {actualValue} during run {run}.");
 
-                        // Assert Actual Cut
                         currentBuilderToTest.AddBoundary(cutDirection, expectedValue);
                         // Invalid spaces can't keep any previous promises and shouldn't be tested further
                         if (currentBuilderToTest.IsValid)
                         {
+                            // Assert Actual Cut
                             actualValue = currentBuilderToTest.MaximalValues[cutDirection];
                             var distanceFromTarget = currentBuilderToTest.DistanceFrom(cutDirection, expectedValue);
                             Assert.LessOrEqual(distanceFromTarget, 0, $"Builder Type {builderType.Name} should have cut direction {cutDirection} to {expectedValue} but cut from {initialValue} to {actualValue} during run {run}.");
