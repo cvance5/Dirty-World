@@ -23,23 +23,26 @@ namespace Narrative
 
         private void OnEnable()
         {
-            if (_source != null)
+            if (Application.isPlaying)
             {
-                if (_scriptMap != null)
+                if (_source != null)
                 {
-                    _log.Error($"Multiple scripts active at a time.  Clearing.");
+                    if (_scriptMap != null)
+                    {
+                        _log.Error($"Multiple scripts active at a time.  Clearing.");
+                    }
+
+                    _scriptMap = JsonConvert.DeserializeObject<Dictionary<ScriptKey, string>>(_source.text);
                 }
 
-                _scriptMap = JsonConvert.DeserializeObject<Dictionary<ScriptKey, string>>(_source.text);
-            }
-
 #if UNITY_EDITOR
-            if (_skipScriptPlayback)
-            {
-                _playbackSpeed = 1000;
-                UpdatePlaybackSpeed();
-            }
+                if (_skipScriptPlayback)
+                {
+                    _playbackSpeed = 1000;
+                    UpdatePlaybackSpeed();
+                }
 #endif  
+            }
         }
 
         public static string Read(ScriptKey key)
