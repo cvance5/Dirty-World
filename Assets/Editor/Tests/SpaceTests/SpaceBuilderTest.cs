@@ -65,7 +65,7 @@ namespace Tests.SpaceTests
                         // Assert No-Op Clamp
                         currentBuilderToTest.Clamp(clampDirection, initialValue);
                         var actualValue = currentBuilderToTest.MaximalValues[clampDirection];
-                        Assert.AreEqual(actualValue, initialValue, $"Builder Type {builderType.Name} should have not have clamped direction {clampDirection}, but clamped from {initialValue} to {actualValue}.");
+                        Assert.AreEqual(actualValue, initialValue, $"Builder Type {builderType.Name} should not have clamped direction {clampDirection}, but clamped from {initialValue} to {actualValue}.");
 
                         // Assert Real Clamp
                         currentBuilderToTest.Clamp(clampDirection, expectedValue);
