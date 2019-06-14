@@ -164,7 +164,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         }
 
         public abstract bool Contains(IntVector2 point);
-        public abstract void Cut(IntVector2 direction, int amount);
+        public abstract void Squash(IntVector2 direction, int amount);
 
         protected abstract Space BuildRaw();
         protected abstract void Recalculate();

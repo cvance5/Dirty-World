@@ -91,23 +91,21 @@ namespace Tests.SpaceTests
         }
 
         [Test]
-        public void CutTest()
+        public void SquashTest()
         {
             for (var run = 0; run < 100; run++)
             {
                 Chance.Seed(run);
                 foreach (var builderType in _builderTypes)
                 {
-                    foreach (var cutDirection in Directions.Cardinals)
+                    foreach (var squashDirection in Directions.Cardinals)
                     {
                         // Initialize
-                        var didNotExpandOtherDirections = new Dictionary<IntVector2, int>();
-
                         var currentBuilderToTest = Activator.CreateInstance(builderType, _testChunk) as SpaceBuilder;
-                        var initialValue = currentBuilderToTest.MaximalValues[cutDirection];
+                        var initialValue = currentBuilderToTest.MaximalValues[squashDirection];
                         var expectedValue = initialValue;
 
-                        if (cutDirection == Directions.Up || cutDirection == Directions.Right)
+                        if (squashDirection == Directions.Up || squashDirection == Directions.Right)
                         {
                             expectedValue -= 2;
                         }
@@ -116,44 +114,34 @@ namespace Tests.SpaceTests
                             expectedValue += 2;
                         }
 
-                        foreach (var shouldNotExpandDirection in Directions.Cardinals)
-                        {
-                            if (shouldNotExpandDirection != cutDirection)
-                            {
-                                // Add a boundary in every other direction
-                                didNotExpandOtherDirections[shouldNotExpandDirection] = currentBuilderToTest.MaximalValues[shouldNotExpandDirection];
-                                currentBuilderToTest.AddBoundary(shouldNotExpandDirection, currentBuilderToTest.MaximalValues[shouldNotExpandDirection]);
-                            }
-                        }
+                        var oppositeDirectionLimit = currentBuilderToTest.MaximalValues[-squashDirection];
+                        currentBuilderToTest.AddBoundary(-squashDirection, oppositeDirectionLimit);
 
-                        // Assert No-Op Cut
-                        currentBuilderToTest.AddBoundary(cutDirection, initialValue);
-                        var actualValue = currentBuilderToTest.MaximalValues[cutDirection];
-                        Assert.AreEqual(actualValue, initialValue, $"Builder Type {builderType.Name} should have not have cut direction {cutDirection}, but cut from {initialValue} to {actualValue} during run {run}.");
+                        // Assert No-Op Squash
+                        currentBuilderToTest.AddBoundary(squashDirection, initialValue);
+                        var actualValue = currentBuilderToTest.MaximalValues[squashDirection];
+                        Assert.AreEqual(actualValue, initialValue, $"Builder Type {builderType.Name} should not have squash direction {squashDirection}, but squash from {initialValue} to {actualValue} during run {run}.");
 
-                        currentBuilderToTest.AddBoundary(cutDirection, expectedValue);
+                        currentBuilderToTest.AddBoundary(squashDirection, expectedValue);
                         // Invalid spaces can't keep any previous promises and shouldn't be tested further
                         if (currentBuilderToTest.IsValid)
                         {
-                            // Assert Actual Cut
-                            actualValue = currentBuilderToTest.MaximalValues[cutDirection];
-                            var distanceFromTarget = currentBuilderToTest.DistanceFrom(cutDirection, expectedValue);
-                            Assert.LessOrEqual(distanceFromTarget, 0, $"Builder Type {builderType.Name} should have cut direction {cutDirection} to {expectedValue} but cut from {initialValue} to {actualValue} during run {run}.");
+                            // Assert Actual Squash
+                            actualValue = currentBuilderToTest.MaximalValues[squashDirection];
+                            var distanceFromTarget = currentBuilderToTest.DistanceFrom(squashDirection, expectedValue);
+                            Assert.LessOrEqual(distanceFromTarget, 0, $"Builder Type {builderType.Name} should have squash direction {squashDirection} to {expectedValue} but squash from {initialValue} to {actualValue} during run {run}.");
 
-                            // Assert No Side Effects if the space is still valid
-                            foreach (var kvp in didNotExpandOtherDirections)
-                            {
-                                var distanceFromPreviousMax = currentBuilderToTest.DistanceFrom(kvp.Key, kvp.Value);
-                                Assert.LessOrEqual(distanceFromPreviousMax, 0, $"Builder Type {builderType.Name} cut direction {cutDirection} but expanded in direction {kvp.Key} from {kvp.Value} by {distanceFromPreviousMax} during run {run}.");
-                            }
+                            // Assert Did Not Shift Opposite Direction
+                            var distanceFromPreviousMax = currentBuilderToTest.DistanceFrom(-squashDirection, oppositeDirectionLimit);
+                            Assert.LessOrEqual(distanceFromPreviousMax, 0, $"Builder Type {builderType.Name} squash direction {squashDirection} but expanded in direction {-squashDirection} from {oppositeDirectionLimit} by {distanceFromPreviousMax} during run {run}.");
                         }
                     }
 
                     // Assert Invalid Arguments Are Exceptional
-                    foreach (var invalidCutDirection in Directions.Ordinals)
+                    foreach (var invalidSquashDirection in Directions.Ordinals)
                     {
                         var currentBuilderToTest = Activator.CreateInstance(builderType, _testChunk) as SpaceBuilder;
-                        Assert.Throws<ArgumentException>(() => currentBuilderToTest.Clamp(invalidCutDirection, 0));
+                        Assert.Throws<ArgumentException>(() => currentBuilderToTest.Clamp(invalidSquashDirection, 0));
                     }
                 }
             }

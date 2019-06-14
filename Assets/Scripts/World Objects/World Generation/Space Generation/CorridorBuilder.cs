@@ -118,7 +118,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             position.X <= _rightEnd.X &&
             position.Y <= _leftEnd.Y + _height;
 
-        public override void Cut(IntVector2 direction, int amount)
+        public override void Squash(IntVector2 direction, int amount)
         {
             var difference = DistanceFrom(direction, amount);
 

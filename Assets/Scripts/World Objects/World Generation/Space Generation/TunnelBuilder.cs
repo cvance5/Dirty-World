@@ -130,7 +130,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             point.Y >= _maximalValues[Directions.Down] &&
             point.Y <= _maximalValues[Directions.Up];
 
-        public override void Cut(IntVector2 direction, int limit)
+        public override void Squash(IntVector2 direction, int limit)
         {
             var difference = DistanceFrom(direction, limit);
 

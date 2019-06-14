@@ -69,7 +69,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             position.Y >= _bottomLeftCorner.Y &&
             position.Y <= _topRightCorner.Y;
 
-        public override void Cut(IntVector2 direction, int amount)
+        public override void Squash(IntVector2 direction, int amount)
         {
             var difference = DistanceFrom(direction, amount);
 
