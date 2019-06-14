@@ -20,8 +20,8 @@ namespace Tests.SpaceTests
             typeof(ShaftBuilder),
             typeof(ElevatorShaftBuilder),
             typeof(RoomBuilder),
-            typeof(MonsterDenBuilder)
-            //typeof(PlexusBuilder)
+            typeof(MonsterDenBuilder),
+            typeof(PlexusBuilder)
         };
 
         [SetUp]
