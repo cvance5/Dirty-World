@@ -9,7 +9,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class PlexusBuilder : SpaceBuilder
     {
-        public override bool IsValid => _origin != null && _tunnels.Count > 0;
+        public override bool IsValid => Origin != null && _tunnels.Count > 0 && _tunnelWidth > 0 && _coreLength > 9 && _tunnels[Offset.IDENTITY].IsValid;
 
         private int _tunnelWidth;
         private int _coreLength;
@@ -32,9 +32,10 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _coreRotation = Quaternion.Euler(0, 0, Chance.Range(0, 180));
 
             UpdateOffsetKeys();
+            Recalculate();
 
             var numberOfOffshoots = Chance.Range(0, _coreLength);
-            for(int offshootCount = 0; offshootCount < numberOfOffshoots; offshootCount++)
+            for (var offshootCount = 0; offshootCount < numberOfOffshoots; offshootCount++)
             {
                 AddRandomOffshoot();
             }
@@ -121,11 +122,14 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                   .SetWidth(_tunnelWidth)
                   .SetRotation(_coreRotation * _offshootRotation);
 
-            foreach (var direction in Directions.Cardinals)
+            if (tunnel.IsValid)
             {
-                if (tunnel.DistanceFrom(direction, _maximalValues[direction]) > 0)
+                foreach (var direction in Directions.Cardinals)
                 {
-                    _maximalValues[direction] = tunnel.MaximalValues[direction];
+                    if (tunnel.DistanceFrom(direction, _maximalValues[direction]) > 0)
+                    {
+                        _maximalValues[direction] = tunnel.MaximalValues[direction];
+                    }
                 }
             }
 
@@ -147,12 +151,25 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return _tunnels.Any(kvp => kvp.Value.Contains(point));
         }
 
-        public override void Cut(IntVector2 direction, int amount)
+        public override void Squash(IntVector2 direction, int amount)
         {
-            foreach (var tunnel in _tunnels.Values)
+            foreach (var kvp in _tunnels.ToArray())
             {
-                tunnel.Cut(direction, amount);
+                if (kvp.Value != null)
+                {
+                    kvp.Value.Squash(direction, amount);
+                }
+
+                if (kvp.Key == Offset.IDENTITY)
+                {
+                    Origin = kvp.Value.Origin;
+                    _coreLength = kvp.Value.Length;
+                    _tunnelWidth = kvp.Value.Width;
+                    _coreRotation = kvp.Value.Rotation;
+                }
             }
+
+            Recalculate();
         }
 
         protected override Spaces.Space BuildRaw()
@@ -171,7 +188,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         protected override void Recalculate()
         {
             _tunnels[Offset.IDENTITY] = new TunnelBuilder(_chunkBuilder)
-                                           .SetOrigin(_origin)
+                                           .SetOrigin(Origin)
                                            .SetLength(_coreLength)
                                            .SetWidth(_tunnelWidth)
                                            .SetRotation(_coreRotation);
@@ -196,12 +213,17 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 {
                     _tunnels.Remove(kvp.Key);
                 }
-                // Count and validate this tunnel
-                else
+                // Count and validate this tunnel if any
+                else if (kvp.Key != Offset.IDENTITY && kvp.Value != null)
                 {
-                    tunnelCount++;
                     // Revalidate this tunnel
                     AppendOffshoot(kvp.Key, kvp.Value);
+
+                    if (!kvp.Value.IsValid)
+                    {
+                        _tunnels[kvp.Key] = null;
+                    }
+                    else tunnelCount++;
                 }
             }
 

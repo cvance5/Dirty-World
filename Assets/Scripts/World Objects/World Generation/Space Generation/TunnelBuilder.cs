@@ -7,14 +7,14 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class TunnelBuilder : SpaceBuilder
     {
-        public override bool IsValid => _origin != null && _length > _minLength && _width > _minWidth;
+        public override bool IsValid => Origin != null && Length > _minLength && Width > _minWidth;
 
-        private int _length;
+        public int Length { get; private set; }
         private int _minLength = 1;
-        private int _width;
+        public int Width { get; private set; }
         private int _minWidth = 1;
 
-        private Quaternion _rotation;
+        public Quaternion Rotation { get; private set; }
 
         private IntVector2 _lengthwiseVector;
         private IntVector2 _widthwiseVector;
@@ -22,11 +22,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public TunnelBuilder(ChunkBuilder chunkBuilder)
             : base(chunkBuilder)
         {
-            _length = Chance.Range(4, 40);
-            _width = Chance.Range(3, _length);
+            Length = Chance.Range(4, 40);
+            Width = Chance.Range(3, Length);
 
             var zRot = Chance.Range(0, 90);
-            _rotation = Quaternion.Euler(0, 0, zRot);
+            Rotation = Quaternion.Euler(0, 0, zRot);
 
             Origin = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
                                      Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
@@ -36,7 +36,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public TunnelBuilder SetLength(int length)
         {
-            _length = length;
+            Length = length;
 
             Recalculate();
 
@@ -45,9 +45,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public TunnelBuilder TrimToLength(int maximumLength)
         {
-            if (_length > maximumLength)
+            if (Length > maximumLength)
             {
-                _length = maximumLength;
+                Length = maximumLength;
 
                 Recalculate();
             }
@@ -64,9 +64,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public TunnelBuilder SetWidth(int width)
         {
-            if (_width != width)
+            if (Width != width)
             {
-                _width = width;
+                Width = width;
 
                 Recalculate();
             }
@@ -85,9 +85,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             var quatRotation = Quaternion.Euler(0, 0, rotation);
 
-            if (_rotation != quatRotation)
+            if (Rotation != quatRotation)
             {
-                _rotation = quatRotation;
+                Rotation = quatRotation;
 
                 Recalculate();
             }
@@ -97,14 +97,14 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public TunnelBuilder SetRotation(Quaternion rotation)
         {
-            if (_rotation.eulerAngles.x != 0 ||
-               _rotation.eulerAngles.y != 0)
+            if (Rotation.eulerAngles.x != 0 ||
+               Rotation.eulerAngles.y != 0)
             {
                 throw new System.ArgumentOutOfRangeException($"Tunnels cannot rotate on any non-Z axis.");
             }
-            else if (_rotation != rotation)
+            else if (Rotation != rotation)
             {
-                _rotation = rotation;
+                Rotation = rotation;
 
                 Recalculate();
             }
@@ -144,39 +144,25 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");
                 }
 
-                var lengthSide = new Segment(_origin, _origin + _lengthwiseVector);
-                foreach (var boundedDirection in _boundedDirections)
-                {
-                    lengthSide.Trim(boundedDirection.Key, boundedDirection.Value);
-                }
+                var lengthSide = new Segment(Origin, Origin + _lengthwiseVector);
+                lengthSide.Trim(direction, limit);
                 lengthSide = Segment.Shift(lengthSide, _widthwiseVector);
-                foreach (var boundedDirection in _boundedDirections)
-                {
-                    lengthSide.Trim(boundedDirection.Key, boundedDirection.Value);
-                }
+                lengthSide.Trim(direction, limit);
                 lengthSide = Segment.Shift(lengthSide, -_widthwiseVector);
+                Length = (int)lengthSide.Length;
+                Rotation = Quaternion.Euler(0, 0, lengthSide.Rotation);
+                Origin = lengthSide.Start;
 
-                _length = (int)lengthSide.Length;
-                _rotation = Quaternion.Euler(0, 0, lengthSide.Rotation);
-                _origin = lengthSide.Start;
-
-                var updatedWidthwiseVector = _rotation * new IntVector2(0, _width);
+                var updatedWidthwiseVector = Rotation * new IntVector2(0, Width);
                 var widthwiseVector = new IntVector2((int)updatedWidthwiseVector.x, (int)updatedWidthwiseVector.y);
 
-                var widthSide = new Segment(_origin, _origin + widthwiseVector);
-                foreach (var boundedDirection in _boundedDirections)
-                {
-                    widthSide.Trim(boundedDirection.Key, boundedDirection.Value);
-                }
+                var widthSide = new Segment(Origin, Origin + widthwiseVector);
+                widthSide.Trim(direction, limit);
                 widthSide = Segment.Shift(widthSide, _lengthwiseVector);
-                foreach (var boundedDirection in _boundedDirections)
-                {
-                    widthSide.Trim(boundedDirection.Key, boundedDirection.Value);
-                }
+                widthSide.Trim(direction, limit);
                 widthSide = Segment.Shift(widthSide, -_lengthwiseVector);
-
-                _width = (int)widthSide.Length;
-                _origin = widthSide.Start;
+                Width = (int)widthSide.Length;
+                Origin = widthSide.Start;
 
                 Recalculate();
             }
@@ -197,8 +183,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override void Recalculate()
         {
-            var vec1 = _rotation * new Vector2(_length, 0);
-            var vec2 = _rotation * new Vector2(0, _width);
+            var vec1 = Rotation * new Vector2(Length, 0);
+            var vec2 = Rotation * new Vector2(0, Width);
             _lengthwiseVector = new IntVector2((int)vec1.x, (int)vec1.y);
             _widthwiseVector = new IntVector2((int)vec2.x, (int)vec2.y);
 
