@@ -28,7 +28,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             var zRot = Chance.Range(0, 90);
             _rotation = Quaternion.Euler(0, 0, zRot);
 
-            _origin = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
+            Origin = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
                                      Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
 
             Recalculate();
@@ -114,9 +114,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public TunnelBuilder SetOrigin(IntVector2 origin)
         {
-            if (_origin != origin)
+            if (Origin != origin)
             {
-                _origin = origin;
+                Origin = origin;
 
                 Recalculate();
             }
@@ -186,10 +186,10 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             var extents = new Extents(new Shape(new List<IntVector2>()
             {
-                _origin,
-                _origin + _widthwiseVector,
-                _origin + _widthwiseVector + _lengthwiseVector,
-                _origin + _lengthwiseVector
+                Origin,
+                Origin + _widthwiseVector,
+                Origin + _widthwiseVector + _lengthwiseVector,
+                Origin + _lengthwiseVector
             }));
 
             return new Spaces.Space($"Tunnel {Name}", extents);
@@ -202,7 +202,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _lengthwiseVector = new IntVector2((int)vec1.x, (int)vec1.y);
             _widthwiseVector = new IntVector2((int)vec2.x, (int)vec2.y);
 
-            var segOne = new Segment(_origin, _origin + _widthwiseVector);
+            var segOne = new Segment(Origin, Origin + _widthwiseVector);
             var segTwo = Segment.Shift(segOne, _lengthwiseVector);
 
             _maximalValues[Directions.Up] = Mathf.Max(segOne.Start.Y, segOne.End.Y, segTwo.Start.Y, segTwo.End.Y);

@@ -9,7 +9,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class MonsterDenBuilder : SpaceBuilder
     {
-        public override bool IsValid => _origin != null && _radius > 0;
+        public override bool IsValid => Origin != null && _radius > 0;
 
         private int _radius;
 
@@ -19,7 +19,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public MonsterDenBuilder(ChunkBuilder chunkBuilder)
             : base(chunkBuilder)
         {
-            _origin = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
+            Origin = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
                                           Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
 
             _radius = Chance.Range(8, 20);
@@ -29,7 +29,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public MonsterDenBuilder SetCenterpoint(IntVector2 centerpoint)
         {
-            _origin = centerpoint;
+            Origin = centerpoint;
 
             Recalculate();
 
@@ -62,9 +62,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             var extents = new Extents(new Shape(new List<IntVector2>()
             {
-                new IntVector2(_origin.X - _radius, _origin.Y),
-                new IntVector2(_origin.X, _origin.Y + _radius),
-                new IntVector2(_origin.X + _radius, _origin.Y)
+                new IntVector2(Origin.X - _radius, Origin.Y),
+                new IntVector2(Origin.X, Origin.Y + _radius),
+                new IntVector2(Origin.X + _radius, Origin.Y)
             }));
 
             return new Spaces.Space($"Monster Den {Name}", extents);
@@ -72,16 +72,16 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public override bool Contains(IntVector2 position)
         {
-            if (position.X < _origin.X - _radius ||
-                position.X > _origin.X + _radius ||
-                position.Y > _origin.Y + _radius ||
-                position.Y < _origin.Y)
+            if (position.X < Origin.X - _radius ||
+                position.X > Origin.X + _radius ||
+                position.Y > Origin.Y + _radius ||
+                position.Y < Origin.Y)
             {
                 return false;
             }
             else
             {
-                var maxHeightAtDistance = _origin.Y + _radius - DistanceFromCenterpoint(position.X);
+                var maxHeightAtDistance = Origin.Y + _radius - DistanceFromCenterpoint(position.X);
                 return position.Y <= maxHeightAtDistance;
             }
         }
@@ -99,10 +99,10 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected override void Recalculate()
         {
-            _maximalValues[Directions.Up] = _origin.Y + _radius;
-            _maximalValues[Directions.Right] = _origin.X + _radius;
-            _maximalValues[Directions.Down] = _origin.Y;
-            _maximalValues[Directions.Left] = _origin.X - _radius;
+            _maximalValues[Directions.Up] = Origin.Y + _radius;
+            _maximalValues[Directions.Right] = Origin.X + _radius;
+            _maximalValues[Directions.Down] = Origin.Y;
+            _maximalValues[Directions.Left] = Origin.X - _radius;
 
             OnSpaceBuilderChanged.Raise(this);
         }
@@ -129,9 +129,9 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
                     var requiredOffset = requirementsForEnemy.Height;
 
-                    var xPosition = Chance.Range(-_radius + requiredOffset, _radius - requiredOffset) + _origin.X;
+                    var xPosition = Chance.Range(-_radius + requiredOffset, _radius - requiredOffset) + Origin.X;
 
-                    var position = new IntVector2(xPosition, _origin.Y);
+                    var position = new IntVector2(xPosition, Origin.Y);
 
                     containedEnemies.Add(new EnemySpawn(position, enemy));
                 }
@@ -140,6 +140,6 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             return containedEnemies;
         }
 
-        private int DistanceFromCenterpoint(int x) => Mathf.Abs(_origin.X - x);
+        private int DistanceFromCenterpoint(int x) => Mathf.Abs(Origin.X - x);
     }
 }

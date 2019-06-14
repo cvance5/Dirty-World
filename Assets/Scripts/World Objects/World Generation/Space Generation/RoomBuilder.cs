@@ -8,7 +8,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class RoomBuilder : SpaceBuilder
     {
-        public override bool IsValid => _origin != null && _size >= _minimumSize;
+        public override bool IsValid => Origin != null && _size >= _minimumSize;
 
         protected int _size;
         protected int _minimumSize = 1;
@@ -20,7 +20,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             : base(chunkBuilder)
         {
             _size = Chance.Range(2, 7);
-            _origin = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
+            Origin = new IntVector2(Chance.Range(_chunkBuilder.BottomLeftCorner.X, _chunkBuilder.TopRightCorner.X),
                                           Chance.Range(_chunkBuilder.BottomLeftCorner.Y, _chunkBuilder.TopRightCorner.Y));
 
             Recalculate();
@@ -31,7 +31,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         {
             _size = roomBuilder._size;
             _minimumSize = roomBuilder._minimumSize;
-            _origin = roomBuilder._origin;
+            Origin = roomBuilder.Origin;
 
             _modifiersApplied.AddRange(roomBuilder._modifiersApplied);
 
@@ -40,7 +40,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public RoomBuilder SetCenter(IntVector2 centerofRoom)
         {
-            _origin = centerofRoom;
+            Origin = centerofRoom;
 
             Recalculate();
 
@@ -98,8 +98,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             // Odd numbers don't divide by 2 and will result in weird values,
             // so this ensures the size is always right
             var halfSize = _size / 2;
-            _bottomLeftCorner = new IntVector2(_origin.X - halfSize, _origin.Y - halfSize);
-            _topRightCorner = new IntVector2(_origin.X + _size - halfSize, _origin.Y + _size - halfSize);
+            _bottomLeftCorner = new IntVector2(Origin.X - halfSize, Origin.Y - halfSize);
+            _topRightCorner = new IntVector2(Origin.X + _size - halfSize, Origin.Y + _size - halfSize);
 
             _maximalValues[Directions.Up] = _topRightCorner.Y;
             _maximalValues[Directions.Right] = _topRightCorner.X;

@@ -44,7 +44,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public PlexusBuilder SetOrigin(IntVector2 origin)
         {
-            _origin = origin;
+            Origin = origin;
 
             return this;
         }
@@ -116,7 +116,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             _tunnels[offset] = tunnel;
 
-            tunnel.SetOrigin(_origin + offset.Position)
+            tunnel.SetOrigin(Origin + offset.Position)
                   .TrimToLength(_maxOffshootLength)
                   .SetWidth(_tunnelWidth)
                   .SetRotation(_coreRotation * _offshootRotation);

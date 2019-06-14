@@ -7,7 +7,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class ShaftBuilder : SpaceBuilder
     {
-        public override bool IsValid => _origin != null && _height >= _minHeight && _width >= _minWidth;
+        public override bool IsValid => Origin != null && _height >= _minHeight && _width >= _minWidth;
 
         protected IntVector2 _top;
         protected IntVector2 _middle;
@@ -46,17 +46,17 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public ShaftBuilder SetStartingPoint(IntVector2 startingPoint, ShaftAlignment alignment)
         {
-            _origin = startingPoint;
+            Origin = startingPoint;
             switch (alignment)
             {
                 case ShaftAlignment.StartFromTop:
-                    _top = _origin;
+                    _top = Origin;
                     break;
                 case ShaftAlignment.StartFromMiddle:
-                    _middle = _origin;
+                    _middle = Origin;
                     break;
                 case ShaftAlignment.StartFromBottom:
-                    _bottom = _origin;
+                    _bottom = Origin;
                     break;
             }
 
@@ -148,7 +148,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     if (_top == null) throw new System.InvalidOperationException("Shaft builder has not been assigned a top position.");
                     else
                     {
-                        _top = _origin;
+                        _top = Origin;
                         _middle = new IntVector2(_top.X, _top.Y - (_height / 2));
                         _bottom = new IntVector2(_top.X, _top.Y - _height);
                     }
@@ -157,7 +157,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     if (_middle == null) throw new System.InvalidOperationException("Shaft builder has not been assigned a middle position.");
                     else
                     {
-                        _middle = _origin;
+                        _middle = Origin;
                         _top = new IntVector2(_middle.X, _middle.Y + (_height / 2));
                         _bottom = new IntVector2(_middle.X, _middle.Y - (_height - (_height / 2)));
                     }
@@ -166,7 +166,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     if (_bottom == null) throw new System.InvalidOperationException("Shaft builder has not been assigned a bottom position.");
                     else
                     {
-                        _bottom = _origin;
+                        _bottom = Origin;
                         _middle = new IntVector2(_bottom.X, _bottom.Y + (_height / 2));
                         _top = new IntVector2(_bottom.X, _bottom.Y + _height);
                     }

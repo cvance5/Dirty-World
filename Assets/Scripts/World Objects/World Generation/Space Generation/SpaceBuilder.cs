@@ -14,7 +14,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         protected ChunkBuilder _chunkBuilder { get; private set; }
 
-        protected IntVector2 _origin { get; set; }
+        public IntVector2 Origin { get; protected set; }
 
         protected Dictionary<IntVector2, int> _boundedDirections { get; private set; } =
               new Dictionary<IntVector2, int>();
