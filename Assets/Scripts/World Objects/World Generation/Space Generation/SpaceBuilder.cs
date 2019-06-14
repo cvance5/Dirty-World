@@ -1,5 +1,6 @@
 ﻿using MathConcepts;
 using System.Collections.Generic;
+using System.Linq;
 using Utilities.Debug;
 using WorldObjects.Spaces;
 
@@ -41,10 +42,16 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
                 Clamp(direction, amount);
 
+                // We are bounded in both sides and can't just shift that way
                 if (_boundedDirections.ContainsKey(-direction))
                 {
-                    // We are bounded in both sides and can't just shift that way
-                    Cut(-direction, _boundedDirections[-direction]);
+                    do
+                    {
+                        foreach (var boundedDirection in _boundedDirections)
+                        {
+                            Squash(boundedDirection.Key, boundedDirection.Value);
+                        }
+                    } while (IsValid && _boundedDirections.Any(boundedDir => DistanceFrom(boundedDir.Key, boundedDir.Value) > 0));
                 }
             }
 
@@ -82,7 +89,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public void Shift(IntVector2 shift)
         {
-            _origin += shift;
+            Origin += shift;
             Recalculate();
         }
 
