@@ -18,11 +18,11 @@ namespace MathConcepts.Geometry
             End = end;
         }
 
-        public bool PassesX(int xValue) =>
+        public bool ContainsX(int xValue) =>
             (Start.X <= xValue && xValue <= End.X) ||
             (Start.X >= xValue && xValue >= End.X);
 
-        public bool PassesY(int YValue) =>
+        public bool ContainsY(int YValue) =>
             (Start.Y <= YValue && YValue <= End.Y) ||
             (Start.Y >= YValue && YValue >= End.Y);
 
@@ -30,7 +30,7 @@ namespace MathConcepts.Geometry
         {
             if (direction == Directions.Right || direction == Directions.Left)
             {
-                if (PassesX(newValue))
+                if (ContainsX(newValue))
                 {
                     // Anchor at whichever one point is less far in that direction
                     var anchorPosition = Start;
@@ -56,10 +56,17 @@ namespace MathConcepts.Geometry
                     movablePosition.X = newValue;
                     movablePosition.Y = newYValue;
                 }
+                // We don't contain this point, so collapse our line to it
+                else
+                {
+                    Start.X = newValue;
+                    End.X = Start.X;
+                    End.Y = Start.Y;
+                }
             }
             else if (direction == Directions.Up || direction == Directions.Down)
             {
-                if (PassesY(newValue))
+                if (ContainsY(newValue))
                 {
                     // Anchor at whichever one point is less far in that direction
                     var anchorPosition = Start;
@@ -84,6 +91,13 @@ namespace MathConcepts.Geometry
                     // Calculate delta and set
                     movablePosition.X = newXValue;
                     movablePosition.Y = newValue;
+                }
+                // We don't contain this point, so collapse our line to it
+                else
+                {
+                    Start.Y = newValue;
+                    End.X = Start.X;
+                    End.Y = Start.Y;
                 }
             }
             else throw new System.ArgumentException($" Expected a cardinal direction.  Cannot operate on {direction}.");

@@ -41,18 +41,18 @@ namespace Tests.SpaceTests
         }
 
         [Test]
-        public void SegmentReachesTest()
+        public void SegmentContainsTest()
         {
             var testSegment = new Segment(new IntVector2(-2, -2), new IntVector2(2, 2));
 
-            Assert.True(testSegment.PassesX(0), $"Test segment did not reach expected X in center.");
-            Assert.True(testSegment.PassesY(0), $"Test segment did not reach expected Y in center.");
+            Assert.True(testSegment.ContainsX(0), $"Test segment did not reach expected X in center.");
+            Assert.True(testSegment.ContainsY(0), $"Test segment did not reach expected Y in center.");
 
-            Assert.True(testSegment.PassesX(-2), $"Test segment did not reach expected X at edge.");
-            Assert.True(testSegment.PassesY(-2), $"Test segment did not reach expected Y at edge.");
+            Assert.True(testSegment.ContainsX(-2), $"Test segment did not reach expected X at edge.");
+            Assert.True(testSegment.ContainsY(-2), $"Test segment did not reach expected Y at edge.");
 
-            Assert.False(testSegment.PassesX(-3), $"Test segment reached X beyond edge.");
-            Assert.False(testSegment.PassesY(-3), $"Test segment reached Y beyond edge.");
+            Assert.False(testSegment.ContainsX(-3), $"Test segment reached X beyond edge.");
+            Assert.False(testSegment.ContainsY(-3), $"Test segment reached Y beyond edge.");
         }
 
         [Test]
@@ -75,6 +75,12 @@ namespace Tests.SpaceTests
             Assert.AreEqual(-2, testSegment.End.Y, $"Test segment trimmed wrong side Y.");
 
             Assert.Throws<ArgumentException>(() => testSegment.Trim(Directions.Right + Directions.Up, -4));
+
+            testSegment = new Segment(new IntVector2(0, 0), new IntVector2(10, 0));
+            testSegment.Trim(Directions.Left, -1);
+
+            Assert.AreEqual(new IntVector2(-1, 0), testSegment.Start, $"Test segment did not collapse to the right value.");
+            Assert.AreEqual(new IntVector2(-1, 0), testSegment.End, $"Test segment did not collapse to a single point.");
         }
 
         [Test]
