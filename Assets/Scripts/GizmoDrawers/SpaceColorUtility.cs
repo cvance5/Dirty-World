@@ -1,7 +1,6 @@
 ﻿#if UNITY_EDITOR
 
 using UnityEngine;
-using WorldObjects.Spaces;
 
 namespace GizmoDrawers
 {
@@ -9,7 +8,9 @@ namespace GizmoDrawers
     {
         public static Color GetOutlineColor(WorldObjects.Spaces.Space space)
         {
-            if (space.Name.Contains("Tunnel"))
+            if (space.Name.Contains("Tunnel") ||
+                space.Name.Contains("Corridor") ||
+                space.Name.Contains("Shaft"))
             {
                 return Color.red;
             }
@@ -25,7 +26,7 @@ namespace GizmoDrawers
             {
                 return Color.black;
             }
-            else throw new System.ArgumentOutOfRangeException($"No color assigned for {space.GetType()}.");
+            else throw new System.ArgumentOutOfRangeException($"No color assigned for {space.Name}.");
         }
     }
 }
