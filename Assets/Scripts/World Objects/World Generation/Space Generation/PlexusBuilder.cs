@@ -9,7 +9,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public class PlexusBuilder : SpaceBuilder
     {
-        public override bool IsValid => Origin != null && _tunnels.Count > 0 && _tunnelWidth > 0 && _coreLength > 9 && _tunnels[Offset.IDENTITY].IsValid;
+        public override bool IsValid => Origin != null && _tunnels.Count > 0 && _tunnelWidth > 0 && _coreLength > 0 && _tunnels[Offset.IDENTITY].IsValid;
 
         private int _tunnelWidth;
         private int _coreLength;
