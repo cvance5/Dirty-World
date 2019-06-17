@@ -2,3 +2,6 @@ Temp/
 Library/
 *.csproj
 *.sln
+.vs/Dirty-World/v15/Server/sqlite3/storage.ide-shm
+.vs/Dirty-World/v15/Server/sqlite3/storage.ide-wal
+obj/Debug/SourceAssembly.csproj.FileListAbsolute.txt
