@@ -39,6 +39,8 @@ public class GameManager : Singleton<GameManager>
 
         FindUser();
 
+        LoadData();
+
         StartGame();
     }
 
@@ -52,6 +54,11 @@ public class GameManager : Singleton<GameManager>
         }
 
         User = UserSaves.LoadUser("Default");
+    }
+
+    private void LoadData()
+    {
+        Script.PrepareScript(Script);
     }
 
     private void StartGame()

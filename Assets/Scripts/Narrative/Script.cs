@@ -12,7 +12,7 @@ namespace Narrative
         private bool _skipScriptPlayback = false;
 
         [SerializeField]
-        private TextAsset _source = null;
+        private TextAsset _textAsset = null;
 #pragma warning restore IDE0044 // Add readonly modifier
 
         private static readonly List<IScriptedPlaybackListener> _scriptListeners = new List<IScriptedPlaybackListener>();
@@ -21,28 +21,25 @@ namespace Narrative
 
         private static Dictionary<ScriptKey, string> _scriptMap;
 
-        private void OnEnable()
+        public static void PrepareScript(Script source)
         {
-            if (Application.isPlaying)
+            if (source != null)
             {
-                if (_source != null)
+                if (_scriptMap != null)
                 {
-                    if (_scriptMap != null)
-                    {
-                        _log.Error($"Multiple scripts active at a time.  Clearing.");
-                    }
-
-                    _scriptMap = JsonConvert.DeserializeObject<Dictionary<ScriptKey, string>>(_source.text);
+                    _log.Error($"Multiple scripts active at a time.  Clearing.");
                 }
+
+                _scriptMap = JsonConvert.DeserializeObject<Dictionary<ScriptKey, string>>(source._textAsset.text);
+            }
 
 #if UNITY_EDITOR
-                if (_skipScriptPlayback)
-                {
-                    _playbackSpeed = 1000;
-                    UpdatePlaybackSpeed();
-                }
-#endif  
+            if (source._skipScriptPlayback)
+            {
+                _playbackSpeed = 1000;
+                UpdatePlaybackSpeed();
             }
+#endif  
         }
 
         public static string Read(ScriptKey key)
