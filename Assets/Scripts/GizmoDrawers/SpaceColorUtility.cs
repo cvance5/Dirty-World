@@ -26,6 +26,10 @@ namespace GizmoDrawers
             {
                 return Color.black;
             }
+            else if(space.Name.Contains("Plexus"))
+            {
+                return Color.blue;
+            }
             else throw new System.ArgumentOutOfRangeException($"No color assigned for {space.Name}.");
         }
     }
