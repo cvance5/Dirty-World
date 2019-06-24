@@ -178,8 +178,11 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             foreach (var tunnel in _tunnels.Values)
             {
-                var space = tunnel.Build();
-                shapes.AddRange(space.Extents.Shapes);
+                if (tunnel != null)
+                {
+                    var space = tunnel.Build();
+                    shapes.AddRange(space.Extents.Shapes);
+                }
             }
 
             return new Spaces.Space($"Plexus {Name}", new Extents(shapes));
