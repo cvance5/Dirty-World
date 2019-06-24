@@ -8,7 +8,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 {
     public abstract class SpaceBuilder : IBoundary
     {
-        public static SmartEvent<SpaceBuilder> OnSpaceBuilderChanged = new SmartEvent<SpaceBuilder>();
+        public SmartEvent<SpaceBuilder> OnSpaceBuilderChanged = new SmartEvent<SpaceBuilder>();
 
         public abstract bool IsValid { get; }
         public string Name { get; } = SpaceNamer.GetName();

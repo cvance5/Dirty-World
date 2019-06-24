@@ -30,6 +30,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             _coreLength = Chance.Range(3, 10);
             _tunnelWidth = Chance.Range(2, 6);
             _coreRotation = Quaternion.Euler(0, 0, Chance.Range(0, 180));
+            _maxOffshootLength = _coreLength - 1;
 
             UpdateOffsetKeys();
             Recalculate();
@@ -95,6 +96,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 if (kvp.Value == null)
                 {
                     offset = kvp.Key;
+                    break;
                 }
             }
 
@@ -131,6 +133,12 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                         _maximalValues[direction] = tunnel.MaximalValues[direction];
                     }
                 }
+
+                tunnel.OnSpaceBuilderChanged += OnTunnelBuilderChanged;
+            }
+            else
+            {
+                _tunnels[offset] = null;
             }
 
             return this;
@@ -215,6 +223,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     kvp.Key.Position.X < 0)
                 {
                     _tunnels.Remove(kvp.Key);
+                    if (kvp.Value != null) kvp.Value.OnSpaceBuilderChanged -= OnTunnelBuilderChanged;
                 }
                 // Count and validate this tunnel if any
                 else if (kvp.Key != Offset.IDENTITY && kvp.Value != null)
@@ -222,11 +231,10 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                     // Revalidate this tunnel
                     AppendOffshoot(kvp.Key, kvp.Value);
 
-                    if (!kvp.Value.IsValid)
+                    if (_tunnels[kvp.Key] != null)
                     {
-                        _tunnels[kvp.Key] = null;
+                        tunnelCount++;
                     }
-                    else tunnelCount++;
                 }
             }
 
@@ -234,6 +242,8 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
             OnSpaceBuilderChanged.Raise(this);
         }
+
+        private void OnTunnelBuilderChanged(SpaceBuilder tunnelBuilder) => OnSpaceBuilderChanged.Raise(this);
 
         private void UpdateOffsetKeys()
         {

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using WorldObjects.Spaces;
+using WorldObjects.WorldGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace GizmoDrawers
@@ -40,8 +41,23 @@ namespace GizmoDrawers
 
         public static void BeginTracking()
         {
-            SpaceBuilder.OnSpaceBuilderChanged += LogSpaceHistory;
+            SpaceArchitect.OnNewSpaceBuilderDeclared += BeginLoggingSpace;
             CustomSpace.OnCustomSpaceBuilt += LogCustomSpace;
+        }
+
+        private static void BeginLoggingSpace(SpaceBuilder newBuilder)
+        {
+            if (_historyPerBuilder.ContainsKey(newBuilder))
+            {
+                throw new System.ArgumentException($"Already tracking spaceBuilder {newBuilder.Name}.");
+            }
+            else
+            {
+                var history = CreateHistory();
+                _historyPerBuilder[newBuilder] = history;
+            }
+
+            newBuilder.OnSpaceBuilderChanged += LogSpaceHistory;
         }
 
         private static void LogSpaceHistory(SpaceBuilder changedBuilder)
@@ -49,12 +65,10 @@ namespace GizmoDrawers
             if (changedBuilder.IsValid)
             {
                 var space = changedBuilder.Build();
-
-                if (!_historyPerBuilder.TryGetValue(changedBuilder, out var history))
+                
+                if(!_historyPerBuilder.TryGetValue(changedBuilder, out var history))
                 {
-                    history = CreateHistory();
-
-                    _historyPerBuilder[changedBuilder] = history;
+                    throw new System.InvalidOperationException($"No history has been established for {changedBuilder.Name}.");
                 }
 
                 history.LogChange(space);
@@ -100,8 +114,13 @@ namespace GizmoDrawers
 
         private void OnDestroy()
         {
-            SpaceBuilder.OnSpaceBuilderChanged -= LogSpaceHistory;
+            SpaceArchitect.OnNewSpaceBuilderDeclared -= BeginLoggingSpace;
             CustomSpace.OnCustomSpaceBuilt -= LogCustomSpace;
+
+            foreach (var kvp in _historyPerBuilder)
+            {
+                kvp.Key.OnSpaceBuilderChanged -= LogSpaceHistory;
+            }
         }
     }
 }
