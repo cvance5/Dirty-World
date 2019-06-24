@@ -1,6 +1,4 @@
-﻿using UnityEngine.Events;
-
-public class SmartEvent : UnityEvent
+﻿public class SmartEvent
 {
     public delegate void TheDelegate();
     event TheDelegate TheEvent;
@@ -31,7 +29,7 @@ public class SmartEvent : UnityEvent
     }
 }
 
-public class SmartEvent<T> : UnityEvent
+public class SmartEvent<T>
 {
     public delegate void TheDelegate(T arg);
     event TheDelegate TheEvent;
@@ -61,7 +59,7 @@ public class SmartEvent<T> : UnityEvent
     }
 }
 
-public class SmartEvent<T, U> : UnityEvent
+public class SmartEvent<T, U>
 {
     public delegate void TheDelegate(T arg, U arg2);
     event TheDelegate TheEvent;
@@ -91,7 +89,7 @@ public class SmartEvent<T, U> : UnityEvent
     }
 }
 
-public class SmartEvent<T, U, V> : UnityEvent
+public class SmartEvent<T, U, V>
 {
     public delegate void TheDelegate(T arg, U arg2, V arg3);
     event TheDelegate TheEvent;
