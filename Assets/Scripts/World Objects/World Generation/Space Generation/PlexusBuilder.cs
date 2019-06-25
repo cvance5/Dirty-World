@@ -166,14 +166,18 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
                 if (kvp.Value != null)
                 {
                     kvp.Value.Squash(direction, amount);
-                }
 
-                if (kvp.Key == Offset.IDENTITY)
-                {
-                    Origin = kvp.Value.Origin;
-                    _coreLength = kvp.Value.Length;
-                    _tunnelWidth = kvp.Value.Width;
-                    _coreRotation = kvp.Value.Rotation;
+                    if (kvp.Key == Offset.IDENTITY)
+                    {
+                        Origin = kvp.Value.Origin;
+                        _coreLength = kvp.Value.Length;
+                        _tunnelWidth = kvp.Value.Width;
+                        _coreRotation = kvp.Value.Rotation;
+                    }
+                    else if (!kvp.Value.IsValid)
+                    {
+                        _tunnels[kvp.Key] = null;
+                    }
                 }
             }
 
@@ -243,7 +247,14 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
             OnSpaceBuilderChanged.Raise(this);
         }
 
-        private void OnTunnelBuilderChanged(SpaceBuilder tunnelBuilder) => OnSpaceBuilderChanged.Raise(this);
+        private void OnTunnelBuilderChanged(SpaceBuilder tunnelBuilder)
+        {
+            // Don't report changes to invalid tunnels, they will be deleted soon
+            if (tunnelBuilder.IsValid)
+            {
+                OnSpaceBuilderChanged.Raise(this);
+            }
+        }
 
         private void UpdateOffsetKeys()
         {

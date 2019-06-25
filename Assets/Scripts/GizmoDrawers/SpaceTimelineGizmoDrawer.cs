@@ -1,6 +1,7 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using UnityEngine;
+using Utilities.Debug;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration;
 using WorldObjects.WorldGeneration.SpaceGeneration;
@@ -58,6 +59,7 @@ namespace GizmoDrawers
             }
 
             newBuilder.OnSpaceBuilderChanged += LogSpaceHistory;
+            LogSpaceHistory(newBuilder);
         }
 
         private static void LogSpaceHistory(SpaceBuilder changedBuilder)
@@ -122,6 +124,8 @@ namespace GizmoDrawers
                 kvp.Key.OnSpaceBuilderChanged -= LogSpaceHistory;
             }
         }
+
+        private static readonly Log _log = new Log("SpaceTimelineGizmoDrawer");
     }
 }
 #endif
