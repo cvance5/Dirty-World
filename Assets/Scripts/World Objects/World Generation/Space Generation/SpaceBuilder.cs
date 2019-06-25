@@ -146,7 +146,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
 
         public Space Build()
         {
-            if (!IsValid) throw new System.InvalidOperationException($"SpaceBuilder is not valid and should not be built.");
+            if (!IsValid) throw new System.InvalidOperationException($"SpaceBuilder {Name} is not valid and should not be built.");
 
             var rawSpace = BuildRaw();
 
