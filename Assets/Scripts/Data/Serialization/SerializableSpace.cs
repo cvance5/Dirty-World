@@ -8,6 +8,7 @@ namespace Data.Serialization
 {
     public class SerializableSpace : ISerializable<Space>
     {
+#pragma warning disable IDE0044 // Add readonly modifier
         [JsonProperty("name")]
         private string _name;
 
@@ -22,6 +23,7 @@ namespace Data.Serialization
 
         [JsonProperty("modifiers")]
         private List<ModifierTypes> _modifiers = new List<ModifierTypes>();
+#pragma warning restore IDE0044 // Add readonly modifier
 
         [JsonConstructor]
         private SerializableSpace() { }
