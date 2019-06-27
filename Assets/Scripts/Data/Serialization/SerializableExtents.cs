@@ -9,6 +9,9 @@ namespace Data.Serialization
         [JsonProperty("shapes")]
         private readonly List<Shape> _shapes;
 
+        [JsonConstructor]
+        private SerializableExtents() { }
+
         public SerializableExtents(Extents extents) => _shapes = extents.Shapes;
 
         public Extents ToObject() => new Extents(_shapes);
