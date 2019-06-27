@@ -48,7 +48,7 @@ namespace Tools.SpaceCrafting
                 new IntVector2(TopRightCorner.X, BottomLeftCorner.Y)
             }));
 
-            return new Space($"Tunnel {SpaceNamer.GetName()}", extents);
+            return new Space($"Tunnel {SpaceNamer.GetNext()}", extents);
         }
     }
 }

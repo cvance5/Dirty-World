@@ -42,7 +42,7 @@ namespace Tools.SpaceCrafting
                 new IntVector2(Centerpoint.X + Radius, Centerpoint.Y)
             }));
 
-            return new Space($"Monster Den {SpaceNamer.GetName()}", extents);
+            return new Space($"Monster Den {SpaceNamer.GetNext()}", extents);
         }
     }
 }

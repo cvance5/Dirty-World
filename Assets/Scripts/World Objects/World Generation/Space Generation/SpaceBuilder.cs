@@ -11,7 +11,7 @@ namespace WorldObjects.WorldGeneration.SpaceGeneration
         public SmartEvent<SpaceBuilder> OnSpaceBuilderChanged = new SmartEvent<SpaceBuilder>();
 
         public abstract bool IsValid { get; }
-        public string Name { get; } = SpaceNamer.GetName();
+        public string Name { get; } = SpaceNamer.GetNext();
 
         protected ChunkBuilder _chunkBuilder { get; private set; }
 
