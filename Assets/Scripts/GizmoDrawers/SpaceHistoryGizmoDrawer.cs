@@ -37,6 +37,7 @@ namespace GizmoDrawers
             _history.Add(new Extents(current.Extents.Shapes));
             _historyIndex = _history.Count - 1;
 
+            // Remember the information about my space
             _spaceName = current.Name;
             _drawColor = SpaceColorUtility.GetOutlineColor(current);
             gameObject.name = $"History for {current.Name}";
