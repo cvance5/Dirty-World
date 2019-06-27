@@ -3,6 +3,7 @@
     SavedGames,
     CurrentGame,
     CurrentCharacter,
+    CurrentSpaceNamer,
     Options,
     Users
 }

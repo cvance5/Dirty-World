@@ -12,6 +12,7 @@ public static class Paths
 
     public const string CHARACTERFILE = "Char";
     public const string SPACESFILE = "Spaces";
+    public const string SPACENAMERFILE = "SpaceNamer";
 
     public static string ToPath(DataTypes dataType)
     {
@@ -25,6 +26,9 @@ public static class Paths
             case DataTypes.CurrentCharacter:
                 if (string.IsNullOrEmpty(GameSaves.CurrentGame)) throw new System.InvalidOperationException($"No save game is selected. Cannot access current Save Game Character.");
                 return Path.Combine(Application.persistentDataPath, DATAPATH, SAVESPATH, GameSaves.CurrentGame, CHARACTERFILE);
+            case DataTypes.CurrentSpaceNamer:
+                if (string.IsNullOrEmpty(GameSaves.CurrentGame)) throw new System.InvalidOperationException($"No save game is selected. Cannot access current Save Game Space Namer.");
+                return Path.Combine(Application.persistentDataPath, DATAPATH, SAVESPATH, GameSaves.CurrentGame, SPACENAMERFILE);
             case DataTypes.Options:
                 return Path.Combine(Application.persistentDataPath, DATAPATH, OPTIONSPATH);
             case DataTypes.Users:

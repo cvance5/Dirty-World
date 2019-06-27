@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using WorldObjects;
 using WorldObjects.Spaces;
 using WorldObjects.WorldGeneration;
+using WorldObjects.WorldGeneration.SpaceGeneration;
 
 namespace Data
 {
@@ -33,6 +34,7 @@ namespace Data
             SpaceArchitect.OnNewSpaceRegistered += LogDirty;
 
             LoadCharacter();
+            LoadSpaceNamer();
         }
 
         public static void LogDirty(Chunk dirtyChunk)
@@ -72,14 +74,15 @@ namespace Data
                 filesToWrite.Add(fileName, data);
             }
 
+            // TODO: How do we delete builders that have been built?
             foreach (var kvp in _dirtyBuilders)
             {
-                var fileName = kvp.Key.ToString() +"B";
+                var fileName = kvp.Key.ToString() + "B";
                 var data = new SerializableChunkBuilder(kvp.Value).Serialize();
                 filesToWrite.Add(fileName, data);
             }
 
-            foreach(var kvp in _dirtySpaces)
+            foreach (var kvp in _dirtySpaces)
             {
                 var fileName = kvp.Key;
                 var data = new SerializableSpace(kvp.Value);
@@ -88,6 +91,8 @@ namespace Data
 
             var characterFile = new SerializableCharacter(CurrentCharacter);
             filesToWrite.Add(Paths.CHARACTERFILE, characterFile.Serialize());
+
+            filesToWrite.Add(Paths.SPACENAMERFILE, SpaceNamer.GetNext());
 
             return filesToWrite;
         }
@@ -104,6 +109,14 @@ namespace Data
             else character = new Character();
 
             CurrentCharacter = character;
+        }
+
+        private static void LoadSpaceNamer()
+        {
+            if (DataReader.Exists(DataTypes.CurrentSpaceNamer))
+            {
+                SpaceNamer.Load(int.Parse(DataReader.Read(DataTypes.CurrentSpaceNamer)));
+            }
         }
 
         public static void Clear() => _dirtyChunks.Clear();
