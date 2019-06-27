@@ -102,11 +102,14 @@ public class GameManager : Singleton<GameManager>
         var chunkArchitect = worldGameObject.AddComponent<ChunkArchitect>();
         chunkArchitect.Initialize(bPicker, spaceArchitect);
 
+#if UNITY_EDITOR
+        GizmoDrawers.SpaceTimelineGizmoDrawer.BeginTracking();
+#endif
+
         World.Initialize(chunkArchitect, spaceArchitect);
 
 # if UNITY_EDITOR
         GizmoDrawers.ChunkGizmoDrawer.SetWorldToDraw(World);
-        GizmoDrawers.SpaceTimelineGizmoDrawer.BeginTracking();
 #endif
         PositionTracker.SetWorldToTrack(World);
 
